@@ -62,52 +62,6 @@ const DashboardPage: FC = () => {
       {/* end::Row  */}
 
       {/* begin::Row */}
-      <div className='row gy-0 gx-5 gx-xl-8'>
-        {/* begin::Col */}
-        <div className='col-xl-4'>
-          <MixedWidget5
-            className='card-xl-stretch mb-5 mb-xl-0'
-            image='/media/svg/brand-logos/plurk.svg'
-            time='7 hours ago'
-            title='PitStop - Multiple Email Generator'
-            description='
-                Pitstop creates quick email campaigns.<br/>
-                We help to strengthen your brand.
-            '
-          />
-        </div>
-        {/* end::Col */}
-
-        {/* begin::Col */}
-        <div className='col-xl-4'>
-          <MixedWidget5
-            className='card-xl-stretch mb-5 mb-xl-0'
-            image='/media/svg/brand-logos/telegram.svg'
-            time='10 days ago'
-            title='ReactJS Admin Theme'
-            description='
-            Keenthemes uses the latest and greatest<br/>
-            frameworks for complete modernization.
-            '
-          />
-        </div>
-        {/* end::Col */}
-
-        {/* begin::Col */}
-        <div className='col-xl-4'>
-          <MixedWidget5
-            className='card-xl-stretch mb-5 mb-xl-0'
-            image='/media/svg/brand-logos/vimeo.svg'
-            time='2 weeks ago'
-            title='KT.com - High Quality Templates'
-            description='
-            Easy to use, incredibly flexible and secure<br/>
-            with in-depth documentation that outlines.
-            '
-          />
-        </div>
-        {/* end::Col */}
-      </div>
       {/* end::Row */}
     </>
   )

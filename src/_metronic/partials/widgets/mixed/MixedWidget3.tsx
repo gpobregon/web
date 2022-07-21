@@ -41,81 +41,8 @@ const MixedWidget3: React.FC<Props> = ({className, chartColor, chartHeight}) => 
   }, [chartRef, mode])
 
   return (
-    <div className={`card ${className}`}>
+    <div>
       {/* begin::Header  */}
-      <div className={`card-header border-0 bg-${chartColor} py-5`}>
-        <h3 className='card-title fw-bold text-white'>Sales Progress</h3>
-
-        <div className='card-toolbar'>
-          {/* begin::Menu  */}
-          <button
-            type='button'
-            className={clsx(
-              'btn btn-sm btn-icon btn-color-white btn-active-white',
-              `btn-active-color-${chartColor}`,
-              'border-0 me-n3'
-            )}
-            data-kt-menu-trigger='click'
-            data-kt-menu-placement='bottom-end'
-            data-kt-menu-flip='top-end'
-          >
-            <KTSVG path='/media/icons/duotune/general/gen024.svg' className='svg-icon-2' />
-          </button>
-          <Dropdown1 />
-          {/* end::Menu  */}
-        </div>
-      </div>
-      {/* end::Header  */}
-
-      {/* begin::Body  */}
-      <div className='card-body p-0'>
-        {/* begin::Chart  */}
-        <div
-          ref={chartRef}
-          className={`mixed-widget-12-chart card-rounded-bottom bg-${chartColor}`}
-        ></div>
-        {/* end::Chart  */}
-
-        {/* begin::Stats  */}
-        <div className='card-rounded bg-body mt-n10 position-relative card-px py-15'>
-          {/* begin::Row  */}
-          <div className='row g-0 mb-7'>
-            {/* begin::Col  */}
-            <div className='col mx-5'>
-              <div className='fs-6 text-gray-400'>Avarage Sale</div>
-              <div className='fs-2 fw-bold text-gray-800'>$650</div>
-            </div>
-            {/* end::Col  */}
-
-            {/* begin::Col  */}
-            <div className='col mx-5'>
-              <div className='fs-6 text-gray-400'>Comissions</div>
-              <div className='fs-2 fw-bold text-gray-800'>$29,500</div>
-            </div>
-            {/* end::Col  */}
-          </div>
-          {/* end::Row  */}
-
-          {/* begin::Row  */}
-          <div className='row g-0'>
-            {/* begin::Col  */}
-            <div className='col mx-5'>
-              <div className='fs-6 text-gray-400'>Revenue</div>
-              <div className='fs-2 fw-bold text-gray-800'>$55,000</div>
-            </div>
-            {/* end::Col  */}
-
-            {/* begin::Col  */}
-            <div className='col mx-5'>
-              <div className='fs-6 text-gray-400'>Expenses</div>
-              <div className='fs-2 fw-bold text-gray-800'>$1,130,600</div>
-            </div>
-            {/* end::Col  */}
-          </div>
-          {/* end::Row  */}
-        </div>
-        {/* end::Stats  */}
-      </div>
       {/* end::Body  */}
     </div>
   )
