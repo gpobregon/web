@@ -8,8 +8,17 @@ export function AsideMenuMain() {
   const intl = useIntl()
   return (
     <>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
       <AsideMenuItem
-        to='/dashboard'
+        to='/site'
         title={intl.formatMessage({id: 'MENU.DASHBOARD'})}
         fontIcon='bi bi-house'
         bsTitle={intl.formatMessage({id: 'MENU.DASHBOARD'})}

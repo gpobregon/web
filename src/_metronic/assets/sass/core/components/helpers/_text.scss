@@ -4,103 +4,235 @@
 
 // Text colors
 @each $name, $color in $theme-text-colors {
-    // Base color
-    .text-#{$name} {
-        color: var(--kt-text-#{$name}) !important;
+  // Base color
+  .text-#{$name} {
+    color: var(--kt-text-#{$name}) !important;
+  }
+
+  // Inverse color
+  @if (theme-inverse-color($name)) {
+    .text-inverse-#{$name} {
+      color: var(--kt-#{$name}-inverse) !important;
+    }
+  }
+
+  @if (theme-light-color($name)) {
+    // Light colors
+    .text-light-#{$name} {
+      color: var(--kt-#{$name}-light) !important;
+    }
+  }
+
+  // Hover
+  .text-hover-#{$name} {
+    transition: $transition-link;
+
+    i {
+      transition: $transition-link;
     }
 
-    // Inverse color
-    @if (theme-inverse-color($name)) {
-        .text-inverse-#{$name} {
-            color: var(--kt-#{$name}-inverse) !important;
-        }
-    }
+    &:hover {
+      transition: $transition-link;
+      color: var(--kt-text-#{$name}) !important;
 
-    @if (theme-light-color($name)) {
-        // Light colors
-        .text-light-#{$name} {
-            color: var(--kt-#{$name}-light) !important;
-        }
-    }
-
-    // Hover
-    .text-hover-#{$name} {
+      i {
         transition: $transition-link;
+        color: var(--kt-text-#{$name}) !important;
+      }
 
-        i {
-            transition: $transition-link;
-        }
+      .svg-icon {
+        color: var(--kt-text-#{$name}) !important;
+      }
+    }
+  }
 
-        &:hover {
-            transition: $transition-link;
-            color: var(--kt-text-#{$name}) !important;
+  // Active
+  .text-active-#{$name} {
+    transition: $transition-link;
 
-            i {
-                transition: $transition-link;
-				color: var(--kt-text-#{$name}) !important;
-			}
-
-			.svg-icon {
-				color: var(--kt-text-#{$name}) !important;
-			}
-        }
+    i {
+      transition: $transition-link;
     }
 
-    // Active
-    .text-active-#{$name} {
-        transition: $transition-link;        
+    &.active {
+      transition: $transition-link;
+      color: var(--kt-text-#{$name}) !important;
 
-        i {
-            transition: $transition-link;
-        }
+      i {
+        transition: $transition-link;
+        color: var(--kt-text-#{$name}) !important;
+      }
 
-        &.active {
-            transition: $transition-link;
-            color: var(--kt-text-#{$name}) !important;
-            
-            i {
-                transition: $transition-link;
-                color: var(--kt-text-#{$name}) !important;
-            }
-    
-            .svg-icon {
-                color: var(--kt-text-#{$name}) !important;
-            }
-        }
+      .svg-icon {
+        color: var(--kt-text-#{$name}) !important;
+      }
     }
+  }
 }
 
 // Text transparent
 .text-transparent {
-    color: transparent;
+  color: transparent;
 }
 
 // Cursor pointer
 .cursor-pointer {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 // Cursor default
 .cursor-default {
-    cursor: default;
+  cursor: default;
 }
 // Cursor move
 .cursor-move {
-    cursor: move;
+  cursor: move;
 }
 
 // Icons
 i {
-    line-height: 1;
-    font-size: 1rem;
-    color: var(--kt-text-muted);
+  line-height: 1;
+  font-size: 1rem;
+  color: var(--kt-text-muted);
 }
 
 // Link transition
 a {
-    transition: $transition-link;
+  transition: $transition-link;
 
-    &:hover {
-        transition:$transition-link;
-    }
+  &:hover {
+    transition: $transition-link;
+  }
+}
+
+.titlesPlaces {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+  color: #ffffff;
+}
+
+.subTextCards {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  color: #474761;
+}
+
+.letterButton {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #2b2b40;
+  margin: 2.5px;
+}
+
+.letterButtonAdd {
+  margin-top: 15px;
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  color: #2b2b40;
+}
+
+.searchDash {
+  margin-top: 11px;
+}
+
+.letra {
+  margin-top: 10px;
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #565674;
+}
+
+.letra1 {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #565674;
+}
+
+.radioImg {
+  border-radius: '25px';
+}
+
+.container {
+  position: absolute;
+  width: 1372px;
+  height: 60px;
+  left: 140px;
+  top: 80px;
+
+  background: #1a1a27;
+}
+
+.letterTitle {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 26px;
+  color: #ffffff;
+  margin-top: 18px;
+}
+
+.lettersmall {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #565674;
+}
+
+.agregadosRecientemente {
+  margin-top: 25px;
+  width: 152px;
+  height: 17px;
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #ffffff;
+}
+
+.barraBusqueda {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 13px;
+  gap: 3px;
+  width: 300px;
+  height: 46px;
+  background: #2b2b40;
+  border-radius: 5px;
+  margin-top: 7px;
+}
+
+.letterSearcher {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 18px;
+  color: #92929f;
+}
+
+.pagination {
+  margin-top: 14px;
 }

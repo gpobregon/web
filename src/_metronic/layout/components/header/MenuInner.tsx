@@ -8,7 +8,7 @@ export function MenuInner() {
   const intl = useIntl()
   return (
     <>
-      <MenuItem title='Dashboards' to='/dashboard' />
+      <MenuItem title='Dashboards' to='/site' />
       <MenuItem title='Botón' to='/#' />
       <MenuItem title='Botón' to='/#' />
       <MenuItem title='Botón' to='/#' />
