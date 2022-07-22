@@ -24,23 +24,23 @@ const themeMenuModeLSKey = 'kt_theme_mode_menu'
 
 const getThemeModeFromLocalStorage = (lsKey: string): ThemeModeType => {
   if (!localStorage) {
-    return 'light'
+    return 'dark'
   }
 
   const data = localStorage.getItem(lsKey)
   if (!data) {
-    return 'light'
-  }
-
-  if (data === 'light') {
-    return 'light'
+    return 'dark'
   }
 
   if (data === 'dark') {
     return 'dark'
   }
 
-  return 'system'
+  if (data === 'dark') {
+    return 'dark'
+  }
+
+  return 'dark'
 }
 
 const defaultThemeMode: ThemeModeContextType = {
@@ -64,7 +64,7 @@ const ThemeModeProvider = ({children}: {children: React.ReactNode}) => {
   const [menuMode, setMenuMode] = useState<ThemeModeType>(defaultThemeMode.menuMode)
 
   const updateMode = (_mode: ThemeModeType) => {
-    const updatedMode = _mode === 'system' ? systemMode : _mode
+    const updatedMode = _mode === 'dark' ? systemMode : _mode
     setMode(updatedMode)
     themeModeSwitchHelper(updatedMode)
     if (localStorage) {
