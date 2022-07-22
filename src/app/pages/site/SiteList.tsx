@@ -3,10 +3,18 @@ import Card from 'react-bootstrap/Card'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
+import { Link } from 'react-router-dom'
 
 export function MyPage() {
   return (
-    <div className='row row-cols-1 row-cols-md-3 g-4'>
+    <>
+    <div>
+    <Link
+        className='btn btn-primary'
+        to="/site/form"
+      >Crear Sitio</Link>
+    <br/></div>
+    <div className='row row-cols-1 row-cols-md-3 g-4 '>
       <div className='col'>
         <div className='card'>
           <Card.Img variant='top' src='holder.js/100px180' />
@@ -55,6 +63,6 @@ export function MyPage() {
           </div>
         </div>
       </div>
-    </div>
+    </div></>
   )
 }
