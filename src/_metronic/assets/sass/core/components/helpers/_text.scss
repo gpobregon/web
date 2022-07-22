@@ -75,6 +75,243 @@
   color: transparent;
 }
 
+.background-button{
+    display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 10px 6px;
+gap: 4px;
+
+width: 46px;
+height: 46px;
+
+background: #2B2B40;
+border-radius: 5px;
+
+/* Inside auto layout */
+
+flex: none;
+order: 0;
+flex-grow: 0;
+}
+
+.div-image{
+    display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 248px;
+height: 365px;
+
+background: #1B1B29;
+border-radius: 5px;
+
+/* Inside auto layout */
+
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+}
+
+.ubicate{
+    display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px 16px;
+gap: 18px;
+
+width: 370px;
+height: 46px;
+
+background: #1B1B29;
+border-radius: 5px;
+
+/* Inside auto layout */
+
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+//tipografia
+font-family: 'Lato';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* identical to box height */
+
+
+color: #92929F;
+}
+
+.etiqueta{
+    display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 12px;
+gap: 10px;
+
+width: 370px;
+height: 111px;
+
+background: #1B1B29;
+border-radius: 5px;
+//tipografia
+font-family: 'Lato';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* Inside auto layout */
+
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 1;
+}
+
+.title_text{
+        font-family: inherit;
+        width: 90%;
+        border: 0;
+        border-bottom: 2px solid #1B1B29;
+        outline: 0;
+        font-size: 1.3rem;
+        color: white;
+        padding: 7px 0;
+        background: transparent;
+        transition: border-color 0.2s;
+}
+
+.icons{
+    position: absolute;
+left: 24.98%;
+right: 24.98%;
+top: 24.98%;
+bottom: 24.98%;
+
+background: #474761;
+}
+.div-edit{
+    display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 30px;
+
+width: 1310px;
+height: 443px;
+
+background: #1E1E2D;
+border-radius: 5px;
+
+/* Inside auto layout */
+
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+}
+
+.img1{
+    
+    border-radius:0px;
+    height: 100%;
+    border: 0px solid #999;
+    padding:2px;
+    width:248px;
+    height:265px;
+    background-size: 100% 100%;
+    background-repeat:no-repeat;
+   // background:url(../img/imagen.jpg);
+    background-size: cover;
+    }
+  .img1 img{
+    width: 100%;
+    height: 100%;
+  }
+  @media all and (min-width: 500px) and (max-width: 1000px)
+  {  
+  .img{
+    
+    border-radius:0px;
+    border: 1px solid #999;
+    padding:1px;
+    width:300px;
+    height:310px;
+    background-size: 100% 100%;
+    background-repeat:no-repeat;
+    //background:url(../img/imagen.jpg);
+    background-size: cover;
+    
+    }
+  }
+  .img1 img{
+     width:100%;
+  }
+
+  div#is-relative{
+    max-width: 420px;
+    position: relative;
+  }
+  
+  /* El icono debe ser "position: absolute"
+   * Ademas le damos un "display: block" y lo posicionamos */
+  #icon{
+    position: absolute;
+    display: block;
+    bottom: .5rem;
+    right: 1rem;
+    
+    user-select: none;
+    cursor: pointer;
+  }
+  input.input{
+    padding-right: 2.5rem;
+  }
+
+.text-movil{
+   
+
+font-family: 'Lato';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 14px;
+
+color: #C7C7C7;
+
+
+/* Inside auto layout */
+
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+}
+
+.icon-movil{
+    width: 50px;
+    height: 60px;
+}
+.site-web{
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.buton{
+    width:60%; height:50%;
+    display: block;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0%;
+}
 // Cursor pointer
 .cursor-pointer {
   cursor: pointer;

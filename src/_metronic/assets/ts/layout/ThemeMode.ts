@@ -15,7 +15,7 @@ class ThemeMode {
   public getMode = (): Mode => {
     const modeParam: string = this.getParamName('value')
     const menuMode: Mode | '' = this.getMenuMode()
-    const defaultMode = 'light'
+    const defaultMode = 'dark'
     if (!localStorage) {
       return defaultMode
     }
@@ -34,7 +34,7 @@ class ThemeMode {
       return defaultMode
     }
 
-    if (menuMode === 'system') {
+    if (menuMode === 'dark') {
       return this.getSystemMode()
     }
 
@@ -43,7 +43,7 @@ class ThemeMode {
 
   public setMode = (mode: Mode, menuMode: Mode | ''): void => {
     // Check input values
-    if (mode !== 'light' && mode !== 'dark') {
+    if (mode !== 'dark') {
       return
     }
 
@@ -52,7 +52,7 @@ class ThemeMode {
     const menuModeParam: string = this.getParamName('menu')
 
     // Reset mode if system mode was changed
-    if (menuMode === 'system') {
+    if (menuMode === 'dark') {
       if (this.getSystemMode() !== mode) {
         mode = this.getSystemMode()
       }
@@ -151,7 +151,7 @@ class ThemeMode {
           e.preventDefault()
 
           const menuMode: string | null = item.getAttribute('data-kt-value')
-          const mode = menuMode === 'system' ? this.getSystemMode() : menuMode
+          const mode = menuMode === 'dark' ? this.getSystemMode() : menuMode
 
           if (mode) {
             this.setMode(mode as Mode, menuMode as Mode | '')
