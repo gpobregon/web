@@ -112,9 +112,9 @@ export function SiteList() {
           </div>
           <div className='col'></div>
           <div className='col-2 letterButtonAdd'>
-            <a href='#' className='btn btn-info'>
+            <Link to='/site/form' className='btn btn-info'>
               <i className='bi bi-file-earmark-plus'></i>Nuevo Sitio
-            </a>
+            </Link>
           </div>
         </div>
       </div>
