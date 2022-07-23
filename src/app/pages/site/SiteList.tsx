@@ -6,11 +6,10 @@ import Button from 'react-bootstrap/Button'
 import {KTSVG} from '../../../_metronic/helpers'
 import {Link, useNavigate} from 'react-router-dom'
 import {Route, Routes, Navigate} from 'react-router-dom'
+import {mockedSites} from '../../mocks/sites'
+import Site from '../../models/site'
 
-interface Site {
-  name: string
-  img: string
-}
+
 export function SiteList() {
   const [sites, setSites] = useState<Site[]>([])
   const [valor, setValor] = useState(true)
@@ -18,34 +17,8 @@ export function SiteList() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const sitesExternal = [
-      {
-        name: 'nombre 1',
-        img: 'img1',
-      },
-      {
-        name: 'nombre 2',
-        img: 'img1',
-      },
-      {
-        name: 'nombre 3',
-        img: 'img1',
-      },
-      {
-        name: 'nombre 1',
-        img: 'img1',
-      },
-      {
-        name: 'nombre 2',
-        img: 'img1',
-      },
-      {
-        name: 'nombre 3',
-        img: 'img1',
-      },
-    ] //obtener el site list del api
-    setSites(sitesExternal)
-    console.log('Sites: ' + sitesExternal, sites)
+    setSites(mockedSites)
+    console.log('Sites: ' + mockedSites, sites)
     return () => {}
   }, [valor])
 
@@ -137,7 +110,7 @@ export function SiteList() {
                       borderRadius: '25px',
                     }}
                     variant='top'
-                    src='https://cdn.pixabay.com/photo/2021/09/02/16/48/cat-6593947_960_720.jpg'
+                    src={site.img}
                   />
                   <div className='card-body'>
                     <h5 className='card-title titlesPlaces'>{site.name}</h5>
@@ -169,187 +142,7 @@ export function SiteList() {
               </div>
             )
           })}
-          <div className='col'>
-            <div className='card' style={{width: '300px', height: '370px'}}>
-              <Card.Img variant='top' src='holder.js/100px180' />
-              <div className='card-body'>
-                <h5 className='card-title titulosLugares'>Museo de Ciencia Natural</h5>
-                <p className='card-text subTextCards'>Ubicacion</p>
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <a href='#' className='btn btn-info letterButton'>
-                    <i className='bi bi-pencil-square'></i> Editar
-                  </a>
-                  <a
-                    href='#'
-                    className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'
-                  >
-                    <i className='bi bi-trash'></i> Eliminar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className='col'>
-            <div className='card' style={{width: '300px', height: '370px'}}>
-              <Card.Img variant='top' src='holder.js/100px180' />
-              <div className='card-body'>
-                <h5 className='card-title titulosLugares'>Museo de Arte Moderno Carlos...</h5>
-                <p className='card-text subTextCards'>Ubicacion</p>
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <a href='#' className='btn btn-info letterButton'>
-                    <i className='bi bi-pencil-square'></i> Editar
-                  </a>
-                  <a
-                    href='#'
-                    className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'
-                  >
-                    <i className='bi bi-trash'></i> Eliminar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col'>
-            <div className='card' style={{width: '300px', height: '370px'}}>
-              <Card.Img variant='top' src='holder.js/100px180' />
-              <div className='card-body'>
-                <h5 className='card-title titulosLugares'>Chocomuseo</h5>
-                <p className='card-text subTextCards'>Ubicacion</p>
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <a href='#' className='btn btn-info letterButton'>
-                    <i className='bi bi-pencil-square'></i> Editar
-                  </a>
-                  <a
-                    href='#'
-                    className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'
-                  >
-                    <i className='bi bi-trash'></i> Eliminar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col'>
-            <div className='card' style={{width: '300px', height: '370px'}}>
-              <Card.Img variant='top' src='holder.js/100px180' />
-              <div className='card-body'>
-                <h5 className='card-title titulosLugares'>Chocomuseo</h5>
-                <p className='card-text subTextCards'>Ubicacion</p>
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <a href='#' className='btn btn-info letterButton'>
-                    <i className='bi bi-pencil-square'></i> Editar
-                  </a>
-                  <a
-                    href='#'
-                    className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'
-                  >
-                    <i className='bi bi-trash'></i> Eliminar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col'>
-            <div className='card' style={{width: '300px', height: '370px'}}>
-              <Card.Img variant='top' src='holder.js/100px180' />
-              <div className='card-body'>
-                <h5 className='card-title titulosLugares'>Chocomuseo</h5>
-                <p className='card-text subTextCards'>Ubicacion</p>
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <a href='#' className='btn btn-info letterButton'>
-                    <i className='bi bi-pencil-square'></i> Editar
-                  </a>
-                  <a
-                    href='#'
-                    className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'
-                  >
-                    <i className='bi bi-trash'></i> Eliminar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col'>
-            <div className='card' style={{width: '300px', height: '370px'}}>
-              <Card.Img variant='top' src='holder.js/100px180' />
-              <div className='card-body'>
-                <h5 className='card-title titulosLugares'>Chocomuseo</h5>
-                <p className='card-text subTextCards'>Ubicacion</p>
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <a href='#' className='btn btn-info letterButton'>
-                    <i className='bi bi-pencil-square'></i> Editar
-                  </a>
-                  <a
-                    href='#'
-                    className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'
-                  >
-                    <i className='bi bi-trash'></i> Eliminar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col'>
-            <div className='card' style={{width: '300px', height: '370px'}}>
-              <Card.Img variant='top' src='holder.js/100px180' />
-              <div className='card-body'>
-                <h5 className='card-title titulosLugares'>Chocomuseo</h5>
-                <p className='card-text subTextCards'>Ubicacion</p>
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <a href='#' className='btn btn-info letterButton'>
-                    <i className='bi bi-pencil-square'></i> Editar
-                  </a>
-                  <a
-                    href='#'
-                    className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'
-                  >
-                    <i className='bi bi-trash'></i> Eliminar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col'>
-            <div className='card' style={{width: '300px', height: '370px'}}>
-              <Card.Img variant='top' src='holder.js/100px180' />
-              <div className='card-body'>
-                <h5 className='card-title titulosLugares'>Chocomuseo</h5>
-                <p className='card-text subTextCards'>Ubicacion</p>
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <a href='#' className='btn btn-info letterButton'>
-                    <i className='bi bi-pencil-square'></i> Editar
-                  </a>
-                  <a
-                    href='#'
-                    className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'
-                  >
-                    <i className='bi bi-trash'></i> Eliminar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col'>
-            <div className='card' style={{width: '300px', height: '370px'}}>
-              <Card.Img variant='top' src='holder.js/100px180' />
-              <div className='card-body'>
-                <h5 className='card-title titulosLugares'>Chocomuseo</h5>
-                <p className='card-text subTextCards'>Ubicacion</p>
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <a href='#' className='btn btn-info letterButton'>
-                    <i className='bi bi-pencil-square'></i> Editar
-                  </a>
-                  <a
-                    href='#'
-                    className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'
-                  >
-                    <i className='bi bi-trash'></i> Eliminar
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
 

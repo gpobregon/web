@@ -87,7 +87,10 @@ export function SiteForm() {
                 <br></br>
 
                 <div id='is-relative'>
-                  <input type='text' className='form-control' value={site ? site.name : ''} />
+                  <input type='text' className='form-control' value={site ? site.name : ''} onChange={e => {
+                    console.log(e.target.value)
+                    site.name=e.target.value;
+                  }} />
                   <span id='icon'>
                     <i className='fa-solid fa-pencil'></i>
                   </span>
