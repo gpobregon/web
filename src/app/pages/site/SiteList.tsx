@@ -4,7 +4,8 @@ import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import {KTSVG} from '../../../_metronic/helpers'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
+import {Route, Routes, Navigate} from 'react-router-dom'
 
 interface Site {
   name: string
@@ -13,6 +14,9 @@ interface Site {
 export function SiteList() {
   const [sites, setSites] = useState<Site[]>([])
   const [valor, setValor] = useState(true)
+
+  const navigate = useNavigate()
+
   useEffect(() => {
     const sitesExternal = [
       {
@@ -145,13 +149,14 @@ export function SiteList() {
                         alignItems: 'center',
                       }}
                     >
-                      <a
-                        href='#'
+                      <Button
                         className='btn btn-info letterButton'
-                        onClick={(event) => console.log(site)}
+                        onClick={(event) => {
+                          navigate('/site/form', {state: {site}})
+                        }}
                       >
                         <i className='bi bi-pencil-square'></i> Editar
-                      </a>
+                      </Button>
                       <a
                         href='#'
                         className='btn btn-outline btn-outline btn-outline-info btn-active-light-info letterButton'

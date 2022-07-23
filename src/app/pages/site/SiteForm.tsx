@@ -1,11 +1,50 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import Card from 'react-bootstrap/Card'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
-import {Link} from 'react-router-dom'
+import {Link, useLocation} from 'react-router-dom'
+import Site from '../../models/site'
+//import { COUNTRIES } from './countries';
 
 export function SiteForm() {
+  const {state} = useLocation()
+  const {site} = state as any
+  const [country, setCountry] = React.useState<any[]>([])
+
+  React.useEffect(() => {
+    obtenerCountries()
+  }, [])
+
+  const obtenerCountries = async () => {
+    const data = await fetch('https://restcountries.com/v2/all')
+    const countries = await data.json()
+    console.log(countries)
+    setCountry(countries)
+  }
+  const suggestions = country.map((country) => {
+    return {
+      id: country,
+      text: country,
+    }
+  })
+
+  const KeyCodes = {
+    comma: 188,
+    enter: 13,
+  }
+
+  const delimiters = [KeyCodes.comma, KeyCodes.enter]
+
+  const App = () => {
+    const [tags, setTags] = React.useState([
+      {id: 'Thailand', text: 'Thailand'},
+      {id: 'India', text: 'India'},
+      {id: 'Vietnam', text: 'Vietnam'},
+      {id: 'Turkey', text: 'Turkey'},
+    ])
+  }
+
   return (
     <>
       <h1>Configuración del sitio</h1>
@@ -48,7 +87,7 @@ export function SiteForm() {
                 <br></br>
 
                 <div id='is-relative'>
-                  <input type='text' className='form-control' />
+                  <input type='text' className='form-control' value={site ? site.name : ''} />
                   <span id='icon'>
                     <i className='fa-solid fa-pencil'></i>
                   </span>
