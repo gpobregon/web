@@ -1,34 +1,25 @@
 /* eslint-disable react/jsx-no-target-blank */
-import {useIntl} from 'react-intl'
-import {AsideMenuItemWithSubMain} from './AsideMenuItemWithSubMain'
-import {AsideMenuItemWithSub} from './AsideMenuItemWithSub'
-import {AsideMenuItem} from './AsideMenuItem'
+import { useIntl } from 'react-intl'
+import { AsideMenuItemWithSubMain } from './AsideMenuItemWithSubMain'
+import { AsideMenuItemWithSub } from './AsideMenuItemWithSub'
+import { AsideMenuItem } from './AsideMenuItem'
 
 export function AsideMenuMain() {
   const intl = useIntl()
   return (
     <>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
       <AsideMenuItem
-        to='/site'
-        title={intl.formatMessage({id: 'MENU.DASHBOARD'})}
-        fontIcon='bi bi-house'
-        bsTitle={intl.formatMessage({id: 'MENU.DASHBOARD'})}
+        to='/catalogos'
+        title='Catalogos'
+        fontIcon='bi bi-tag'
+        bsTitle='Catalogos'
         className='py-3'
       />
       <AsideMenuItem
-        to=''
-        title='Layout Builder'
-        bsTitle='Layout Builder'
-        fontIcon='bi bi-bell'
+        to='/sitios'
+        title='Sitios'
+        bsTitle='Sitios'
+        fontIcon='bi bi-house-door'
         className='py-3'
       />
     </>
