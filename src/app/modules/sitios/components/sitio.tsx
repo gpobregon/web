@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Col, Card, Button } from 'react-bootstrap';
+import { Col, Card, Button, Row } from 'react-bootstrap';
 
 type sitio = {
     id: number,
@@ -18,10 +18,17 @@ const Sitio: FC<sitio> = (props) => {
                 <Card.Title style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden' }}>{props.titulo}</Card.Title>
                 <Card.Text className='text-muted'>{props.ubicacion}</Card.Text>
                 <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
-                    <Button style={{ width: '48%' }}>Editar</Button>
-                    <Button className='bg-secondary' style={{ width: '48%' }}>Eliminar</Button>
+                    <Button style={{ width: '48%' }}> 
+                        <i className="bi bi-pencil-square"></i>
+                        Editar
+                    </Button>
+                    <Button className='bg-secondary' style={{ width: '48%' }}>
+                        <i className="bi bi-trash3"></i>
+                        Eliminar
+                        </Button>
                 </div>
             </Card>
+           
         </Col >
     );
 }
