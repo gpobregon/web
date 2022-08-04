@@ -49,7 +49,7 @@ const ConfSite = () => {
 
     return (
         <Container fluid>
-            <Navbar collapseOnSelect expand="lg" style={{ background: '#1A1A27' }} >
+            <Navbar collapseOnSelect expand="lg" style={{ background: '#1A1A27' }}  >
                 <Navbar.Brand href="../sitios">
                     <div style={{ color: '#2B2B40' }}>
                         <i className="bi fa-less-than background-button" style={{ color: '#FFFFFF', fontSize: '20px' }}></i>
@@ -107,14 +107,14 @@ const ConfSite = () => {
             </Row>
             <Row >
 
-                <ListGroup horizontal>
+                <ListGroup horizontal >
 
                     <ListGroup.Item style={{ backgroundColor: '#1e1e2d', padding: 20 }} >
 
                         <Row className="justify-content-md-center">
                             <Col xs={6}>
                                 <Row className="justify-content-md-center">
-                                    <img src='https://picsum.photos/200/200' className='img-fluid shadow-2-strong mb-5' alt='' height='305px' width='248px' />
+                                    <img src='https://picsum.photos/200/200' className='img-fluid shadow-2-strong mb-5' alt='' height='auto' width='100%' />
                                     <Col xs lg="auto">
                                         <i className="bi bi-arrow-left-right background-button" style={{ color: '#009EF7', fontSize: '20px' }}></i>
                                     </Col>

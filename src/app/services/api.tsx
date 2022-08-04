@@ -23,8 +23,10 @@ export const getData = async (route: string) => {
 }
 
 export const deleteData = async (route: string, id: number) => {
+  
   return new Promise((resolve, reject) => {
-    fetch(`${URL}/${route}/delete`, {method: 'POST', mode: 'cors', body: JSON.stringify(id)})
+  
+    fetch(`${URL}/${route}/delete`, {method: 'POST',  headers: { 'Content-Type': 'application/json' }, mode: 'cors', body: JSON.stringify({ id_sitio: id })})
       .then((response) => response.json())
       .then((data) => {
         resolve(data)
