@@ -85,7 +85,7 @@ const SitiosPage = () => {
                     <a className="navbar-brand" href="#">Agregado recientemente</a>     
                </Col> 
                <Col md={{ span: 2, offset: 6 }} >
-                    <Button className="btn btn-primary">
+                    <Button className="btn btn-primary" >
                         <i className="bi bi-file-earmark-plus"></i>
                         {'Nuevo sitio'}
                     </Button>

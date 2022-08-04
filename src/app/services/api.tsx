@@ -10,27 +10,15 @@ export const statesMethod = 'site/state'
 
 export const getData = async (route: string) => {
   return new Promise((resolve, reject) => {
-
-    axios.get('https://6335-45-229-130-255.ngrok.io/dev2/site').then(
-      res=>{
-          console.log(res)
-      }
-    )
-    // fetch('https://6335-45-229-130-255.ngrok.io/dev2/site', {method: 'GET', mode: 'cors'})
-    //   .then((response) => {response.json()
-    //   console.log(response)
-    //   console.log(URL)
-    //   console.log(route)
-    // })
-      
-    //   .then((data) => {
-    //     resolve(data)
-    //   })
-    //   .catch((err) => {
-    //     resolve(null)
-    //     console.log(err.message)
-        
-    //   })
+    fetch(`${URL}/${route}/`, {method: 'GET', mode: 'cors'})
+      .then((response) => response.json())
+      .then((data) => {
+        resolve(data)
+      })
+      .catch((err) => {
+        resolve(null)
+        console.log(err.message)
+      })
   })
 }
 
