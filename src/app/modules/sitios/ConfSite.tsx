@@ -1,22 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, ListGroup, Form, Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated'
 
+const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
+    item => ({ label: item, value: item })
+);
+const options = [
+    { label: "Grapes", value: "grapes" },
+    { label: "Mango", value: "mango" },
+    { label: "Strawberry ", value: "strawberry"},
+  ];
+
+  const customStyles = {
+    control: (base: any, state: any) => ({
+      ...base,
+      background: '#1b1b29',
+      borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
+      borderColor: state.isFocused ? '#565674' : '#1b1b29',
+      boxShadow: state.isFocused ? '#474761' : '#1b1b29',
+      color: '#1b1b29',
+    //   '&:hover': {
+    //     borderColor: state.isFocused ? 'black' : 'white',
+    //   },
+    }),
+    menu: (base: any) => ({
+      ...base,
+      borderRadius: 0,
+      marginTop: 0,
+      background: '#1b1b29',
+      '&:hover': {
+        background: '#white',
+      }
+    }),
+    menuList: (base: any) => ({
+      ...base,
+      padding: 0,
+      color: 'white',
+      '&:hover': {
+        background: '#1b1b29',
+      }
+    }),
+  }
+  const animatedComponents = makeAnimated()
 const ConfSite = () => {
+
+    const [selected, setSelected] = useState([]);
+
     return (
         <Container fluid>
             <Navbar collapseOnSelect expand="lg" style={{ background: '#1A1A27' }} >
-                <Navbar.Brand href="/metronic8/react/demo4/sitios">
+                <Navbar.Brand href="../sitios">
                     <div style={{ color: '#2B2B40' }}>
                         <i className="bi fa-less-than background-button" style={{ color: '#FFFFFF', fontSize: '20px' }}></i>
 
                     </div>
                 </Navbar.Brand>
-                <Navbar.Text style={{ color: 'white', fontSize: '22px' }}>Texto De prueba</Navbar.Text>
+                <Navbar.Text style={{ color: 'white', fontSize: '22px', fontFamily: 'Lato' }}>Texto De prueba</Navbar.Text>
                 <div style={{ width: '250px', height: '17px', position: 'relative', left: '20px' }}>
-                    <Navbar.Text style={{ color: '#565674', fontSize: '14px' }} > Última vez editado el 15/07/22 por </Navbar.Text>
+                    <Navbar.Text style={{ color: '#565674', fontSize: '14px', fontFamily: 'Lato' }} > Última vez editado el 15/07/22 por </Navbar.Text>
                 </div>
                 <div style={{ width: '100px', height: '17px', position: 'relative', left: '20px' }}>
-                    <Navbar.Text style={{ color: '#92929F', fontSize: '14px' }} >Usuario 01</Navbar.Text>
+                    <Navbar.Text style={{ color: '#92929F', fontSize: '14px', fontFamily: 'Lato' }} >Usuario 01</Navbar.Text>
                 </div>
 
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -53,12 +98,12 @@ const ConfSite = () => {
             </Row>
             <Row >
 
-                <Col xs={6} md={4}><h1>Configuracion del Sitio</h1></Col>
+                <Col xs={6} md={4}><h1 style={{ fontFamily: 'Lato' }}>Configuracion del Sitio</h1></Col>
 
 
             </Row>
             <Row className='pb-10'>
-                <Col xs={6} md={4}><p className='text-muted'>Lista de Sitios - Configuraciuon del Sitio</p></Col>
+                <Col xs={6} md={4}><p className='text-muted' style={{ fontFamily: 'Lato' }} >Lista de Sitios - Configuraciuon del Sitio</p></Col>
             </Row>
             <Row >
 
@@ -81,18 +126,54 @@ const ConfSite = () => {
                                 </Row>
                             </Col>
                             <Col xs={6}>
-                                <input
-                                    type='text'
-                                    className='form-control'
-                                    style={{ border:'0'}}
-                                ></input>
-                                <hr></hr>
+                                <Row >
 
-                                <br></br>
+
+                                    <Col xs={10}>
+                                        <input
+                                            type='text'
+                                            className='form-control'
+                                            style={{ border: '0', fontFamily: 'Lato', fontSize: '22px', color: '#FFFFFF' }}
+                                        ></input>
+                                    </Col>
+                                    <Col style={{ position: 'relative', left: '10px', top: '15px' }}>
+
+                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M17.3332 5.03331C17.3338 4.92363 17.3128 4.81492 17.2713 4.71338C17.2299 4.61185 17.1688 4.51951 17.0915 4.44164L13.5582 0.908307C13.4803 0.831072 13.388 0.769968 13.2864 0.728497C13.1849 0.687027 13.0762 0.666006 12.9665 0.66664C12.8568 0.666006 12.7481 0.687027 12.6466 0.728497C12.5451 0.769968 12.4527 0.831072 12.3749 0.908307L10.0165 3.26664L0.908184 12.375C0.83095 12.4528 0.769846 12.5452 0.728375 12.6467C0.686905 12.7482 0.665884 12.857 0.666518 12.9666V16.5C0.666518 16.721 0.754315 16.933 0.910595 17.0892C1.06688 17.2455 1.27884 17.3333 1.49985 17.3333H5.03318C5.14979 17.3397 5.26643 17.3214 5.37553 17.2798C5.48464 17.2381 5.58378 17.174 5.66652 17.0916L14.7249 7.98331L17.0915 5.66664C17.1676 5.58587 17.2296 5.49292 17.2749 5.39164C17.2829 5.32522 17.2829 5.25806 17.2749 5.19164C17.2788 5.15285 17.2788 5.11376 17.2749 5.07497L17.3332 5.03331ZM4.69152 15.6666H2.33318V13.3083L10.6082 5.03331L12.9665 7.39164L4.69152 15.6666ZM14.1415 6.21664L11.7832 3.85831L12.9665 2.68331L15.3165 5.03331L14.1415 6.21664Z" fill="#565674" />
+                                        </svg>
+
+                                    </Col>
+                                    
+                                </Row>
+                                <hr style={{ position: 'relative', top: '-20px' }}></hr>
+
+
+
+                             
                                 <label>Ubicación</label>
                                 <br></br>
+                                <input
+                                            type='text'
+                                            className='form-control'
+                                            style={{ border: '0', fontFamily: 'Lato', fontSize: '22px', color: '#FFFFFF' }}
+                                        ></input>
+                                            <hr style={{ position: 'relative', top: '-20px' }}></hr>
+                                <br></br>
                                 <label>Etiquetas</label>
+
+
+
+                    <Select
+                    closeMenuOnSelect={false}
+                    styles={customStyles}
+                    components={animatedComponents}
+                    defaultValue={[options[4], options[5]]}
+                    isMulti
+                    options={options}
+                  />
+
                             </Col>
+
                         </Row>
 
                     </ListGroup.Item>
@@ -103,7 +184,7 @@ const ConfSite = () => {
                         <Row className="justify-content-md-center">
                             <Col xs={6}>
                                 <Card style={{ backgroundColor: '#1e1e2d', padding: 20 }} >
-                                    <Card.Title style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', textAlign: 'center' }} className='pb-10'>Versión Web</Card.Title>
+                                    <Card.Title style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', textAlign: 'center', fontFamily: 'Lato' }} className='pb-10'>Versión Web</Card.Title>
                                     <a href="#" style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', textAlign: 'center' }} className='pb-10'>
                                         <svg width="74" height="105" viewBox="0 0 74 105" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M40.6978 74.8438L39.9165 74.2188C39.6262 74.0217 39.3109 73.864 38.979 73.75L38.0415 73.3334C37.1968 73.1568 36.3215 73.1928 35.4942 73.4383C34.6669 73.6837 33.9136 74.1309 33.3019 74.7396C32.8419 75.2459 32.4719 75.8272 32.2082 76.4584C31.814 77.4073 31.7094 78.4517 31.9074 79.46C32.1055 80.4683 32.5974 81.3955 33.3212 82.1249C34.045 82.8543 34.9684 83.3532 35.9752 83.559C36.9819 83.7648 38.027 83.6681 38.979 83.2813C39.6014 82.9793 40.1796 82.5938 40.6978 82.1354C41.4205 81.403 41.91 80.473 42.1047 79.4626C42.2993 78.4522 42.1904 77.4069 41.7915 76.4584C41.5318 75.8561 41.1607 75.3083 40.6978 74.8438ZM57.8332 0.416687H16.1665C12.0225 0.416687 8.04822 2.06289 5.11796 4.99314C2.18771 7.9234 0.541504 11.8977 0.541504 16.0417V88.9584C0.541504 93.1024 2.18771 97.0766 5.11796 100.007C8.04822 102.937 12.0225 104.583 16.1665 104.583H57.8332C61.9772 104.583 65.9515 102.937 68.8817 100.007C71.812 97.0766 73.4582 93.1024 73.4582 88.9584V16.0417C73.4582 11.8977 71.812 7.9234 68.8817 4.99314C65.9515 2.06289 61.9772 0.416687 57.8332 0.416687ZM63.0415 88.9584C63.0415 90.3397 62.4928 91.6645 61.516 92.6412C60.5393 93.618 59.2145 94.1667 57.8332 94.1667H16.1665C14.7852 94.1667 13.4604 93.618 12.4837 92.6412C11.5069 91.6645 10.9582 90.3397 10.9582 88.9584V16.0417C10.9582 14.6604 11.5069 13.3356 12.4837 12.3588C13.4604 11.3821 14.7852 10.8334 16.1665 10.8334H57.8332C59.2145 10.8334 60.5393 11.3821 61.516 12.3588C62.4928 13.3356 63.0415 14.6604 63.0415 16.0417V88.9584Z" fill="#009EF7" />
@@ -111,10 +192,10 @@ const ConfSite = () => {
 
 
                                     </a>
-                                    <p style={{ fontSize: '12px', lineHeight: '14.4px', width: '196px', textAlign: 'justify' }}> Lorem ipsum dolor sit amet, consec tetur adipiscing elit. Aenean sollicit bibendum.</p>
+                                    <p style={{ fontSize: '12px', lineHeight: '14.4px', width: '196px', textAlign: 'justify', fontFamily: 'Lato' }}> Maquetar los elementos del sitio para versión móvil</p>
                                     <div style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', textAlign: 'center' }}>
                                         <Button style={{
-                                            whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', width: '196px', height: '44px',
+                                            whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', width: '156px', height: '44px', fontFamily: 'Lato'
                                         }}>
                                             <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M20 5.24002C20.0008 5.10841 19.9756 4.97795 19.9258 4.85611C19.876 4.73427 19.8027 4.62346 19.71 4.53002L15.47 0.290017C15.3766 0.197335 15.2658 0.12401 15.1439 0.0742455C15.0221 0.0244809 14.8916 -0.000744179 14.76 1.67143e-05C14.6284 -0.000744179 14.4979 0.0244809 14.3761 0.0742455C14.2543 0.12401 14.1435 0.197335 14.05 0.290017L11.22 3.12002L0.290017 14.05C0.197335 14.1435 0.12401 14.2543 0.0742455 14.3761C0.0244809 14.4979 -0.000744179 14.6284 1.67143e-05 14.76V19C1.67143e-05 19.2652 0.105374 19.5196 0.29291 19.7071C0.480446 19.8947 0.7348 20 1.00002 20H5.24002C5.37994 20.0076 5.51991 19.9857 5.65084 19.9358C5.78176 19.8858 5.90073 19.8089 6.00002 19.71L16.87 8.78002L19.71 6.00002C19.8013 5.9031 19.8757 5.79155 19.93 5.67002C19.9397 5.59031 19.9397 5.50973 19.93 5.43002C19.9347 5.38347 19.9347 5.33657 19.93 5.29002L20 5.24002ZM4.83002 18H2.00002V15.17L11.93 5.24002L14.76 8.07002L4.83002 18ZM16.17 6.66002L13.34 3.83002L14.76 2.42002L17.58 5.24002L16.17 6.66002Z" fill="#2B2B40" />
@@ -130,16 +211,16 @@ const ConfSite = () => {
 
                             <Col xs={6}>
                                 <Card style={{ backgroundColor: '#1e1e2d', padding: 20 }} >
-                                    <Card.Title style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', textAlign: 'center' }} className='pb-10'>Versión Web</Card.Title>
+                                    <Card.Title style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', textAlign: 'center', fontFamily: 'Lato' }} className='pb-10'>Versión Web</Card.Title>
                                     <a href="#" style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', textAlign: 'center' }} className='pb-10'>
                                         <svg width="106" height="105" viewBox="0 0 106 105" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M89.4582 0.416687H16.5415C12.3975 0.416687 8.42322 2.06289 5.49296 4.99314C2.56271 7.9234 0.916504 11.8977 0.916504 16.0417V68.125C0.916504 72.269 2.56271 76.2433 5.49296 79.1736C8.42322 82.1038 12.3975 83.75 16.5415 83.75H30.2915L27.2707 88.9584C26.3564 90.5419 25.8751 92.3382 25.8751 94.1667C25.8751 95.9952 26.3564 97.7915 27.2707 99.375C28.1928 100.972 29.5225 102.296 31.1239 103.211C32.7253 104.126 34.5409 104.6 36.3853 104.583H70.0311C71.8578 104.581 73.6519 104.099 75.2334 103.185C76.8149 102.271 78.1282 100.957 79.0415 99.375C79.9558 97.7915 80.4371 95.9952 80.4371 94.1667C80.4371 92.3382 79.9558 90.5419 79.0415 88.9584L75.9686 83.75H89.4582C93.6022 83.75 97.5765 82.1038 100.507 79.1736C103.437 76.2433 105.083 72.269 105.083 68.125V16.0417C105.083 11.8977 103.437 7.9234 100.507 4.99314C97.5765 2.06289 93.6022 0.416687 89.4582 0.416687ZM36.1769 94.1667L42.5832 83.75H63.4165L69.6665 94.1667H36.1769ZM94.6665 68.125C94.6665 69.5064 94.1178 70.8311 93.141 71.8079C92.1643 72.7846 90.8395 73.3334 89.4582 73.3334H16.5415C15.1602 73.3334 13.8354 72.7846 12.8587 71.8079C11.8819 70.8311 11.3332 69.5064 11.3332 68.125V62.9167H94.6665V68.125ZM94.6665 52.5H11.3332V16.0417C11.3332 14.6604 11.8819 13.3356 12.8587 12.3588C13.8354 11.3821 15.1602 10.8334 16.5415 10.8334H89.4582C90.8395 10.8334 92.1643 11.3821 93.141 12.3588C94.1178 13.3356 94.6665 14.6604 94.6665 16.0417V52.5Z" fill="#92929F" />
                                         </svg>
                                     </a>
-                                    <p style={{ fontSize: '12px', lineHeight: '14.4px', width: '196px', textAlign: 'justify' }}> Lorem ipsum dolor sit amet, consec tetur adipiscing elit. Aenean sollicit bibendum.</p>
+                                    <p style={{ fontSize: '12px', lineHeight: '14.4px', width: '196px', textAlign: 'justify', fontFamily: 'Lato' }}> Maquetar los elementos del sitio para versión web.</p>
                                     <div style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', textAlign: 'center' }}>
 
-                                        <Button style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', width: '196px', height: '44px' }}>
+                                        <Button style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', width: '150px', height: '44px', fontFamily: 'Lato' }}>
                                             <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M20 5.24002C20.0008 5.10841 19.9756 4.97795 19.9258 4.85611C19.876 4.73427 19.8027 4.62346 19.71 4.53002L15.47 0.290017C15.3766 0.197335 15.2658 0.12401 15.1439 0.0742455C15.0221 0.0244809 14.8916 -0.000744179 14.76 1.67143e-05C14.6284 -0.000744179 14.4979 0.0244809 14.3761 0.0742455C14.2543 0.12401 14.1435 0.197335 14.05 0.290017L11.22 3.12002L0.290017 14.05C0.197335 14.1435 0.12401 14.2543 0.0742455 14.3761C0.0244809 14.4979 -0.000744179 14.6284 1.67143e-05 14.76V19C1.67143e-05 19.2652 0.105374 19.5196 0.29291 19.7071C0.480446 19.8947 0.7348 20 1.00002 20H5.24002C5.37994 20.0076 5.51991 19.9857 5.65084 19.9358C5.78176 19.8858 5.90073 19.8089 6.00002 19.71L16.87 8.78002L19.71 6.00002C19.8013 5.9031 19.8757 5.79155 19.93 5.67002C19.9397 5.59031 19.9397 5.50973 19.93 5.43002C19.9347 5.38347 19.9347 5.33657 19.93 5.29002L20 5.24002ZM4.83002 18H2.00002V15.17L11.93 5.24002L14.76 8.07002L4.83002 18ZM16.17 6.66002L13.34 3.83002L14.76 2.42002L17.58 5.24002L16.17 6.66002Z" fill="#2B2B40" />
                                             </svg>
