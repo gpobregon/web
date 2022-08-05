@@ -4,6 +4,7 @@ import { Site } from '../../../models/site';
 import { getData, sitesMethod, deleteData } from '../../../services/api'
 import  swal  from "sweetalert";
 import SitiosPage from '../SitiosPage';
+import { useNavigate} from 'react-router-dom'
 type sitio = {
     id_sitio: number
     nombre: string
@@ -31,7 +32,7 @@ type sitio = {
   
 
 const Sitio: FC<sitio> = (props) => {
-   
+  const navigate = useNavigate()
       const deleteSites = async () => {
         swal({
             title: "¿Estas seguro de Eliminar  "+props.nombre+"?",
@@ -61,7 +62,26 @@ const Sitio: FC<sitio> = (props) => {
                 <Card.Title style={{  }}>{props.nombre}</Card.Title>
                 <Card.Text className='text-muted'>{props.ubicacion}</Card.Text>
                 <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
-                    <Button style={{ width: '50%' }}> 
+                    <Button style={{ width: '50%' }}
+                     onClick={(event) => {
+                      navigate('sitios/create', {
+                        state: {
+                          id_sitio: '',
+                          nombre: '',
+                          descripcion: '',
+                          ubicacion: '',
+                          geoX: '',
+                          geoY: '',
+                          portada_path: '',
+                          estado: '',
+                          id_municipio: '',
+                          categorias: '',
+                          favorito: false,
+                          publicado: true,
+                          oculto: false,
+                        },
+                      })
+                    }}> 
                         <i className="bi bi-pencil-square"></i>
                         Editar
                     </Button>

@@ -2,10 +2,16 @@ import React, { useState, useEffect,FC } from 'react';
 import { Container, Row, Col, Button, Card, ListGroup, Form, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated'
-
+import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
+import { Site } from '../../models/site';
+import { getData, sitesMethod, deleteData,postData,categorysMethod,statesMethod } from '../../services/api'
+import {Tag }from '../../models/tag';
+import {status }from '../../models/status';
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     item => ({ label: item, value: item })
 );
+
+
 type sitio = {
     id_sitio: number
     nombre: string
@@ -40,6 +46,7 @@ const options = [
     { label: "Strawberry4 ", value: "strawberry4"},
   ];
 
+ 
   const customStyles = {
     control: (base: any, state: any) => ({
       ...base,
@@ -66,7 +73,7 @@ const options = [
           backgroundColor: '#white',
         };
       },
-      multiValueRemove: (base:any, ) => ({
+      multiValueRemove: (base:any ) => ({
         ...base,
         color: 'gray',
         // ':hover': {
@@ -93,8 +100,82 @@ const options = [
     }),
   }
   const animatedComponents = makeAnimated()
-const ConfSite = () => {
 
+  
+  
+//   async function postSite() {
+//     console.log('posting');
+//   }
+
+// const {state} = useLocation();
+
+
+
+    
+
+
+
+const ConfSite = () => {
+    useEffect(() => {
+        getCategorys();
+    }, []);
+
+    const [categorys, setCategorys] = useState<Tag[]>([])
+    const [site, setSite] = useState({
+        id_sitio: 1,
+        nombre: '',
+        descripcion: '',
+        ubicacion: '',
+        geoX: '',
+        geoY: '',
+        portada_path: 'https://picsum.photos/200/200',
+        estado: 0,
+        creado: new Date(),
+        editado: new Date(),
+        categorias: [{id_categoria: 1, nombre: 's', estado: 0}],
+        id_municipio: 1,
+        favorito: false,
+        publicado: false,
+        oculto: false,
+    });
+    const [status, setStatus] = useState<status>({
+        id_sitio: site.id_sitio,
+        favorito: site.favorito,
+        publicado: site.favorito,
+        oculto: site.oculto,
+      })
+
+
+    async function getCategorys() {
+        const category: any = await getData(categorysMethod)
+        category.map((cat: any) => {
+          categorys.push({value: cat.id_categoria, label: cat.nombre})
+        })
+        console.log(category)
+      }
+      //methods to post data to api
+
+  async function postSite(sitee: any) {
+    const sit: any = await postData(sitesMethod, sitee)
+   console.log(sitee)
+ }
+ async function postDefault(route: string, object: any) {
+    const sit: any = await postData(route, object)
+  }
+ const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
+    setStatus({
+      id_sitio: site.id_sitio,
+      favorito: favorito,
+      publicado: publicado,
+      oculto: oculto,
+    })
+    console.log(status)
+    postDefault(statesMethod, status)
+    const getSites = async () => {
+      const site: any = await getData(sitesMethod)
+      console.log(site)
+    }
+  }
     return (
         <Container fluid>
             <Navbar collapseOnSelect expand="lg" style={{ background: '#1A1A27' }}  >
@@ -121,10 +202,19 @@ const ConfSite = () => {
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M0.760563 0C0.340516 0 0 0.360845 0 0.805969V7.25372C0 7.69885 0.340516 8.05969 0.760563 8.05969H6.84507C7.26511 8.05969 7.60563 7.69885 7.60563 7.25372V0.805969C7.60563 0.360845 7.26511 0 6.84507 0H0.760563ZM1.52113 6.44775V1.61194H6.0845V6.44775H1.52113ZM0.760563 9.6716C0.340516 9.6716 0 10.0324 0 10.4776V16.9253C0 17.3704 0.340516 17.7313 0.760563 17.7313H6.84507C7.26511 17.7313 7.60563 17.3704 7.60563 16.9253V10.4776C7.60563 10.0324 7.26511 9.6716 6.84507 9.6716H0.760563ZM1.52113 16.1194V11.2835H6.0845V16.1194H1.52113ZM2.78871 2.95524H4.81688V5.10449H2.78871V2.95524ZM10.9014 0C10.4813 0 10.1408 0.360845 10.1408 0.805969V7.25372C10.1408 7.69885 10.4813 8.05969 10.9014 8.05969H16.9859C17.4059 8.05969 17.7465 7.69885 17.7465 7.25372V0.805969C17.7465 0.360845 17.4059 0 16.9859 0H10.9014ZM11.662 6.44775V1.61194H16.2253V6.44775H11.662ZM2.78871 12.6268H4.81688V14.7761H2.78871V12.6268ZM10.9014 9.40295H9.88733V10.4776H10.9014H10.9014H11.9155V9.40295H10.9014H10.9014ZM9.88733 16.9254H10.9014V18H9.88733V16.9254ZM15.9718 15.8507H14.9577V18H15.9718V15.8507ZM9.88733 13.7015H10.9014H10.9014H11.9155V14.7761V14.7761V15.8507H10.9014V14.7761H9.88733V13.7015ZM11.9155 10.4776H12.9296V11.5522H12.9296V12.6269H10.9014V11.5522H11.9155V10.4776ZM14.9577 9.40295H13.9436V10.4776H14.9577V9.40295ZM12.9296 15.8507H13.9437V18H12.9296V15.8507ZM18 9.40295H16.9859V10.4776H18V9.40295ZM15.9718 10.4776H16.9859V11.5522H18V13.7015H16.9859V11.5522H15.9718V10.4776ZM18 16.9254H16.9859V18H18V16.9254ZM14.9577 11.5522H13.9436V12.6268H12.9296V13.7015H13.9437V12.6269H14.9577V13.7015H15.9718V12.6268H14.9577V11.5522ZM12.9296 13.7015H13.9437V14.7761H15.9718V13.7015H16.9859V14.7761H16.9859V15.8507H13.9436V14.7761H12.9296V15.8507H11.9155V14.7761H12.9296V13.7015ZM14.9577 2.95524H12.9296V5.10449H14.9577V2.95524Z" fill="#92929F" />
                         </svg>
                         </Nav.Link>
-                        <Nav.Link href="#"><svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20.9201 7.6C18.9001 2.91 15.1001 0 11.0001 0C6.90007 0 3.10007 2.91 1.08007 7.6C1.025 7.72617 0.996582 7.86234 0.996582 8C0.996582 8.13766 1.025 8.27383 1.08007 8.4C3.10007 13.09 6.90007 16 11.0001 16C15.1001 16 18.9001 13.09 20.9201 8.4C20.9751 8.27383 21.0036 8.13766 21.0036 8C21.0036 7.86234 20.9751 7.72617 20.9201 7.6ZM11.0001 14C7.83007 14 4.83007 11.71 3.10007 8C4.83007 4.29 7.83007 2 11.0001 2C14.1701 2 17.1701 4.29 18.9001 8C17.1701 11.71 14.1701 14 11.0001 14ZM11.0001 4C10.2089 4 9.43558 4.2346 8.77779 4.67412C8.11999 5.11365 7.6073 5.73836 7.30455 6.46927C7.0018 7.20017 6.92258 8.00444 7.07693 8.78036C7.23127 9.55628 7.61223 10.269 8.17164 10.8284C8.73105 11.3878 9.44378 11.7688 10.2197 11.9231C10.9956 12.0775 11.7999 11.9983 12.5308 11.6955C13.2617 11.3928 13.8864 10.8801 14.3259 10.2223C14.7655 9.56448 15.0001 8.79113 15.0001 8C15.0001 6.93913 14.5786 5.92172 13.8285 5.17157C13.0783 4.42143 12.0609 4 11.0001 4ZM11.0001 10C10.6045 10 10.2178 9.8827 9.88893 9.66294C9.56003 9.44318 9.30368 9.13082 9.15231 8.76537C9.00093 8.39991 8.96133 7.99778 9.0385 7.60982C9.11567 7.22186 9.30615 6.86549 9.58585 6.58579C9.86556 6.30608 10.2219 6.1156 10.6099 6.03843C10.9978 5.96126 11.4 6.00087 11.7654 6.15224C12.1309 6.30362 12.4432 6.55996 12.663 6.88886C12.8828 7.21776 13.0001 7.60444 13.0001 8C13.0001 8.53043 12.7894 9.03914 12.4143 9.41421C12.0392 9.78929 11.5305 10 11.0001 10Z" fill="#92929F" />
-                        </svg>
-                        </Nav.Link>
+                        <i
+                  className={
+                    status.oculto == false
+                      ? 'fa-solid fa-eye-slash background-button'
+                      : 'fa-solid fa-eye background-button'
+                  }
+                  id='center2'
+                  onClick={() => {
+                    status.oculto == false
+                      ? changeStatus(status.favorito, status.publicado, true)
+                      : changeStatus(status.favorito, status.publicado, false)
+                  }}
+                ></i>
                         <Nav.Link href="../sitios"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M8.40994 6.99994L12.7099 2.70994C12.8982 2.52164 13.004 2.26624 13.004 1.99994C13.004 1.73364 12.8982 1.47825 12.7099 1.28994C12.5216 1.10164 12.2662 0.99585 11.9999 0.99585C11.7336 0.99585 11.4782 1.10164 11.2899 1.28994L6.99994 5.58994L2.70994 1.28994C2.52164 1.10164 2.26624 0.99585 1.99994 0.99585C1.73364 0.99585 1.47824 1.10164 1.28994 1.28994C1.10164 1.47825 0.995847 1.73364 0.995847 1.99994C0.995847 2.26624 1.10164 2.52164 1.28994 2.70994L5.58994 6.99994L1.28994 11.2899C1.19621 11.3829 1.12182 11.4935 1.07105 11.6154C1.02028 11.7372 0.994141 11.8679 0.994141 11.9999C0.994141 12.132 1.02028 12.2627 1.07105 12.3845C1.12182 12.5064 1.19621 12.617 1.28994 12.7099C1.3829 12.8037 1.4935 12.8781 1.61536 12.9288C1.73722 12.9796 1.86793 13.0057 1.99994 13.0057C2.13195 13.0057 2.26266 12.9796 2.38452 12.9288C2.50638 12.8781 2.61698 12.8037 2.70994 12.7099L6.99994 8.40994L11.2899 12.7099C11.3829 12.8037 11.4935 12.8781 11.6154 12.9288C11.7372 12.9796 11.8679 13.0057 11.9999 13.0057C12.132 13.0057 12.2627 12.9796 12.3845 12.9288C12.5064 12.8781 12.617 12.8037 12.7099 12.7099C12.8037 12.617 12.8781 12.5064 12.9288 12.3845C12.9796 12.2627 13.0057 12.132 13.0057 11.9999C13.0057 11.8679 12.9796 11.7372 12.9288 11.6154C12.8781 11.4935 12.8037 11.3829 12.7099 11.2899L8.40994 6.99994Z" fill="#92929F" />
                         </svg>
@@ -181,6 +271,25 @@ const ConfSite = () => {
                                             type='text'
                                             className='form-control'
                                             style={{ border: '0', fontFamily: 'Lato', fontSize: '22px', color: '#FFFFFF' }}
+                                            onChange={(e) => {
+                                                setSite({
+                                                  id_sitio: site.id_sitio,
+                                                  nombre: e.target.value,
+                                                  descripcion: site.descripcion,
+                                                  ubicacion: site.ubicacion,
+                                                  geoX: site.geoX,
+                                                  geoY: site.geoY,
+                                                  portada_path: site.portada_path,
+                                                  estado: site.estado,
+                                                  creado: site.creado,
+                                                  editado: site.editado,
+                                                  categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                                                  id_municipio: site.id_municipio,
+                                                  favorito: site.favorito,
+                                                  publicado: site.publicado,
+                                                  oculto: site.oculto,
+                                                })
+                                            }}
                                         ></input>
                                     </Col>
                                     <Col style={{ position: 'relative', left: '10px', top: '15px' }}>
@@ -203,6 +312,25 @@ const ConfSite = () => {
                                             type='text'
                                             className='form-control'
                                             style={{ border: '0', fontFamily: 'Lato', fontSize: '22px', color: '#FFFFFF' }}
+                                            onChange={(e) => {
+                                                setSite({
+                                                  id_sitio: site.id_sitio,
+                                                  nombre: site.nombre,
+                                                  descripcion: site.descripcion,
+                                                  ubicacion: e.target.value,
+                                                  geoX: site.geoX,
+                                                  geoY: site.geoY,
+                                                  portada_path: site.portada_path,
+                                                  estado: site.estado,
+                                                  creado: site.creado,
+                                                  editado: site.editado,
+                                                  categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                                                  id_municipio: site.id_municipio,
+                                                  favorito: site.favorito,
+                                                  publicado: site.publicado,
+                                                  oculto: site.oculto,
+                                                })
+                                            }}
                                         ></input>
                                             <hr style={{ position: 'relative', top: '-20px' }}></hr>
                                 <br></br>
@@ -217,7 +345,7 @@ const ConfSite = () => {
                     components={animatedComponents}
                     // defaultValue={[options[4], options[5]]}
                     isMulti
-                    options={options}
+                    options={categorys}
                   />
 
                             </Col>
@@ -244,7 +372,9 @@ const ConfSite = () => {
                                     <div style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', textAlign: 'center' }}>
                                         <Button style={{
                                             whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', width: '156px', height: '44px', fontFamily: 'Lato'
-                                        }}>
+                                        }}    onClick={(event) => {
+                                             postSite(site);
+                                          }}>
                                             <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M20 5.24002C20.0008 5.10841 19.9756 4.97795 19.9258 4.85611C19.876 4.73427 19.8027 4.62346 19.71 4.53002L15.47 0.290017C15.3766 0.197335 15.2658 0.12401 15.1439 0.0742455C15.0221 0.0244809 14.8916 -0.000744179 14.76 1.67143e-05C14.6284 -0.000744179 14.4979 0.0244809 14.3761 0.0742455C14.2543 0.12401 14.1435 0.197335 14.05 0.290017L11.22 3.12002L0.290017 14.05C0.197335 14.1435 0.12401 14.2543 0.0742455 14.3761C0.0244809 14.4979 -0.000744179 14.6284 1.67143e-05 14.76V19C1.67143e-05 19.2652 0.105374 19.5196 0.29291 19.7071C0.480446 19.8947 0.7348 20 1.00002 20H5.24002C5.37994 20.0076 5.51991 19.9857 5.65084 19.9358C5.78176 19.8858 5.90073 19.8089 6.00002 19.71L16.87 8.78002L19.71 6.00002C19.8013 5.9031 19.8757 5.79155 19.93 5.67002C19.9397 5.59031 19.9397 5.50973 19.93 5.43002C19.9347 5.38347 19.9347 5.33657 19.93 5.29002L20 5.24002ZM4.83002 18H2.00002V15.17L11.93 5.24002L14.76 8.07002L4.83002 18ZM16.17 6.66002L13.34 3.83002L14.76 2.42002L17.58 5.24002L16.17 6.66002Z" fill="#2B2B40" />
                                             </svg>

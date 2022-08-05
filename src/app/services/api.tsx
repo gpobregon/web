@@ -5,7 +5,7 @@ import { Route } from "react-router-dom"
 const URL = 'https://c48b-200-119-173-88.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
-export const categorysMethod = 'site/category'
+export const categorysMethod = 'site/categories'
 export const statesMethod = 'site/state'
 
 export const getData = async (route: string) => {

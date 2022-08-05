@@ -48,6 +48,11 @@ const CatalogosPage = () => {
                 id: 8,
                 nombre: 'Radio',
                 icono: 'boombox'
+            },
+            {
+                id: 9,
+                nombre: 'Radio2',
+                icono: '6-circle'
             }
         ]
     });
