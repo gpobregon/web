@@ -2,7 +2,7 @@ import axios from "axios"
 import { Route } from "react-router-dom"
 
 
-const URL = 'https://6335-45-229-130-255.ngrok.io/dev2'
+const URL = 'https://c48b-200-119-173-88.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
 export const categorysMethod = 'site/category'

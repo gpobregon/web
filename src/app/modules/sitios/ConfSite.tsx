@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,FC } from 'react';
 import { Container, Row, Col, Button, Card, ListGroup, Form, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated'
@@ -6,10 +6,38 @@ import makeAnimated from 'react-select/animated'
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     item => ({ label: item, value: item })
 );
+type sitio = {
+    id_sitio: number
+    nombre: string
+    descripcion: string
+    ubicacion: string
+    geoX: string
+    geoY: string
+    portada_path: string
+    estado: number
+    creado: Date
+    editado: Date
+    categorias: [
+      {
+        id_categoria: number
+        nombre: string
+        estado: number
+      }
+    ]
+    id_municipio: number
+    favorito: boolean
+    publicado: boolean
+    oculto: boolean
+  }
+
 const options = [
     { label: "Grapes", value: "grapes" },
     { label: "Mango", value: "mango" },
     { label: "Strawberry ", value: "strawberry"},
+    { label: "Strawberry1 ", value: "strawberry1"},
+    { label: "Strawberry2 ", value: "strawberry2"},
+    { label: "Strawberry3 ", value: "strawberry3"},
+    { label: "Strawberry4 ", value: "strawberry4"},
   ];
 
   const customStyles = {
@@ -20,32 +48,52 @@ const options = [
       borderColor: state.isFocused ? '#565674' : '#1b1b29',
       boxShadow: state.isFocused ? '#474761' : '#1b1b29',
       color: '#1b1b29',
-    //   '&:hover': {
-    //     borderColor: state.isFocused ? 'black' : 'white',
-    //   },
+      '&:hover': {
+        borderColor: state.isFocused ? 'white' : 'white',
+      },
+   
     }),
+    option: (base:any,state: any) => ({
+        ...base,
+        borderBottom: '1px dotted pink',
+        color: state.isSelected ? 'red' : 'gray',
+        padding: 10,
+      }),
+      multiValue: (base:any, ) => {
+       
+        return {
+          ...base,
+          backgroundColor: '#white',
+        };
+      },
+      multiValueRemove: (base:any, ) => ({
+        ...base,
+        color: 'gray',
+        // ':hover': {
+        //   backgroundColor: data.color,
+        //   color: 'white',
+        // },
+      }),
+    
+    multiValueLabel: (base:any) => ({
+        ...base,
+        color: 'white',
+      }),
     menu: (base: any) => ({
       ...base,
       borderRadius: 0,
       marginTop: 0,
+     color:'white',
       background: '#1b1b29',
-      '&:hover': {
-        background: '#white',
-      }
     }),
     menuList: (base: any) => ({
       ...base,
       padding: 0,
-      color: 'white',
-      '&:hover': {
-        background: '#1b1b29',
-      }
+      color: 'white',   
     }),
   }
   const animatedComponents = makeAnimated()
 const ConfSite = () => {
-
-    const [selected, setSelected] = useState([]);
 
     return (
         <Container fluid>
@@ -94,7 +142,6 @@ const ConfSite = () => {
 
             </Navbar>
             <Row className='pb-10'>
-
             </Row>
             <Row >
 
@@ -107,7 +154,7 @@ const ConfSite = () => {
             </Row>
             <Row >
 
-                <ListGroup horizontal >
+                <ListGroup horizontal>
 
                     <ListGroup.Item style={{ backgroundColor: '#1e1e2d', padding: 20 }} >
 
@@ -164,10 +211,11 @@ const ConfSite = () => {
 
 
                     <Select
+                    
                     closeMenuOnSelect={false}
                     styles={customStyles}
                     components={animatedComponents}
-                    defaultValue={[options[4], options[5]]}
+                    // defaultValue={[options[4], options[5]]}
                     isMulti
                     options={options}
                   />

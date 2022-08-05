@@ -7,63 +7,63 @@ import { Site } from "../../models/site";
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
-    //     data: [
-    //         {
-    //             id: 1,
-    //             titulo: 'Museo del ferrocaril',
-    //             ubicacion: 'Ubicacion'
-    //         },
-    //         {
-    //             id: 2,
-    //             titulo: 'Museo de Ciencia Natural',
-    //             ubicacion: 'Ubicacion'
-    //         },
-    //         {
-    //             id: 3,
-    //             titulo: 'Museo de Arte Moderno',
-    //             ubicacion: 'Ubicacion'
-    //         },
-    //         {
-    //             id: 4,
-    //             titulo: 'Chocomuseo',
-    //             ubicacion: 'Ubicacion'
-    //         },
-    //         {
-    //             id: 5,
-    //             titulo: 'Museo del ferrocaril',
-    //             ubicacion: 'Ubicacion'
-    //         },
-    //         {
-    //             id: 6,
-    //             titulo: 'Museo de Ciencia Natural',
-    //             ubicacion: 'Ubicacion'
-    //         },
-    //         {
-    //             id: 7,
-    //             titulo: 'Museo de Arte Moderno',
-    //             ubicacion: 'Ubicacion'
-    //          }//,
-    //         // {
-    //         //     id: 8,
-    //         //     titulo: 'Chocomuseo',
-    //         //     ubicacion: 'Ubicacion'
-    //         // }
-    //     ]
-    // });
+    const [busqueda, setBusqueda] = useState('')
+    const [filterSites, setFilterSites] = useState<Site[]>([])
+    const [estado, setEstado] = useState(true)
+    const [up, setUp] = useState(true)
     useEffect(() => {
         getSites();
 
     }, [])
+    const search = (search: string) => {
+        if (!search) {
+          setFilterSites(sites)
+        } else {
+          setFilterSites(
+            sites.filter((elemento: Site) =>
+              elemento.nombre.toLowerCase().includes(search.toLocaleLowerCase())
+               
+            )
+           
+          )
+          console.log(filterSites)
+        }
+      }
 
+    const handlerChange = (e: {target: {value: string}}) => {
+        setBusqueda(e.target.value)
+        search(e.target.value)
+      }
 
     const getSites = async () => {
         const site: any = await getData(sitesMethod)
         console.log(site)
+        setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
-        // setFilterSites(site.site as Site[])
     }
 
-
+    const ordernarAsc = () => {
+        const moment = require("moment")
+        const numAscending = [...sites].sort((a, b) => 
+        // a.editado.getTime() - b.editado.getTime()
+        moment(a.editado,"DD-MM").unix() -  moment(b.editado,"DD-MM").unix())
+        setSites(numAscending)
+        setFilterSites(numAscending)
+        console.log(numAscending)
+        setEstado(false)
+        setUp(false)
+      }
+    
+      const ordenarDesc = () => {
+        const moment = require("moment")
+        const numDescending = [...sites].sort((a, b) =>
+        moment(a.editado,"DD-MM").unix() -  moment(b.editado,"DD-MM").unix())
+        setSites(numDescending)
+        setFilterSites(numDescending)
+        console.log(numDescending)
+        setEstado(true)
+        setUp(true)
+      }
     return (
 
         <Container fluid>
@@ -90,6 +90,8 @@ const SitiosPage = () => {
                                     id='kt_filter_search'
                                     className='form-control form-control-white form-control-sm w-155px ps-9 inputBuscar'
                                     placeholder='Search'
+                                    value={busqueda}
+                                    onChange={handlerChange}
                                 />
 
                                 {/* Block input search: here we command to fetch the handlerChange function */}
@@ -136,7 +138,14 @@ const SitiosPage = () => {
             <br></br>
             <Row className='pb-10'>
                 <Col md={4} className='pb-10'>
-                    <a className="navbar-brand" href="sitios/create">Agregado recientemente</a>
+                
+              <span
+                className={up == false ? 'bi bi-sort-down' : 'bi bi-sort-up'}
+                onClick={estado == true ? ordernarAsc : ordenarDesc}
+              >
+                Agregados recientemente
+              </span>
+            
                 </Col>
                 <Col md={{ span: 2, offset: 6 }} >
                     <Button className="btn btn-primary" href="sitios/create">
@@ -145,12 +154,13 @@ const SitiosPage = () => {
                     </Button>
                 </Col>
             </Row>
-            <Row>
+            <div className='row g-4'>
+          
                 {
-                    sites?.map(sitio => <Sitio {...sitio} key={sitio.id_sitio.toString()} />)
+                    filterSites?.map(sitio => <Sitio {...sitio} key={sitio.id_sitio.toString()} />)
                 }
-                <Col sm='6' md='3' className='pb-10'>
-                    <Card style={{ backgroundColor: '#1e1e2d', padding: 20, width: '305px', height: '395px', display: 'table' }}>
+                  <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+                    <Card  style={{ backgroundColor: '#1e1e2d',margin:'20px', padding: 20, width: '95%', height: '395px', display: 'table' }}>
                         <a href="sitios/create" style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
                             <svg
 
@@ -165,9 +175,12 @@ const SitiosPage = () => {
                         </a>
 
                     </Card>
-
-                </Col >
-            </Row>
+                    </div>
+                
+                  
+                    </div>
+                   
+               
         </Container>
     );
 }
