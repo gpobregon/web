@@ -5,7 +5,7 @@ import makeAnimated from 'react-select/animated'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import { Site } from '../../models/site';
 import Moment from 'moment'
-import { getData, sitesMethod, deleteData,postData,categorysMethod,statesMethod } from '../../services/api'
+import { getData, sitesMethod, deleteData,postData,categorysMethod,statesMethod,updateSiteMethod } from '../../services/api'
 import {Tag }from '../../models/tag';
 import {status }from '../../models/status';
 import  swal  from "sweetalert";
@@ -94,31 +94,35 @@ const options = [
 
 
 
-const ConfSite = () => {
+const EditSite = () => {
     useEffect(() => {
-        getCategorys();
+         getCategorys();
+         mostrarCategorys();
     }, []);
+    const {state} = useLocation()
+    const [site, setSite] = useState(state as Site)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
     const [show, setShow] = useState(false)
     const [categorys, setCategorys] = useState<Tag[]>([])
-    const [site, setSite] = useState({
-        id_sitio: 1,
-        nombre: '',
-        descripcion: 'eeee',
-        ubicacion: '',
-        geoX: '',
-        geoY: '',
-        portada_path: 'https://picsum.photos/200/200',
-        estado: 0,
-        creado: new Date(),
-        editado: new Date(),
-        categorias: [{id_categoria: 1, nombre: 's', estado: 0}],
-        id_municipio: 1,
-        favorito: false,
-        publicado: false,
-        oculto: false,
-    });
+    const [editcategorys, setEditCategory] = useState<Tag[]>([])
+    // const [site, setSite] = useState({
+    //     id_sitio: 1,
+    //     nombre: '',
+    //     descripcion: 'eeee',
+    //     ubicacion: '',
+    //     geoX: '',
+    //     geoY: '',
+    //     portada_path: 'https://picsum.photos/200/200',
+    //     estado: 0,
+    //     creado: new Date(),
+    //     editado: new Date(),
+    //     categorias: [{id_categoria: 1, nombre: 's', estado: 0}],
+    //     id_municipio: 1,
+    //     favorito: false,
+    //     publicado: false,
+    //     oculto: false,
+    // });
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
         favorito: site.favorito,
@@ -135,6 +139,16 @@ const ConfSite = () => {
         console.log(category)
       }
 
+      const mostrarCategorys = () => {
+        site.categorias.map((cat: any) => {
+            editcategorys.push({value: cat.id_categoria, label: cat.nombre})
+        }
+        )
+        console.log(editcategorys)
+        }
+
+
+
       const alertNotNullInputs = async () => {
         swal({
             text: "¡Faltan campos por completar!",
@@ -149,7 +163,7 @@ const ConfSite = () => {
 
   async function postSite(sitee: any) {
     if (site.nombre!=''&& site.geoX!=''&& site.geoY!=''&& site.ubicacion!='') {
-    const sit: any = await postData(sitesMethod, sitee)
+    const sit: any = await postData(updateSiteMethod, sitee)
     console.log(sitee)
     }else{
         alertNotNullInputs()
@@ -168,7 +182,7 @@ const ConfSite = () => {
       oculto: oculto,
     })
     console.log(status)
-    // postDefault(statesMethod, status)
+     postDefault(statesMethod, status)
     // const getSites = async () => {
     //   const site: any = await getData(sitesMethod)
     //   console.log(site)
@@ -197,8 +211,24 @@ const ConfSite = () => {
 
         }
       });
-  
-      
+    }
+      const saveChanges = async () => {
+        swal({
+            title: "¿Quiere Seguir Editando ?",
+            icon: "warning",
+            buttons:["Sí","No"],
+            
+          }).then(res=>{
+            if(res){
+                swal({
+                text:"Descartado Correctamente",
+                icon:"success",
+                timer:2000,
+                
+            })
+            window.location.href = "../sitios";
+            }
+          });  
 }
 
 
@@ -225,15 +255,15 @@ const ConfSite = () => {
                         : changeStatus(false, status.publicado, status.oculto)
                     }}
                   ></i>
-              {/* {site.nombre != '' ? (
+              {site.nombre != '' ? (
                 <span className='font-size: 25px;  font-family:Lato;'>
-                {site.nombre}
-                  Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}
+                {site.nombre }
+                {'      '}   Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}
                   
                 </span>
               ) : (
                 <p></p>
-              )} */}
+              )}
              
             </div>
           </div>
@@ -282,9 +312,9 @@ const ConfSite = () => {
                   className='fa-solid fa-xmark background-button'
                   id='center2'
                   onClick={() => {
-                    // var n = window.confirm('Esta seguro que desea eliminar?')
+                    // var n = window.confirm('Esta seguro que descartar cambios?')
                     // if (n == true) {
-                    //   navigate('/site')
+                    //     window.location.href = "../sitios";
                     // } else {
                     // }
                     
@@ -296,7 +326,9 @@ const ConfSite = () => {
                   className='fa-solid fa-floppy-disk background-button'
                   id='center2'
                   onClick={() => {
-                    postSite(site)
+                     postSite(site)
+                     saveChanges();
+                    // console.log(site)
                     // navigate('/site')
                   }}
                   style={{color: '#92929F' }}
@@ -393,7 +425,7 @@ const ConfSite = () => {
                         estado: site.estado,
                         creado: site.creado,
                         editado: site.editado,
-                        categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                        categorias:  site.categorias,
                         id_municipio: site.id_municipio,
                         favorito: site.favorito,
                         publicado: site.publicado,
@@ -427,7 +459,7 @@ const ConfSite = () => {
                             estado: site.estado,
                             creado: site.creado,
                             editado: site.editado,
-                            categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                            categorias: site.categorias,
                             id_municipio: site.id_municipio,
                             favorito: site.favorito,
                             publicado: site.publicado,
@@ -457,7 +489,7 @@ const ConfSite = () => {
                             estado: site.estado,
                             creado: site.creado,
                             editado: site.editado,
-                            categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                            categorias:  site.categorias,
                             id_municipio: site.id_municipio,
                             favorito: site.favorito,
                             publicado: site.publicado,
@@ -489,7 +521,7 @@ const ConfSite = () => {
                       estado: site.estado,
                       creado: site.creado,
                       editado: site.editado,
-                      categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                      categorias:  site.categorias,
                       id_municipio: site.id_municipio,
                       favorito: site.favorito,
                       publicado: site.publicado,
@@ -506,7 +538,7 @@ const ConfSite = () => {
                     closeMenuOnSelect={false}
                     styles={customStyles}
                     components={animatedComponents}
-                    // defaultValue={[options[4], options[5]]}
+                    defaultValue={editcategorys}
                     isMulti
                     options={categorys}
                   ></Select>
@@ -537,7 +569,7 @@ const ConfSite = () => {
                       <Button
                         onClick={() => {
                          
-                          postSite(site)
+                        //   postSite(site)
                           window.location.href = "../sitios";
 
                           console.log('creado con el boton de sitio mobil')
@@ -570,7 +602,7 @@ const ConfSite = () => {
                         className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                         onClick={() => {
                         //   navigate('/site')
-                          postSite(site)
+                        //   postSite(site)
                           window.location.href = "../sitios";
                           console.log('creado con el boton de sitio web')
                         }}
@@ -587,38 +619,9 @@ const ConfSite = () => {
       </div>
       <br />
       <br />
-      {/*<h3>Puntos de interés</h3>
-      <br />
-      <div className='row'>
-        <div className='col-10'>
-          <div className='card'>Hola</div>
-        </div>
-        <div className='col-2'>
-          <div className='card div-image'>
-            <br />
-            <h4>Vista Previa de Sala</h4>
-            <Card.Img
-              src={
-                site == null
-                  ? 'https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'
-                  : site.portada_path
-              }
-              alt='...'
-              className='card-img-top img2'
-              onClick={
-                site == null
-                  ? (e) => {
-                      alert('subir imagen')
-                    }
-                  : (e) => {}
-              }
-            />
-          </div>
-        </div>
-            </div>*/}
     </>
   )
 
 }
 
-export default ConfSite;
+export default EditSite;

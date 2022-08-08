@@ -27,9 +27,9 @@ const AsideDefault: FC = () => {
         className='aside-logo d-none d-lg-flex flex-column align-items-center flex-column-auto py-8'
         id='kt_aside_logo'
       >
-        <Link to='/dashboard'>
+        {/* <Link to='/dashboard'>
           <img src={toAbsoluteUrl('/media/logos/demo4.svg')} alt='logo' className='h-55px' />
-        </Link>
+        </Link> */}
       </div>
       {/* end::Logo */}
 

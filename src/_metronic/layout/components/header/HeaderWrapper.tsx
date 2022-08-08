@@ -36,11 +36,11 @@ export function HeaderWrapper() {
         {/* begin::Mobile logo */}
         <div className='d-flex align-items-center flex-grow-1 flex-lg-grow-0'>
           <Link to='/dashboard' className='d-lg-none'>
-            <img
+            {/* <img
               alt='Logo'
               src={toAbsoluteUrl('/media/logos/demo4-mobile.svg')}
               className='h-30px'
-            />
+            /> */}
           </Link>
         </div>
         {/* end::Mobile logo */}

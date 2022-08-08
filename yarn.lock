@@ -10961,6 +10961,11 @@
   "resolved" "https://registry.npmjs.org/react-generate-context/-/react-generate-context-1.0.1.tgz"
   "version" "1.0.1"
 
+"react-hook-form@^7.34.0":
+  "integrity" "sha512-s0/TJ09NVlEk2JPp3yit1WnMuPNBXFmUKEQPulgDi9pYBw/ZmmAFHe6AXWq73Y+kp8ye4OcMf0Jv+i/qLPektg=="
+  "resolved" "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.34.0.tgz"
+  "version" "7.34.0"
+
 "react-inlinesvg@3.0.0":
   "integrity" "sha512-zUt0DW3cKBk+vYZJJCzJqA9STRb+ZFmKLQFWurTvM4UR6vyHT8kHZSzyZZseX9BUNbTFJAfirtwpt97BWDJoSg=="
   "resolved" "https://registry.npmjs.org/react-inlinesvg/-/react-inlinesvg-3.0.0.tgz"

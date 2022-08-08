@@ -30,6 +30,7 @@
     "react-bootstrap": "2.3.0",
     "react-copy-to-clipboard": "5.1.0",
     "react-dom": "18.0.0",
+    "react-hook-form": "^7.34.0",
     "react-inlinesvg": "3.0.0",
     "react-intl": "5.25.0",
     "react-multi-select-component": "^4.3.2",

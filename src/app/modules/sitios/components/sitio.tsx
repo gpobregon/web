@@ -64,21 +64,24 @@ const Sitio: FC<sitio> = (props) => {
                 <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
                     <Button style={{ width: '50%' }}
                      onClick={(event) => {
-                      navigate('sitios/create', {
+                      console.log(props)
+                      navigate('/sitios/edit', {
                         state: {
-                          id_sitio: '',
-                          nombre: '',
-                          descripcion: '',
-                          ubicacion: '',
-                          geoX: '',
-                          geoY: '',
-                          portada_path: '',
-                          estado: '',
-                          id_municipio: '',
-                          categorias: '',
-                          favorito: false,
-                          publicado: true,
-                          oculto: false,
+                          id_sitio: props.id_sitio,
+                          nombre: props.nombre,
+                          descripcion: props.descripcion,
+                          ubicacion: props.ubicacion,
+                          geoX: props.geoX,
+                          geoY: props.geoY,
+                          portada_path: props.portada_path,
+                          estado: props.estado,
+                          creado: props.creado,
+                          editado: props.editado,
+                          categorias: props.categorias,
+                          id_municipio: props.id_municipio,
+                          favorito: props.favorito,
+                          publicado: props.publicado,
+                          oculto: props.oculto,
                         },
                       })
                     }}> 
