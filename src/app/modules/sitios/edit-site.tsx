@@ -11,6 +11,7 @@ import {status }from '../../models/status';
 import  swal  from "sweetalert";
 import { useForm } from 'react-hook-form';
 import { number } from 'yup/lib/locale';
+import { Category } from '../../models/category';
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     item => ({ label: item, value: item })
 );
@@ -104,11 +105,20 @@ const EditSite = () => {
     const [show, setShow] = useState(false)
     let [categorys, setCategorys] = useState<Tag[]>([])
     const [editcategorys, setEditCategory] = useState<Tag[]>([])
+    const [categorysHolder, setCategorysHolder] = useState("")
+
+
     useEffect(() => {
       getCategorys();
       mostrarCategorys();
       setearStatus();
-     
+      var txt="";
+      for(var i=0;i<site.categorias.length;i++){
+        txt+=site.categorias[i].nombre+", "
+      }
+      txt=txt.substring(0,txt.length-2);
+      setCategorysHolder(txt)
+
  }, []);
     // const [site, setSite] = useState({
     //     id_sitio: 1,
@@ -179,7 +189,7 @@ const EditSite = () => {
     if (site.nombre!=''&& site.geoX!=''&& site.geoY!=''&& site.ubicacion!='') {
       
     const sit: any = await postData(updateSiteMethod, sitee)
-    // console.log(sit)
+    //  console.log(sitee)
     }else{
         alertNotNullInputs()
     }
@@ -264,9 +274,26 @@ const EditSite = () => {
           });  
 }
 
-
+const [categoria,setcategoria]=useState(
+    [{
+      id_categoria: 1,
+      nombre: '',
+      estado: 0,
+    }]
+)
 const handleChange = (event:any) => {
-  console.log(event);
+
+
+  var arrtempo:[{
+    id_categoria: number
+    nombre: string
+    estado: number
+  }] = [{id_categoria: 1, nombre: 's', estado: 0}];
+  arrtempo.shift();
+
+  event.map((cat: any) => {
+    arrtempo.push({id_categoria: cat.value,nombre: cat.label,estado:1})
+  })
   setSite({
     id_sitio: site.id_sitio,
     nombre: site.nombre,
@@ -278,12 +305,15 @@ const handleChange = (event:any) => {
     estado: site.estado,
     creado: site.creado,
     editado: site.editado,
-    categorias: event,
+    categorias: arrtempo,
     id_municipio: site.id_municipio,
     favorito: status.favorito,
     publicado: status.publicado,
     oculto: status.oculto,
   })
+
+  console.log(site);
+
 };
 
 
@@ -617,9 +647,10 @@ const handleChange = (event:any) => {
                     closeMenuOnSelect={false}
                     styles={customStyles}
                     components={animatedComponents}
-                    value={editcategorys}
+                    // value={editcategorys}
                     isMulti
                     options={categorys}
+                    placeholder={categorysHolder}
                     onChange={handleChange}
                   ></Select>
                 </div>

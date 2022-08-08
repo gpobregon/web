@@ -1,3 +1,5 @@
+import { Category } from "./category"
+
 export interface Site {
   id_sitio: number
   nombre: string

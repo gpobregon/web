@@ -57,7 +57,7 @@ const Sitio: FC<sitio> = (props) => {
       <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
             <Card style={{ backgroundColor: '#1e1e2d', padding: 20,margin:'20px', width: '95%', height: '395px' }}>
 
-                <Card.Img variant='top' src={`https://picsum.photos/200/200?${props}`} className='mb-5 'style={{ maxHeight:'70%' }} />
+                <Card.Img variant='top' src={`${props.portada_path}`} className='mb-5 'style={{ maxHeight:'70%' }} />
 
                 <Card.Title style={{  }}>{props.nombre}</Card.Title>
                 <Card.Text className='text-muted'>{props.ubicacion}</Card.Text>

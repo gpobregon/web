@@ -43,10 +43,7 @@ const SitiosPage = () => {
     }
 
     const ordernarAsc = () => {
-        const moment = require("moment")
-        const numAscending = [...sites].sort((a, b) => 
-        // a.editado.getTime() - b.editado.getTime()
-        moment(a.editado,"DD").unix() -  moment(b.editado,"DD").unix())
+        const numAscending = [...sites].sort((a, b) => a.id_sitio - b.id_sitio)
         setSites(numAscending)
         setFilterSites(numAscending)
         console.log(numAscending)
@@ -55,9 +52,7 @@ const SitiosPage = () => {
       }
     
       const ordenarDesc = () => {
-        const moment = require("moment")
-        const numDescending = [...sites].sort((a, b) =>
-        moment(a.editado,"DD").unix() -  moment(b.editado,"DD").unix())
+        const numDescending = [...sites].sort((a, b) => b.id_sitio - a.id_sitio)
         setSites(numDescending)
         setFilterSites(numDescending)
         console.log(numDescending)

@@ -212,19 +212,7 @@ const ConfSite = () => {
               <Link to={'/sitios'}>
                 <i className='fa-solid fa-less-than background-button ' id='center2'></i>
               </Link>
-              <i
-                    className={
-                      status.favorito == false
-                        ? 'fa-regular fa-star background-button'
-                        : 'fas fa-star background-button'
-                    }
-                    id='center2'
-                    onClick={() => {
-                      status.favorito == false
-                        ? changeStatus(true, status.publicado, status.oculto)
-                        : changeStatus(false, status.publicado, status.oculto)
-                    }}
-                  ></i>
+            
               {/* {site.nombre != '' ? (
                 <span className='font-size: 25px;  font-family:Lato;'>
                 {site.nombre}
@@ -241,14 +229,27 @@ const ConfSite = () => {
             <div id='center2'>
               <ul className='nav justify-content-end'>
                 <li className='nav-item'>
-                  
+                <i
+                    className={
+                      status.favorito == false
+                        ? 'fa-regular fa-star background-button'
+                        : 'fas fa-star background-button'
+                    }
+                    id='center2'
+                    onClick={() => {
+                      status.favorito == false
+                        ? changeStatus(true, status.publicado, status.oculto)
+                        : changeStatus(false, status.publicado, status.oculto)
+                    }}
+                    style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                  ></i>
                 </li>
                 <li className='nav-item'>
                   <i
                     className='fa-solid fa-qrcode background-button '
                     id='center2'
                     onClick={handleShow}
-                    style={{color: '#92929F' }}
+                    style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
                   ></i>
                 </li>
                 <Modal show={show} onHide={handleClose}>
@@ -276,7 +277,7 @@ const ConfSite = () => {
                       ? changeStatus(status.favorito, status.publicado, true)
                       : changeStatus(status.favorito, status.publicado, false)
                   }}
-                  style={{color: '#92929F' }}
+                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
                 ></i>
                 <i
                   className='fa-solid fa-xmark background-button'
@@ -290,7 +291,7 @@ const ConfSite = () => {
                     
                     discardChanges()
                   }}
-                  style={{color: '#92929F' }}
+                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
                 ></i>
                 <i
                   className='fa-solid fa-floppy-disk background-button'
@@ -299,7 +300,7 @@ const ConfSite = () => {
                     postSite(site)
                     // navigate('/site')
                   }}
-                  style={{color: '#92929F' }}
+                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
                 ></i>
 
                 <i
@@ -314,9 +315,9 @@ const ConfSite = () => {
                       : 'fa-solid fa-upload background-button'
                   }
                   id='center2'
-                  style={{color: '#92929F' }}
+                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
                 ></i>
-                <i className='fa-solid fa-gear background-button' id='center2' style={{color: '#92929F' }}></i>
+                <i className='fa-solid fa-gear background-button' id='center2'  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}></i>
               </ul>
             </div>
           </div>
