@@ -2,7 +2,7 @@ import axios from "axios"
 import { Route } from "react-router-dom"
 
 
-const URL = 'https://0dda-190-104-119-60.ngrok.io/dev2'
+const URL = 'https://4654-45-229-130-255.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
 export const categorysMethod = 'site/categories'
@@ -45,7 +45,7 @@ export const postData = async (route: string, object: any) => {
       .then((response) => response.json())
       .then((data) => {
         resolve(data)
-        console.log(data)
+  
       })
       .catch((err) => {
         resolve(null)

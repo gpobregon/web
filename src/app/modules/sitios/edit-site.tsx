@@ -10,6 +10,7 @@ import {Tag }from '../../models/tag';
 import {status }from '../../models/status';
 import  swal  from "sweetalert";
 import { useForm } from 'react-hook-form';
+import { number } from 'yup/lib/locale';
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     item => ({ label: item, value: item })
 );
@@ -95,17 +96,20 @@ const options = [
 
 
 const EditSite = () => {
-    useEffect(() => {
-         getCategorys();
-         mostrarCategorys();
-    }, []);
+ 
     const {state} = useLocation()
     const [site, setSite] = useState(state as Site)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
     const [show, setShow] = useState(false)
-    const [categorys, setCategorys] = useState<Tag[]>([])
+    let [categorys, setCategorys] = useState<Tag[]>([])
     const [editcategorys, setEditCategory] = useState<Tag[]>([])
+    useEffect(() => {
+      getCategorys();
+      mostrarCategorys();
+      setearStatus();
+     
+ }, []);
     // const [site, setSite] = useState({
     //     id_sitio: 1,
     //     nombre: '',
@@ -130,20 +134,30 @@ const EditSite = () => {
         oculto: site.oculto,
       })
 
-
+      const setearStatus = () => {
+        setStatus({
+            id_sitio: site.id_sitio,
+            favorito: site.favorito,
+            publicado: site.favorito,
+            oculto: site.oculto,
+          })
+      }
     async function getCategorys() {
+        
         const category: any = await getData(categorysMethod)
+        
         category.map((cat: any) => {
           categorys.push({value: cat.id_categoria, label: cat.nombre})
         })
-        console.log(category)
+         console.log(category)
       }
 
       const mostrarCategorys = () => {
         site.categorias.map((cat: any) => {
-            editcategorys.push({value: cat.id_categoria, label: cat.nombre})
+            editcategorys.push({value: Number.parseInt(cat.id_categoria), label: cat.nombre})
         }
         )
+        setEditCategory(editcategorys)
         console.log(editcategorys)
         }
 
@@ -163,8 +177,9 @@ const EditSite = () => {
 
   async function postSite(sitee: any) {
     if (site.nombre!=''&& site.geoX!=''&& site.geoY!=''&& site.ubicacion!='') {
+      
     const sit: any = await postData(updateSiteMethod, sitee)
-    console.log(sitee)
+    // console.log(sit)
     }else{
         alertNotNullInputs()
     }
@@ -181,12 +196,30 @@ const EditSite = () => {
       publicado: publicado,
       oculto: oculto,
     })
-    console.log(status)
-     postDefault(statesMethod, status)
-    // const getSites = async () => {
-    //   const site: any = await getData(sitesMethod)
-    //   console.log(site)
-    // }
+    setSite({
+      id_sitio: site.id_sitio,
+      nombre: site.nombre,
+      descripcion: site.descripcion,
+      ubicacion: site.ubicacion,
+      geoX: site.geoX,
+      geoY: site.geoY,
+      portada_path: site.portada_path,
+      estado: site.estado,
+      creado: site.creado,
+      editado: site.editado,
+      categorias: site.categorias,
+      id_municipio: site.id_municipio,
+      favorito: status.favorito,
+      publicado: status.publicado,
+      oculto: status.oculto,
+    })
+    console.log(status.favorito)
+    console.log(site)
+      postDefault(statesMethod, status)
+    const getSites = async () => {
+      const site: any = await getData(sitesMethod)
+      // console.log(site)
+    }
   }
 
 
@@ -232,6 +265,27 @@ const EditSite = () => {
 }
 
 
+const handleChange = (event:any) => {
+  console.log(event);
+  setSite({
+    id_sitio: site.id_sitio,
+    nombre: site.nombre,
+    descripcion: site.descripcion,
+    ubicacion: site.ubicacion,
+    geoX: site.geoX,
+    geoY: site.geoY,
+    portada_path: site.portada_path,
+    estado: site.estado,
+    creado: site.creado,
+    editado: site.editado,
+    categorias: event,
+    id_municipio: site.id_municipio,
+    favorito: status.favorito,
+    publicado: status.publicado,
+    oculto: status.oculto,
+  })
+};
+
 
   return (
     <>
@@ -240,23 +294,11 @@ const EditSite = () => {
           <div className='col-xs-12 col-md-6 col-lg-6'>
             <div id='center'>
               <Link to={'/sitios'}>
-                <i className='fa-solid fa-less-than background-button ' id='center2'></i>
+                <i className='fa-solid fa-less-than background-button ' id='center2'   ></i>
               </Link>
-              <i
-                    className={
-                      status.favorito == false
-                        ? 'fa-regular fa-star background-button'
-                        : 'fas fa-star background-button'
-                    }
-                    id='center2'
-                    onClick={() => {
-                      status.favorito == false
-                        ? changeStatus(true, status.publicado, status.oculto)
-                        : changeStatus(false, status.publicado, status.oculto)
-                    }}
-                  ></i>
+              
               {site.nombre != '' ? (
-                <span className='font-size: 25px;  font-family:Lato;'>
+                <span className='font-size: 10rem;  font-family:Lato;'>
                 {site.nombre }
                 {'      '}   Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}
                   
@@ -269,18 +311,33 @@ const EditSite = () => {
           </div>
           <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
             <div id='center2'>
-              <ul className='nav justify-content-end'>
+              <ul className='nav justify-content-end '>
                 <li className='nav-item'>
-                  
+                <i  
+                    className={
+                      status.favorito == false
+                        ? 'fa-regular fa-star background-button'
+                        : 'fas fa-star background-button'
+                    }
+                    id='center2'
+                    onClick={() => {
+                      
+                      // status.favorito == false
+                      status.favorito = !status.favorito
+                      changeStatus(status.favorito, status.publicado, status.oculto)
+                        // : changeStatus(false, status.publicado, status.oculto)
+                    }}
+                  style={{display:'flex',marginRight:'4px'}} ></i>
                 </li>
                 <li className='nav-item'>
                   <i
                     className='fa-solid fa-qrcode background-button '
                     id='center2'
                     onClick={handleShow}
-                    style={{color: '#92929F' }}
+                    style={{color: '#92929F',display:'flex',marginRight:'4px' }}
                   ></i>
                 </li>
+                
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
                     <Modal.Title>Escanee su Código QR</Modal.Title>
@@ -294,6 +351,7 @@ const EditSite = () => {
                     </Button>
                   </Modal.Footer>
                 </Modal>
+                
                 <i
                   className={
                     status.oculto == false
@@ -302,11 +360,13 @@ const EditSite = () => {
                   }
                   id='center2'
                   onClick={() => {
-                    status.oculto == false
-                      ? changeStatus(status.favorito, status.publicado, true)
-                      : changeStatus(status.favorito, status.publicado, false)
+                    // status.oculto == false
+                    //   ? changeStatus(status.favorito, status.publicado, true)
+                    //   : changeStatus(status.favorito, status.publicado, false)
+                    status.oculto = !status.oculto
+                    changeStatus(status.favorito, status.publicado, status.oculto)
                   }}
-                  style={{color: '#92929F' }}
+                  style={{color: '#92929F',display:'flex' ,marginRight:'4px' }}
                 ></i>
                 <i
                   className='fa-solid fa-xmark background-button'
@@ -320,25 +380,28 @@ const EditSite = () => {
                     
                     discardChanges()
                   }}
-                  style={{color: '#92929F' }}
+                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
                 ></i>
                 <i
                   className='fa-solid fa-floppy-disk background-button'
                   id='center2'
                   onClick={() => {
+                    console.log('site')
                      postSite(site)
                      saveChanges();
                     // console.log(site)
                     // navigate('/site')
                   }}
-                  style={{color: '#92929F' }}
+                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
                 ></i>
 
                 <i
                   onClick={() => {
-                    status.publicado == false
-                      ? changeStatus(status.favorito, true, status.oculto)
-                      : changeStatus(status.favorito, false, status.oculto)
+                    // status.publicado == false
+                    //   ? changeStatus(status.favorito, true, status.oculto)
+                    //   : changeStatus(status.favorito, false, status.oculto)
+                    status.publicado = !status.publicado
+                    changeStatus(status.favorito, status.publicado, status.oculto)
                   }}
                   className={
                     status.publicado == false
@@ -346,9 +409,9 @@ const EditSite = () => {
                       : 'fa-solid fa-upload background-button'
                   }
                   id='center2'
-                  style={{color: '#92929F' }}
+                  style={{color: '#92929F',display:'flex' ,marginRight:'4px' }}
                 ></i>
-                <i className='fa-solid fa-gear background-button' id='center2' style={{color: '#92929F' }}></i>
+                <i className='fa-solid fa-gear background-button' id='center2' style={{color: '#92929F',display:'flex'  }}></i>
               </ul>
             </div>
           </div>
@@ -395,7 +458,23 @@ const EditSite = () => {
                         <Link className='bi bi-crop background-button text-info' to={''}></Link>
                       </Col>
                       <Col>
-                        <Link className='bi bi-trash background-button text-danger' to={''}></Link>
+                        <Link className='bi bi-trash background-button text-danger' to={''} onClick={() =>   setSite({
+                        id_sitio: site.id_sitio,
+                        nombre: site.nombre,
+                        descripcion: site.descripcion,
+                        ubicacion: site.ubicacion,
+                        geoX: site.geoX,
+                        geoY: site.geoY,
+                        portada_path: '',
+                        estado: site.estado,
+                        creado: site.creado,
+                        editado: site.editado,
+                        categorias:  site.categorias,
+                        id_municipio: site.id_municipio,
+                        favorito: status.favorito,
+                        publicado: status.publicado,
+                        oculto: status.oculto,
+                      })}></Link>
                       </Col>
                     </Row>
                   </div>
@@ -427,9 +506,9 @@ const EditSite = () => {
                         editado: site.editado,
                         categorias:  site.categorias,
                         id_municipio: site.id_municipio,
-                        favorito: site.favorito,
-                        publicado: site.publicado,
-                        oculto: site.oculto,
+                        favorito: status.favorito,
+                        publicado: status.publicado,
+                        oculto: status.oculto,
                       })
                     }}
                 
@@ -461,9 +540,9 @@ const EditSite = () => {
                             editado: site.editado,
                             categorias: site.categorias,
                             id_municipio: site.id_municipio,
-                            favorito: site.favorito,
-                            publicado: site.publicado,
-                            oculto: site.oculto,
+                            favorito: status.favorito,
+                            publicado: status.publicado,
+                            oculto: status.oculto,
                           })
                         }}
                       />
@@ -491,9 +570,9 @@ const EditSite = () => {
                             editado: site.editado,
                             categorias:  site.categorias,
                             id_municipio: site.id_municipio,
-                            favorito: site.favorito,
-                            publicado: site.publicado,
-                            oculto: site.oculto,
+                            favorito: status.favorito,
+                            publicado: status.publicado,
+                            oculto: status.oculto,
                           })
                         }}
                       />
@@ -523,9 +602,9 @@ const EditSite = () => {
                       editado: site.editado,
                       categorias:  site.categorias,
                       id_municipio: site.id_municipio,
-                      favorito: site.favorito,
-                      publicado: site.publicado,
-                      oculto: site.oculto,
+                      favorito: status.favorito,
+                      publicado: status.publicado,
+                      oculto: status.oculto,
                     })
                   }}
                 ></input>
@@ -538,9 +617,10 @@ const EditSite = () => {
                     closeMenuOnSelect={false}
                     styles={customStyles}
                     components={animatedComponents}
-                    defaultValue={editcategorys}
+                    value={editcategorys}
                     isMulti
                     options={categorys}
+                    onChange={handleChange}
                   ></Select>
                 </div>
               </div>

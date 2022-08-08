@@ -168,7 +168,7 @@ const ConfSite = () => {
       oculto: oculto,
     })
     console.log(status)
-    // postDefault(statesMethod, status)
+   postDefault(statesMethod, status)
     // const getSites = async () => {
     //   const site: any = await getData(sitesMethod)
     //   console.log(site)
@@ -363,7 +363,23 @@ const ConfSite = () => {
                         <Link className='bi bi-crop background-button text-info' to={''}></Link>
                       </Col>
                       <Col>
-                        <Link className='bi bi-trash background-button text-danger' to={''}></Link>
+                        <Link className='bi bi-trash background-button text-danger' to={''} onClick={() =>   setSite({
+                        id_sitio: site.id_sitio,
+                        nombre: site.nombre,
+                        descripcion: site.descripcion,
+                        ubicacion: site.ubicacion,
+                        geoX: site.geoX,
+                        geoY: site.geoY,
+                        portada_path: '',
+                        estado: site.estado,
+                        creado: site.creado,
+                        editado: site.editado,
+                        categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                        id_municipio: site.id_municipio,
+                        favorito: site.favorito,
+                        publicado: site.publicado,
+                        oculto: site.oculto,
+                      })}></Link>
                       </Col>
                     </Row>
                   </div>
