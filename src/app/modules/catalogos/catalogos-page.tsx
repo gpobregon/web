@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {Container, Col, Row, Button, InputGroup, Form, Stack} from 'react-bootstrap'
 
-import Catalogo from './components/catalogo'; 
+import Catalogo from './components/catalogo';
+import UpdateCatalogo from './components/update-catalogo';
 import Language from './components/language';
-import UpdateCatalogo from './components/update-catalogo'; 
 import AddLanguaje from './components/add-language';
 
 const CatalogosPage = () => {

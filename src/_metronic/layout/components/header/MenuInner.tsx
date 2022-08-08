@@ -9,9 +9,9 @@ export function MenuInner() {
   return (
     <>
       <MenuItem title='Dashboards' to='/site' />
+      {/* <MenuItem title='Botón' to='/#' />
       <MenuItem title='Botón' to='/#' />
-      <MenuItem title='Botón' to='/#' />
-      <MenuItem title='Botón' to='/#' />
+      <MenuItem title='Botón' to='/#' /> */}
     </>
   )
 }
