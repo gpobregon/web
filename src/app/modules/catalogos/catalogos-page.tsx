@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react'
 import {Container, Col, Row, Button, InputGroup, Form, Stack} from 'react-bootstrap'
 
-import Catalogo from './components/catalogo';
-import UpdateCatalogo from './components/update-catalogo';
-import Language from './components/language';
-import AddLanguaje from './components/add-language';
+import Catalogo from './components/catalogo'
+import UpdateCatalogo from './components/update-catalogo'
+import Language from './components/language'
+import AddLanguaje from './components/add-language'
+import AddCatalogo from './components/add-catalogo'
 
 const CatalogosPage = () => {
-    const [updateModal, setUpdateModal] = useState({show: false, catalogo: {}})
+    const [modalAddTag, setModalAddTag] = useState(false)
+    const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
+    const [addModalLanguage, setAddModalLanguage] = useState({show: false, language: {}})
+
     const [optionSort, setOptionSort] = useState('Agregado recientemente')
     const [searchInput, setSearchInput] = useState('')
-    const [addModalLanguage, setAddModalLanguage] = useState({show: false, language: {}})
     const [catalogos, setCatalogos] = useState({
         /* count: 100,
         pages: 20,
@@ -105,15 +108,15 @@ const CatalogosPage = () => {
             {
                 id: 1,
                 nombre: 'Español (Guatemala)',
-                descripcion: 'El idioma español está disponible'
+                descripcion: 'El idioma español está disponible',
             },
             {
                 id: 2,
                 nombre: 'Inglés (EEUU)',
-                descripcion: 'English language is available'
-            }
-        ]
-    });   
+                descripcion: 'English language is available',
+            },
+        ],
+    })
 
     const [filteredResults, setFilteredResults] = useState(catalogos.data)
 
@@ -133,10 +136,6 @@ const CatalogosPage = () => {
         // setFilterSites(lenguaje.etiquetas as Site[])
         // setSites(site.site as Site[])
     } */
-
-    const showModal = (catalogo: any) => {
-        setUpdateModal({show: true, catalogo})
-    }
 
     const searchItems = (searchValue: any) => {
         setSearchInput(searchValue)
@@ -165,135 +164,142 @@ const CatalogosPage = () => {
         }
     }
 
-    const onClick = (catalogo: any) => {
-        setUpdateModal({ show: true, catalogo });
-    } 
+    const showModalUpdateTag = (catalogo: any) => {
+        setModalUpdateTag({show: true, catalogo})
+    }
 
-    const onClickLanguage = (language: any)=>{ 
+    const showModalAddTag = () => {
+        setModalAddTag(true)
+    }
+
+    const showModalLanguage = (language: any) => {
         setAddModalLanguage({show: true, language})
-    } 
+    }
 
-
-
-    // // useEffect(() => {
-    // //     console.log(state.data);
-    // // }, []);
-
-    return ( 
+    return (
         <>
             <Container fluid>
                 <Row className='pb-9'>
-                <div className='text-left'>
-                    <h1 className='text-dark mt-0'>Categorías</h1>
-                    <h2 className='text-muted mb-0'>Lista de categorías</h2>
-                </div>
-            </Row>
-
-            <Row className='pb-9'>
-                <div className='d-flex'>
-                    <Form.Control
-                        className='me-5'
-                        style={{maxWidth: '300px', height: '46px'}}
-                        placeholder='Buscar categoría'
-                        onChange={(event) => searchItems(event.target.value)}
-                    />
-
-                    <Button variant='secondary' className='text-center'>
-                        <i className='fs-2 bi-search px-0 fw-bolder'></i>
-                    </Button>
-                </div>
-            </Row>
-
-            <Row className='pb-9'>
-                <div className='d-sm-flex justify-content-between align-items-center'>
-                    <div
-                        className='d-flex align-items-center fs-5 text-muted'
-                        style={{cursor: 'pointer'}}
-                        onClick={toggleOptionSort}>
-                        <i className='bi-sort-up fs-1 me-2'></i>
-                        {`${optionSort}`}
-                    </div>
-
-                    <Button variant='primary' className='mt-md-0 mt-4' onClick={showModal} >
-                        <span className='menu-icon me-0'>
-                            <i className={`bi-tag fs-2`}></i>
-                        </span>
-                        {' Nueva categoria'}
-                    </Button>
-                </div>
-            </Row>
-
-            <Row>
-                {searchInput.length > 1
-                    ? filteredResults.map((catalogo) => (
-                          <Catalogo
-                              key={catalogo.id.toString()}
-                              data={catalogo}
-                              showModal={() => showModal(catalogo)}
-                          />
-                      ))
-                    : catalogos.data.map((catalogo) => (
-                          <Catalogo
-                              key={catalogo.id.toString()}
-                              data={catalogo}
-                              showModal={() => showModal(catalogo)}
-                          />
-                      ))}
-
-                {/* {catalogo.map((catalogo) => (
-                    <Catalogo
-                        key={catalogo.id.toString()}
-                        data={catalogo}
-                        showModal={() => showModal(catalogo)}
-                    />
-                ))} */}
-            </Row>
-
-            <UpdateCatalogo
-                show={updateModal.show}
-                catalogo={updateModal.catalogo}
-                onClose={() => setUpdateModal({show: false, catalogo: {}})}
-            />
-            </Container>  
-
-            <Container fluid>
-                <Row>
-                    <div className='text-left mb-10' >
-                        <h1 className='text-dark mb-3'>Idiomas</h1> 
-                        <p>Lista de idiomas disponibles</p>
+                    <div className='text-left'>
+                        <h1 className='text-dark mt-0'>Categorías</h1>
+                        <h2 className='text-muted mb-0'>Lista de categorías</h2>
                     </div>
                 </Row>
-                <Row className='pb-10'>
-                    <div>
-                        <Button variant="primary" style={{float: 'right' }}  onClick={ ()=>  setAddModalLanguage({ show: true, language: {} })}> 
-                            
-                            <span className='menu-icon me-0  ' >
-                                <i className={`bi-plus-circle  `}></i>
-                            </span>
-                            {' Nuevo Idioma'} 
-                            
+
+                <Row className='pb-9'>
+                    <div className='d-flex'>
+                        <Form.Control
+                            className='me-5'
+                            style={{maxWidth: '300px', height: '46px'}}
+                            placeholder='Buscar categoría'
+                            onChange={(event) => searchItems(event.target.value)}
+                        />
+
+                        <Button variant='secondary' className='text-center'>
+                            <i className='fs-2 bi-search px-0 fw-bolder'></i>
                         </Button>
                     </div>
-                </Row> 
-                
-                <Row>
-                    {
-                     stateLanguage.data.map(language=> <Language key={language.id.toString()} data={language} onClickLanguage={() => onClickLanguage(language)} />)
-                    }
                 </Row>
 
-                <AddLanguaje sendLanguage={sendLanguage}  show={addModalLanguage.show} language={addModalLanguage.language} onClose={() => setAddModalLanguage({ show: false, language: {} })} /> 
-            </Container>  
+                <Row className='pb-9'>
+                    <div className='d-sm-flex justify-content-between align-items-center'>
+                        <div
+                            className='d-flex align-items-center fs-5 text-muted'
+                            style={{cursor: 'pointer'}}
+                            onClick={toggleOptionSort}
+                        >
+                            <i className='bi-sort-up fs-1 me-2'></i>
+                            {`${optionSort}`}
+                        </div>
+
+                        <Button
+                            variant='primary'
+                            className='mt-md-0 mt-4'
+                            onClick={() => showModalAddTag()}
+                        >
+                            <span className='menu-icon me-0'>
+                                <i className={`bi-tag fs-2`}></i>
+                            </span>
+                            {' Nueva categoria'}
+                        </Button>
+                    </div>
+                </Row>
+
+                <Row>
+                    {searchInput.length > 1
+                        ? filteredResults.map((catalogo) => (
+                              <Catalogo
+                                  key={catalogo.id.toString()}
+                                  data={catalogo}
+                                  showModal={() => showModalUpdateTag(catalogo)}
+                              />
+                          ))
+                        : catalogos.data.map((catalogo) => (
+                              <Catalogo
+                                  key={catalogo.id.toString()}
+                                  data={catalogo}
+                                  showModal={() => showModalUpdateTag(catalogo)}
+                              />
+                          ))}
+                </Row>
+
+                <UpdateCatalogo
+                    show={modalUpdateTag.show}
+                    catalogo={modalUpdateTag.catalogo}
+                    onClose={() => setModalUpdateTag({show: false, catalogo: {}})}
+                />
+
+                <AddCatalogo show={modalAddTag} onClose={() => setModalAddTag(false)} />
+            </Container>
+
+            <Container fluid>
+                <Row className='mt-12 mb-9'>
+                    <div className='text-left'>
+                        <h1 className='text-dark mt-0'>Idiomas</h1>
+                        <h2 className='text-muted mb-0'>Lista de idiomas disponible</h2>
+                    </div>
+                </Row>
+
+                <Row className='mb-9'>
+                    <div className='d-flex justify-content-end'>
+                        <Button
+                            variant='primary'
+                            className='mt-md-0 mt-4'
+                            onClick={() => setAddModalLanguage({show: true, language: {}})}
+                        >
+                            <span className='menu-icon me-0  '>
+                                <i className={`bi-plus-circle fs-2`}></i>
+                            </span>
+                            {' Nuevo Idioma'}
+                        </Button>
+                    </div>
+                </Row>
+
+                <Row>
+                    {stateLanguage.data.map((language) => (
+                        <Language
+                            key={language.id.toString()}
+                            data={language}
+                            onClickLanguage={() => showModalLanguage(language)}
+                        />
+                    ))}
+                </Row>
+
+                <AddLanguaje
+                    sendLanguage={sendLanguage}
+                    show={addModalLanguage.show}
+                    language={addModalLanguage.language}
+                    onClose={() => setAddModalLanguage({show: false, language: {}})}
+                />
+            </Container>
         </>
-       
-    );
-} 
+    )
+}
 
+//-------------------------------------INTENTANDO ENVIAR DATOS Y GUARDARLOS---------------------------
 
-//-------------------------------------INTENTANDO ENVIAR DATOS Y GUARDARLOS--------------------------- 
-
-const sendLanguage= ()=>{ 
+const sendLanguage = () => {
     console.log('Lenguaje enviado ')
 }
 
-export default CatalogosPage;
+export default CatalogosPage

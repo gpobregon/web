@@ -80,30 +80,19 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const UpdateCatalogo: FC<any> = ({ show, catalogo, onClose }) => {
-    const [state, setState] = useState({
-        id: catalogo?.id ?? 0,
-        nombre: catalogo?.nombre ?? '',
-        icono: catalogo?.icono ?? '',
-        idioma: catalogo?.idioma ?? ''
-    });
-
-    const handleChange = (e: any) => setState(prev => ({ ...prev, [e.target.name]: e.target.value }));
-
+const AddCatalogo: FC<any> = ({ show, onClose }) => {
     return (
         <>
             <Modal show={show} onHide={onClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{'Configuración de categoría'}</Modal.Title>
+                    <Modal.Title>{'Nueva categoría'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group>
                         <Form.Label>{'Nombre de categoría'}</Form.Label>
                         <Form.Control
-                            placeholder={catalogo.nombre}
                             type='text'
                             name='nombre'
-                            onChange={handleChange}
                             className={'mb-4'}
                         />
                     </Form.Group>
@@ -111,7 +100,6 @@ const UpdateCatalogo: FC<any> = ({ show, catalogo, onClose }) => {
                     <Form.Group>
                         <Form.Label>{'Icono'}</Form.Label>
                         <Select
-                            defaultInputValue={catalogo.icono}
                             options={optionsWithIcons}
                             styles={customStyles}
                             components={animatedComponents}
@@ -122,7 +110,6 @@ const UpdateCatalogo: FC<any> = ({ show, catalogo, onClose }) => {
                     <Form.Group>
                         <Form.Label>{'Idioma'}</Form.Label>
                         <Select
-                            defaultInputValue={catalogo.idioma?.nombre ?? ''}
                             options={languages}
                             styles={customStyles}
                             components={animatedComponents}
@@ -130,7 +117,6 @@ const UpdateCatalogo: FC<any> = ({ show, catalogo, onClose }) => {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary'><i className={`bi-trash text-white fs-3`}></i></Button>
                     <Button variant="secondary" onClick={onClose}>{'Cancelar '}<i className={`bi-x text-white fs-3`}></i></Button>
                     <Button variant="primary" onClick={onClose}>{'Aplicar '}<i className={`bi-check2 text-white fs-3`}></i></Button>
                 </Modal.Footer>
@@ -139,4 +125,4 @@ const UpdateCatalogo: FC<any> = ({ show, catalogo, onClose }) => {
     );
 }
 
-export default UpdateCatalogo;
+export default AddCatalogo;

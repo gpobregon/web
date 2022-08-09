@@ -1,7 +1,7 @@
 import React, { useState, FC } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 
-const AddLanguaje: FC<any> = ({ show, language, onClose,}) => { 
+const AddLanguaje: FC<any> = ({ show, language, onClose, }) => {
 
     const [state, setState] = useState({
         id: language?.id ?? 0,
@@ -10,7 +10,7 @@ const AddLanguaje: FC<any> = ({ show, language, onClose,}) => {
     });
 
     const handleChange = (e: any) => setState(prev => ({ ...prev, [e.target.name]: e.target.value, }));
-    
+
     return (
         <>
             <Modal show={show} onHide={onClose}>
@@ -25,6 +25,7 @@ const AddLanguaje: FC<any> = ({ show, language, onClose,}) => {
                             value={state.nombre}
                             name='nombre'
                             onChange={handleChange}
+                            className={'mb-4'}
                         />
                     </Form.Group>
                     <Form.Group>

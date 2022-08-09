@@ -11,7 +11,7 @@ export const updateSiteMethod = 'site/update'
 
 export const getData = async (route: string) => {
   return new Promise((resolve, reject) => {
-    fetch(`${URL}/${route}/`, {method: 'GET', mode: 'cors'})
+    fetch(`${URL}/${route}/`, { method: 'GET', mode: 'cors' })
       .then((response) => response.json())
       .then((data) => {
         resolve(data)
@@ -24,10 +24,8 @@ export const getData = async (route: string) => {
 }
 
 export const deleteData = async (route: string, id: number) => {
-  
   return new Promise((resolve, reject) => {
-  
-    fetch(`${URL}/${route}/delete`, {method: 'POST',  headers: { 'Content-Type': 'application/json' }, mode: 'cors', body: JSON.stringify({ id_sitio: id })})
+    fetch(`${URL}/${route}/delete`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, mode: 'cors', body: JSON.stringify({ id_sitio: id }) })
       .then((response) => response.json())
       .then((data) => {
         resolve(data)
@@ -41,11 +39,11 @@ export const deleteData = async (route: string, id: number) => {
 
 export const postData = async (route: string, object: any) => {
   return new Promise((resolve, reject) => {
-    fetch(`${URL}/${route}`, {method: 'POST', mode: 'cors', body: JSON.stringify(object)})
+    fetch(`${URL}/${route}`, { method: 'POST', mode: 'cors', body: JSON.stringify(object) })
       .then((response) => response.json())
       .then((data) => {
         resolve(data)
-  
+
       })
       .catch((err) => {
         resolve(null)
