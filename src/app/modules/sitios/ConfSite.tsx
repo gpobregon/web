@@ -10,6 +10,7 @@ import {Tag }from '../../models/tag';
 import {status }from '../../models/status';
 import  swal  from "sweetalert";
 import { useForm } from 'react-hook-form';
+import  Interes  from "./components/sitios-interes/sala-interes";  
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     item => ({ label: item, value: item })
 );
@@ -231,25 +232,26 @@ const ConfSite = () => {
                 <li className='nav-item'>
                 <i
                     className={
-                      status.favorito == false
-                        ? 'fa-regular fa-star background-button'
-                        : 'fas fa-star background-button'
+                      'fa-regular fa-star background-button'
+                      // status.favorito == false
+                      //   ? 'fa-regular fa-star background-button'
+                        // : 'fas fa-star background-button'
                     }
                     id='center2'
-                    onClick={() => {
-                      status.favorito == false
-                        ? changeStatus(true, status.publicado, status.oculto)
-                        : changeStatus(false, status.publicado, status.oculto)
-                    }}
-                    style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                    // onClick={() => {
+                    //   status.favorito == false
+                    //     ? changeStatus(true, status.publicado, status.oculto)
+                    //     : changeStatus(false, status.publicado, status.oculto)
+                    // }}
+                    style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                   ></i>
                 </li>
                 <li className='nav-item'>
                   <i
                     className='fa-solid fa-qrcode background-button '
                     id='center2'
-                    onClick={handleShow}
-                    style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                    // onClick={handleShow}
+                    style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                   ></i>
                 </li>
                 <Modal show={show} onHide={handleClose}>
@@ -267,28 +269,23 @@ const ConfSite = () => {
                 </Modal>
                 <i
                   className={
-                    status.oculto == false
-                      ? 'fa-solid fa-eye-slash background-button'
-                      : 'fa-solid fa-eye background-button'
+                    'fa-solid fa-eye background-button'
+                    // status.oculto == false
+                    //   ? 'fa-solid fa-eye-slash background-button'
+                    //   : 'fa-solid fa-eye background-button'
                   }
                   id='center2'
-                  onClick={() => {
-                    status.oculto == false
-                      ? changeStatus(status.favorito, status.publicado, true)
-                      : changeStatus(status.favorito, status.publicado, false)
-                  }}
-                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                  // onClick={() => {
+                  //   status.oculto == false
+                  //     ? changeStatus(status.favorito, status.publicado, true)
+                  //     : changeStatus(status.favorito, status.publicado, false)
+                  // }}
+                  style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                 ></i>
                 <i
                   className='fa-solid fa-xmark background-button'
                   id='center2'
-                  onClick={() => {
-                    // var n = window.confirm('Esta seguro que desea eliminar?')
-                    // if (n == true) {
-                    //   navigate('/site')
-                    // } else {
-                    // }
-                    
+                  onClick={() => {   
                     discardChanges()
                   }}
                   style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
@@ -297,35 +294,36 @@ const ConfSite = () => {
                   className='fa-solid fa-floppy-disk background-button'
                   id='center2'
                   onClick={() => {
-                    postSite(site)
+                    // postSite(site)
                     // navigate('/site')
                   }}
-                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                  style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                 ></i>
 
                 <i
-                  onClick={() => {
-                    status.publicado == false
-                      ? changeStatus(status.favorito, true, status.oculto)
-                      : changeStatus(status.favorito, false, status.oculto)
-                  }}
+                  // onClick={() => {
+                  //   status.publicado == false
+                  //     ? changeStatus(status.favorito, true, status.oculto)
+                  //     : changeStatus(status.favorito, false, status.oculto)
+                  // }}
                   className={
-                    status.publicado == false
-                      ? 'fa-solid fa-download background-button'
-                      : 'fa-solid fa-upload background-button'
+                    'fa-solid fa-upload background-button'
+                    // status.publicado == false
+                    //   ? 'fa-solid fa-download background-button'
+                    //   : 'fa-solid fa-upload background-button'
                   }
                   id='center2'
-                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                  style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                 ></i>
-                <i className='fa-solid fa-gear background-button' id='center2'  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}></i>
+                <i className='fa-solid fa-gear background-button' id='center2'  style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}></i>
               </ul>
             </div>
           </div>
         </div>
       </div>
       <br />
-      <h1 style={{ color: 'white', fontSize: '18px', fontFamily: 'Lato' }}>Configuración del sitio</h1>
-      <h5 style={{color: '#565674', fontSize: '14px', fontFamily: 'Lato' }}>Lista de Sitios - Configuración del Sitio</h5>
+      <h1 style={{ color: 'white', fontSize: '18px' }}>Configuración del sitio</h1>
+      <h5 style={{color: '#565674', fontSize: '14px'}}>Lista de Sitios - Configuración del Sitio</h5>
       <br />
       <div className='row'>
         <div className='card centrado'>
@@ -391,13 +389,13 @@ const ConfSite = () => {
                 <br></br>
 
                 <div id='is-relative'>
-                  <label style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>Título</label>
+                  <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Título</label>
                   <br />
                   <input
                     type='text'
                     className='form-control'
                     value={site.nombre == '' ? '' : site.nombre}
-                    style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                    style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                     onChange={(e) => {
                       setSite({
                         id_sitio: site.id_sitio,
@@ -425,12 +423,12 @@ const ConfSite = () => {
                   <br></br>
                   <div className='row'>
                     <div className='col-6'>
-                      <label style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>GeoX</label>
+                      <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoX</label>
                       <input
                         type='number'
                         pattern='[0-9]*'
                         className='form-control'
-                        style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                        style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoX == '' ? '' : site.geoX}
                         onChange={(e) => {
                           setSite({
@@ -455,12 +453,12 @@ const ConfSite = () => {
                       <hr style={{ position: 'relative', top: '-20px' }}></hr>
                     </div>
                     <div className='col-6'>
-                      <label style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>GeoY</label>
+                      <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoY</label>
                       <input
                         type='number'
                         pattern='[0-9]*'
                         className='form-control'
-                        style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                        style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoY == '' ? '' : site.geoY}
                         onChange={(e) => {
                           setSite({
@@ -487,12 +485,12 @@ const ConfSite = () => {
                   </div>
                 </div>
                 <br />
-                <label  style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
+                <label  style={{ fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
                 <br></br>
                 <input
                   type='text'
                   className='form-control'
-                  style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                  style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                   value={site.ubicacion != '' ? site.ubicacion : ''}
                   onChange={(e) => {
                     setSite({
@@ -533,7 +531,7 @@ const ConfSite = () => {
                 <div className='row mt-6 gx-10 m-auto'>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
                     <div className='row'>
-                      <h2 className='col-md-12 mt-5 text-center' style={{fontFamily: 'Lato', fontSize: '18px'}}>Sitio Móvil</h2>
+                      <h2 className='col-md-12 mt-5 text-center' style={{ fontSize: '18px'}}>Sitio Móvil</h2>
                     </div>
                     <br></br>
                     <div className='row text-center'>
@@ -545,7 +543,7 @@ const ConfSite = () => {
                     <br></br>
                     <br />
                     <div className='row'>
-                      <p className=' text-movil col-md-12 text-center mt-5'>
+                      <p className=' col-md-12 text-center mt-5'>
                         Maquetar los elementos del sitio para versión móvil.
                       </p>
                     </div>
@@ -568,7 +566,7 @@ const ConfSite = () => {
                   </div>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
                     <div className='row text-center'>
-                      <h2 className='col-md-12 text-center mt-5' style={{fontFamily: 'Lato', fontSize: '18px'}}>Sitio Web</h2>
+                      <h2 className='col-md-12 text-center mt-5' style={{ fontSize: '18px'}}>Sitio Web</h2>
                     </div>
                     <br />
                     <div className='row text-center'>
@@ -577,7 +575,7 @@ const ConfSite = () => {
                     <br></br>
                     <br />
                     <div className='row'>
-                      <p className=' text-movil col-md-12 text-center mt-5'>
+                      <p className=' col-md-12 text-center mt-5'>
                         Maquetar los elementos del sitio para versión web
                       </p>
                     </div>
@@ -604,6 +602,7 @@ const ConfSite = () => {
       </div>
       <br />
       <br />
+                        <Interes/>
       {/*<h3>Puntos de interés</h3>
       <br />
       <div className='row'>

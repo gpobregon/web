@@ -328,7 +328,7 @@ const handleChange = (event:any) => {
               </Link>
               
               {site.nombre != '' ? (
-                <span className='font-size: 10rem;  font-family:Lato;'>
+                <span className='font-size: 10rem; '>
                 {site.nombre }
                 {'      '}   Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}
                   
@@ -448,8 +448,8 @@ const handleChange = (event:any) => {
         </div>
       </div>
       <br />
-      <h1 style={{ color: 'white', fontSize: '18px', fontFamily: 'Lato' }}>Configuración del sitio</h1>
-      <h5 style={{color: '#565674', fontSize: '14px', fontFamily: 'Lato' }}>Lista de Sitios - Configuración del Sitio</h5>
+      <h1 style={{ color: 'white', fontSize: '18px' }}>Configuración del sitio</h1>
+      <h5 style={{color: '#565674', fontSize: '14px' }}>Lista de Sitios - Configuración del Sitio</h5>
       <br />
       <div className='row'>
         <div className='card centrado'>
@@ -515,13 +515,13 @@ const handleChange = (event:any) => {
                 <br></br>
 
                 <div id='is-relative'>
-                  <label style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>Título</label>
+                  <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Título</label>
                   <br />
                   <input
                     type='text'
                     className='form-control'
                     value={site.nombre == '' ? '' : site.nombre}
-                    style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                    style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                     onChange={(e) => {
                       setSite({
                         id_sitio: site.id_sitio,
@@ -549,12 +549,12 @@ const handleChange = (event:any) => {
                   <br></br>
                   <div className='row'>
                     <div className='col-6'>
-                      <label style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>GeoX</label>
+                      <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoX</label>
                       <input
                         type='number'
                         pattern='[0-9]*'
                         className='form-control'
-                        style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                        style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoX == '' ? '' : site.geoX}
                         onChange={(e) => {
                           setSite({
@@ -579,12 +579,12 @@ const handleChange = (event:any) => {
                       <hr style={{ position: 'relative', top: '-20px' }}></hr>
                     </div>
                     <div className='col-6'>
-                      <label style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>GeoY</label>
+                      <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoY</label>
                       <input
                         type='number'
                         pattern='[0-9]*'
                         className='form-control'
-                        style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                        style={{ border: '0',  fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoY == '' ? '' : site.geoY}
                         onChange={(e) => {
                           setSite({
@@ -611,12 +611,12 @@ const handleChange = (event:any) => {
                   </div>
                 </div>
                 <br />
-                <label  style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
+                <label  style={{ fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
                 <br></br>
                 <input
                   type='text'
                   className='form-control'
-                  style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                  style={{ border: '0',  fontSize: '18px', color: '#FFFFFF' }}
                   value={site.ubicacion != '' ? site.ubicacion : ''}
                   onChange={(e) => {
                     setSite({
@@ -659,7 +659,7 @@ const handleChange = (event:any) => {
                 <div className='row mt-6 gx-10 m-auto'>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
                     <div className='row'>
-                      <h2 className='col-md-12 mt-5 text-center' style={{fontFamily: 'Lato', fontSize: '18px'}}>Sitio Móvil</h2>
+                      <h2 className='col-md-12 mt-5 text-center' style={{fontSize: '18px'}}>Sitio Móvil</h2>
                     </div>
                     <br></br>
                     <div className='row text-center'>
@@ -694,7 +694,7 @@ const handleChange = (event:any) => {
                   </div>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
                     <div className='row text-center'>
-                      <h2 className='col-md-12 text-center mt-5' style={{fontFamily: 'Lato', fontSize: '18px'}}>Sitio Web</h2>
+                      <h2 className='col-md-12 text-center mt-5' style={{ fontSize: '18px'}}>Sitio Web</h2>
                     </div>
                     <br />
                     <div className='row text-center'>
