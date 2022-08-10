@@ -1,28 +1,105 @@
 import React, { FC } from 'react';
-import { Col, Card, Button } from 'react-bootstrap';
-
+import { Col, Card, Button, Row } from 'react-bootstrap';
+import { Site } from '../../../models/site';
+import { getData, sitesMethod, deleteData } from '../../../services/api'
+import  swal  from "sweetalert";
+import SitiosPage from '../SitiosPage';
+import { useNavigate} from 'react-router-dom'
 type sitio = {
-    id: number,
-    titulo: string,
+    id_sitio: number
+    nombre: string
+    descripcion: string
     ubicacion: string
-}
+    geoX: string
+    geoY: string
+    portada_path: string
+    estado: number
+    creado: Date
+    editado: Date
+    categorias: [
+      {
+        id_categoria: number
+        nombre: string
+        estado: number
+      }
+    ]
+    id_municipio: number
+    favorito: boolean
+    publicado: boolean
+    oculto: boolean
+  }
+  
+  
 
 const Sitio: FC<sitio> = (props) => {
+  const navigate = useNavigate()
+      const deleteSites = async () => {
+        swal({
+            title: "¿Estas seguro de Eliminar  "+props.nombre+"?",
+            icon: "warning",
+            buttons:["No","Sí"],
+            
+          }).then(res=>{
+            if(res){
+                deleteData(sitesMethod, props.id_sitio)
+                swal({text:"Se elimino con éxito",
+                icon:"success",
+                timer:2000,
+                
+            })
+            window.location.reload(); //reload page
 
+            }
+          });
+      
+    }
     return (
-        <Col sm='6' md='3' className='pb-10'>
-            <Card style={{ backgroundColor: '#1e1e2d', padding: 20 }}>
+      <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+            <Card style={{ backgroundColor: '#1e1e2d', padding: 20,margin:'20px', width: '95%', height: '395px' }}>
 
-                <Card.Img variant='top' src={`https://picsum.photos/200/200?${props.id}`} className='mb-5' />
+                <Card.Img variant='top' src={`${props.portada_path}`} className='mb-5 'style={{ maxHeight:'70%' }} />
 
-                <Card.Title style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden' }}>{props.titulo}</Card.Title>
+                <Card.Title style={{  }}>{props.nombre}</Card.Title>
                 <Card.Text className='text-muted'>{props.ubicacion}</Card.Text>
                 <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
-                    <Button style={{ width: '48%' }}>Editar</Button>
-                    <Button className='bg-secondary' style={{ width: '48%' }}>Eliminar</Button>
+                    <Button style={{ width: '50%' }}
+                     onClick={(event) => {
+                      console.log(props)
+                      navigate('/sitios/edit', {
+                        state: {
+                          id_sitio: props.id_sitio,
+                          nombre: props.nombre,
+                          descripcion: props.descripcion,
+                          ubicacion: props.ubicacion,
+                          geoX: props.geoX,
+                          geoY: props.geoY,
+                          portada_path: props.portada_path,
+                          estado: props.estado,
+                          creado: props.creado,
+                          editado: props.editado,
+                          categorias: props.categorias,
+                          id_municipio: props.id_municipio,
+                          favorito: props.favorito,
+                          publicado: props.publicado,
+                          oculto: props.oculto,
+                        },
+                      })
+                    }}> 
+                        <i className="bi bi-pencil-square"></i>
+                        Editar
+                    </Button>
+                    <Button className='bg-secondary' style={{ width: '50%' }}  onClick={deleteSites}>
+                        <i className="bi bi-trash3"></i>
+                        Eliminar
+                        
+                        </Button>
+                        
                 </div>
+                <br></br>
+                <br></br>
             </Card>
-        </Col >
+           
+        </div >
     );
 }
 

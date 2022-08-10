@@ -9,6 +9,8 @@ import { WithChildren } from '../../_metronic/helpers'
 import BuilderPageWrapper from '../pages/layout-builder/BuilderPageWrapper'
 import CatalogosPage from '../modules/catalogos/catalogos-page';
 import SitiosPage from '../modules/sitios/SitiosPage'
+import ConfSite  from "../modules/sitios/ConfSite";
+import EditSite  from "../modules/sitios/edit-site";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
@@ -26,6 +28,8 @@ const PrivateRoutes = () => {
 
         {/* Pages */}
         <Route path='dashboard' element={<DashboardWrapper />} />
+        <Route path='/sitios/create' element={<ConfSite />} />
+        <Route path='/sitios/edit' element={<EditSite />} />
         <Route path='builder' element={<BuilderPageWrapper />} />
         <Route path='menu-test' element={<MenuTestPage />} />
         <Route path='catalogos' element={<CatalogosPage />} />

@@ -38,7 +38,7 @@ export function HeaderWrapper() {
           <Link to='/dashboard' className='d-lg-none'>
             <img
               alt='Logo'
-              src={toAbsoluteUrl('/media/logos/demo4-mobile.svg')}
+              src={toAbsoluteUrl('/media/logos/demo4.svg')}
               className='h-30px'
             />
           </Link>

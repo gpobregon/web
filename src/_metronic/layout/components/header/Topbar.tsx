@@ -36,9 +36,9 @@ const Topbar: FC = () => {
       </div>
 
       {/* CHAT */}
-      <div className={clsx('d-flex align-items-center', itemClass)}>
+      {/* <div className={clsx('d-flex align-items-center', itemClass)}> */}
         {/* begin::Menu wrapper */}
-        <div
+        {/* <div
           className={clsx(
             'btn btn-icon btn-active-light-primary btn-custom position-relative',
             btnClass
@@ -48,14 +48,14 @@ const Topbar: FC = () => {
           <KTSVG path='/media/icons/duotune/communication/com012.svg' className={btnIconClass} />
 
           <span className='bullet bullet-dot bg-success h-6px w-6px position-absolute translate-middle top-0 start-50 animation-blink'></span>
-        </div>
+        </div> */}
         {/* end::Menu wrapper */}
-      </div>
+      {/* </div> */}
 
       {/* CONFIGURACION */}
-      <div className={clsx('d-flex align-items-center', itemClass)}>
+      {/* <div className={clsx('d-flex align-items-center', itemClass)}> */}
         {/* begin::Menu wrapper */}
-        <div
+        {/* <div
           className={clsx('btn btn-icon btn-active-light-primary btn-custom', btnClass)}
           data-kt-menu-trigger='click'
           data-kt-menu-attach='parent'
@@ -63,9 +63,9 @@ const Topbar: FC = () => {
         >
           <KTSVG path='/media/icons/duotune/general/gen025.svg' className={btnIconClass} />
         </div>
-        <QuickLinks />
+        <QuickLinks /> */}
         {/* end::Menu wrapper */}
-      </div>
+      {/* </div> */}
 
       {/* begin::User */}
       <div className={clsx('d-flex align-items-center', itemClass)} id='kt_header_user_menu_toggle'>
