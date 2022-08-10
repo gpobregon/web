@@ -1,16 +1,18 @@
-import { lazy, FC, Suspense } from 'react'
-import { Route, Routes, Navigate } from 'react-router-dom'
-import { MasterLayout } from '../../_metronic/layout/MasterLayout'
+import {lazy, FC, Suspense} from 'react'
+import {Route, Routes, Navigate} from 'react-router-dom'
+import {MasterLayout} from '../../_metronic/layout/MasterLayout'
 import TopBarProgress from 'react-topbar-progress-indicator'
-import { DashboardWrapper } from '../pages/dashboard/DashboardWrapper'
-import { MenuTestPage } from '../pages/MenuTestPage'
-import { getCSSVariableValue } from '../../_metronic/assets/ts/_utils'
-import { WithChildren } from '../../_metronic/helpers'
+import {DashboardWrapper} from '../pages/dashboard/DashboardWrapper'
+import {MenuTestPage} from '../pages/MenuTestPage'
+import {getCSSVariableValue} from '../../_metronic/assets/ts/_utils'
+import {WithChildren} from '../../_metronic/helpers'
 import BuilderPageWrapper from '../pages/layout-builder/BuilderPageWrapper'
-import CatalogosPage from '../modules/catalogos/catalogos-page';
+import ReportsPage from '../modules/reports/ReportsPage'
+import CatalogosPage from '../modules/catalogos/catalogos-page'
 import SitiosPage from '../modules/sitios/SitiosPage'
-import ConfSite  from "../modules/sitios/ConfSite";
-import EditSite  from "../modules/sitios/edit-site";
+import ConfSite from '../modules/sitios/ConfSite'
+import EditSite from '../modules/sitios/edit-site'
+import MostVistedReport from '../modules/reports/MostVistedReport'
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
@@ -33,6 +35,8 @@ const PrivateRoutes = () => {
         <Route path='builder' element={<BuilderPageWrapper />} />
         <Route path='menu-test' element={<MenuTestPage />} />
         <Route path='catalogos' element={<CatalogosPage />} />
+        <Route path='reportes' element={<ReportsPage />} />
+        <Route path='/reportes/sitios-mas-visitados' element={<MostVistedReport />} />
         <Route path='sitios' element={<SitiosPage />} />
         {/* Lazy Modules */}
         <Route
@@ -90,7 +94,7 @@ const PrivateRoutes = () => {
   )
 }
 
-const SuspensedView: FC<WithChildren> = ({ children }) => {
+const SuspensedView: FC<WithChildren> = ({children}) => {
   const baseColor = getCSSVariableValue('--kt-primary')
   TopBarProgress.config({
     barColors: {
@@ -102,4 +106,4 @@ const SuspensedView: FC<WithChildren> = ({ children }) => {
   return <Suspense fallback={<TopBarProgress />}>{children}</Suspense>
 }
 
-export { PrivateRoutes }
+export {PrivateRoutes}
