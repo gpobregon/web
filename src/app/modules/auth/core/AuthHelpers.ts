@@ -1,7 +1,8 @@
-import {AuthModel} from './_models'
+import {  CognitoUser } from 'amazon-cognito-identity-js';
+
 
 const AUTH_LOCAL_STORAGE_KEY = 'kt-auth-react-v'
-const getAuth = (): AuthModel | undefined => {
+const getAuth = (): CognitoUser | undefined => {
   if (!localStorage) {
     return
   }
@@ -12,7 +13,7 @@ const getAuth = (): AuthModel | undefined => {
   }
 
   try {
-    const auth: AuthModel = JSON.parse(lsValue) as AuthModel
+    const auth: CognitoUser = JSON.parse(lsValue) as CognitoUser
     if (auth) {
       // You can easily check auth_token expiration also
       return auth
@@ -22,7 +23,7 @@ const getAuth = (): AuthModel | undefined => {
   }
 }
 
-const setAuth = (auth: AuthModel) => {
+const setAuth = (auth: CognitoUser|any) => {
   if (!localStorage) {
     return
   }
@@ -47,19 +48,6 @@ const removeAuth = () => {
   }
 }
 
-export function setupAxios(axios: any) {
-  axios.defaults.headers.Accept = 'application/json'
-  axios.interceptors.request.use(
-    (config: {headers: {Authorization: string}}) => {
-      const auth = getAuth()
-      if (auth && auth.api_token) {
-        config.headers.Authorization = `Bearer ${auth.api_token}`
-      }
 
-      return config
-    },
-    (err: any) => Promise.reject(err)
-  )
-}
 
 export {getAuth, setAuth, removeAuth, AUTH_LOCAL_STORAGE_KEY}
