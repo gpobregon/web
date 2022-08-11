@@ -83,13 +83,11 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
 
     const getLanguages = async () => {
         const languages: any = await getData(languagesMethod)
-        console.log(languages.data)
         setLanguages(languages.data as CatalogLanguage[])
     }
 
     useEffect(() => {
         getLanguages()
-        console.log(languages)
     }, [])
 
     const languagesOptions = languages.map((language) => ({

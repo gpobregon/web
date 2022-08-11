@@ -82,26 +82,16 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag}) => {
-    const [tag, setTag] = useState({
-        id_categoria: catalogo?.id ?? 1,
-        nombre: catalogo?.nombre ?? '',
-        icono: catalogo?.icono ?? '',
-        estado: catalogo?.estado ?? 1,
-        id_lenguaje: catalogo?.idioma?.id ?? '',
-    })
-
+const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}) => {
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
     const getLanguages = async () => {
         const languages: any = await getData(languagesMethod)
-        console.log(languages.data)
         setLanguages(languages.data as CatalogLanguage[])
     }
 
     useEffect(() => {
         getLanguages()
-        console.log(languages)
     }, [])
 
     const languagesOptions = languages.map((language) => ({
@@ -109,9 +99,23 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag}) => {
         label: language.nombre,
     }))
 
+    const [tag, setTag] = useState({
+        id_categoria: 0,
+        nombre: '',
+        icono: '',
+        estado: 1,
+        id_lenguaje: 0,
+    })
+
+    let modifiedTagDelete = {
+        id_categoria: catalogo.id_categoria,
+        id_lenguaje: catalogo.idioma?.id,
+        estado: 0,
+    }
+
     const handleChangeIcon = (event: any) => {
         setTag({
-            id_categoria: tag.id_categoria,
+            id_categoria: catalogo.id_categoria,
             nombre: tag.nombre,
             icono: event.value,
             estado: tag.estado,
@@ -121,7 +125,7 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag}) => {
 
     const handleChangeLanguage = (event: any) => {
         setTag({
-            id_categoria: tag.id_categoria,
+            id_categoria: catalogo.id_categoria,
             nombre: tag.nombre,
             icono: tag.icono,
             estado: tag.estado,
@@ -145,7 +149,7 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag}) => {
                             className={'mb-4'}
                             onChange={(e) => {
                                 setTag({
-                                    id_categoria: tag.id_categoria,
+                                    id_categoria: catalogo.id_categoria,
                                     nombre: e.target.value,
                                     icono: tag.icono,
                                     estado: tag.estado,
@@ -158,7 +162,10 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag}) => {
                     <Form.Group>
                         <Form.Label>{'Icono'}</Form.Label>
                         <Select
-                            defaultInputValue={catalogo.icono}
+                            defaultValue={{
+                                label: catalogo?.icono,
+                                value: catalogo?.icono,
+                            }}
                             options={optionsWithIcons}
                             styles={customStyles}
                             components={animatedComponents}
@@ -170,10 +177,9 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag}) => {
                     <Form.Group>
                         <Form.Label>{'Idioma'}</Form.Label>
                         <Select
-                            defaultInputValue={catalogo.idioma?.nombre}
                             defaultValue={{
-                                label: catalogo.idioma?.nombre,
-                                value: catalogo.idioma?.id,
+                                label: catalogo?.idioma?.nombre,
+                                value: catalogo?.idioma?.id,
                             }}
                             options={languagesOptions}
                             styles={customStyles}
@@ -183,7 +189,12 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag}) => {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary'>
+                    <Button
+                        variant='secondary'
+                        onClick={() => {
+                            deleteTag(modifiedTagDelete)
+                        }}
+                    >
                         <i className={`bi-trash text-white fs-3`}></i>
                     </Button>
                     <Button variant='secondary' onClick={onClose}>
@@ -193,6 +204,13 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag}) => {
                     <Button
                         variant='primary'
                         onClick={() => {
+                            setTag({
+                                id_categoria: catalogo.id_categoria,
+                                nombre: tag.nombre,
+                                icono: tag.icono,
+                                estado: 1,
+                                id_lenguaje: tag.id_lenguaje,
+                            })
                             updateTag(tag)
                         }}
                     >

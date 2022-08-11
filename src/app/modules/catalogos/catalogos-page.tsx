@@ -12,6 +12,7 @@ import {
     addCategoryMethod,
     addLanguageMethod,
     categorysMethod,
+    deleteData,
     getData,
     languagesMethod,
     postData,
@@ -45,13 +46,11 @@ const CatalogosPage = () => {
 
     const getTags = async () => {
         const catalogos: any = await getData(categorysMethod)
-        console.log(catalogos)
         setCatalogos(catalogos as CatalogTag[])
     }
 
     const getLanguages = async () => {
         const lenguaje: any = await getData(languagesMethod)
-        console.log(lenguaje.data)
         setLanguages(lenguaje.data as CatalogLanguage[])
     }
 
@@ -65,8 +64,7 @@ const CatalogosPage = () => {
     // TODO: addTag
     const addTag = async (tag: any) => {
         if (tag.nombre != '' && tag.icono != '') {
-            let catalogoTag: any = await postData(addCategoryMethod, tag)
-            console.log(catalogoTag)
+            await postData(addCategoryMethod, tag)
             setModalAddTag(false)
             getTags()
         } else {
@@ -77,8 +75,7 @@ const CatalogosPage = () => {
     // TODO: addLanguage
     const addLanguage = async (language: any) => {
         if (language.nombre != '' && language.descripcion != '') {
-            const sit: any = await postData(addLanguageMethod, language)
-            console.log(language)
+            await postData(addLanguageMethod, language)
             setModalAddLanguage(false)
             getLanguages()
         } else {
@@ -89,13 +86,23 @@ const CatalogosPage = () => {
     // TODO: updateTag
     const updateTag = async (tag: any) => {
         if (tag.nombre != '' && tag.icono != '') {
-            let catalogoTag: any = await postData(updateCategoryMethod, tag)
-            console.log(catalogoTag)
+            await postData(updateCategoryMethod, tag)
             setModalUpdateTag({show: false, catalogo: {}})
             getTags()
         } else {
             alertNotNullInputs()
         }
+    }
+
+    // TODO: deleteTag
+    const deleteTag = async (tag: any) => {
+        await deleteData(categorysMethod, tag)
+        setModalUpdateTag({show: false, catalogo: {}})
+        getTags()
+        swal({
+            title: 'Se ha eliminado la etiqueta',
+            icon: 'success',
+        })
     }
 
     const searchItems = (searchValue: any) => {
@@ -213,6 +220,7 @@ const CatalogosPage = () => {
                     onClose={() => setModalUpdateTag({show: false, catalogo: {}})}
                     catalogo={modalUpdateTag.catalogo}
                     updateTag={updateTag}
+                    deleteTag={deleteTag}
                 />
             </Container>
 
