@@ -104,7 +104,7 @@ const ConfSite = () => {
     const [show, setShow] = useState(false)
     const [categorys, setCategorys] = useState<Tag[]>([])
     const [site, setSite] = useState({
-        id_sitio: 1,
+        id_sitio: 0,
         nombre: '',
         descripcion: 'eeee',
         ubicacion: '',

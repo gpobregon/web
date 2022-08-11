@@ -1,9 +1,10 @@
 import { type } from 'os';
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Card, Button, Row, Modal } from 'react-bootstrap';
-import { getRooms, postData, updateSiteMethod } from '../../../../services/api'
+import { RoomsMethod, postData, updateSiteMethod ,addRoom,deleteData} from '../../../../services/api'
 import { Room } from "../../../../models/rooms";
 import Rooms from './components/rooms';
+import  swal  from "sweetalert";
 import { PointInteres } from "../../../../models/sitio-interes";
 
 type id_sitio = {
@@ -13,6 +14,12 @@ type id_sitio = {
 const Interes: FC<id_sitio> = (props) => {
     const [room, setRooms] = useState<Room[]>([])
     const [puntoInteres, setPuntoInteres] = useState<PointInteres[]>([])
+    const [createRoom, setCreateRoom] = useState({
+        id_sitio:props.id_sitio, 
+        nombre:'sala test ',
+        descripcion:'desc sala ',
+        "tipo":true
+    })
     const handleClose = () => setShow(false)  //modal close qr
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
@@ -22,15 +29,51 @@ const Interes: FC<id_sitio> = (props) => {
 
 
     const getSalas = async () => {
-        const rooms: any = await postData(getRooms, props)
+        const rooms: any = await postData(RoomsMethod, props)
         setRooms(rooms.salas as Room[])
     }
 
     const seteatPuntoInteres = (interes: any) => {
         setPuntoInteres(interes)
-        console.log(puntoInteres)
+        // console.log(puntoInteres)
     }
 
+    const addNewRoom = async () => {
+         await postData(addRoom, createRoom)
+        getSalas()
+    }
+    const deleteRoom = (id: number,longitud:number) => {
+        if (longitud > 0) {
+            swal({
+                icon: "error",
+                title: "¡Error al Eliminar Sala"+id+"!",
+                text: "No se puede eliminar una sala con puntos de interés",
+              });
+        } else {
+            swal({
+                title: "¿Estas seguro de Eliminar Sala "+id+"?",
+                icon: "warning",
+                buttons:["No","Sí"],
+                
+              }).then(async res=>{
+                if(res){
+                    await deleteData(RoomsMethod, { id_sala: id })
+                    swal({text:"Se elimino con éxito",
+                    icon:"success",
+                    timer:2000,
+                    
+                })
+                getSalas()
+                }
+              });
+        }
+
+     
+        
+
+     
+      
+    }
     return (
         <>
             <div className=' '>
@@ -58,17 +101,39 @@ const Interes: FC<id_sitio> = (props) => {
                                 }  */}
 
                                 {room?.map((sala) => (
-                                    <Button variant="secondary" size="sm" onClick={() => {
-                                        seteatPuntoInteres(sala.points_of_interest as PointInteres[])
-                                    }}
-                                        style={{ marginRight: '4px' }}>
+                                    <><Button variant="outline-dark" size="sm" onClick={() => {
+                                        seteatPuntoInteres(sala.points_of_interest as PointInteres[]);
+                                    } }
+                                       >
                                         Sitio {sala.id_sala}
+                                        
                                     </Button>
-                                ))}
+                                    <Button variant="outline-dark" size="sm" onClick={() => {
+                                        deleteRoom(sala.id_sala,sala.points_of_interest.length)
+                                    } }
+                                    style={{width:'5px',height:'40px',marginRight:'10px'}} >
+                                       <i
+                                        className='fa-solid fa-xmark '
+                                        style={{ color: '#92929F',display:'flex',justifyContent:'center',alignItems:'center'}}
+                                    ></i>
+                                    </Button>
+                                    </>
+                                ))
+                                }
 
-                                <Button variant="secondary" size="sm">
+                                <Button variant="outline-dark" size="sm" onClick={() =>{
+                                    addNewRoom()
+                                }}>
                                     Nueva Sala
+                                    <i
+                                        className='fa-solid bi-plus '
+                                        id='center2'
+                                        onClick={() => {
+                                        } }
+                                        style={{ color: '#92929F',fontSize: '20px',marginTop:'-5px' }}
+                                    ></i>
                                 </Button>
+                                
                             </div>
                             <hr style={{ position: 'relative' }}></hr>
                             <br></br>
@@ -195,7 +260,7 @@ const Interes: FC<id_sitio> = (props) => {
                             }
 
 
-
+{/* 
                             <div className='row'>
                                 <div className='col-xs-12 col-md-12 col-lg-6'>
 
@@ -253,7 +318,7 @@ const Interes: FC<id_sitio> = (props) => {
                                     </div>
 
                                 </div>
-                            </div>
+                            </div> */}
 
 
                             <br></br>

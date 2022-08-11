@@ -8,7 +8,8 @@ export const sitesMethod = 'site'
 export const categorysMethod = 'site/categories'
 export const statesMethod = 'site/state'
 export const updateSiteMethod = 'site/update'
-export const getRooms = 'site/rooms'
+export const RoomsMethod = 'site/rooms'
+export const addRoom = 'site/rooms/add'
 
 export const getData = async (route: string) => {
   return new Promise((resolve, reject) => {
@@ -24,11 +25,10 @@ export const getData = async (route: string) => {
   })
 }
 
-export const deleteData = async (route: string, id: number) => {
+export const deleteData = async (route: string, object:any) => {
   
   return new Promise((resolve, reject) => {
-  
-    fetch(`${URL}/${route}/delete`, {method: 'POST',  headers: { 'Content-Type': 'application/json' }, mode: 'cors', body: JSON.stringify({ id_sitio: id })})
+    fetch(`${URL}/${route}/delete`, {method: 'POST', mode: 'cors', body: JSON.stringify(object)})
       .then((response) => response.json())
       .then((data) => {
         resolve(data)

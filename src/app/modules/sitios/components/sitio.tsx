@@ -39,16 +39,16 @@ const Sitio: FC<sitio> = (props) => {
             icon: "warning",
             buttons:["No","Sí"],
             
-          }).then(res=>{
+          }).then(async res=>{
             if(res){
-                deleteData(sitesMethod, props.id_sitio)
+              await deleteData(sitesMethod, {id_sitio: props.id_sitio})
                 swal({text:"Se elimino con éxito",
                 icon:"success",
                 timer:2000,
                 
             })
       
-            window.location.reload(); //reload page
+            // window.location.reload(); //reload page
 
             }
           });

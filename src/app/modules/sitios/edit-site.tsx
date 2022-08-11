@@ -87,9 +87,9 @@ const EditSite = () => {
  
     const {state} = useLocation()
     const [site, setSite] = useState(state as Site)
-    const handleClose = () => setShow(false)
-    const handleShow = () => setShow(true)
-    const [show, setShow] = useState(false)
+    const handleClose = () => setShow(false)  //modal close qr
+    const handleShow = () => setShow(true)  //modal open qr
+    const [show, setShow] = useState(false) //modal show qr
     let [categorys, setCategorys] = useState<Tag[]>([])
     const [editcategorys, setEditCategory] = useState<Tag[]>([])
     const [categorysHolder, setCategorysHolder] = useState("")
@@ -308,22 +308,27 @@ const handleChange = (event:any) => {
     <>
       <div className=' '>
         <div className='row'>
-          <div className='col-xs-12 col-md-6 col-lg-6'>
+          <div className='col-xs-12 col-md-5 col-lg-6 d-flex'>
             <div id='center'>
               <Link to={'/sitios'}>
-                <i className='fa-solid fa-less-than background-button ' id='center2'   ></i>
+                <i className='fa-solid fa-less-than background-button ' id='center2'    style={{display:'flex',marginRight:'6px'}} ></i>
               </Link>
               
-              {site.nombre != '' ? (
+             
+            </div>
+            <div id='center'>
+            {site.nombre != '' ? (
                 <span className='font-size: 10rem; '>
-                {site.nombre }
-                {'      '}   Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}
+            <h1 style={{marginTop:'10px',marginRight:'5px'}} >{   site.nombre }</h1> 
+               
                   
                 </span>
               ) : (
                 <p></p>
               )}
-             
+            </div>
+            <div id='center'>
+          <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p> 
             </div>
           </div>
           <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
@@ -717,6 +722,7 @@ const handleChange = (event:any) => {
       </div>
       <br />
       <br />
+      <h3>Puntos de interés</h3>
       <Interes id_sitio={site.id_sitio} />
     </>
   )
