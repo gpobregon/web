@@ -3,6 +3,7 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Form, Row} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
+import ResultMostVisited from './components/ResultMostVisited'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -102,7 +103,7 @@ const MostVistedReport = () => {
             </Row>
 
             <div
-                className=''
+                className='mb-9'
                 style={{
                     backgroundColor: '#1E1E2D',
                     borderRadius: '5px',
@@ -177,6 +178,9 @@ const MostVistedReport = () => {
                     </Row>
                 </div>
             </div>
+
+            <ResultMostVisited />
+
         </>
     )
 }
