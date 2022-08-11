@@ -1,7 +1,16 @@
-import React, { useState, FC } from 'react';
+import React, {useState, FC, useEffect} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import { Button, Modal, Form } from 'react-bootstrap';
+import {Button, Modal, Form} from 'react-bootstrap'
+
+import {
+    addCategoryMethod,
+    categorysMethod,
+    languagesMethod,
+    getData,
+    postData,
+} from '../../../services/api'
+import {CatalogLanguage} from '../../../models/catalogLanguage'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -47,28 +56,17 @@ const customStyles = {
 }
 
 const options = [
-    { value: 'car-front', label: 'car-front' },
-    { value: 'book', label: 'book' },
-    { value: 'apple', label: 'apple' },
-    { value: 'tree', label: 'tree' },
-    { value: 'bank', label: 'bank' },
-    { value: 'airplane', label: 'airplane' },
-]
-
-const languages = [
-    {
-        value: 'Español (Guatemala)',
-        label: 'Español (Guatemala)',
-    },
-    {
-        value: 'Inglés (EEUU)',
-        label: 'Inglés (EEUU)',
-    },
+    {value: 'car-front', label: 'car-front'},
+    {value: 'book', label: 'book'},
+    {value: 'apple', label: 'apple'},
+    {value: 'tree', label: 'tree'},
+    {value: 'bank', label: 'bank'},
+    {value: 'airplane', label: 'airplane'},
 ]
 
 const optionTemplate = (option: any) => (
     <span>
-        <i className={`bi-${option.value} text-white`} style={{ fontSize: 16 }}></i>
+        <i className={`bi-${option.value} text-white`} style={{fontSize: 16}}></i>
         {`ㅤ${option.label}`}
     </span>
 )
@@ -80,7 +78,53 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const AddCatalogo: FC<any> = ({ show, onClose }) => {
+const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
+    const [languages, setLanguages] = useState<CatalogLanguage[]>([])
+
+    const getLanguages = async () => {
+        const languages: any = await getData(languagesMethod)
+        console.log(languages.data)
+        setLanguages(languages.data as CatalogLanguage[])
+    }
+
+    useEffect(() => {
+        getLanguages()
+        console.log(languages)
+    }, [])
+
+    const languagesOptions = languages.map((language) => ({
+        value: language.id_lenguaje,
+        label: language.nombre,
+    }))
+
+    const [tag, setTag] = useState({
+        id_categoria: 1,
+        nombre: '',
+        icono: '',
+        estado: 1,
+        id_lenguaje: 1,
+    })
+
+    const handleChangeIcon = (event: any) => {
+        setTag({
+            id_categoria: tag.id_categoria,
+            nombre: tag.nombre,
+            icono: event.value,
+            estado: tag.estado,
+            id_lenguaje: tag.id_lenguaje,
+        })
+    }
+
+    const handleChangeLanguage = (event: any) => {
+        setTag({
+            id_categoria: tag.id_categoria,
+            nombre: tag.nombre,
+            icono: tag.icono,
+            estado: tag.estado,
+            id_lenguaje: event.value,
+        })
+    }
+
     return (
         <>
             <Modal show={show} onHide={onClose}>
@@ -94,7 +138,16 @@ const AddCatalogo: FC<any> = ({ show, onClose }) => {
                             type='text'
                             name='nombre'
                             className={'mb-4'}
-                        />
+                            onChange={(e) => {
+                                setTag({
+                                    id_categoria: tag.id_categoria,
+                                    nombre: e.target.value,
+                                    icono: tag.icono,
+                                    estado: tag.estado,
+                                    id_lenguaje: tag.id_lenguaje,
+                                })
+                            }}
+                        ></Form.Control>
                     </Form.Group>
 
                     <Form.Group>
@@ -104,25 +157,38 @@ const AddCatalogo: FC<any> = ({ show, onClose }) => {
                             styles={customStyles}
                             components={animatedComponents}
                             className={'mb-4'}
+                            onChange={handleChangeIcon}
                         />
                     </Form.Group>
 
                     <Form.Group>
                         <Form.Label>{'Idioma'}</Form.Label>
                         <Select
-                            options={languages}
+                            options={languagesOptions}
                             styles={customStyles}
                             components={animatedComponents}
+                            onChange={handleChangeLanguage}
                         />
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={onClose}>{'Cancelar '}<i className={`bi-x text-white fs-3`}></i></Button>
-                    <Button variant="primary" onClick={onClose}>{'Aplicar '}<i className={`bi-check2 text-white fs-3`}></i></Button>
+                    <Button variant='secondary' onClick={onClose}>
+                        {'Cancelar '}
+                        <i className={`bi-x text-white fs-3`}></i>
+                    </Button>
+                    <Button
+                        variant='primary'
+                        onClick={() => {
+                            addTag(tag)
+                        }}
+                    >
+                        {'Añadir '}
+                        <i className={`bi-check2 text-white fs-3`}></i>
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </>
-    );
+    )
 }
 
-export default AddCatalogo;
+export default AddCatalogo

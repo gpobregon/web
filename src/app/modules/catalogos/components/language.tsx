@@ -4,11 +4,7 @@ import {Col, Card, Button, Figure} from 'react-bootstrap'
 const Language: FC<any> = ({data, onClickLanguage}) => {
     return (
         <Col sm='4' md='12' className='mb-9'>
-            <Card
-                className='d-flex align-items-center flex-row py-3 px-8'
-                style={{
-                }}
-            >
+            <Card className='d-flex align-items-center flex-row py-3 px-8' style={{}}>
                 <i className='bi bi-list fs-2'></i>
 
                 <div className='d-flex flex-column my-4 px-5 justify-content-between'>

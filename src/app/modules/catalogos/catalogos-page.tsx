@@ -6,141 +6,102 @@ import UpdateCatalogo from './components/update-catalogo'
 import Language from './components/language'
 import AddLanguaje from './components/add-language'
 import AddCatalogo from './components/add-catalogo'
+import {CatalogTag} from '../../models/catalogTag'
+import {CatalogLanguage} from '../../models/catalogLanguage'
+import {
+    addCategoryMethod,
+    addLanguageMethod,
+    categorysMethod,
+    getData,
+    languagesMethod,
+    postData,
+    updateCategoryMethod,
+} from '../../services/api'
+import swal from 'sweetalert'
 
 const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
+    const [modalAddLanguage, setModalAddLanguage] = useState(false)
+
     const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
-    const [addModalLanguage, setAddModalLanguage] = useState({show: false, language: {}})
 
     const [optionSort, setOptionSort] = useState('Agregado recientemente')
     const [searchInput, setSearchInput] = useState('')
-    const [catalogos, setCatalogos] = useState({
-        /* count: 100,
-        pages: 20,
-        page: 5,
-        sites: 2, */
-        data: [
-            {
-                id: 1,
-                nombre: 'Parque',
-                icono: 'tree',
-                idioma: {
-                    id: 1,
-                    nombre: 'Español (Guatemala)',
-                    descripcion: 'El idioma español está disponible',
-                },
-            },
-            {
-                id: 2,
-                nombre: 'Edificio',
-                icono: 'building',
-                idioma: {
-                    id: 2,
-                    nombre: 'Inglés (EEUU)',
-                    descripcion: 'English language is available',
-                },
-            },
-            {
-                id: 3,
-                nombre: 'Carro',
-                icono: 'car-front',
-                idioma: {
-                    id: 1,
-                    nombre: 'Español (Guatemala)',
-                    descripcion: 'El idioma español está disponible',
-                },
-            },
-            {
-                id: 4,
-                nombre: 'Avion',
-                icono: 'airplane',
-                idioma: {
-                    id: 2,
-                    nombre: 'Inglés (EEUU)',
-                    descripcion: 'English language is available',
-                },
-            },
-            {
-                id: 5,
-                nombre: 'Tecnologia',
-                icono: 'apple',
-                idioma: {
-                    id: 1,
-                    nombre: 'Español (Guatemala)',
-                    descripcion: 'El idioma español está disponible',
-                },
-            },
-            {
-                id: 6,
-                nombre: 'Museo',
-                icono: 'bank',
-                idioma: {
-                    id: 2,
-                    nombre: 'Inglés (EEUU)',
-                    descripcion: 'English language is available',
-                },
-            },
-            {
-                id: 7,
-                nombre: 'Libro',
-                icono: 'book',
-                idioma: {
-                    id: 1,
-                    nombre: 'Español (Guatemala)',
-                    descripcion: 'El idioma español está disponible',
-                },
-            },
-            {
-                id: 8,
-                nombre: 'Radio',
-                icono: 'boombox',
-                idioma: {
-                    id: 2,
-                    nombre: 'Inglés (EEUU)',
-                    descripcion: 'English language is available',
-                },
-            },
-        ],
+    const [catalogos, setCatalogos] = useState<CatalogTag[]>([])
+    const [filteredResults, setFilteredResults] = useState(catalogos)
+
+    const [languages, setLanguages] = useState<CatalogLanguage[]>([])
+    const [language, setLanguage] = useState({
+        id_lenguaje: 1,
+        nombre: '',
+        descripcion: '',
+        estado: 1,
     })
 
-    const [stateLanguage, setStateLanguage] = useState({
-        data: [
-            {
-                id: 1,
-                nombre: 'Español (Guatemala)',
-                descripcion: 'El idioma español está disponible',
-            },
-            {
-                id: 2,
-                nombre: 'Inglés (EEUU)',
-                descripcion: 'English language is available',
-            },
-        ],
-    })
+    useEffect(() => {
+        getTags()
+        getLanguages()
+    }, [])
 
-    const [filteredResults, setFilteredResults] = useState(catalogos.data)
+    const getTags = async () => {
+        const catalogos: any = await getData(categorysMethod)
+        console.log(catalogos)
+        setCatalogos(catalogos as CatalogTag[])
+    }
 
-    /* useEffect(() => {
-        getEtiquetas()
+    const getLanguages = async () => {
+        const lenguaje: any = await getData(languagesMethod)
+        console.log(lenguaje.data)
+        setLanguages(lenguaje.data as CatalogLanguage[])
+    }
 
-        console.log(etiquetas)
-        // console.log(catalogos.data[0].idioma.nombre)
-    }, []) */
+    const alertNotNullInputs = async () => {
+        swal({
+            text: '¡Faltan campos por completar!',
+            icon: 'warning',
+        })
+    }
 
-    /* const getEtiquetas =async () => {
-        setEtiquetas(catalogos.data as Etiquetas[])
+    // TODO: addTag
+    const addTag = async (tag: any) => {
+        if (tag.nombre != '' && tag.icono != '') {
+            let catalogoTag: any = await postData(addCategoryMethod, tag)
+            console.log(catalogoTag)
+            setModalAddTag(false)
+            getTags()
+        } else {
+            alertNotNullInputs()
+        }
+    }
 
+    // TODO: addLanguage
+    const addLanguage = async (language: any) => {
+        if (language.nombre != '' && language.descripcion != '') {
+            const sit: any = await postData(addLanguageMethod, language)
+            console.log(language)
+            setModalAddLanguage(false)
+            getLanguages()
+        } else {
+            alertNotNullInputs()
+        }
+    }
 
-        // const lenguaje: any = await getData(sitesMethod)
-        // console.log(site)
-        // setFilterSites(lenguaje.etiquetas as Site[])
-        // setSites(site.site as Site[])
-    } */
+    // TODO: updateTag
+    const updateTag = async (tag: any) => {
+        if (tag.nombre != '' && tag.icono != '') {
+            let catalogoTag: any = await postData(updateCategoryMethod, tag)
+            console.log(catalogoTag)
+            setModalUpdateTag({show: false, catalogo: {}})
+            getTags()
+        } else {
+            alertNotNullInputs()
+        }
+    }
 
     const searchItems = (searchValue: any) => {
         setSearchInput(searchValue)
         if (searchInput !== '') {
-            const filteredData = catalogos.data.filter((item) => {
+            const filteredData = catalogos.filter((item) => {
                 return Object.values(item.nombre)
                     .join('')
                     .toLowerCase()
@@ -148,32 +109,31 @@ const CatalogosPage = () => {
             })
             setFilteredResults(filteredData)
         } else {
-            setFilteredResults(catalogos.data)
+            setFilteredResults(catalogos)
         }
     }
 
     const toggleOptionSort = () => {
         if (optionSort == 'Agregado recientemente') {
-            const sortAscending = [...catalogos.data].sort((a, b) => a.id - b.id)
-            setCatalogos({data: sortAscending})
+            const sortAscending = [...catalogos].sort((a, b) => a.id_categoria - b.id_categoria)
+            setCatalogos(sortAscending)
             setOptionSort('Agregado anteriormente')
         } else if (optionSort == 'Agregado anteriormente') {
-            const sortDescending = [...catalogos.data].sort((a, b) => b.id - a.id)
-            setCatalogos({data: sortDescending})
+            const sortDescending = [...catalogos].sort((a, b) => b.id_categoria - a.id_categoria)
+            setCatalogos(sortDescending)
             setOptionSort('Agregado recientemente')
         }
-    }
-
-    const showModalUpdateTag = (catalogo: any) => {
-        setModalUpdateTag({show: true, catalogo})
     }
 
     const showModalAddTag = () => {
         setModalAddTag(true)
     }
+    const showModalLanguage = () => {
+        setModalAddLanguage(true)
+    }
 
-    const showModalLanguage = (language: any) => {
-        setAddModalLanguage({show: true, language})
+    const showModalUpdateTag = (catalogo: any) => {
+        setModalUpdateTag({show: true, catalogo})
     }
 
     return (
@@ -227,29 +187,33 @@ const CatalogosPage = () => {
 
                 <Row>
                     {searchInput.length > 1
-                        ? filteredResults.map((catalogo) => (
+                        ? filteredResults?.map((catalogo) => (
                               <Catalogo
-                                  key={catalogo.id.toString()}
+                                  key={catalogo.id_categoria.toString()}
                                   data={catalogo}
                                   showModal={() => showModalUpdateTag(catalogo)}
                               />
                           ))
-                        : catalogos.data.map((catalogo) => (
+                        : catalogos?.map((catalogo) => (
                               <Catalogo
-                                  key={catalogo.id.toString()}
+                                  key={catalogo.id_categoria.toString()}
                                   data={catalogo}
                                   showModal={() => showModalUpdateTag(catalogo)}
                               />
                           ))}
                 </Row>
+                <AddCatalogo
+                    show={modalAddTag}
+                    onClose={() => setModalAddTag(false)}
+                    addTag={addTag}
+                />
 
                 <UpdateCatalogo
                     show={modalUpdateTag.show}
-                    catalogo={modalUpdateTag.catalogo}
                     onClose={() => setModalUpdateTag({show: false, catalogo: {}})}
+                    catalogo={modalUpdateTag.catalogo}
+                    updateTag={updateTag}
                 />
-
-                <AddCatalogo show={modalAddTag} onClose={() => setModalAddTag(false)} />
             </Container>
 
             <Container fluid>
@@ -265,7 +229,7 @@ const CatalogosPage = () => {
                         <Button
                             variant='primary'
                             className='mt-md-0 mt-4'
-                            onClick={() => setAddModalLanguage({show: true, language: {}})}
+                            onClick={() => setModalAddLanguage(true)}
                         >
                             <span className='menu-icon me-0  '>
                                 <i className={`bi-plus-circle fs-2`}></i>
@@ -276,30 +240,23 @@ const CatalogosPage = () => {
                 </Row>
 
                 <Row>
-                    {stateLanguage.data.map((language) => (
+                    {languages.map((language) => (
                         <Language
-                            key={language.id.toString()}
+                            key={language.id_lenguaje.toString()}
                             data={language}
-                            onClickLanguage={() => showModalLanguage(language)}
+                            showModal={() => showModalLanguage()}
                         />
                     ))}
                 </Row>
 
                 <AddLanguaje
-                    sendLanguage={sendLanguage}
-                    show={addModalLanguage.show}
-                    language={addModalLanguage.language}
-                    onClose={() => setAddModalLanguage({show: false, language: {}})}
+                    show={modalAddLanguage}
+                    onClose={() => setModalAddLanguage(false)}
+                    addLanguage={addLanguage}
                 />
             </Container>
         </>
     )
-}
-
-//-------------------------------------INTENTANDO ENVIAR DATOS Y GUARDARLOS---------------------------
-
-const sendLanguage = () => {
-    console.log('Lenguaje enviado ')
 }
 
 export default CatalogosPage
