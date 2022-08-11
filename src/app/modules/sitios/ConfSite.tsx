@@ -145,13 +145,47 @@ const ConfSite = () => {
     
             }
 
+            const handleChange = (event:any) => {
 
+
+              var arrtempo:[{
+                id_categoria: number
+                nombre: string
+                estado: number
+              }] = [{id_categoria: 1, nombre: 's', estado: 0}];
+              arrtempo.shift();
+            
+              event.map((cat: any) => {
+                arrtempo.push({id_categoria: cat.value,nombre: cat.label,estado:1})
+              })
+              setSite({
+                id_sitio: site.id_sitio,
+                nombre: site.nombre,
+                descripcion: site.descripcion,
+                ubicacion: site.ubicacion,
+                geoX: site.geoX,
+                geoY: site.geoY,
+                portada_path: site.portada_path,
+                estado: site.estado,
+                creado: site.creado,
+                editado: site.editado,
+                categorias: arrtempo,
+                id_municipio: site.id_municipio,
+                favorito: status.favorito,
+                publicado: status.publicado,
+                oculto: status.oculto,
+              })
+            
+              console.log(site);
+            
+            };
       //methods to post data to api------------------------------------------------------
 
   async function postSite(sitee: any) {
     if (site.nombre!=''&& site.geoX!=''&& site.geoY!=''&& site.ubicacion!='') {
     const sit: any = await postData(sitesMethod, sitee)
     console.log(sitee)
+    window.location.href = "../sitios";
     }else{
         alertNotNullInputs()
     }
@@ -373,7 +407,7 @@ const ConfSite = () => {
                         estado: site.estado,
                         creado: site.creado,
                         editado: site.editado,
-                        categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                        categorias:  site.categorias,
                         id_municipio: site.id_municipio,
                         favorito: site.favorito,
                         publicado: site.publicado,
@@ -408,7 +442,7 @@ const ConfSite = () => {
                         estado: site.estado,
                         creado: site.creado,
                         editado: site.editado,
-                        categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                        categorias:  site.categorias,
                         id_municipio: site.id_municipio,
                         favorito: site.favorito,
                         publicado: site.publicado,
@@ -442,7 +476,7 @@ const ConfSite = () => {
                             estado: site.estado,
                             creado: site.creado,
                             editado: site.editado,
-                            categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                            categorias:  site.categorias,
                             id_municipio: site.id_municipio,
                             favorito: site.favorito,
                             publicado: site.publicado,
@@ -472,7 +506,7 @@ const ConfSite = () => {
                             estado: site.estado,
                             creado: site.creado,
                             editado: site.editado,
-                            categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                            categorias:  site.categorias,
                             id_municipio: site.id_municipio,
                             favorito: site.favorito,
                             publicado: site.publicado,
@@ -504,7 +538,7 @@ const ConfSite = () => {
                       estado: site.estado,
                       creado: site.creado,
                       editado: site.editado,
-                      categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                      categorias:  site.categorias,
                       id_municipio: site.id_municipio,
                       favorito: site.favorito,
                       publicado: site.publicado,
@@ -524,6 +558,7 @@ const ConfSite = () => {
                     // defaultValue={[options[4], options[5]]}
                     isMulti
                     options={categorys}
+                    onChange={handleChange}
                   ></Select>
                 </div>
               </div>
@@ -553,7 +588,7 @@ const ConfSite = () => {
                         onClick={() => {
                          
                           postSite(site)
-                          window.location.href = "../sitios";
+                          
 
                           console.log('creado con el boton de sitio mobil')
                         }}
@@ -602,7 +637,11 @@ const ConfSite = () => {
       </div>
       <br />
       <br />
-                        <Interes/>
+      <div className='row'>
+       <h3>Puntos de interés</h3>
+      <Interes id_sitio={site.id_sitio} />
+      </div>
+      
       {/*<h3>Puntos de interés</h3>
       <br />
       <div className='row'>

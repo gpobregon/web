@@ -2,12 +2,13 @@ import axios from "axios"
 import { Route } from "react-router-dom"
 
 
-const URL = 'https://4654-45-229-130-255.ngrok.io/dev2'
+const URL = 'https://72ad-190-104-119-60.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
 export const categorysMethod = 'site/categories'
 export const statesMethod = 'site/state'
 export const updateSiteMethod = 'site/update'
+export const getRooms = 'site/rooms'
 
 export const getData = async (route: string) => {
   return new Promise((resolve, reject) => {

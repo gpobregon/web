@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import { getData, sitesMethod, deleteData } from '../../services/api'
 import Sitio from './components/sitio';
 import { Site } from "../../models/site";
-
+import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -143,20 +143,28 @@ const SitiosPage = () => {
             
                 </Col>
                 <Col md={{ span: 2, offset: 6 }} >
-                    <Button className="btn btn-primary" href="sitios/create">
-                        <i className="bi bi-file-earmark-plus"></i>
-                        {'Nuevo sitio'}
+                <Link to={'create'}>
+                    <Button className="btn btn-primary" >
+                    
+                    <i className="bi bi-file-earmark-plus"></i>
+                    {'Nuevo sitio'}
+                    
+                        
                     </Button>
+                    </Link>
                 </Col>
             </Row>
             <div className='row g-4'>
           
                 {
-                    filterSites?.map(sitio => <Sitio {...sitio} key={sitio.id_sitio.toString()} />)
+                    filterSites?.map(sitio => <Sitio {...sitio} key={sitio.id_sitio.toString() }  />)
+                    
                 }
+                
                   <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
                     <Card  style={{ backgroundColor: '#1e1e2d',margin:'20px', padding: 20, width: '95%', height: '395px', display: 'table' }}>
-                        <a href="sitios/create" style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
+                    <Link to={'create'} style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
+                     
                             <svg
 
                                 xmlns="http://www.w3.org/2000/svg" width="
@@ -167,8 +175,8 @@ const SitiosPage = () => {
                             </svg>
                             <Card.Text style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden' }} >Nuevo Sitio</Card.Text>
 
-                        </a>
-
+                  
+                        </Link>
                     </Card>
                     </div>
                 

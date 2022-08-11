@@ -12,20 +12,7 @@ import  swal  from "sweetalert";
 import { useForm } from 'react-hook-form';
 import { number } from 'yup/lib/locale';
 import { Category } from '../../models/category';
-const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
-    item => ({ label: item, value: item })
-);
-
-
-const options = [
-    { label: "Grapes", value: "grapes" },
-    { label: "Mango", value: "mango" },
-    { label: "Strawberry ", value: "strawberry"},
-    { label: "Strawberry1 ", value: "strawberry1"},
-    { label: "Strawberry2 ", value: "strawberry2"},
-    { label: "Strawberry3 ", value: "strawberry3"},
-    { label: "Strawberry4 ", value: "strawberry4"},
-  ];
+import  Interes  from "./components/sitios-interes/sala-interes";  
 
  
   const customStyles = {
@@ -159,7 +146,7 @@ const EditSite = () => {
         category.map((cat: any) => {
           categorys.push({value: cat.id_categoria, label: cat.nombre})
         })
-         console.log(category)
+        //  console.log(category)
       }
 
       const mostrarCategorys = () => {
@@ -168,7 +155,7 @@ const EditSite = () => {
         }
         )
         setEditCategory(editcategorys)
-        console.log(editcategorys)
+        // console.log(editcategorys)
         }
 
 
@@ -223,8 +210,8 @@ const EditSite = () => {
       publicado: status.publicado,
       oculto: status.oculto,
     })
-    console.log(status.favorito)
-    console.log(site)
+    // console.log(status.favorito)
+    // console.log(site)
       postDefault(statesMethod, status)
     const getSites = async () => {
       const site: any = await getData(sitesMethod)
@@ -312,7 +299,7 @@ const handleChange = (event:any) => {
     oculto: status.oculto,
   })
 
-  console.log(site);
+  // console.log(site);
 
 };
 
@@ -416,7 +403,7 @@ const handleChange = (event:any) => {
                   className='fa-solid fa-floppy-disk background-button'
                   id='center2'
                   onClick={() => {
-                    console.log('site')
+                    // console.log('site')
                      postSite(site)
                      saveChanges();
                     // console.log(site)
@@ -730,6 +717,7 @@ const handleChange = (event:any) => {
       </div>
       <br />
       <br />
+      <Interes id_sitio={site.id_sitio} />
     </>
   )
 
