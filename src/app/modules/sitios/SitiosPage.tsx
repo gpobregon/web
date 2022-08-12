@@ -37,7 +37,7 @@ const SitiosPage = () => {
 
     const getSites = async () => {
         const site: any = await getData(sitesMethod)
-        console.log(site)
+        // console.log(site)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
     }
@@ -116,6 +116,7 @@ const SitiosPage = () => {
                             </ul>
                         </div>
                     </div>
+                    <br />
                 </div>
             </div>
             {/* <Row className='pb-10'>

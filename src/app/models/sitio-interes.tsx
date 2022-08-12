@@ -1,8 +1,8 @@
 export interface PointInteres {
-    id_punto: string  //TODO: change to number
-    id_sitio: string  //TODO: change to number
+    id_punto: number  //TODO: change to number
+    id_sitio: number  //TODO: change to number
     descripcion: string
-    id_lenguaje: string//TODO: change to number
+    id_lenguaje: number//TODO: change to number
     estado: string
     portada_path:string
     qr_path:string

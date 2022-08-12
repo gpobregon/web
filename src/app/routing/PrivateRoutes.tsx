@@ -11,6 +11,7 @@ import CatalogosPage from '../modules/catalogos/catalogos-page';
 import SitiosPage from '../modules/sitios/SitiosPage'
 import ConfSite  from "../modules/sitios/ConfSite";
 import EditSite  from "../modules/sitios/edit-site";
+import AddPoin  from "../modules/sitios/components/sitios-interes/add-point-interes";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
@@ -34,6 +35,7 @@ const PrivateRoutes = () => {
         <Route path='menu-test' element={<MenuTestPage />} />
         <Route path='catalogos' element={<CatalogosPage />} />
         <Route path='sitios' element={<SitiosPage />} />
+        <Route path='/sitios/create-point-interes' element={<AddPoin />} />
         {/* Lazy Modules */}
         <Route
           path='crafted/pages/profile/*'

@@ -2,14 +2,17 @@ import axios from "axios"
 import { Route } from "react-router-dom"
 
 
-const URL = 'https://72ad-190-104-119-60.ngrok.io/dev2'
+const URL = 'https://fa98-190-56-32-170.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
 export const categorysMethod = 'site/categories'
 export const statesMethod = 'site/state'
 export const updateSiteMethod = 'site/update'
-export const RoomsMethod = 'site/rooms'
-export const addRoom = 'site/rooms/add'
+export const RoomsMethod = sitesMethod+'/rooms'
+export const addRoom = RoomsMethod+'/add'
+export const addNewPointInteres= RoomsMethod+'/points/add'
+
+
 
 export const getData = async (route: string) => {
   return new Promise((resolve, reject) => {

@@ -133,7 +133,7 @@ const ConfSite = () => {
         category.map((cat: any) => {
           categorys.push({value: cat.id_categoria, label: cat.nombre})
         })
-        console.log(category)
+        // console.log(category)
       }
 
       const alertNotNullInputs = async () => {
@@ -184,7 +184,7 @@ const ConfSite = () => {
   async function postSite(sitee: any) {
     if (site.nombre!=''&& site.geoX!=''&& site.geoY!=''&& site.ubicacion!='') {
     const sit: any = await postData(sitesMethod, sitee)
-    console.log(sitee)
+    // console.log(sit)
     window.location.href = "../sitios";
     }else{
         alertNotNullInputs()
@@ -202,7 +202,7 @@ const ConfSite = () => {
       publicado: publicado,
       oculto: oculto,
     })
-    console.log(status)
+    // console.log(status)
    postDefault(statesMethod, status)
     // const getSites = async () => {
     //   const site: any = await getData(sitesMethod)
@@ -638,8 +638,8 @@ const ConfSite = () => {
       <br />
       <br />
       <div className='row'>
-       <h3>Puntos de interés</h3>
-      <Interes id_sitio={site.id_sitio} />
+       {/* <h3>Puntos de interés</h3>
+      <Interes id_sitio={site.id_sitio} /> */}
       </div>
       
       {/*<h3>Puntos de interés</h3>

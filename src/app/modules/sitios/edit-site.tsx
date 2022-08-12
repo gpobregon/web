@@ -69,20 +69,6 @@ import  Interes  from "./components/sitios-interes/sala-interes";
   }
   const animatedComponents = makeAnimated()
 
-  
-  
-//   async function postSite() {
-//     console.log('posting');
-//   }
-
-// const {state} = useLocation();
-
-
-
-    
-
-
-
 const EditSite = () => {
  
     const {state} = useLocation()
