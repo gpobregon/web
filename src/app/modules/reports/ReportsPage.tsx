@@ -13,30 +13,32 @@ const ReportsPage = () => {
                     </div>
                 </Row>
                 <Row className='g-10'>
-                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>
-                        <Card
-                            className='d-flex justify-content-center align-items-center p-5'
-                            style={{
-                                height: 270,
-                            }}
-                        >
-                            <Card.Title
-                                className='mb-4'
+                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>  
+                        <Link to='/reportes/reporte-de-usuario'>
+                            <Card
+                                className='d-flex justify-content-center align-items-center p-5'
                                 style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
+                                    height: 270,
                                 }}
                             >
-                                <span className='menu-ico'>
-                                    <i
-                                        className='bi bi-people text-white'
-                                        style={{fontSize: 64}}
-                                    ></i>
-                                </span>
-                            </Card.Title>
-                            <Card.Subtitle className='mb-4 fs-3'>Usuarios</Card.Subtitle>
-                        </Card>
+                                <Card.Title
+                                    className='mb-4'
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <span className='menu-ico'>
+                                        <i
+                                            className='bi bi-people text-white'
+                                            style={{fontSize: 64}}
+                                        ></i>
+                                    </span>
+                                </Card.Title>
+                                <Card.Subtitle className='mb-4 fs-3'>Usuarios</Card.Subtitle>
+                            </Card> 
+                        </Link>
                     </Col>
 
                     <Col sm='4' md='3' style={{cursor: 'pointer'}}>
@@ -69,32 +71,34 @@ const ReportsPage = () => {
                         </Link>
                     </Col>
 
-                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>
-                        <Card
-                            className='d-flex justify-content-center align-items-center p-5'
-                            style={{
-                                height: 270,
-                            }}
-                        >
-                            <Card.Title
-                                className='mb-4'
+                    <Col sm='4' md='3' style={{cursor: 'pointer'}}> 
+                        <Link to='/reportes/sitios-por-calificacion'>
+                            <Card
+                                className='d-flex justify-content-center align-items-center p-5'
                                 style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
+                                    height: 270,
                                 }}
                             >
-                                <span className='menu-ico'>
-                                    <i
-                                        className='bi bi-emoji-smile text-white'
-                                        style={{fontSize: 64}}
-                                    ></i>
-                                </span>
-                            </Card.Title>
-                            <Card.Subtitle className='mb-4 fs-3'>
-                                Sitios por calificación
-                            </Card.Subtitle>
-                        </Card>
+                                <Card.Title
+                                    className='mb-4'
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <span className='menu-ico'>
+                                        <i
+                                            className='bi bi-emoji-smile text-white'
+                                            style={{fontSize: 64}}
+                                        ></i>
+                                    </span>
+                                </Card.Title>
+                                <Card.Subtitle className='mb-4 fs-3'>
+                                    Sitios por calificación
+                                </Card.Subtitle>
+                            </Card> 
+                        </Link>
                     </Col>
 
                     <Col sm='4' md='3' style={{cursor: 'pointer'}}>

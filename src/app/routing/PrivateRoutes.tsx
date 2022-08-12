@@ -12,7 +12,9 @@ import CatalogosPage from '../modules/catalogos/catalogos-page'
 import SitiosPage from '../modules/sitios/SitiosPage'
 import ConfSite from '../modules/sitios/ConfSite'
 import EditSite from '../modules/sitios/edit-site'
-import MostVistedReport from '../modules/reports/MostVistedReport'
+import MostVistedReport from '../modules/reports/MostVistedReport' 
+import SitesByRating from '../modules/reports/SitesByRating' 
+import UserReport from '../modules/reports/UserReport'
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
@@ -36,7 +38,9 @@ const PrivateRoutes = () => {
         <Route path='menu-test' element={<MenuTestPage />} />
         <Route path='catalogos' element={<CatalogosPage />} />
         <Route path='reportes' element={<ReportsPage />} />
-        <Route path='/reportes/sitios-mas-visitados' element={<MostVistedReport />} />
+        <Route path='/reportes/sitios-mas-visitados' element={<MostVistedReport />} /> 
+        <Route path='/reportes/sitios-por-calificacion' element={<SitesByRating />}  /> 
+        <Route path='/reportes/reporte-de-usuario' element={<UserReport />}  />
         <Route path='sitios' element={<SitiosPage />} />
         {/* Lazy Modules */}
         <Route
