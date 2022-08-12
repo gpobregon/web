@@ -214,7 +214,7 @@ const CatalogosPage = () => {
                         {`${optionSort}`}
                     </div>
 
-                    <Button variant='primary' className='mt-md-0 mt-4' onClick={showModal} >
+                    <Button variant='primary' className='mt-md-0 mt-lg-0 mt-xxl-0 mt-4' onClick={showModal} >
                         <span className='menu-icon me-0'>
                             <i className={`bi-tag fs-2`}></i>
                         </span>
