@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Form, Row} from 'react-bootstrap'
@@ -60,24 +60,35 @@ const sitesOptions = [
 ]
 
 const genresOptions = [
+    {value: 'Todos', label: 'Todos'},
     {value: 'Mujer', label: 'Mujer'},
     {value: 'Hombre', label: 'Hombre'},
     {value: 'Indefinido', label: 'Indefinido'},
 ]
 
 const yearsOldOptions = [
-    {value: 1, label: 'Ejemplo 1'},
-    {value: 2, label: 'Ejemplo 2'},
-    {value: 3, label: 'Ejemplo 3'},
+    {value: 1, label: 'Todos'},
+    {value: 2, label: 'Menores de edad'},
+    {value: 3, label: 'Mayores de edad'},
+    {value: 4, label: 'Tercera edad'},
 ]
 
-const countryOptions = [{value: 'Guatemala', label: 'Guatemala'}]
+const nacionalityOptions = [
+    {value: 1, label: 'Todos'},
+    {value: 2, label: 'Nacionales'},
+    {value: 3, label: 'Extranjeros'},
+]
 
 const MostVistedReport = () => {
+    const [showResult, setShowResult] = useState(false)
+
+    const showResultComponent = () => {
+        setShowResult(true)
+    }
+
     return (
         <>
             <div
-                className=''
                 style={{
                     backgroundColor: '#1E1E2D',
                     borderRadius: '5px',
@@ -160,7 +171,7 @@ const MostVistedReport = () => {
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>País</Form.Label>
                                 <Select
-                                    options={countryOptions}
+                                    options={nacionalityOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
                                     className={'mb-4'}
@@ -168,7 +179,11 @@ const MostVistedReport = () => {
                             </Form.Group>
                         </Col>
                         <Col lg={4} md={4} sm={6} className='d-flex align-items-center'>
-                            <Button variant='primary' className='mt-4'>
+                            <Button
+                                variant='primary'
+                                className='mt-4'
+                                onClick={() => showResultComponent()}
+                            >
                                 <span className='menu-icon me-0'>
                                     <i className={`bi-search fs-2`}></i>
                                 </span>
@@ -179,8 +194,7 @@ const MostVistedReport = () => {
                 </div>
             </div>
 
-            <ResultMostVisited />
-
+            <ResultMostVisited show={showResult} />
         </>
     )
 }
