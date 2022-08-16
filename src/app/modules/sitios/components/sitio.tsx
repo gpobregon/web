@@ -48,7 +48,7 @@ const Sitio: FC<sitio> = (props) => {
                 
             })
       
-            // window.location.reload(); //reload page
+             window.location.reload(); //reload page
 
             }
           });
@@ -63,7 +63,7 @@ const Sitio: FC<sitio> = (props) => {
                 <Card.Title style={{  }}>{props.nombre}</Card.Title>
                 <Card.Text className='text-muted'>{props.ubicacion}</Card.Text>
                 <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
-                    <Button style={{ width: '50%' }}
+                    <Button style={{ width: '47%'}}
                      onClick={(event) => {
                       navigate('/sitios/edit', {
                         state: {
@@ -88,7 +88,7 @@ const Sitio: FC<sitio> = (props) => {
                         <i className="bi bi-pencil-square"></i>
                         Editar
                     </Button>
-                    <Button className='bg-secondary' style={{ width: '50%' }}  onClick={deleteSites}>
+                    <Button className='bg-secondary' style={{ width: '47%' }}  onClick={deleteSites}>
                         <i className="bi bi-trash3"></i>
                         Eliminar
                         

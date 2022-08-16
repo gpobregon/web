@@ -57,9 +57,7 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const addNewRoom = async () => {
-        //   const newroom= await postData(addRoom, createRoom)
-        // console.log(newroom)
-
+        await postData(addRoom, createRoom)
         getSalas()
     }
     const deleteRoom = (id: number, longitud: number) => {
@@ -106,7 +104,7 @@ const Interes: FC<id_sitio> = (props) => {
                     timer: 2000,
 
                 })
-                getSalas()
+                window.location.reload(); //reload page
             }
         });
     }
