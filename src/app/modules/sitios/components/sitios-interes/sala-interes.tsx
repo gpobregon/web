@@ -47,13 +47,12 @@ const Interes: FC<id_sitio> = (props) => {
 
     const getSalas = async () => {
         const rooms: any = await postData(RoomsMethod, props)
-        console.log(rooms)
+        // console.log(rooms)
         setRooms(rooms.salas as Room[])
     }
 
     const seteatPuntoInteres = (interes: any) => {
         setPuntoInteres(interes)
-        // console.log(puntoInteres)
     }
 
     const addNewRoom = async () => {
@@ -82,7 +81,6 @@ const Interes: FC<id_sitio> = (props) => {
                         timer: 2000,
 
                     })
-                    getSalas()
                 }
             });
         }
@@ -98,13 +96,16 @@ const Interes: FC<id_sitio> = (props) => {
         }).then(async res => {
             if (res) {
                 await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: true })
+                setPuntoInteres([])
                 swal({
                     text: "Se elimino con éxito",
                     icon: "success",
                     timer: 2000,
 
                 })
-                window.location.reload(); //reload page
+                getSalas()
+          
+            
             }
         });
     }
@@ -359,6 +360,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                         onClick={() => {
                                                             // console.log(punto.es_portada_de_sitio)
                                                             deletePointInteres(punto.id_punto, punto.id_sitio);
+                                                            getSalas()
                                                         }}
                                                     ></i>
 
@@ -492,17 +494,32 @@ const Interes: FC<id_sitio> = (props) => {
                     </div>
 
 
-                    <div className='col-3'>
-                        <div className='card div-image'>
+                    <div className='col-3' >
+                        {/* <div className='card div-image'>
                             <br />
-                            <h4 style={{ fontSize: '18px' }}>Vista Previa de Sala</h4>
-                            <Card.Img
+                            <h4 style={{ fontSize: '18px' ,textAlign:'center'}}>Vista Previa de Sala</h4>
+                            <Card.Img 
                                 src={' https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'}
-                                alt='...'
-                                className='card-img-top img2'
+                              
+                             
 
                             />
-                        </div>
+
+                            
+                        </div> */}
+
+<Card className="text-center">
+      <Card.Body>
+        <Card.Title>Vista Previa de Sala</Card.Title>
+        <Card.Img 
+                                src={' https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'}
+                              
+                             
+
+                            />
+      </Card.Body>
+   
+    </Card>
                     </div>
                 </div>
             </div>

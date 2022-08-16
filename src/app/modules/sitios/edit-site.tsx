@@ -295,8 +295,11 @@ const EditSite = () => {
   return (
     <>
       <div className=' '>
-        <div className='row'>
-          <div className='col-xs-12 col-md-5 col-lg-6 d-flex'>
+        <div className='row' style={{
+                        backgroundColor: '#1A1A27',
+                        backgroundSize: 'auto 100%',
+                    }}>
+          <div className='col-xs-12 col-md-5 col-lg-6 d-flex' >
             <div id='center'>
               <Link to={'/sitios'}>
                 <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }} ></i>
@@ -437,6 +440,7 @@ const EditSite = () => {
               </ul>
             </div>
           </div>
+          
         </div>
       </div>
       <br />

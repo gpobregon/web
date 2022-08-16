@@ -241,11 +241,14 @@ const ConfSite = () => {
   return (
     <>
       <div className=' '>
-        <div className='row'>
+        <div className='row'style={{
+                        backgroundColor: '#1A1A27',
+                        backgroundSize: 'auto 100%',
+                    }}>
           <div className='col-xs-12 col-md-6 col-lg-6'>
             <div id='center'>
-              <Link to={'/sitios'}>
-                <i className='fa-solid fa-less-than background-button ' id='center2'></i>
+            <Link to={'/sitios'}>
+                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }} ></i>
               </Link>
             
               {/* {site.nombre != '' ? (

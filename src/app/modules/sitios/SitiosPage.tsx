@@ -163,7 +163,7 @@ const SitiosPage = () => {
                 }
                 
                   <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                    <Card  style={{ backgroundColor: '#1e1e2d',margin:'20px', padding: 20, width: '95%', height: '395px', display: 'table' }}>
+                    <Card  style={{ backgroundColor: '#1e1e2d',margin:'20px', padding: 20, width: '95%', height: '420px', display: 'table' }}>
                     <Link to={'create'} style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
                      
                             <svg
