@@ -1,7 +1,7 @@
 import { type } from 'os';
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Card, Button, Row, Modal } from 'react-bootstrap';
-import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData } from '../../../../services/api'
+import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, statePointInteres } from '../../../../services/api'
 import { Room } from "../../../../models/rooms";
 import swal from "sweetalert";
 import { PointInteres } from "../../../../models/sitio-interes";
@@ -27,6 +27,18 @@ const Interes: FC<id_sitio> = (props) => {
     const handleClose = () => setShow(false)  //modal close qr
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
+
+    const [status, setStatus] = useState({
+        oculto: true,
+    })
+    const changeStatus = (oculto: boolean) => {
+        setStatus({
+            oculto: oculto,
+        })
+
+        // postData(statePointInteres, status)
+
+    }
     useEffect(() => {
         getSalas()
     }, [])
@@ -44,8 +56,9 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const addNewRoom = async () => {
-        await postData(addRoom, createRoom)
-        
+        //   const newroom= await postData(addRoom, createRoom)
+        // console.log(newroom)
+
         getSalas()
     }
     const deleteRoom = (id: number, longitud: number) => {
@@ -75,12 +88,29 @@ const Interes: FC<id_sitio> = (props) => {
             });
         }
 
-
-
-
-
-
     }
+    const deletePointInteres = (id_punto: number, id_sitio: number) => {
+        // console.log(id_punto,id_sitio,idsala)
+        swal({
+            title: "¿Estas seguro de Eliminar este punto de interes ?",
+            icon: "warning",
+            buttons: ["No", "Sí"],
+
+        }).then(async res => {
+            if (res) {
+                await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: true })
+                swal({
+                    text: "Se elimino con éxito",
+                    icon: "success",
+                    timer: 2000,
+
+                })
+                getSalas()
+            }
+        });
+    }
+
+
     return (
         <>
             <div className=' '>
@@ -178,9 +208,19 @@ const Interes: FC<id_sitio> = (props) => {
                                             </li>
                                             <li className='nav-item'>
                                                 <i
-                                                    className='fa-solid fa-eye background-button'
+                                                    className={
+                                                        status.oculto == false
+                                                            ? 'fa-solid fa-eye-slash background-button'
+                                                            : 'fa-solid fa-eye background-button'
+                                                    }
                                                     id='center2'
-                                                    // onClick={handleShow}
+                                                    onClick={() => {
+                                                        // status.oculto == false
+                                                        //   ? changeStatus(status.favorito, status.publicado, true)
+                                                        //   : changeStatus(status.favorito, status.publicado, false)
+                                                        status.oculto = !status.oculto
+                                                        changeStatus(status.oculto)
+                                                    }}
                                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                                 ></i>
                                             </li>
@@ -215,22 +255,22 @@ const Interes: FC<id_sitio> = (props) => {
                                                 <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
 
                                                 </Card.Title>
-                                                <Card.Subtitle className="text-white" style={{ alignItems: 'flex-start', paddingLeft: 10 ,marginLeft:'75px'}} >{punto.nombre}</Card.Subtitle>
-                                                <Card.Subtitle className='text-muted' style={{ alignItems: 'flex-start', paddingLeft: 10, paddingTop: 5,marginLeft:'75px' }} >{punto.descripcion}</Card.Subtitle>
+                                                <Card.Subtitle className="text-white" style={{ alignItems: 'flex-start', paddingLeft: 10, marginLeft: '75px' }} >{punto.nombre}</Card.Subtitle>
+                                                <Card.Subtitle className='text-muted' style={{ alignItems: 'flex-start', paddingLeft: 10, paddingTop: 5, marginLeft: '75px' }} >{punto.descripcion}</Card.Subtitle>
                                                 <span className='menu-ico' style={{ left: 10, position: 'absolute' }}>
 
-                                                    <i className={`bi bi-list`} style={{ fontSize: 20,marginRight:'10px' }}></i>
+                                                    <i className={`bi bi-list`} style={{ fontSize: 20, marginRight: '10px' }}></i>
                                                     <Card.Img
-                                                src=
+                                                        src=
 
-                                                    {`${punto.portada_path}`}
+                                                        {`${punto.portada_path}`}
 
-                                                
-                                                style={{ width: '25%', height: '25%',borderRadius:'10px' }}
-                                                alt='...'
-                                                className='card-img-top img1'
 
-                                            />
+                                                        style={{ width: '25%', height: '25%', borderRadius: '10px' }}
+                                                        alt='...'
+                                                        className='card-img-top img1'
+
+                                                    />
                                                 </span>
                                             </Card>
                                         </div>
@@ -263,18 +303,58 @@ const Interes: FC<id_sitio> = (props) => {
                                                         <p style={{ display: 'flex', marginRight: '30px', fontSize: '14px', marginTop: '15px' }}> <i className="bi bi bi-circle"
                                                             style={{ color: '#92929F', display: 'flex', marginRight: '8px', fontSize: '23px' }}></i>imagen principal</p>
                                                     </li>
+
                                                     <li className='nav-item'>
+
                                                         <i
-                                                            className='fa-solid fa-eye background-button'
+                                                            className={
+                                                                status.oculto == false
+                                                                    ? 'fa-solid fa-eye-slash background-button'
+                                                                    : 'fa-solid fa-eye background-button'
+                                                            }
                                                             id='center2'
-                                                            // onClick={handleShow}
+                                                            onClick={() => {
+                                                                status.oculto = !status.oculto
+                                                                changeStatus(status.oculto)
+                                                            }}
                                                             style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                                         ></i>
                                                     </li>
+                                                    <i className="fa-solid  fa-pencil background-button"
+                                                        style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
+                                                        onClick={(event) => {
+                                                            navigate('/sitios/edit-point-interes', {
+                                                                state: {
+                                                                    id_punto: punto.id_punto,
+                                                                    lenguajes: punto.lenguajes,
+                                                                    id_sitio: punto.id_sitio,
+                                                                    id_guia: idsala,
+                                                                    nombre: punto.nombre,
+                                                                    descripcion: punto.descripcion,
+                                                                    geoX: punto.geoX,
+                                                                    geoY: punto.geoY,
+                                                                    portada_path: punto.portada_path,
+                                                                    qr_path: punto.qr_path,
+                                                                    es_portada_de_sitio: punto.es_portada_de_sitio,
+                                                                    estado: punto.estado,
+                                                                },
+                                                            })
+                                                        }}
+                                                    //   "raw": "{\r\n    \"id_punto\":5,\r\n    \"id_lenguaje\":1,\r\n    \"id_sitio\":1,\r\n    \"id_guia\":1,\r\n    \"nombre\":\"punto editado1 test 2\",\r\n 
+                                                    //    \"descripcion\":\"desc editado1 punto 2\",\r\n    \"geoX\":\"geox punto 2\",\r\n    \"geoY\":\"geoy punto 2\",\r\n    \"portada_path\":\"portada path punto 2\",\r\n
+                                                    // \"qr_path\":\"qr punto 2\",\r\n    \"es_portada_de_sitio\":true,\r\n    \"estado\":1\r\n}"
+
+                                                    ></i>
                                                     <i className="bi-solid bi-trash3 background-button"
                                                         id='center2'
-                                                        style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}></i>
-                                                    <i
+                                                        style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
+                                                        onClick={() => {
+                                                            // console.log(punto.es_portada_de_sitio)
+                                                            deletePointInteres(punto.id_punto, punto.id_sitio);
+                                                        }}
+                                                    ></i>
+
+                                                    {/* <i
                                                         className='fa-solid fa-gear background-button'
                                                         id='center2'
                                                         onClick={() => {
@@ -282,7 +362,7 @@ const Interes: FC<id_sitio> = (props) => {
 
                                                         }}
                                                         style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
-                                                    ></i>
+                                                    ></i> */}
                                                 </ul>
                                             </div>
 
