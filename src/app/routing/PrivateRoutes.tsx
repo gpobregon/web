@@ -10,12 +10,15 @@ import BuilderPageWrapper from '../pages/layout-builder/BuilderPageWrapper'
 import ReportsPage from '../modules/reports/ReportsPage'
 import CatalogosPage from '../modules/catalogos/catalogos-page'
 import SitiosPage from '../modules/sitios/SitiosPage'
-import ConfSite from '../modules/sitios/ConfSite'
-import EditSite from '../modules/sitios/edit-site'
 import MostVistedReport from '../modules/reports/MostVistedReport' 
 import SitesByRating from '../modules/reports/SitesByRating' 
 import UserReport from '../modules/reports/UserReport'
 import Template  from "../modules/template/movil/index";
+import ConfSite  from "../modules/sitios/ConfSite";
+import EditSite  from "../modules/sitios/edit-site";
+import AddPoin  from "../modules/sitios/components/sitios-interes/add-point-interes";
+import EditPoin  from "../modules/sitios/components/sitios-interes/edit-point-interes";
+
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
@@ -43,7 +46,12 @@ const PrivateRoutes = () => {
         <Route path='/reportes/sitios-por-calificacion' element={<SitesByRating />}  /> 
         <Route path='/reportes/reporte-de-usuario' element={<UserReport />}  />
         <Route path='sitios' element={<SitiosPage />} />
+
         <Route path='template' element={<Template />} />
+
+        <Route path='/sitios/create-point-interes' element={<AddPoin />} />
+        <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
+
         {/* Lazy Modules */}
         <Route
           path='crafted/pages/profile/*'
