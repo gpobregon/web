@@ -16,7 +16,9 @@ const Toolbar = () => {
         backgroundSize: 'auto 100%',
         backgroundImage: `url('${toAbsoluteUrl('/media/misc/taieri.svg')}')`,
       }}
-    ></div>
+    >
+      asdasdasd
+    </div>
   )
 }
 export {Toolbar}

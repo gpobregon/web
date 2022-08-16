@@ -11,6 +11,8 @@ import CatalogosPage from '../modules/catalogos/catalogos-page';
 import SitiosPage from '../modules/sitios/SitiosPage'
 import ConfSite  from "../modules/sitios/ConfSite";
 import EditSite  from "../modules/sitios/edit-site";
+import Template  from "../modules/template/movil/index";
+import Test  from "../modules/Test/index";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
@@ -34,6 +36,8 @@ const PrivateRoutes = () => {
         <Route path='menu-test' element={<MenuTestPage />} />
         <Route path='catalogos' element={<CatalogosPage />} />
         <Route path='sitios' element={<SitiosPage />} />
+        <Route path='template' element={<Template />} />
+        <Route path='test' element={<Test />} />
         {/* Lazy Modules */}
         <Route
           path='crafted/pages/profile/*'
@@ -103,3 +107,4 @@ const SuspensedView: FC<WithChildren> = ({ children }) => {
 }
 
 export { PrivateRoutes }
+
