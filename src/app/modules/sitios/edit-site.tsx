@@ -14,7 +14,7 @@ import { number } from 'yup/lib/locale';
 import { Category } from '../../models/category';
 import Interes from "./components/sitios-interes/sala-interes";
 import { QRCodeCanvas } from "qrcode.react";
-
+import logo from './upload-image_03.jpg';
 
 const customStyles = {
   control: (base: any, state: any) => ({
@@ -458,7 +458,7 @@ const EditSite = () => {
                 <Card.Img
                   src={
                     site.portada_path == ''
-                      ? 'https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'
+                      ? logo
                       : site.portada_path
                   }
                   alt='...'

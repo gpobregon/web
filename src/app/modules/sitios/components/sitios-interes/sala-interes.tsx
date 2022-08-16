@@ -9,6 +9,7 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { safeUseLayoutEffect } from 'react-table';
 import { number } from 'yup';
 import { QRCodeCanvas } from "qrcode.react";
+import logo from '../../upload-image_03.jpg';
 
 type id_sitio = {
     id_sitio: number
@@ -104,8 +105,8 @@ const Interes: FC<id_sitio> = (props) => {
 
                 })
                 getSalas()
-          
-            
+
+
             }
         });
     }
@@ -508,18 +509,18 @@ const Interes: FC<id_sitio> = (props) => {
                             
                         </div> */}
 
-<Card className="text-center">
-      <Card.Body>
-        <Card.Title>Vista Previa de Sala</Card.Title>
-        <Card.Img 
-                                src={' https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'}
-                              
-                             
+                        <Card className="text-center">
+                            <Card.Body>
+                                <Card.Title>Vista Previa de Sala</Card.Title>
+                                <Card.Img
+                                    src={logo}
 
-                            />
-      </Card.Body>
-   
-    </Card>
+
+
+                                />
+                            </Card.Body>
+
+                        </Card>
                     </div>
                 </div>
             </div>

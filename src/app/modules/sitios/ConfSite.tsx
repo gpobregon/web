@@ -11,6 +11,7 @@ import {status }from '../../models/status';
 import  swal  from "sweetalert";
 import { useForm } from 'react-hook-form';
 import  Interes  from "./components/sitios-interes/sala-interes";  
+import logo from './upload-image_03.jpg';
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     item => ({ label: item, value: item })
 );
@@ -373,7 +374,7 @@ const ConfSite = () => {
                 <Card.Img
                   src={
                     site.portada_path == ''
-                      ? 'https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'
+                      ? logo
                       : site.portada_path
                   }
                   alt='...'
