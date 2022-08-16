@@ -174,87 +174,10 @@ const CatalogosPage = () => {
 
     return (
         <>
-            <Container fluid>
-                <Row className='pb-9'>
-                <div className='text-left'>
-                    <h1 className='text-dark mt-0'>Categorías</h1>
-                    <h2 className='text-muted mb-0'>Lista de categorías</h2>
-                </div>
-            </Row>
-
-            <Row className='pb-9'>
-                <div className='d-flex'>
-                    <Form.Control
-                        className='me-5'
-                        style={{maxWidth: '300px', height: '46px'}}
-                        placeholder='Buscar categoría'
-                        onChange={(event) => searchItems(event.target.value)}
-                    />
-
-                    <Button variant='secondary' className='text-center'>
-                        <i className='fs-2 bi-search px-0 fw-bolder'></i>
-                    </Button>
-                </div>
-            </Row>
-
-            <Row className='pb-9'>
-                <div className='d-sm-flex justify-content-between align-items-center'>
-                    <div
-                        className='d-flex align-items-center fs-5 text-muted'
-                        style={{cursor: 'pointer'}}
-                        onClick={toggleOptionSort}>
-                        <i className='bi-sort-up fs-1 me-2'></i>
-                        {`${optionSort}`}
-                    </div>
-
-                    <Button variant='primary' className='mt-md-0 mt-lg-0 mt-xxl-0 mt-4' onClick={showModal} >
-                        <span className='menu-icon me-0'>
-                            <i className={`bi-tag fs-2`}></i>
-                        </span>
-                        {' Nueva categoria'}
-                    </Button>
-                </div>
-            </Row>
-
-            <Row>
-                {searchInput.length > 1
-                    ? filteredResults.map((catalogo) => (
-                          <Catalogo
-                              key={catalogo.id.toString()}
-                              data={catalogo}
-                              showModal={() => showModal(catalogo)}
-                          />
-                      ))
-                    : catalogos.data.map((catalogo) => (
-                          <Catalogo
-                              key={catalogo.id.toString()}
-                              data={catalogo}
-                              showModal={() => showModal(catalogo)}
-                          />
-                      ))}
-
-                {/* {catalogo.map((catalogo) => (
-                    <Catalogo
-                        key={catalogo.id.toString()}
-                        data={catalogo}
-                        showModal={() => showModal(catalogo)}
-                    />
-                ))} */}
-            </Row>
-
-            <UpdateCatalogo
-                show={updateModal.show}
-                catalogo={updateModal.catalogo}
-                onClose={() => setUpdateModal({show: false, catalogo: {}})}
-            />
-            </Container>  
-
+        
             <Container fluid>
                 <Row>
-                    <div className='text-left mb-10' >
-                        <h1 className='text-dark mb-3'>Idiomas</h1> 
-                        <p>Lista de idiomas disponibles</p>
-                    <div className='text-left'>
+                    <div className='text-left mb-10' >                        
                         <h1 className='text-dark mt-0'>Categorías</h1>
                         <h2 className='text-muted mb-0'>Lista de categorías</h2>
                     </div>
