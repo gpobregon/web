@@ -144,7 +144,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         setIdSala(sala.id_sala);
                                     }}
                                     >
-                                        Sitio {sala.id_sala}
+                                        Sala {sala.id_sala}
 
                                     </Button>
                                         <Button variant="outline-dark" size="sm" onClick={() => {
