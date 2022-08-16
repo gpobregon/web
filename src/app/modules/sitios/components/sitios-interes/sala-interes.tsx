@@ -8,6 +8,7 @@ import { PointInteres } from "../../../../models/sitio-interes";
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { safeUseLayoutEffect } from 'react-table';
 import { number } from 'yup';
+import { QRCodeCanvas } from "qrcode.react";
 
 type id_sitio = {
     id_sitio: number
@@ -27,7 +28,7 @@ const Interes: FC<id_sitio> = (props) => {
     const handleClose = () => setShow(false)  //modal close qr
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
-
+    const [qr, setQr] = useState<any>() //modal qr
     const [status, setStatus] = useState({
         oculto: true,
     })
@@ -281,7 +282,12 @@ const Interes: FC<id_sitio> = (props) => {
                                                     <li className='nav-item '>
                                                         <i className="fa-solid fa-qrcode background-button "
                                                             style={{ color: '#92929F', display: 'flex', marginRight: '30px', fontSize: '23px' }}
-                                                            onClick={handleShow}
+                                                            onClick={() => {
+                                                                setQr('sitios/puntos-interes/' + punto.id_punto)
+                                                                handleShow()
+
+                                                            }}
+
                                                         ></i>
 
                                                     </li>
@@ -289,8 +295,16 @@ const Interes: FC<id_sitio> = (props) => {
                                                         <Modal.Header closeButton>
                                                             <Modal.Title>Escanee su Código QR</Modal.Title>
                                                         </Modal.Header>
-                                                        <Modal.Body>
-                                                            <Card.Img src='https://res.cloudinary.com/dte7upwcr/image/upload/blog/blog2/como-crear-codigo-qr/codigo-qr.jpg'></Card.Img>
+                                                        <Modal.Body style={{ textAlign: 'center' }}>
+
+                                                            <QRCodeCanvas
+                                                                id="qrCode"
+                                                                value={qr}
+                                                                size={300}
+
+                                                                level={"H"}
+                                                            />
+
                                                         </Modal.Body>
                                                         <Modal.Footer>
                                                             <Button variant='secondary' onClick={handleClose}>
@@ -340,10 +354,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 },
                                                             })
                                                         }}
-                                                    //   "raw": "{\r\n    \"id_punto\":5,\r\n    \"id_lenguaje\":1,\r\n    \"id_sitio\":1,\r\n    \"id_guia\":1,\r\n    \"nombre\":\"punto editado1 test 2\",\r\n 
-                                                    //    \"descripcion\":\"desc editado1 punto 2\",\r\n    \"geoX\":\"geox punto 2\",\r\n    \"geoY\":\"geoy punto 2\",\r\n    \"portada_path\":\"portada path punto 2\",\r\n
-                                                    // \"qr_path\":\"qr punto 2\",\r\n    \"es_portada_de_sitio\":true,\r\n    \"estado\":1\r\n}"
-
                                                     ></i>
                                                     <i className="bi-solid bi-trash3 background-button"
                                                         id='center2'
