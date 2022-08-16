@@ -2,8 +2,15 @@ import React, {useState, FC, useEffect} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Modal, Form} from 'react-bootstrap'
+
+import {
+    addCategoryMethod,
+    categorysMethod,
+    languagesMethod,
+    getData,
+    postData,
+} from '../../../services/api'
 import {CatalogLanguage} from '../../../models/catalogLanguage'
-import {getData, languagesMethod} from '../../../services/api'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -57,17 +64,6 @@ const options = [
     {value: 'airplane', label: 'airplane'},
 ]
 
-const languages = [
-    {
-        value: 'Español (Guatemala)',
-        label: 'Español (Guatemala)',
-    },
-    {
-        value: 'Inglés (EEUU)',
-        label: 'Inglés (EEUU)',
-    },
-]
-
 const optionTemplate = (option: any) => (
     <span>
         <i className={`bi-${option.value} text-white`} style={{fontSize: 16}}></i>
@@ -82,7 +78,7 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}) => {
+const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
     const getLanguages = async () => {
@@ -100,22 +96,16 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
     }))
 
     const [tag, setTag] = useState({
-        id_categoria: 0,
+        id_categoria: 1,
         nombre: '',
         icono: '',
         estado: 1,
-        id_lenguaje: 0,
+        id_lenguaje: 1,
     })
-
-    let modifiedTagDelete = {
-        id_categoria: catalogo.id_categoria,
-        id_lenguaje: catalogo.idioma?.id,
-        estado: 0,
-    }
 
     const handleChangeIcon = (event: any) => {
         setTag({
-            id_categoria: catalogo.id_categoria,
+            id_categoria: tag.id_categoria,
             nombre: tag.nombre,
             icono: event.value,
             estado: tag.estado,
@@ -125,7 +115,7 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
 
     const handleChangeLanguage = (event: any) => {
         setTag({
-            id_categoria: catalogo.id_categoria,
+            id_categoria: tag.id_categoria,
             nombre: tag.nombre,
             icono: tag.icono,
             estado: tag.estado,
@@ -137,35 +127,30 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
         <>
             <Modal show={show} onHide={onClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{'Configuración de categoría'}</Modal.Title>
+                    <Modal.Title>{'Nueva categoría'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group>
                         <Form.Label>{'Nombre de categoría'}</Form.Label>
                         <Form.Control
-                            placeholder={catalogo.nombre}
                             type='text'
                             name='nombre'
                             className={'mb-4'}
                             onChange={(e) => {
                                 setTag({
-                                    id_categoria: catalogo.id_categoria,
+                                    id_categoria: tag.id_categoria,
                                     nombre: e.target.value,
                                     icono: tag.icono,
                                     estado: tag.estado,
                                     id_lenguaje: tag.id_lenguaje,
                                 })
                             }}
-                        />
+                        ></Form.Control>
                     </Form.Group>
 
                     <Form.Group>
                         <Form.Label>{'Icono'}</Form.Label>
                         <Select
-                            defaultValue={{
-                                label: catalogo?.icono,
-                                value: catalogo?.icono,
-                            }}
                             options={optionsWithIcons}
                             styles={customStyles}
                             components={animatedComponents}
@@ -177,10 +162,6 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                     <Form.Group>
                         <Form.Label>{'Idioma'}</Form.Label>
                         <Select
-                            defaultValue={{
-                                label: catalogo?.idioma?.nombre,
-                                value: catalogo?.idioma?.id,
-                            }}
                             options={languagesOptions}
                             styles={customStyles}
                             components={animatedComponents}
@@ -189,14 +170,6 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button
-                        variant='secondary'
-                        onClick={() => {
-                            deleteTag(modifiedTagDelete)
-                        }}
-                    >
-                        <i className={`bi-trash text-white fs-3`}></i>
-                    </Button>
                     <Button variant='secondary' onClick={onClose}>
                         {'Cancelar '}
                         <i className={`bi-x text-white fs-3`}></i>
@@ -204,17 +177,10 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                     <Button
                         variant='primary'
                         onClick={() => {
-                            setTag({
-                                id_categoria: catalogo.id_categoria,
-                                nombre: tag.nombre,
-                                icono: tag.icono,
-                                estado: 1,
-                                id_lenguaje: tag.id_lenguaje,
-                            })
-                            updateTag(tag)
+                            addTag(tag)
                         }}
                     >
-                        {'Aplicar '}
+                        {'Añadir '}
                         <i className={`bi-check2 text-white fs-3`}></i>
                     </Button>
                 </Modal.Footer>
@@ -223,4 +189,4 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
     )
 }
 
-export default UpdateCatalogo
+export default AddCatalogo
