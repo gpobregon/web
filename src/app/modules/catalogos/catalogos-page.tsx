@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {Container, Col, Row, Button, InputGroup, Form, Stack} from 'react-bootstrap'
+import moment from 'moment'
 
 import Catalogo from './components/catalogo'
 import UpdateCatalogo from './components/update-catalogo'
@@ -30,6 +31,7 @@ const CatalogosPage = () => {
     const [searchInput, setSearchInput] = useState('')
     const [catalogos, setCatalogos] = useState<CatalogTag[]>([])
     const [filteredResults, setFilteredResults] = useState(catalogos)
+    const [resultIcon, setResultIcon] = useState('bi-sort-up')
 
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
     const [language, setLanguage] = useState({
@@ -122,13 +124,15 @@ const CatalogosPage = () => {
 
     const toggleOptionSort = () => {
         if (optionSort == 'Agregado recientemente') {
-            const sortAscending = [...catalogos].sort((a, b) => a.id_categoria - b.id_categoria)
+            const sortAscending = [...catalogos].sort((a, b) => moment(b.creado).diff(a.creado))
             setCatalogos(sortAscending)
             setOptionSort('Agregado anteriormente')
+            setResultIcon('bi-sort-down')
         } else if (optionSort == 'Agregado anteriormente') {
-            const sortDescending = [...catalogos].sort((a, b) => b.id_categoria - a.id_categoria)
+            const sortDescending = [...catalogos].sort((a, b) => moment(a.creado).diff(b.creado))
             setCatalogos(sortDescending)
             setOptionSort('Agregado recientemente')
+            setResultIcon('bi-sort-up')
         }
     }
 
@@ -142,6 +146,8 @@ const CatalogosPage = () => {
     const showModalUpdateTag = (catalogo: any) => {
         setModalUpdateTag({show: true, catalogo})
     }
+
+    console.log(catalogos)
 
     return (
         <>
@@ -175,7 +181,7 @@ const CatalogosPage = () => {
                             style={{cursor: 'pointer'}}
                             onClick={toggleOptionSort}
                         >
-                            <i className='bi-sort-up fs-1 me-2'></i>
+                            <i className={`${resultIcon} fs-1 me-2`}></i>
                             {`${optionSort}`}
                         </div>
 
