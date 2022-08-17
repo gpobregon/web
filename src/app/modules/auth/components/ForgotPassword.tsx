@@ -3,7 +3,8 @@ import * as Yup from 'yup'
 import clsx from 'clsx'
 import {Link} from 'react-router-dom'
 import {useFormik} from 'formik'
-import {requestPassword} from '../core/_requests'
+import {requestPassword} from '../core/_requests' 
+import { Form, Button } from 'react-bootstrap';
 
 const initialValues = {
   email: 'admin@demo.com',
@@ -43,22 +44,26 @@ export function ForgotPassword() {
   })
 
   return (
-    <>
+    <Form style={{ width: '50%' }}>
       <form
         className='form w-100 fv-plugins-bootstrap5 fv-plugins-framework'
         noValidate
         id='kt_login_password_reset_form'
         onSubmit={formik.handleSubmit}
-      >
-        <div className='text-center mb-10'>
-          {/* begin::Title */}
-          <h1 className='text-dark mb-3'>Forgot Password ?</h1>
-          {/* end::Title */}
+      > 
+        
+          <div className='text-center mb-10'>
+            {/* begin::Title */}
+            <h1 className='text-dark mb-3'>Forgot Password ?</h1>
+            {/* end::Title */}
+          
 
-          {/* begin::Link */}
-          <div className='text-gray-400 fw-bold fs-4'>Enter your email to reset your password.</div>
-          {/* end::Link */}
-        </div>
+            {/* begin::Link */}
+            <div className='text-gray-400 fw-bold fs-4'>Enter your email to reset your password.</div>
+            {/* end::Link */}
+          </div> 
+        
+        
 
         {/* begin::Title */}
         {hasErrors === true && (
@@ -130,6 +135,6 @@ export function ForgotPassword() {
         </div>
         {/* end::Form group */}
       </form>
-    </>
+    </Form>
   )
 }

@@ -86,7 +86,15 @@ export function Login() {
           <Link to='/auth/registration' className='link-primary fw-bolder'>
             {'Solicita tu usuario'}
           </Link>
+        </div> 
+
+        <div className='text-gray-400 fw-bold fs-4'>
+          {'¿Olvidaste tu contraseña? '}
+          <Link to='/auth/forgot-password' className='link-primary fw-bolder'>
+            {'Recuperar'}
+          </Link>
         </div>
+
       </div>
     </Form>
   )
