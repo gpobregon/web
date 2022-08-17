@@ -1,7 +1,9 @@
-import React, { useState, FC } from 'react'; 
+import React, {useState, FC, useEffect} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import { Button, Modal, Form } from 'react-bootstrap'; 
+import {Button, Modal, Form} from 'react-bootstrap'
+import {CatalogLanguage} from '../../../models/catalogLanguage'
+import {getData, languagesMethod} from '../../../services/api'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -44,7 +46,7 @@ const customStyles = {
         padding: 0,
         borderRadius: 6.175,
     }),
-} 
+}
 
 const options = [
     {value: 'car-front', label: 'car-front'},
@@ -78,20 +80,58 @@ const optionsWithIcons = options.map((option) => ({
     label: optionTemplate(option),
 }))
 
-const animatedComponents = makeAnimated() 
+const animatedComponents = makeAnimated()
 
+const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}) => {
+    const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
+    const getLanguages = async () => {
+        const languages: any = await getData(languagesMethod)
+        setLanguages(languages.data as CatalogLanguage[])
+    }
 
+    useEffect(() => {
+        getLanguages()
+    }, [])
 
-const UpdateCatalogo: FC<any> = ({ show, catalogo, onClose }) => {
-    const [state, setState] = useState({
-        id: catalogo?.id ?? 0,
-        nombre: catalogo?.nombre ?? '',
-        icono: catalogo?.icono ?? '', 
-        idioma: catalogo?.idioma ?? ''
-    });
+    const languagesOptions = languages.map((language) => ({
+        value: language.id_lenguaje,
+        label: language.nombre,
+    }))
 
-    const handleChange = (e: any) => setState(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const [tag, setTag] = useState({
+        id_categoria: 0,
+        nombre: '',
+        icono: '',
+        estado: 1,
+        id_lenguaje: 0,
+    })
+
+    let modifiedTagDelete = {
+        id_categoria: catalogo.id_categoria,
+        id_lenguaje: catalogo.idioma?.id,
+        estado: 0,
+    }
+
+    const handleChangeIcon = (event: any) => {
+        setTag({
+            id_categoria: catalogo.id_categoria,
+            nombre: tag.nombre,
+            icono: event.value,
+            estado: tag.estado,
+            id_lenguaje: tag.id_lenguaje,
+        })
+    }
+
+    const handleChangeLanguage = (event: any) => {
+        setTag({
+            id_categoria: catalogo.id_categoria,
+            nombre: tag.nombre,
+            icono: tag.icono,
+            estado: tag.estado,
+            id_lenguaje: event.value,
+        })
+    }
 
     return (
         <>
@@ -106,40 +146,81 @@ const UpdateCatalogo: FC<any> = ({ show, catalogo, onClose }) => {
                             placeholder={catalogo.nombre}
                             type='text'
                             name='nombre'
-                            onChange={handleChange}
                             className={'mb-4'}
+                            onChange={(e) => {
+                                setTag({
+                                    id_categoria: catalogo.id_categoria,
+                                    nombre: e.target.value,
+                                    icono: tag.icono,
+                                    estado: tag.estado,
+                                    id_lenguaje: tag.id_lenguaje,
+                                })
+                            }}
                         />
                     </Form.Group>
 
                     <Form.Group>
                         <Form.Label>{'Icono'}</Form.Label>
                         <Select
-                            defaultInputValue={catalogo.icono}
+                            defaultValue={{
+                                label: catalogo?.icono,
+                                value: catalogo?.icono,
+                            }}
                             options={optionsWithIcons}
                             styles={customStyles}
                             components={animatedComponents}
                             className={'mb-4'}
+                            onChange={handleChangeIcon}
                         />
                     </Form.Group>
 
                     <Form.Group>
                         <Form.Label>{'Idioma'}</Form.Label>
                         <Select
-                            defaultInputValue={catalogo.idioma?.nombre ?? ''}
-                            options={languages}
+                            defaultValue={{
+                                label: catalogo?.idioma?.nombre,
+                                value: catalogo?.idioma?.id,
+                            }}
+                            options={languagesOptions}
                             styles={customStyles}
                             components={animatedComponents}
+                            onChange={handleChangeLanguage}
                         />
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary'><i className={`bi-trash text-white fs-3`}></i></Button>
-                    <Button variant="secondary" onClick={onClose}>{'Cancelar '}<i className={`bi-x text-white fs-3`}></i></Button>
-                    <Button variant="primary" onClick={onClose}>{'Aplicar '}<i className={`bi-check2 text-white fs-3`}></i></Button>
+                    <Button
+                        variant='secondary'
+                        onClick={() => {
+                            deleteTag(modifiedTagDelete)
+                        }}
+                    >
+                        <i className={`bi-trash text-white fs-3`}></i>
+                    </Button>
+                    <Button variant='secondary' onClick={onClose}>
+                        {'Cancelar '}
+                        <i className={`bi-x text-white fs-3`}></i>
+                    </Button>
+                    <Button
+                        variant='primary'
+                        onClick={() => {
+                            setTag({
+                                id_categoria: catalogo.id_categoria,
+                                nombre: tag.nombre,
+                                icono: tag.icono,
+                                estado: 1,
+                                id_lenguaje: tag.id_lenguaje,
+                            })
+                            updateTag(tag)
+                        }}
+                    >
+                        {'Aplicar '}
+                        <i className={`bi-check2 text-white fs-3`}></i>
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </>
-    );
+    )
 }
 
-export default UpdateCatalogo;
+export default UpdateCatalogo

@@ -38,7 +38,7 @@ const MasterLayout = () => {
             <div className='wrapper d-flex flex-column flex-row-fluid' id='kt_wrapper'>
               <HeaderWrapper />
 
-              <Toolbar />
+              {/* <Toolbar /> */}
 
               {/* begin::Content */}
               <div id='kt_content' className='content d-flex flex-column flex-column-fluid'>
