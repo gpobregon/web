@@ -17,7 +17,8 @@ import Template  from "../modules/template/movil/index";
 import ConfSite  from "../modules/sitios/ConfSite";
 import EditSite  from "../modules/sitios/edit-site";
 import AddPoin  from "../modules/sitios/components/sitios-interes/add-point-interes";
-import EditPoin  from "../modules/sitios/components/sitios-interes/edit-point-interes";
+import EditPoin  from "../modules/sitios/components/sitios-interes/edit-point-interes"; 
+import RestorePassword  from '../pages/RestorePassword'
 
 
 const PrivateRoutes = () => {
@@ -45,7 +46,8 @@ const PrivateRoutes = () => {
         <Route path='/reportes/sitios-mas-visitados' element={<MostVistedReport />} /> 
         <Route path='/reportes/sitios-por-calificacion' element={<SitesByRating />}  /> 
         <Route path='/reportes/reporte-de-usuario' element={<UserReport />}  />
-        <Route path='sitios' element={<SitiosPage />} />
+        <Route path='sitios' element={<SitiosPage />} /> 
+        <Route path='restore-password' element={<RestorePassword />} /> 
 
         <Route path='template' element={<Template />} />
 

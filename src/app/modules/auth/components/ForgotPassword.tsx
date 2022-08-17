@@ -54,12 +54,12 @@ export function ForgotPassword() {
         
           <div className='text-center mb-10'>
             {/* begin::Title */}
-            <h1 className='text-dark mb-3'>Forgot Password ?</h1>
+            <h1 className='text-dark mb-3'>¿Olvidaste tu contraseña?</h1>
             {/* end::Title */}
           
 
             {/* begin::Link */}
-            <div className='text-gray-400 fw-bold fs-4'>Enter your email to reset your password.</div>
+            <div className='text-gray-400 fw-bold fs-4'>Ingresa tu email para restablecer tu contraseña</div>
             {/* end::Link */}
           </div> 
         
@@ -114,7 +114,7 @@ export function ForgotPassword() {
             id='kt_password_reset_submit'
             className='btn btn-lg btn-primary fw-bolder me-4'
           >
-            <span className='indicator-label'>Submit</span>
+            <span className='indicator-label'>Siguiente</span>
             {loading && (
               <span className='indicator-progress'>
                 Please wait...
@@ -129,7 +129,7 @@ export function ForgotPassword() {
               className='btn btn-lg btn-light-primary fw-bolder'
               disabled={formik.isSubmitting || !formik.isValid}
             >
-              Cancel
+              Cancelar
             </button>
           </Link>{' '}
         </div>

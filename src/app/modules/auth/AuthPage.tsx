@@ -2,7 +2,8 @@
 import { useEffect } from 'react'
 import { Outlet, Route, Routes } from 'react-router-dom'
 import { Registration } from './components/Registration'
-import { ForgotPassword } from './components/ForgotPassword'
+import { ForgotPassword } from './components/ForgotPassword' 
+import { RestorePassword } from './components/RestorePassword'
 import { Login } from './components/Login'
 import { Container, Row, Col } from 'react-bootstrap';
 
@@ -31,7 +32,8 @@ const AuthPage = () => (
     <Route element={<AuthLayout />}>
       <Route path='login' element={<Login />} />
       <Route path='registration' element={<Registration />} />
-      <Route path='forgot-password' element={<ForgotPassword />} />
+      <Route path='forgot-password' element={<ForgotPassword />} /> 
+      <Route path='restore-password' element={<RestorePassword />} />
       <Route index element={<Login />} />
     </Route>
   </Routes>
