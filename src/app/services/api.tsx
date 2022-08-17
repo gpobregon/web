@@ -2,7 +2,7 @@ import axios from 'axios'
 import {Route} from 'react-router-dom'
 
 
-const URL = 'https://88cb-190-104-119-60.ngrok.io/dev2'
+const URL = 'https://cde4-186-151-40-205.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
 export const statesMethod = 'site/state'
@@ -19,6 +19,7 @@ export const updateLanguageMethod = 'language/update'
 
 export const RoomsMethod = sitesMethod+'/rooms'
 export const addRoom = RoomsMethod+'/add'
+export const editRoom = RoomsMethod+'/update'
 export const addNewPointInteres= RoomsMethod+'/points/add'
 export const updatePointInteres= RoomsMethod+'/points/update'
 export const delPointInteres= RoomsMethod+'/points'

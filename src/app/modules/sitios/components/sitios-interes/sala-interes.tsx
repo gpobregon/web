@@ -1,7 +1,7 @@
 import { type } from 'os';
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Card, Button, Row, Modal } from 'react-bootstrap';
-import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, statePointInteres } from '../../../../services/api'
+import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom } from '../../../../services/api'
 import { Room } from "../../../../models/rooms";
 import swal from "sweetalert";
 import { PointInteres } from "../../../../models/sitio-interes";
@@ -10,6 +10,8 @@ import { safeUseLayoutEffect } from 'react-table';
 import { number } from 'yup';
 import { QRCodeCanvas } from "qrcode.react";
 import logo from '../../upload-image_03.jpg';
+import AddRoom from './add-room';
+import UpdateRoom from './update-room';
 
 type id_sitio = {
     id_sitio: number
@@ -20,12 +22,17 @@ const Interes: FC<id_sitio> = (props) => {
     const [room, setRooms] = useState<Room[]>([])
     const [puntoInteres, setPuntoInteres] = useState<PointInteres[]>([])
     const [idsala, setIdSala] = useState<number>()
-    const [createRoom, setCreateRoom] = useState({
+    const [upRoom, setupdateRoom] = useState({
         id_sitio: props.id_sitio,
-        nombre: 'sala test ',
-        descripcion: 'desc sala ',
-        "tipo": true
+        id_sala: 0,
+        nombre: '',
+        descripcion: '',
+        tipo:true,
+        estado:1,
     })
+
+    const [modalAddRoom, setModalAddRoom] = useState(false)
+    const [modalUpdateRoom, setModalUpdateRoom] = useState(false)
     const handleClose = () => setShow(false)  //modal close qr
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
@@ -56,10 +63,24 @@ const Interes: FC<id_sitio> = (props) => {
         setPuntoInteres(interes)
     }
 
-    const addNewRoom = async () => {
+    const addNewRoom = async (createRoom: any) => {
         await postData(addRoom, createRoom)
+        setModalAddRoom(false)
         getSalas()
     }
+
+    const updateRooom = async (Room: any) => {
+         await postData(editRoom, Room)
+        
+         setModalUpdateRoom(false)
+        getSalas()
+    }
+
+    const showModalUpdateRoom = () =>{ 
+        console.log(upRoom)
+        setModalUpdateRoom(true)
+    }
+
     const deleteRoom = (id: number, longitud: number) => {
         if (longitud > 0) {
             swal({
@@ -76,6 +97,7 @@ const Interes: FC<id_sitio> = (props) => {
             }).then(async res => {
                 if (res) {
                     await deleteData(RoomsMethod, { id_sala: id })
+                    getSalas()
                     swal({
                         text: "Se elimino con éxito",
                         icon: "success",
@@ -144,25 +166,37 @@ const Interes: FC<id_sitio> = (props) => {
                                         setIdSala(sala.id_sala);
                                     }}
                                     >
-                                        Sala {sala.id_sala}
+                                        {sala.nombre}
 
                                     </Button>
-                                        <Button variant="outline-dark" size="sm" onClick={() => {
-                                            deleteRoom(sala.id_sala, sala.points_of_interest.length)
-                                        }}
-                                            style={{ width: '5px', height: '40px', marginRight: '10px' }} >
-                                            <i
-                                                className='fa-solid fa-xmark '
-                                                style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                                            ></i>
+                                        <Button variant="outline-dark" size="sm"
+                                            onClick={() => {
+                                                setupdateRoom({
+                                                    id_sala: sala.id_sala,
+                                                    id_sitio: upRoom.id_sitio,
+                                                    nombre: sala.nombre,
+                                                    descripcion: sala.descripcion,
+                                                    tipo: true,
+                                                    estado: 1, 
+                                                })
+                                                setModalUpdateRoom(true)}}
+                                            style={{ width: '5px', height: '40px' }} >
+                                            <i className='fa-solid fa-pencil '
+                                                style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                </i>
+                                        </Button>
+                                        <Button variant="outline-dark" size="sm"
+                                            onClick={() => { deleteRoom(sala.id_sala, sala.points_of_interest.length) }}
+                                            style={{ width: '5px', height: '40px' }} >
+                                            <i className='fa-solid fa-xmark '
+                                                style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                </i>
                                         </Button>
                                     </>
                                 ))
                                 }
 
-                                <Button variant="outline-dark" size="sm" onClick={() => {
-                                    addNewRoom()
-                                }}>
+                                <Button variant="outline-dark" size="sm" onClick={() => setModalAddRoom(true)}>
                                     Nueva Sala
                                     <i
                                         className='fa-solid bi-plus '
@@ -178,7 +212,7 @@ const Interes: FC<id_sitio> = (props) => {
                             <br></br>
                             <div className='row'>
                                 <div className='col-xs-12 col-md-6 col-lg-6'>
-                                    <p style={{ marginTop: '10px', marginLeft: '15px', display: 'flex' }}>Agregado Recientemente</p>
+
 
                                 </div>
                                 <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
@@ -299,7 +333,7 @@ const Interes: FC<id_sitio> = (props) => {
 
                                                             <QRCodeCanvas
                                                                 id="qrCode"
-                                                                value={qr}
+                                                                value={punto.qr_path}
                                                                 size={300}
 
                                                                 level={"H"}
@@ -522,6 +556,18 @@ const Interes: FC<id_sitio> = (props) => {
 
                         </Card>
                     </div>
+                    <AddRoom
+                        show={modalAddRoom}
+                        onClose={() => setModalAddRoom(false)}
+                        addRoom={addNewRoom}
+                        id_sitio={props.id_sitio}
+                    />
+                    <UpdateRoom
+                        show={modalUpdateRoom}
+                        onClose={() => {setModalUpdateRoom(false)}}
+                        updateRoom={updateRooom}
+                        room={upRoom}
+                    />
                 </div>
             </div>
         </>

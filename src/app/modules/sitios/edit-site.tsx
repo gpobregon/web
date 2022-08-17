@@ -72,7 +72,7 @@ const animatedComponents = makeAnimated()
 
 const EditSite = () => {
 
-  const { state } = useLocation()
+  const { state} = useLocation()
   const [site, setSite] = useState(state as Site)
   const handleClose = () => setShow(false)  //modal close qr
   const handleShow = () => setShow(true)  //modal open qr
