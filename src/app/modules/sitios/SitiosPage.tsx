@@ -4,6 +4,7 @@ import { getData, sitesMethod, deleteData } from '../../services/api'
 import Sitio from './components/sitio';
 import { Site } from "../../models/site";
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
+import moment from 'moment';
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -43,7 +44,7 @@ const SitiosPage = () => {
     }
 
     const ordernarAsc = () => {
-        const numAscending = [...sites].sort((a, b) => a.id_sitio - b.id_sitio)
+        const numAscending = [...sites].sort((a, b) =>  moment(a.creado).diff(b.creado))
         setSites(numAscending)
         setFilterSites(numAscending)
         console.log(numAscending)
@@ -52,7 +53,7 @@ const SitiosPage = () => {
       }
     
       const ordenarDesc = () => {
-        const numDescending = [...sites].sort((a, b) => b.id_sitio - a.id_sitio)
+        const numDescending = [...sites].sort((a, b) => moment(b.creado).diff(a.creado))
         setSites(numDescending)
         setFilterSites(numDescending)
         console.log(numDescending)
@@ -89,9 +90,6 @@ const SitiosPage = () => {
                                     onChange={handlerChange}
                                 />
 
-                                {/* Block input search: here we command to fetch the handlerChange function */}
-
-                                {/* block input search */}
                             </div>
                         </div>
 
@@ -119,16 +117,6 @@ const SitiosPage = () => {
                     <br />
                 </div>
             </div>
-            {/* <Row className='pb-10'>
-                
-                <Col xs={6} md={4}><h1>Gestor de sitios</h1></Col>
-                <Col xs={6} md={4}>
-                <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Buscar"/>
-                </Col>
-            </Row> */}
 
             <br></br>
             <br></br>

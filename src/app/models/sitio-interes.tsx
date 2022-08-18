@@ -3,6 +3,11 @@ export interface PointInteres {
     id_sitio: number  //TODO: change to number
     descripcion: string
     lenguajes: [
+      {
+        id_punto: number
+        id_lenguaje: number
+        descripcion: string
+      }
     ]
     estado: string
     portada_path:string

@@ -1,11 +1,13 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Card, Button, Row, Modal, Form } from 'react-bootstrap';
-import { postData, addNewPointInteres } from '../../../../services/api'
+import { postData, addNewPointInteres, getValue, sitesMethod, URLAWS } from '../../../../services/api'
 import swal from "sweetalert";
 import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { status } from '../../../../models/status';
+import UpImage from '../upload-image';
+import logo from '../../upload-image_03.jpg';
 
 const customStyles = {
   control: (base: any, state: any) => ({
@@ -65,6 +67,7 @@ type datosPuntoInteres = {
 }
 const animatedComponents = makeAnimated()
 const AddPoint = () => {
+  const navigate = useNavigate()
   const handleClose = () => setShow(false)  //modal close qr
   const handleShow = () => setShow(true)  //modal open qr
   const [show, setShow] = useState(false) //modal show qr
@@ -78,8 +81,8 @@ const AddPoint = () => {
     nombre: '',
     geoX: '232',
     geoY: '323',
-    portada_path: 'https://picsum.photos/200/200',
-    qr_path: 'qr path',
+    portada_path: '',
+    qr_path: 'sitio/interes/'+datospuntoInteres.id_sitio+"/"+datospuntoInteres.id_guia,
     es_portada_de_sitio: true,
     estado: 1,
   });
@@ -110,7 +113,10 @@ const AddPoint = () => {
           timer: 2000,
 
         })
-        window.location.href = "../sitios";
+        navigate('/sitios/edit', {
+          state:  sitios
+          
+        })
 
 
       }
@@ -130,27 +136,69 @@ const AddPoint = () => {
           timer: 2000,
 
         })
-        window.location.href = "../sitios";
+        navigate('/sitios/edit', {
+          state:  sitios
+          
+        })
       }
     });
   }
   //petitions----------------------------------------------------------------------------
   const addNewPoint = async () => {
     await postData(addNewPointInteres, sitio)
-    console.log(sitio)
+    // console.log(sitio)
   }
 
+//get sitio-------------------------------------------------------------------------------------
+const [sitios, setSitios] = useState()
+useEffect(() => {
+    getSites()
+}, [])
 
+const getSites = async () => {
+    const site: any = await getValue(sitesMethod,datospuntoInteres.id_sitio)
+
+    setSitios(site.site)
+   
+}
+ // UPLOAD IMAGE-------------------------------------------------------------------------
+ const [modalupimg, setModalupIMG] = useState(false)
+ const uploadImage = async (imagen: string) => {
+  setSitio({
+    id_sitio: datospuntoInteres.id_sitio,
+    id_guia: datospuntoInteres.id_guia,
+    descripcion: '',
+    id_lenguaje: 1,
+    nombre: '',
+    geoX: '232',
+    geoY: '323',
+    portada_path: URLAWS+imagen,
+    qr_path: 'sitio/interes/'+datospuntoInteres.id_sitio+"/"+datospuntoInteres.id_guia,
+    es_portada_de_sitio: true,
+    estado: 1,
+  })
+
+  // console.log(sitio)
+  if (imagen != '') {
+    setModalupIMG(false)
+  }
+};
 
   return (
     <>
       <div className=' '>
-        <div className='row'>
+        <div className='row' style={{ backgroundColor: '#1A1A27', backgroundSize: 'auto 100%'}}>
           <div className='col-xs-12 col-md-5 col-lg-6 d-flex'>
             <div id='center'>
-              <Link to={'/sitios'}>
-                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }} ></i>
-              </Link>
+             
+                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}  
+                  onClick={(event) => {                                 
+                                    navigate('/sitios/edit', {
+                                      state:  sitios
+                                      
+                                    })
+                                  }}></i>
+             
 
 
             </div>
@@ -186,14 +234,14 @@ const AddPoint = () => {
                       // changeStatus(status.favorito, status.publicado, status.oculto)
 
                     }}
-                    style={{ display: 'flex', marginRight: '4px' }} ></i>
+                    style={{color: '#4F4B4B',display: 'flex', marginRight: '4px' }} ></i>
                 </li>
                 <li className='nav-item'>
                   <i
                     className='fa-solid fa-qrcode background-button '
                     id='center2'
                     onClick={handleShow}
-                    style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
+                    style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                   ></i>
                 </li>
 
@@ -225,7 +273,7 @@ const AddPoint = () => {
                     status.oculto = !status.oculto
                     // changeStatus(status.favorito, status.publicado, status.oculto)
                   }}
-                  style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
+                  style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                 ></i>
                 <i
                   className='fa-solid fa-xmark background-button'
@@ -247,11 +295,11 @@ const AddPoint = () => {
                   onClick={() => {
                     // console.log('site')
 
-                    saveChanges();
+                    // saveChanges();
                     // console.log(site)
                     // navigate('/site')
                   }}
-                  style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
+                  style={{color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                 ></i>
 
                 <i
@@ -268,9 +316,9 @@ const AddPoint = () => {
                       : 'fa-solid fa-upload background-button'
                   }
                   id='center2'
-                  style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
+                  style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                 ></i>
-                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></i>
+                <i className='fa-solid fa-gear background-button' id='center2' style={{color: '#4F4B4B', display: 'flex' }}></i>
               </ul>
             </div>
           </div>
@@ -291,7 +339,7 @@ const AddPoint = () => {
                 <Card.Img
                   src={
                     sitio.portada_path == ''
-                      ? 'https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'
+                      ? logo
                       : sitio.portada_path
                   }
                   alt='...'
@@ -299,7 +347,7 @@ const AddPoint = () => {
                   onClick={
                     sitio.portada_path == ''
                       ? (e) => {
-                        alert('subir imagen')
+                        setModalupIMG(true)
                       }
                       : (e) => { }
                   }
@@ -440,20 +488,6 @@ const AddPoint = () => {
 
                 <hr style={{ position: 'relative', top: '-20px' }}></hr>
                 <br></br>
-                {/* <label>Etiquetas</label>
-                <br />
-                <div className='form-control'> */}
-                {/* <Select
-                    closeMenuOnSelect={false}
-                    styles={customStyles}
-                    components={animatedComponents}
-                    // value={editcategorys}
-                    isMulti
-                    options={categorys}
-                    placeholder={categorysHolder}
-                    onChange={handleChange}
-                  ></Select> */}
-                {/* </div> */}
               </div>
               <div className='col-xs-12 col-md-5 col-lg-5 mb-5'>
                 <div className='row mt-6 gx-10 m-auto'>
@@ -482,6 +516,7 @@ const AddPoint = () => {
                         onClick={() => {
 
                           addNewPoint();
+                          // console.log(sitio)
                           // window.location.href = "../sitios";
 
                           console.log('creado con el boton de sitio mobil')
@@ -514,10 +549,7 @@ const AddPoint = () => {
                       <Button
                         className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                         onClick={() => {
-                          //   navigate('/site')
-                          //   postSite(site)
-                          window.location.href = "../sitios";
-                          console.log('creado con el boton de sitio web')
+                      
                         }}
                       >
                         <i className='fa-solid fa-pencil '></i> Crear
@@ -529,7 +561,13 @@ const AddPoint = () => {
             </div>
           </div>
         </div>
+        <UpImage
+                        show={modalupimg}
+                        onClose={() => setModalupIMG(false)}
+                        cargarIMG={uploadImage}
+                    />
       </div>
+     
     </>
   )
 }

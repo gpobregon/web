@@ -5,7 +5,7 @@ import makeAnimated from 'react-select/animated'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Site } from '../../models/site';
 import Moment from 'moment'
-import { getData, sitesMethod, deleteData, postData, categorysMethod, statesMethod, updateSiteMethod } from '../../services/api'
+import { getData, sitesMethod, deleteData, postData, categorysMethod, statesMethod, updateSiteMethod, URLAWS } from '../../services/api'
 import { Tag } from '../../models/tag';
 import { status } from '../../models/status';
 import swal from "sweetalert";
@@ -15,6 +15,7 @@ import { Category } from '../../models/category';
 import Interes from "./components/sitios-interes/sala-interes";
 import { QRCodeCanvas } from "qrcode.react";
 import logo from './upload-image_03.jpg';
+import UpImage from './components/upload-image';
 
 const customStyles = {
   control: (base: any, state: any) => ({
@@ -72,7 +73,7 @@ const animatedComponents = makeAnimated()
 
 const EditSite = () => {
 
-  const { state} = useLocation()
+  const { state } = useLocation()
   const [site, setSite] = useState(state as Site)
   const handleClose = () => setShow(false)  //modal close qr
   const handleShow = () => setShow(true)  //modal open qr
@@ -95,23 +96,6 @@ const EditSite = () => {
     setCategorysHolder(txt)
 
   }, []);
-  // const [site, setSite] = useState({
-  //     id_sitio: 1,
-  //     nombre: '',
-  //     descripcion: 'eeee',
-  //     ubicacion: '',
-  //     geoX: '',
-  //     geoY: '',
-  //     portada_path: 'https://picsum.photos/200/200',
-  //     estado: 0,
-  //     creado: new Date(),
-  //     editado: new Date(),
-  //     categorias: [{id_categoria: 1, nombre: 's', estado: 0}],
-  //     id_municipio: 1,
-  //     favorito: false,
-  //     publicado: false,
-  //     oculto: false,
-  // });
   const [status, setStatus] = useState<status>({
     id_sitio: site.id_sitio,
     favorito: site.favorito,
@@ -134,7 +118,6 @@ const EditSite = () => {
     category.map((cat: any) => {
       categorys.push({ value: cat.id_categoria, label: cat.nombre })
     })
-    //  console.log(category)
   }
 
   const mostrarCategorys = () => {
@@ -290,15 +273,40 @@ const EditSite = () => {
     // console.log(site);
 
   };
+  // UPLOAD IMAGE-------------------------------------------------------------------------
 
+  const uploadImage = async (imagen: string) => {
+
+    setSite({
+      id_sitio: site.id_sitio,
+      nombre: site.nombre,
+      descripcion: site.descripcion,
+      ubicacion: site.ubicacion,
+      geoX: site.geoX,
+      geoY: site.geoY,
+      portada_path: URLAWS + imagen,
+      estado: site.estado,
+      creado: site.creado,
+      editado: site.editado,
+      categorias: site.categorias,
+      id_municipio: site.id_municipio,
+      favorito: status.favorito,
+      publicado: status.publicado,
+      oculto: status.oculto,
+    })
+    if (imagen != '') {
+      setModalupIMG(false)
+    }
+  };
+  const [modalupimg, setModalupIMG] = useState(false)
 
   return (
     <>
       <div className=' '>
         <div className='row' style={{
-                        backgroundColor: '#1A1A27',
-                        backgroundSize: 'auto 100%',
-                    }}>
+          backgroundColor: '#1A1A27',
+          backgroundSize: 'auto 100%',
+        }}>
           <div className='col-xs-12 col-md-5 col-lg-6 d-flex' >
             <div id='center'>
               <Link to={'/sitios'}>
@@ -350,7 +358,7 @@ const EditSite = () => {
                       setQr('sitios/view/' + site.id_sitio)
                       handleShow()
 
-                  }}
+                    }}
                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                   ></i>
                 </li>
@@ -440,7 +448,7 @@ const EditSite = () => {
               </ul>
             </div>
           </div>
-          
+
         </div>
       </div>
       <br />
@@ -466,7 +474,7 @@ const EditSite = () => {
                   onClick={
                     site.portada_path == ''
                       ? (e) => {
-                        alert('subir imagen')
+                        setModalupIMG(true)
                       }
                       : (e) => { }
                   }
@@ -728,6 +736,11 @@ const EditSite = () => {
       <br />
       <h3>Puntos de interés</h3>
       <Interes id_sitio={site.id_sitio} />
+      <UpImage
+                        show={modalupimg}
+                        onClose={() => setModalupIMG(false)}
+                        cargarIMG={uploadImage}
+                    />
     </>
   )
 

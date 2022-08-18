@@ -1,17 +1,18 @@
-import React, { useState, useEffect,FC } from 'react';
+import React, { useState, useEffect,FC, useRef } from 'react';
 import { Container, Row, Col, Button, Card, ListGroup, Form, Navbar, Nav, NavDropdown,Modal } from 'react-bootstrap';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import { Site } from '../../models/site';
 import Moment from 'moment'
-import { getData, sitesMethod, deleteData,postData,categorysMethod,statesMethod } from '../../services/api'
+import { getData, sitesMethod, deleteData,postData,categorysMethod,statesMethod,URLAWS } from '../../services/api'
 import {Tag }from '../../models/tag';
 import {status }from '../../models/status';
 import  swal  from "sweetalert";
 import { useForm } from 'react-hook-form';
 import  Interes  from "./components/sitios-interes/sala-interes";  
 import logo from './upload-image_03.jpg';
+import UpImage from './components/upload-image';
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     item => ({ label: item, value: item })
 );
@@ -107,11 +108,11 @@ const ConfSite = () => {
     const [site, setSite] = useState({
         id_sitio: 0,
         nombre: '',
-        descripcion: 'eeee',
+        descripcion: '',
         ubicacion: '',
         geoX: '',
         geoY: '',
-        portada_path: 'https://picsum.photos/200/200',
+        portada_path: '',
         estado: 0,
         creado: new Date(),
         editado: new Date(),
@@ -237,7 +238,32 @@ const ConfSite = () => {
       
 }
 
+// UPLOAD IMAGE-------------------------------------------------------------------------
 
+const uploadImage = async (imagen:string) => {
+
+  setSite({
+    id_sitio: site.id_sitio,
+    nombre: site.nombre,
+    descripcion: site.descripcion,
+    ubicacion: site.ubicacion,
+    geoX: site.geoX,
+    geoY: site.geoY,
+    portada_path: URLAWS+imagen,
+    estado: site.estado,
+    creado: site.creado,
+    editado: site.editado,
+    categorias: site.categorias,
+    id_municipio: site.id_municipio,
+    favorito: status.favorito,
+    publicado: status.publicado,
+    oculto: status.oculto,
+  })
+if(imagen!=''){
+  setModalupIMG(false)
+}
+};
+const [modalupimg, setModalupIMG] = useState(false)
 
   return (
     <>
@@ -371,7 +397,7 @@ const ConfSite = () => {
             <div className='card-header row'>
               <div className='card div-image col-xs-12 col-md-3 col-lg-3'>
                 <br></br>
-                <Card.Img
+                <Card.Img 
                   src={
                     site.portada_path == ''
                       ? logo
@@ -382,12 +408,16 @@ const ConfSite = () => {
                   onClick={
                     site.portada_path == ''
                       ? (e) => {
-                          alert('subir imagen')
+                        setModalupIMG(true)
                         }
                       : (e) => {}
                   }
+                  
                 />
+               
+
                 <div>
+                {/* <Form.Control type="file" onChange={uploadImage} /> */}
                   <div className='card-body '>
                     <Row>
                       <Col>
@@ -645,36 +675,12 @@ const ConfSite = () => {
        {/* <h3>Puntos de interés</h3>
       <Interes id_sitio={site.id_sitio} /> */}
       </div>
-      
-      {/*<h3>Puntos de interés</h3>
-      <br />
-      <div className='row'>
-        <div className='col-10'>
-          <div className='card'>Hola</div>
-        </div>
-        <div className='col-2'>
-          <div className='card div-image'>
-            <br />
-            <h4>Vista Previa de Sala</h4>
-            <Card.Img
-              src={
-                site == null
-                  ? 'https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'
-                  : site.portada_path
-              }
-              alt='...'
-              className='card-img-top img2'
-              onClick={
-                site == null
-                  ? (e) => {
-                      alert('subir imagen')
-                    }
-                  : (e) => {}
-              }
-            />
-          </div>
-        </div>
-            </div>*/}
+                    <UpImage
+                        show={modalupimg}
+                        onClose={() => setModalupIMG(false)}
+                        cargarIMG={uploadImage}
+                    />
+     
     </>
   )
 

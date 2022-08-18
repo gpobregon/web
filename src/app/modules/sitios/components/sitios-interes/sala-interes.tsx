@@ -1,5 +1,5 @@
 import { type } from 'os';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Col, Card, Button, Row, Modal } from 'react-bootstrap';
 import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom } from '../../../../services/api'
 import { Room } from "../../../../models/rooms";
@@ -12,6 +12,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import logo from '../../upload-image_03.jpg';
 import AddRoom from './add-room';
 import UpdateRoom from './update-room';
+import domtoimage from 'dom-to-image';
 
 type id_sitio = {
     id_sitio: number
@@ -61,6 +62,7 @@ const Interes: FC<id_sitio> = (props) => {
 
     const seteatPuntoInteres = (interes: any) => {
         setPuntoInteres(interes)
+        console.log(puntoInteres)
     }
 
     const addNewRoom = async (createRoom: any) => {
@@ -118,7 +120,8 @@ const Interes: FC<id_sitio> = (props) => {
 
         }).then(async res => {
             if (res) {
-                await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: true })
+               await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
+              
                 setPuntoInteres([])
                 swal({
                     text: "Se elimino con éxito",
@@ -133,6 +136,32 @@ const Interes: FC<id_sitio> = (props) => {
         });
     }
 
+    //descargar QR------------------------------------------------------
+    const downloadQRCode = async  () => {
+    //     const qrCodeURL = document.getElementById('qrCode')  as HTMLCanvasElement
+    //     .toDataURL("image/png")
+    //     .replace("image/png", "image/octet-stream");
+    //   console.log(qrCodeURL)
+    //   let aEl = document.createElement("a");
+    //   aEl.href = qrCodeURL;
+    //   aEl.download = "QR_Code.png";
+    //   document.body.appendChild(aEl);
+    //   aEl.click();
+    //   document.body.removeChild(aEl);
+    
+
+    domtoimage.toJpeg(document.getElementById('qrCode')!, { quality: 0.95 })
+    .then(function (dataUrl) {
+        var link = document.createElement('a');
+        link.download = 'my-image-name.jpeg';
+        link.href = dataUrl;
+        link.click();
+    });
+}
+   
+      
+    
+    
 
     return (
         <>
@@ -317,23 +346,23 @@ const Interes: FC<id_sitio> = (props) => {
                                                         <i className="fa-solid fa-qrcode background-button "
                                                             style={{ color: '#92929F', display: 'flex', marginRight: '30px', fontSize: '23px' }}
                                                             onClick={() => {
-                                                                setQr('sitios/puntos-interes/' + punto.id_punto)
+                                                                setQr(punto.qr_path)
                                                                 handleShow()
-
+                                                                console.log(punto)
                                                             }}
 
                                                         ></i>
 
                                                     </li>
-                                                    <Modal show={show} onHide={handleClose}>
+                                                    <Modal show={show} onHide={handleClose}id="qrCode">
                                                         <Modal.Header closeButton>
                                                             <Modal.Title>Escanee su Código QR</Modal.Title>
                                                         </Modal.Header>
                                                         <Modal.Body style={{ textAlign: 'center' }}>
 
-                                                            <QRCodeCanvas
-                                                                id="qrCode"
-                                                                value={punto.qr_path}
+                                                            <QRCodeCanvas 
+                                                                
+                                                                value={qr}
                                                                 size={300}
 
                                                                 level={"H"}
@@ -341,10 +370,15 @@ const Interes: FC<id_sitio> = (props) => {
 
                                                         </Modal.Body>
                                                         <Modal.Footer>
+                                                       
                                                             <Button variant='secondary' onClick={handleClose}>
                                                                 Close
                                                             </Button>
+                                                            <Button variant='primary' onClick={downloadQRCode}>
+                                                                Descargar
+                                                            </Button>
                                                         </Modal.Footer>
+                                                        
                                                     </Modal>
                                                     <li className='nav-item '>
 
@@ -546,14 +580,8 @@ const Interes: FC<id_sitio> = (props) => {
                         <Card className="text-center">
                             <Card.Body>
                                 <Card.Title>Vista Previa de Sala</Card.Title>
-                                <Card.Img
-                                    src={logo}
-
-
-
-                                />
+                                <Card.Img src={logo}/>
                             </Card.Body>
-
                         </Card>
                     </div>
                     <AddRoom
