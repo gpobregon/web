@@ -4,7 +4,7 @@ import { Site } from '../../../models/site';
 import { getData, sitesMethod, deleteData } from '../../../services/api'
 import  swal  from "sweetalert";
 import SitiosPage from '../SitiosPage';
-import { useNavigate} from 'react-router-dom'
+import { Link, useNavigate} from 'react-router-dom'
 type sitio = {
     id_sitio: number
     nombre: string
@@ -39,15 +39,16 @@ const Sitio: FC<sitio> = (props) => {
             icon: "warning",
             buttons:["No","Sí"],
             
-          }).then(res=>{
+          }).then(async res=>{
             if(res){
-                deleteData(sitesMethod, props.id_sitio)
+              await deleteData(sitesMethod, {id_sitio: props.id_sitio})
                 swal({text:"Se elimino con éxito",
                 icon:"success",
                 timer:2000,
                 
             })
-            window.location.reload(); //reload page
+      
+            // window.location.reload(); //reload page
 
             }
           });
@@ -64,7 +65,6 @@ const Sitio: FC<sitio> = (props) => {
                 <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
                     <Button style={{ width: '50%' }}
                      onClick={(event) => {
-                      console.log(props)
                       navigate('/sitios/edit', {
                         state: {
                           id_sitio: props.id_sitio,

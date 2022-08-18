@@ -1,0 +1,93 @@
+.primary-light-dark {
+  background-color:#1e1e2d;
+}
+
+.content-section {
+  background: #1E1E2D;
+}
+.height-section {
+  height: 650px;
+}
+
+.seccion-dark {
+  background: #1C1B29;
+  border: solid 1px #1C1B29;
+}
+
+.content-icon
+{ 
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.bkg-dark {
+  background-color: #12121B !important;
+}
+
+.btn.btn-dark {
+  background-color: #2B2B40;
+  border-color: #181c32;
+  color: #fff !important;
+}
+
+.btn-check:active + .btn.btn-dark,
+.btn-check:checked + .btn.btn-dark,
+.btn.btn-dark.active,
+.btn.btn-dark.show,
+.btn.btn-dark:active:not(.btn-active),
+.btn.btn-dark:focus:not(.btn-active),
+.btn.btn-dark:hover:not(.btn-active),
+.show > .btn.btn-dark {
+  background-color: #131628 !important;
+  border-color: #131628;
+  color: #fff !important;
+}
+
+.btn.btn-dark.dropdown-toggle:after {
+  color: #fff !important;
+}
+
+#dropdown-item-button {
+  padding-right: 30px;
+  padding-left: 30px;
+}
+
+.collapsible {
+  background-color: transparent;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.collapsible:after {
+  content: "\276F";
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  transform:rotate(90deg);
+}
+
+.content-collapse {
+  padding: 0 18px;
+  display: none;
+  transition: max-height 0.2s ease-out;
+}
+
+.active-collapse {
+  display: block;
+}
+
+.editable:focus-visible {
+  outline: 1px dashed #009EF7;
+  padding: 2px;
+  background: #009cf72c;
+}
