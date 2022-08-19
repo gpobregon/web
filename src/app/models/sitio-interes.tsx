@@ -14,7 +14,8 @@ export interface PointInteres {
     qr_path:string
     geoX:string
     geoY:string
-    es_portada_de_sitio:string
+    es_portada_de_sitio:boolean
     nombre:string
+    es_visible:boolean
   }
   

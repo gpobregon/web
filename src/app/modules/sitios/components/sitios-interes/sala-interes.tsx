@@ -1,7 +1,7 @@
 import { type } from 'os';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Col, Card, Button, Row, Modal } from 'react-bootstrap';
-import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom } from '../../../../services/api'
+import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom, statePointInteres, changePointOfInterestFront } from '../../../../services/api'
 import { Room } from "../../../../models/rooms";
 import swal from "sweetalert";
 import { PointInteres } from "../../../../models/sitio-interes";
@@ -13,6 +13,7 @@ import logo from '../../upload-image_03.jpg';
 import AddRoom from './add-room';
 import UpdateRoom from './update-room';
 import domtoimage from 'dom-to-image';
+import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 
 type id_sitio = {
     id_sitio: number
@@ -28,8 +29,8 @@ const Interes: FC<id_sitio> = (props) => {
         id_sala: 0,
         nombre: '',
         descripcion: '',
-        tipo:true,
-        estado:1,
+        tipo: true,
+        estado: 1,
     })
 
     const [modalAddRoom, setModalAddRoom] = useState(false)
@@ -38,31 +39,47 @@ const Interes: FC<id_sitio> = (props) => {
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
     const [qr, setQr] = useState<any>() //modal qr
-    const [status, setStatus] = useState({
-        oculto: true,
-    })
-    const changeStatus = (oculto: boolean) => {
-        setStatus({
-            oculto: oculto,
+    const [vista, setVistaPrevia] = useState(false) //mostrar vsta previa
+    const [imagen, setImagenPrevia] = useState('') //mostrar vsta previa
+    const changeStatus = (idpunto: number, oculto: boolean) => {
+        postData(statePointInteres, { id_punto: idpunto, es_visible: oculto })
+        setPuntoInteres([])
+        swal({
+            text: "Se cambio visibilidad con éxito",
+            icon: "success",
+            timer: 2000,
+
         })
-
-        // postData(statePointInteres, status)
-
+        
     }
+    const changeImagePrincipal = (idpunto: number, idsitio: number) => {
+        postData(changePointOfInterestFront, { id_punto: idpunto, id_sitio: idsitio })
+        setPuntoInteres([])
+        swal({
+            text: "Se cambio Imagen principal",
+            icon: "success",
+            timer: 2000,
+
+        })
+      
+    }
+
     useEffect(() => {
         getSalas()
-    }, [])
+        console.log("das")
+    }, [puntoInteres])
 
 
     const getSalas = async () => {
         const rooms: any = await postData(RoomsMethod, props)
-        // console.log(rooms)
+        console.log(rooms)
         setRooms(rooms.salas as Room[])
+        setVistaPrevia(false)
     }
 
     const seteatPuntoInteres = (interes: any) => {
         setPuntoInteres(interes)
-        console.log(puntoInteres)
+        // console.log(puntoInteres)
     }
 
     const addNewRoom = async (createRoom: any) => {
@@ -72,13 +89,13 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const updateRooom = async (Room: any) => {
-         await postData(editRoom, Room)
-        
-         setModalUpdateRoom(false)
+        await postData(editRoom, Room)
+
+        setModalUpdateRoom(false)
         getSalas()
     }
 
-    const showModalUpdateRoom = () =>{ 
+    const showModalUpdateRoom = () => {
         console.log(upRoom)
         setModalUpdateRoom(true)
     }
@@ -120,8 +137,8 @@ const Interes: FC<id_sitio> = (props) => {
 
         }).then(async res => {
             if (res) {
-               await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
-              
+                await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
+
                 setPuntoInteres([])
                 swal({
                     text: "Se elimino con éxito",
@@ -140,19 +157,19 @@ const Interes: FC<id_sitio> = (props) => {
     const downloadQRCode = () => {
         const canvas = document.getElementById("qrCode") as HTMLCanvasElement;
         const pngUrl = canvas!
-          .toDataURL("image/png")
-          .replace("image/png", "image/octet-stream");
+            .toDataURL("image/png")
+            .replace("image/png", "image/octet-stream");
         let downloadLink = document.createElement("a");
         downloadLink.href = pngUrl;
         downloadLink.download = "qr.png";
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-      };
-   
+    };
 
-    
-    
+
+
+
 
     return (
         <>
@@ -184,6 +201,7 @@ const Interes: FC<id_sitio> = (props) => {
                                     <><Button variant="outline-dark" size="sm" onClick={() => {
                                         seteatPuntoInteres(sala.points_of_interest as PointInteres[]);
                                         setIdSala(sala.id_sala);
+                                        setVistaPrevia(false)
                                     }}
                                     >
                                         {sala.nombre}
@@ -197,20 +215,21 @@ const Interes: FC<id_sitio> = (props) => {
                                                     nombre: sala.nombre,
                                                     descripcion: sala.descripcion,
                                                     tipo: true,
-                                                    estado: 1, 
+                                                    estado: 1,
                                                 })
-                                                setModalUpdateRoom(true)}}
+                                                setModalUpdateRoom(true)
+                                            }}
                                             style={{ width: '5px', height: '40px' }} >
                                             <i className='fa-solid fa-pencil '
                                                 style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                </i>
+                                            </i>
                                         </Button>
                                         <Button variant="outline-dark" size="sm"
                                             onClick={() => { deleteRoom(sala.id_sala, sala.points_of_interest.length) }}
                                             style={{ width: '5px', height: '40px' }} >
                                             <i className='fa-solid fa-xmark '
                                                 style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                </i>
+                                            </i>
                                         </Button>
                                     </>
                                 ))
@@ -264,17 +283,18 @@ const Interes: FC<id_sitio> = (props) => {
                                             <li className='nav-item'>
                                                 <i
                                                     className={
-                                                        status.oculto == false
-                                                            ? 'fa-solid fa-eye-slash background-button'
-                                                            : 'fa-solid fa-eye background-button'
+                                                        'fa-solid fa-eye-slash background-button'
+                                                        // status.oculto == false
+                                                        //     ? 'fa-solid fa-eye-slash background-button'
+                                                        //     : 'fa-solid fa-eye background-button'
                                                     }
                                                     id='center2'
                                                     onClick={() => {
                                                         // status.oculto == false
                                                         //   ? changeStatus(status.favorito, status.publicado, true)
                                                         //   : changeStatus(status.favorito, status.publicado, false)
-                                                        status.oculto = !status.oculto
-                                                        changeStatus(status.oculto)
+                                                        // status.oculto = !status.oculto
+                                                        // changeStatus(status.oculto)
                                                     }}
                                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                                 ></i>
@@ -304,7 +324,7 @@ const Interes: FC<id_sitio> = (props) => {
                             {
                                 puntoInteres?.map((punto) => (
                                     <div className='row'>
-                                        <div className='col-xs-12 col-md-12 col-lg-6'>
+                                           <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-start'>
 
                                             <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column', }}>
                                                 <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
@@ -324,6 +344,10 @@ const Interes: FC<id_sitio> = (props) => {
                                                         style={{ width: '25%', height: '25%', borderRadius: '10px' }}
                                                         alt='...'
                                                         className='card-img-top img1'
+                                                        onClick={() => {
+                                                            setVistaPrevia(true)
+                                                            setImagenPrevia(punto.portada_path)
+                                                        }}
 
                                                     />
                                                 </span>
@@ -351,7 +375,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                         </Modal.Header>
                                                         <Modal.Body style={{ textAlign: 'center' }}>
 
-                                                            <QRCodeCanvas 
+                                                            <QRCodeCanvas
                                                                 id="qrCode"
                                                                 value={qr}
                                                                 size={300}
@@ -361,7 +385,7 @@ const Interes: FC<id_sitio> = (props) => {
 
                                                         </Modal.Body>
                                                         <Modal.Footer>
-                                                       
+
                                                             <Button variant='secondary' onClick={handleClose}>
                                                                 Close
                                                             </Button>
@@ -369,26 +393,36 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 Descargar
                                                             </Button>
                                                         </Modal.Footer>
-                                                        
+
                                                     </Modal>
                                                     <li className='nav-item '>
 
-                                                        <p style={{ display: 'flex', marginRight: '30px', fontSize: '14px', marginTop: '15px' }}> <i className="bi bi bi-circle"
-                                                            style={{ color: '#92929F', display: 'flex', marginRight: '8px', fontSize: '23px' }}></i>imagen principal</p>
+                                                        <p style={{ display: 'flex', marginRight: '30px', fontSize: '14px', marginTop: '15px' }}>
+                                                            <i className=
+                                                                {
+                                                                    punto.es_portada_de_sitio == false
+                                                                        ? "bi bi bi-circle"
+                                                                        : "bi bi-record-circle"
+                                                                }
+                                                                onClick={() => {
+                                                                    punto.es_portada_de_sitio = !punto.es_portada_de_sitio
+                                                                    changeImagePrincipal(punto.id_punto,punto.id_sitio)
+                                                                }    }
+                                                                style={{ color: '#92929F', display: 'flex', marginRight: '8px', fontSize: '23px' }}></i>imagen principal</p>
                                                     </li>
 
                                                     <li className='nav-item'>
 
                                                         <i
                                                             className={
-                                                                status.oculto == false
+                                                                punto.es_visible == false
                                                                     ? 'fa-solid fa-eye-slash background-button'
                                                                     : 'fa-solid fa-eye background-button'
                                                             }
                                                             id='center2'
                                                             onClick={() => {
-                                                                status.oculto = !status.oculto
-                                                                changeStatus(status.oculto)
+                                                                punto.es_visible = !punto.es_visible
+                                                                changeStatus(punto.id_punto, punto.es_visible)
                                                             }}
                                                             style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                                         ></i>
@@ -410,6 +444,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                     qr_path: punto.qr_path,
                                                                     es_portada_de_sitio: punto.es_portada_de_sitio,
                                                                     estado: punto.estado,
+                                                                    es_visible: punto.es_visible,
                                                                 },
                                                             })
                                                         }}
@@ -443,71 +478,7 @@ const Interes: FC<id_sitio> = (props) => {
 
 
 
-                            {/* <div className='row'>
-                                <div className='col-xs-12 col-md-12 col-lg-6'>
-
-                                    <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column' }}>
-                                        <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
-                                        </Card.Title>
-                                        <Card.Subtitle className="text-white" style={{ alignItems: 'flex-start', paddingLeft: 10,marginLeft:'75px' }} >pana</Card.Subtitle>
-                                        <Card.Subtitle className='text-muted' style={{ alignItems: 'flex-start', paddingLeft: 10, paddingTop: 5,marginLeft:'75px' }} >descripcion</Card.Subtitle>
-                                        <span className='menu-ico' style={{ left: 10, position: 'absolute' }}>
-
-                                            <i className={`bi bi-list`} style={{ fontSize: 20,marginRight:'10px' }}></i>
-                                            <Card.Img
-                                                src={
-
-                                                    'https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'
-
-                                                }
-                                                style={{ width: '15%', height: '15%',borderRadius:'10px' }}
-                                                alt='...'
-                                                className='card-img-top img1'
-
-                                            />
-                                        </span>
-                                    </Card>
-                                   
-                                </div>
-                                <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-end'>
-                               
-                                    <div id='center2'>
-                                        <ul className='nav justify-content-end'>
-                                            <li className='nav-item '>
-                                                
-                                            <i className="fa-solid fa-qrcode background-button "
-                                                    style={{ color: '#92929F', display: 'flex', marginRight: '30px', fontSize: '23px' }}></i>
-                                            </li>
-                                            <li className='nav-item '>
-                                           
-                                                <p style={{ display: 'flex', marginRight: '30px', fontSize: '14px', marginTop: '15px' }}>  <i className="bi bi-record-circle"
-                                                    style={{ color: '#92929F', display: 'flex', marginRight: '8px', fontSize: '23px' }}></i>imagen principal</p>
-                                            </li>
-                                            <li className='nav-item'>
-                                                <i
-                                                    className='fa-solid fa-eye background-button'
-                                                    id='center2'
-                                                    // onClick={handleShow}
-                                                    style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                                                ></i>
-                                            </li>
-                                            <i className="bi-solid bi-trash3 background-button"
-                                                id='center2'
-                                                style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}></i>
-                                            <i
-                                                className='fa-solid fa-gear background-button'
-                                                id='center2'
-                                                onClick={() => {
-
-
-                                                }}
-                                                style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
-                                            ></i>
-                                        </ul>
-                                    </div>
-
-                                </div>
-                            </div> */}
+                        
 
 
                             <br></br>
@@ -555,25 +526,18 @@ const Interes: FC<id_sitio> = (props) => {
 
 
                     <div className='col-3' >
-                        {/* <div className='card div-image'>
-                            <br />
-                            <h4 style={{ fontSize: '18px' ,textAlign:'center'}}>Vista Previa de Sala</h4>
-                            <Card.Img 
-                                src={' https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'}
-                              
-                             
 
-                            />
+                        {vista === true ?
 
-                            
-                        </div> */}
+                            <Card className="text-center">
+                                <Card.Body>
+                                    <Card.Title>Vista Previa de Sala</Card.Title>
+                                    {/* <Card.Img src={logo}/> */}
+                                    <Card.Img src={imagen} />
+                                </Card.Body>
+                            </Card>
+                            : null}
 
-                        <Card className="text-center">
-                            <Card.Body>
-                                <Card.Title>Vista Previa de Sala</Card.Title>
-                                <Card.Img src={logo}/>
-                            </Card.Body>
-                        </Card>
                     </div>
                     <AddRoom
                         show={modalAddRoom}
@@ -583,7 +547,7 @@ const Interes: FC<id_sitio> = (props) => {
                     />
                     <UpdateRoom
                         show={modalUpdateRoom}
-                        onClose={() => {setModalUpdateRoom(false)}}
+                        onClose={() => { setModalUpdateRoom(false) }}
                         updateRoom={updateRooom}
                         room={upRoom}
                     />

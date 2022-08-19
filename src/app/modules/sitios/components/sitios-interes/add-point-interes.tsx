@@ -76,7 +76,7 @@ const AddPoint = () => {
     geoY: '323',
     portada_path: '',
     qr_path: 'sitio/interes/' + datospuntoInteres.id_sitio + "/" + datospuntoInteres.id_guia,
-    es_portada_de_sitio: true,
+    es_portada_de_sitio: false,
     estado: 1,
   });
   const [languages, setLanguages] = useState<CatalogLanguage[]>([])

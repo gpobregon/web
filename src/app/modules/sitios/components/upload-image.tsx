@@ -33,11 +33,11 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG }) => {
 
     const handleFileInput = (e: any) => {
         setSelectedFile(e.target.files[0]);
-        setImg(e.target.files[0].name)
+      
     }
 
     const uploadFile = (file: any) => {
-       
+        setImg(file.name)
         const params = {
             ACL: 'public-read',
             Body: file,
@@ -60,7 +60,7 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG }) => {
                     <Modal.Title>{'Escoge Tu Imagen'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Control type="file" onChange={handleFileInput} />
+                    <Form.Control type="file" onChange={handleFileInput} accept="image/*"/>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant='secondary' onClick={onClose}>

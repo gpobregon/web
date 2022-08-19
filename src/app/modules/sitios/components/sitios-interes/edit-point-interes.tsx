@@ -275,7 +275,7 @@ const EditPoint = () => {
                         <div id='center2'>
                             <ul className='nav justify-content-end '>
                                 <li className='nav-item'>
-                                    <i
+                                    {/* <i
                                         className={
                                             status.favorito == false
                                                 ? 'fa-regular fa-star background-button'
@@ -288,7 +288,7 @@ const EditPoint = () => {
                                             // changeStatus(status.favorito, status.publicado, status.oculto)
 
                                         }}
-                                        style={{ display: 'flex', marginRight: '4px' }} ></i>
+                                        style={{ display: 'flex', marginRight: '4px' }} ></i> */}
                                 </li>
                                 <li className='nav-item'>
                                     <i

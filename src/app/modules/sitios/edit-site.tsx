@@ -350,8 +350,8 @@ const EditSite = () => {
                   <i
                     className={
                       status.favorito == false
-                        ? 'fa-regular fa-star background-button'
-                        : 'fas fa-star background-button'
+                        ? 'text-white  fa-regular fa-star background-button'
+                        : 'text-white fas fa-star background-button'
                     }
                     id='center2'
                     onClick={() => {

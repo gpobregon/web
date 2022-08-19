@@ -23,8 +23,8 @@ export const editRoom = RoomsMethod+'/update'
 export const addNewPointInteres= RoomsMethod+'/points/add'
 export const updatePointInteres= RoomsMethod+'/points/update'
 export const delPointInteres= RoomsMethod+'/points'
-export const statePointInteres = addNewPointInteres+'/visibility'
-
+export const statePointInteres = RoomsMethod+'/points'+'/visibility'
+export const changePointOfInterestFront =RoomsMethod+'/points/changePointOfInterestFront'
 
 
 export const getData = async (route: string) => {
