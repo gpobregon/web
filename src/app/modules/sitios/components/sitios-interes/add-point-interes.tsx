@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Col, Card, Button, Row, Modal, Form } from 'react-bootstrap';
-import { postData, addNewPointInteres, getValue, sitesMethod, URLAWS } from '../../../../services/api'
+import { postData, addNewPointInteres, getValue, sitesMethod, URLAWS, getData, languagesMethod } from '../../../../services/api'
 import swal from "sweetalert";
 import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
@@ -8,59 +8,52 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { status } from '../../../../models/status';
 import UpImage from '../upload-image';
 import logo from '../../upload-image_03.jpg';
+import { CatalogLanguage } from '../../../../models/catalogLanguage';
 
+import Select from 'react-select'
 const customStyles = {
   control: (base: any, state: any) => ({
     ...base,
-    background: '#1b1b29',
-    borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
-    borderColor: state.isFocused ? '#565674' : '#1b1b29',
-    boxShadow: state.isFocused ? '#474761' : '#1b1b29',
-    color: '#1b1b29',
+    background: 'transparent',
+    borderColor: state.isFocused ? '#474761' : '#323248',
+    borderRadius: 6.175,
+    color: '#92929F',
     '&:hover': {
-      borderColor: state.isFocused ? 'white' : 'white',
+      borderColor: '#323248',
     },
-
+    '&:focus': {
+      borderColor: '#323248',
+    },
+    '&:active': {
+      borderColor: '#323248',
+    },
+  }),
+  input: (base: any, state: any) => ({
+    ...base,
+    color: '#92929f',
   }),
   option: (base: any, state: any) => ({
     ...base,
-    borderBottom: '1px dotted pink',
-    color: state.isSelected ? 'red' : 'gray',
+    background: state.isFocused ? '#7239ea' : '#323248',
+    color: state.isFocused ? '#fff' : '#92929F',
     padding: 10,
   }),
-  multiValue: (base: any,) => {
-
-    return {
-      ...base,
-      backgroundColor: '#white',
-    };
-  },
-  multiValueRemove: (base: any) => ({
+  singleValue: (base: any) => ({
     ...base,
-    color: 'gray',
-    // ':hover': {
-    //   backgroundColor: data.color,
-    //   color: 'white',
-    // },
-  }),
-
-  multiValueLabel: (base: any) => ({
-    ...base,
-    color: 'white',
+    color: '#fff',
   }),
   menu: (base: any) => ({
     ...base,
-    borderRadius: 0,
-    marginTop: 0,
-    color: 'white',
-    background: '#1b1b29',
+    borderRadius: 6.175,
+    background: '#323248',
   }),
   menuList: (base: any) => ({
     ...base,
     padding: 0,
-    color: 'white',
+    borderRadius: 6.175,
   }),
 }
+
 type datosPuntoInteres = {
   id_sitio: number,
   id_guia: number,  // id de la sala 
@@ -82,11 +75,11 @@ const AddPoint = () => {
     geoX: '232',
     geoY: '323',
     portada_path: '',
-    qr_path: 'sitio/interes/'+datospuntoInteres.id_sitio+"/"+datospuntoInteres.id_guia,
+    qr_path: 'sitio/interes/' + datospuntoInteres.id_sitio + "/" + datospuntoInteres.id_guia,
     es_portada_de_sitio: true,
     estado: 1,
   });
-
+  const [languages, setLanguages] = useState<CatalogLanguage[]>([])
   // useEffect(() => {
   //   console.log(sitio)
   // }, []);
@@ -114,8 +107,8 @@ const AddPoint = () => {
 
         })
         navigate('/sitios/edit', {
-          state:  sitios
-          
+          state: sitios
+
         })
 
 
@@ -137,8 +130,8 @@ const AddPoint = () => {
 
         })
         navigate('/sitios/edit', {
-          state:  sitios
-          
+          state: sitios
+
         })
       }
     });
@@ -149,56 +142,87 @@ const AddPoint = () => {
     // console.log(sitio)
   }
 
-//get sitio-------------------------------------------------------------------------------------
-const [sitios, setSitios] = useState()
-useEffect(() => {
+  //get sitio-------------------------------------------------------------------------------------
+  const [sitios, setSitios] = useState()
+  useEffect(() => {
     getSites()
-}, [])
+    getLanguages()
+  }, [])
 
-const getSites = async () => {
-    const site: any = await getValue(sitesMethod,datospuntoInteres.id_sitio)
+  const getSites = async () => {
+    const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
 
     setSitios(site.site)
-   
-}
- // UPLOAD IMAGE-------------------------------------------------------------------------
- const [modalupimg, setModalupIMG] = useState(false)
- const uploadImage = async (imagen: string) => {
-  setSitio({
-    id_sitio: datospuntoInteres.id_sitio,
-    id_guia: datospuntoInteres.id_guia,
-    descripcion: '',
-    id_lenguaje: 1,
-    nombre: '',
-    geoX: '232',
-    geoY: '323',
-    portada_path: URLAWS+imagen,
-    qr_path: 'sitio/interes/'+datospuntoInteres.id_sitio+"/"+datospuntoInteres.id_guia,
-    es_portada_de_sitio: true,
-    estado: 1,
-  })
 
-  // console.log(sitio)
-  if (imagen != '') {
-    setModalupIMG(false)
   }
-};
+  // UPLOAD IMAGE-------------------------------------------------------------------------
+  const [modalupimg, setModalupIMG] = useState(false)
+  const uploadImage = async (imagen: string) => {
+    setSitio({
+      id_sitio: datospuntoInteres.id_sitio,
+      id_guia: datospuntoInteres.id_guia,
+      descripcion: '',
+      id_lenguaje: 1,
+      nombre: '',
+      geoX: '232',
+      geoY: '323',
+      portada_path: URLAWS + imagen,
+      qr_path: 'sitio/interes/' + datospuntoInteres.id_sitio + "/" + datospuntoInteres.id_guia,
+      es_portada_de_sitio: true,
+      estado: 1,
+    })
 
+    // console.log(sitio)
+    if (imagen != '') {
+      setModalupIMG(false)
+    }
+  };
+  //GET LANNUGAGES---------------------------------------------------------------------------------
+
+
+  const getLanguages = async () => {
+    const language: any = await getData(languagesMethod)
+    setLanguages(language.data as CatalogLanguage[])
+    console.log(language)
+  }
+
+  const languagesOptions = languages?.map((language) => ({
+    value: language.id_lenguaje,
+    label: language.descripcion,
+  }))
+
+
+  const handleChangeLanguage = (event: any) => {
+    setSitio({
+      id_sitio: datospuntoInteres.id_sitio,
+      id_guia: datospuntoInteres.id_guia,
+      descripcion: sitio.descripcion,
+      id_lenguaje: event.value,
+      nombre: sitio.nombre,
+      geoX: sitio.geoX,
+      geoY: sitio.geoY,
+      portada_path: sitio.portada_path,
+      qr_path: sitio.qr_path,
+      es_portada_de_sitio: sitio.es_portada_de_sitio,
+      estado: sitio.estado
+    })
+    console.log(sitio)
+  }
   return (
     <>
       <div className=' '>
-        <div className='row' style={{ backgroundColor: '#1A1A27', backgroundSize: 'auto 100%'}}>
+        <div className='row' style={{ backgroundColor: '#1A1A27', backgroundSize: 'auto 100%' }}>
           <div className='col-xs-12 col-md-5 col-lg-6 d-flex'>
             <div id='center'>
-             
-                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}  
-                  onClick={(event) => {                                 
-                                    navigate('/sitios/edit', {
-                                      state:  sitios
-                                      
-                                    })
-                                  }}></i>
-             
+
+              <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
+                onClick={(event) => {
+                  navigate('/sitios/edit', {
+                    state: sitios
+
+                  })
+                }}></i>
+
 
 
             </div>
@@ -234,7 +258,7 @@ const getSites = async () => {
                       // changeStatus(status.favorito, status.publicado, status.oculto)
 
                     }}
-                    style={{color: '#4F4B4B',display: 'flex', marginRight: '4px' }} ></i>
+                    style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }} ></i>
                 </li>
                 <li className='nav-item'>
                   <i
@@ -245,19 +269,7 @@ const getSites = async () => {
                   ></i>
                 </li>
 
-                <Modal show={show} onHide={handleClose}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Escanee su Código QR</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Card.Img src='https://res.cloudinary.com/dte7upwcr/image/upload/blog/blog2/como-crear-codigo-qr/codigo-qr.jpg'></Card.Img>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant='secondary' onClick={handleClose}>
-                      Close
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
+
 
                 <i
                   className={
@@ -299,7 +311,7 @@ const getSites = async () => {
                     // console.log(site)
                     // navigate('/site')
                   }}
-                  style={{color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
+                  style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                 ></i>
 
                 <i
@@ -318,7 +330,7 @@ const getSites = async () => {
                   id='center2'
                   style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                 ></i>
-                <i className='fa-solid fa-gear background-button' id='center2' style={{color: '#4F4B4B', display: 'flex' }}></i>
+                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#4F4B4B', display: 'flex' }}></i>
               </ul>
             </div>
           </div>
@@ -438,55 +450,17 @@ const getSites = async () => {
 
                 </div>
                 <br />
-                <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Descripcion</label>
+                <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Selecciona Lenguaje</label>
                 <br />
                 <br />
-                {/* <input  type='text'
-                  className='form-control'
-                  style={{ border: '0',  fontSize: '18px', color: '#FFFFFF' }}
-                  value={site.ubicacion != '' ? site.ubicacion : ''}
-                  onChange={(e) => {
-                    setSite({
-                      id_sitio: site.id_sitio,
-                      nombre: site.nombre,
-                      descripcion: site.descripcion,
-                      ubicacion: e.target.value,
-                      geoX: site.geoX,
-                      geoY: site.geoY,
-                      portada_path: site.portada_path,
-                      estado: site.estado,
-                      creado: site.creado,
-                      editado: site.editado,
-                      categorias:  site.categorias,
-                      id_municipio: site.id_municipio,
-                      favorito: status.favorito,
-                      publicado: status.publicado,
-                      oculto: status.oculto,
-                    })
-                  }}
-                ></input> */}
-                <Form.Control
-                  as="textarea"
-                  placeholder="Escribe una descripcion aqui"
-                  style={{ height: '100px' }}
-                  onChange={(e) => {
-                    setSitio({
-                      id_sitio: datospuntoInteres.id_sitio,
-                      id_guia: datospuntoInteres.id_guia,
-                      descripcion: e.target.value,
-                      id_lenguaje: sitio.id_lenguaje,
-                      nombre: sitio.nombre,
-                      geoX: sitio.geoX,
-                      geoY: sitio.geoY,
-                      portada_path: sitio.portada_path,
-                      qr_path: sitio.qr_path,
-                      es_portada_de_sitio: sitio.es_portada_de_sitio,
-                      estado: sitio.estado
-                    })
-                  }}
-                />
-
-                <hr style={{ position: 'relative', top: '-20px' }}></hr>
+          
+            
+                <Select
+                                    options={languagesOptions}
+                                    styles={customStyles}
+                                    components={animatedComponents}
+                                    onChange={handleChangeLanguage}
+                                />
                 <br></br>
               </div>
               <div className='col-xs-12 col-md-5 col-lg-5 mb-5'>
@@ -511,21 +485,21 @@ const getSites = async () => {
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={'/sitios'}>
-                      <Button
-                        onClick={() => {
+                      <Link to={'/sitios'}>
+                        <Button
+                          onClick={() => {
 
-                          addNewPoint();
-                          // console.log(sitio)
-                          // window.location.href = "../sitios";
+                            addNewPoint();
+                            // console.log(sitio)
+                            // window.location.href = "../sitios";
 
-                          console.log('creado con el boton de sitio mobil')
-                        }}
-                        className='btn btn-info col-md-12 col-sm-12 col-lg-12'
-                      >
-                        {' '}
-                        <i className='fa-solid fa-pencil' ></i> Crear
-                      </Button>
+                            console.log('creado con el boton de sitio mobil')
+                          }}
+                          className='btn btn-info col-md-12 col-sm-12 col-lg-12'
+                        >
+                          {' '}
+                          <i className='fa-solid fa-pencil' ></i> Crear
+                        </Button>
                       </Link>
                     </div>
                   </div>
@@ -549,7 +523,7 @@ const getSites = async () => {
                       <Button
                         className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                         onClick={() => {
-                      
+
                         }}
                       >
                         <i className='fa-solid fa-pencil '></i> Crear
@@ -562,12 +536,12 @@ const getSites = async () => {
           </div>
         </div>
         <UpImage
-                        show={modalupimg}
-                        onClose={() => setModalupIMG(false)}
-                        cargarIMG={uploadImage}
-                    />
+          show={modalupimg}
+          onClose={() => setModalupIMG(false)}
+          cargarIMG={uploadImage}
+        />
       </div>
-     
+
     </>
   )
 }

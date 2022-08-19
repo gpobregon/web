@@ -185,7 +185,7 @@ const ConfSite = () => {
 
   async function postSite(sitee: any) {
     if (site.nombre!=''&& site.geoX!=''&& site.geoY!=''&& site.ubicacion!='') {
-    const sit: any = await postData(sitesMethod, sitee)
+    const sit: any = await postData(sitesMethod+"/add", sitee)
     // console.log(sit)
     window.location.href = "../sitios";
     }else{

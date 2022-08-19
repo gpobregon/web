@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { getData, sitesMethod, deleteData } from '../../services/api'
+import { getData, sitesMethod, deleteData, postData } from '../../services/api'
 import Sitio from './components/sitio';
 import { Site } from "../../models/site";
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import moment from 'moment';
+import logo from './upload-image_03.jpg';
+import QRCode from 'qrcode.react';
+
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -37,7 +40,7 @@ const SitiosPage = () => {
       }
 
     const getSites = async () => {
-        const site: any = await getData(sitesMethod)
+        const site: any = await postData(sitesMethod,{page:"1",quantity:"100"})
         console.log(site)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
@@ -60,6 +63,19 @@ const SitiosPage = () => {
         setEstado(true)
         setUp(true)
       }
+
+      const downloadQR = () => {
+        const canvas = document.getElementById("123456") as HTMLCanvasElement;
+        const pngUrl = canvas!
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        let downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = "qr.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      };
     return (
 
         <Container fluid>
@@ -168,8 +184,6 @@ const SitiosPage = () => {
                         </Link>
                     </Card>
                     </div>
-                
-                  
                     </div>
                    
                

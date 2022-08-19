@@ -137,29 +137,20 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     //descargar QR------------------------------------------------------
-    const downloadQRCode = async  () => {
-    //     const qrCodeURL = document.getElementById('qrCode')  as HTMLCanvasElement
-    //     .toDataURL("image/png")
-    //     .replace("image/png", "image/octet-stream");
-    //   console.log(qrCodeURL)
-    //   let aEl = document.createElement("a");
-    //   aEl.href = qrCodeURL;
-    //   aEl.download = "QR_Code.png";
-    //   document.body.appendChild(aEl);
-    //   aEl.click();
-    //   document.body.removeChild(aEl);
-    
-
-    domtoimage.toJpeg(document.getElementById('qrCode')!, { quality: 0.95 })
-    .then(function (dataUrl) {
-        var link = document.createElement('a');
-        link.download = 'my-image-name.jpeg';
-        link.href = dataUrl;
-        link.click();
-    });
-}
+    const downloadQRCode = () => {
+        const canvas = document.getElementById("qrCode") as HTMLCanvasElement;
+        const pngUrl = canvas!
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        let downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = "qr.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      };
    
-      
+
     
     
 
@@ -354,14 +345,14 @@ const Interes: FC<id_sitio> = (props) => {
                                                         ></i>
 
                                                     </li>
-                                                    <Modal show={show} onHide={handleClose}id="qrCode">
+                                                    <Modal show={show} onHide={handleClose}>
                                                         <Modal.Header closeButton>
                                                             <Modal.Title>Escanee su Código QR</Modal.Title>
                                                         </Modal.Header>
                                                         <Modal.Body style={{ textAlign: 'center' }}>
 
                                                             <QRCodeCanvas 
-                                                                
+                                                                id="qrCode"
                                                                 value={qr}
                                                                 size={300}
 

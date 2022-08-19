@@ -223,6 +223,20 @@ const EditPoint = () => {
             setModalupIMG(false)
         }
     };
+
+    //DONWLOAD QR-------------------------------------------------------------------------
+      const downloadQRCode = () => {
+        const canvas = document.getElementById("qrCode") as HTMLCanvasElement;
+        const pngUrl = canvas!
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        let downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = "qr.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      };
     return (
         <>
             <div className=' '>
@@ -291,17 +305,22 @@ const EditPoint = () => {
                                     </Modal.Header>
                                     <Modal.Body style={{ textAlign: 'center' }}>
                                         <QRCodeCanvas
-
+                                             id="qrCode"
                                             value={datospuntoInteres.qr_path}
                                             size={300}
 
                                             level={"H"}
                                         />
+                                           
+
                                     </Modal.Body>
                                     <Modal.Footer>
                                         <Button variant='secondary' onClick={handleClose}>
                                             Close
                                         </Button>
+                                        <Button variant='primary' onClick={downloadQRCode}>
+                                                                Descargar
+                                                            </Button>
                                     </Modal.Footer>
                                 </Modal>
 

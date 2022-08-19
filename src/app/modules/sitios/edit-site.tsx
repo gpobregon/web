@@ -300,6 +300,19 @@ const EditSite = () => {
   };
   const [modalupimg, setModalupIMG] = useState(false)
 
+  //DONWLOAD QR-------------------------------------------------------------------------
+  const downloadQRCode = () => {
+    const canvas = document.getElementById("qrCode") as HTMLCanvasElement;
+    const pngUrl = canvas!
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
+    let downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = "qr.png";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
   return (
     <>
       <div className=' '>
@@ -379,8 +392,12 @@ const EditSite = () => {
 
                   </Modal.Body>
                   <Modal.Footer>
+
                     <Button variant='secondary' onClick={handleClose}>
                       Close
+                    </Button>
+                    <Button variant='primary' onClick={downloadQRCode}>
+                      Descargar
                     </Button>
                   </Modal.Footer>
                 </Modal>
@@ -737,10 +754,10 @@ const EditSite = () => {
       <h3>Puntos de interés</h3>
       <Interes id_sitio={site.id_sitio} />
       <UpImage
-                        show={modalupimg}
-                        onClose={() => setModalupIMG(false)}
-                        cargarIMG={uploadImage}
-                    />
+        show={modalupimg}
+        onClose={() => setModalupIMG(false)}
+        cargarIMG={uploadImage}
+      />
     </>
   )
 
