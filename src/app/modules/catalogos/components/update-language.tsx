@@ -1,17 +1,17 @@
 import React, {useState, FC} from 'react'
 import {Button, Modal, Form} from 'react-bootstrap'
 
-const UpdateLanguage: FC<any> = ({show, onClose, language,  updateIdioma, deleteIdioma}) => {
+const UpdateLanguage: FC<any> = ({show, onClose, language, updateIdioma, deleteIdioma}) => {
     const [idioma, setIdioma] = useState({
         id_lenguaje: 0,
         nombre: '',
         descripcion: '',
         estado: 1,
-    }) 
+    })
 
-    let modifiedIdiomaDelete = { 
-        id_lenguaje: language.id_lenguaje, 
-        estado: 0
+    let modifiedIdiomaDelete = {
+        id_lenguaje: language.id_lenguaje,
+        estado: 0,
     }
 
     return (
@@ -23,7 +23,7 @@ const UpdateLanguage: FC<any> = ({show, onClose, language,  updateIdioma, delete
                 <Modal.Body>
                     <Form.Group>
                         <Form.Label>{'Nombre del idioma'}</Form.Label>
-                        <Form.Control 
+                        <Form.Control
                             placeholder={language.nombre}
                             type='text'
                             name='nombre'
@@ -40,7 +40,7 @@ const UpdateLanguage: FC<any> = ({show, onClose, language,  updateIdioma, delete
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>{'Descripción'}</Form.Label>
-                        <Form.Control 
+                        <Form.Control
                             placeholder={language.descripcion}
                             type='text'
                             name='descripcion'
@@ -55,7 +55,7 @@ const UpdateLanguage: FC<any> = ({show, onClose, language,  updateIdioma, delete
                         />
                     </Form.Group>
                 </Modal.Body>
-                <Modal.Footer>  
+                <Modal.Footer>
                     <Button
                         variant='secondary'
                         onClick={() => {
@@ -64,7 +64,7 @@ const UpdateLanguage: FC<any> = ({show, onClose, language,  updateIdioma, delete
                     >
                         <i className={`bi-trash text-white fs-3`}></i>
                     </Button>
-                    <Button variant='secondary' onClick={onClose} > 
+                    <Button variant='secondary' onClick={onClose}>
                         {'Cancelar '}
                         <i className={`bi-x text-white fs-3`}></i>
                     </Button>
@@ -83,4 +83,4 @@ const UpdateLanguage: FC<any> = ({show, onClose, language,  updateIdioma, delete
     )
 }
 
-export default UpdateLanguage;
+export default UpdateLanguage

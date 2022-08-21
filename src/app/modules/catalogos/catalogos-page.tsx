@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react'
 import {Container, Col, Row, Button, InputGroup, Form, Stack} from 'react-bootstrap'
 
 import Catalogo from './components/catalogo'
-import UpdateCatalogo from './components/update-catalogo' 
+import UpdateCatalogo from './components/update-catalogo'
 import UpdateLanguage from './components/update-language'
 import Language from './components/language'
-import AddLanguaje from './components/add-language' 
+import AddLanguaje from './components/add-language'
 import AddCatalogo from './components/add-catalogo'
 import {CatalogTag} from '../../models/catalogTag'
 import {CatalogLanguage} from '../../models/catalogLanguage'
@@ -15,6 +15,7 @@ import {
     categorysMethod,
     deleteData,
     getData,
+    getDataPOST,
     languagesMethod,
     postData,
     updateCategoryMethod,
@@ -26,7 +27,7 @@ const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
     const [modalAddLanguage, setModalAddLanguage] = useState(false)
 
-    const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}}) 
+    const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
     const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
 
     const [optionSort, setOptionSort] = useState('Agregado recientemente')
@@ -48,7 +49,7 @@ const CatalogosPage = () => {
     }, [])
 
     const getTags = async () => {
-        const catalogos: any = await getData(categorysMethod)
+        const catalogos: any = await getDataPOST(categorysMethod)
         setCatalogos(catalogos as CatalogTag[])
     }
 
@@ -91,17 +92,17 @@ const CatalogosPage = () => {
         if (tag.nombre != '' && tag.icono != '') {
             await postData(updateCategoryMethod, tag)
             setModalUpdateTag({show: false, catalogo: {}})
-            getTags() 
+            getTags()
         } else {
             alertNotNullInputs()
         }
-    } 
+    }
 
-    // TODO: updateIdioma 
-    const updateIdioma = async (idioma: any)=> {
-        if (idioma.nombre != '' && idioma.descripcion !='') {
-            await postData(updateLanguageMethod, idioma) 
-            setModalUpdateIdioma({show: false, language: {}}) 
+    // TODO: updateIdioma
+    const updateIdioma = async (idioma: any) => {
+        if (idioma.nombre != '' && idioma.descripcion != '') {
+            await postData(updateLanguageMethod, idioma)
+            setModalUpdateIdioma({show: false, language: {}})
             getLanguages()
         } else {
             alertNotNullInputs()
@@ -117,16 +118,16 @@ const CatalogosPage = () => {
             title: 'Se ha eliminado la etiqueta',
             icon: 'success',
         })
-    } 
+    }
 
-    //TODO: deleteLanguage 
-    const deleteIdioma = async (idioma: any)=>{ 
-        await deleteData(languagesMethod, idioma) 
-        setModalUpdateIdioma({show: false, language: {}}) 
-        getLanguages() 
-        swal({ 
-            title: 'Se ha eliminado el idioma', 
-            icon: 'success'
+    //TODO: deleteLanguage
+    const deleteIdioma = async (idioma: any) => {
+        await deleteData(languagesMethod, idioma)
+        setModalUpdateIdioma({show: false, language: {}})
+        getLanguages()
+        swal({
+            title: 'Se ha eliminado el idioma',
+            icon: 'success',
         })
     }
 
@@ -166,18 +167,17 @@ const CatalogosPage = () => {
 
     const showModalUpdateTag = (catalogo: any) => {
         setModalUpdateTag({show: true, catalogo})
-    } 
+    }
 
-    const showModalUpdateIdioma = (language: any) =>{ 
+    const showModalUpdateIdioma = (language: any) => {
         setModalUpdateIdioma({show: true, language})
     }
 
     return (
         <>
-        
             <Container fluid>
                 <Row>
-                    <div className='text-left mb-10' >                        
+                    <div className='text-left mb-10'>
                         <h1 className='text-dark mt-0'>Categorías</h1>
                         <h2 className='text-muted mb-0'>Lista de categorías</h2>
                     </div>
@@ -291,16 +291,15 @@ const CatalogosPage = () => {
                     show={modalAddLanguage}
                     onClose={() => setModalAddLanguage(false)}
                     addLanguage={addLanguage}
-                /> 
-
-                <UpdateLanguage  
-                    show = {modalUpdateIdioma.show} 
-                    onClose={()=>({setModalUpdateIdioma, language: {show: false, language: {}}}) } 
-                    language={modalUpdateIdioma.language} 
-                    updateIdioma={updateIdioma} 
-                    deleteIdioma={deleteIdioma}
                 />
 
+                <UpdateLanguage
+                    show={modalUpdateIdioma.show}
+                    onClose={() => setModalUpdateIdioma({show: false, language: {}})}
+                    language={modalUpdateIdioma.language}
+                    updateIdioma={updateIdioma}
+                    deleteIdioma={deleteIdioma}
+                />
             </Container>
         </>
     )

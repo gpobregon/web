@@ -2,10 +2,12 @@ import React, {FC, useState} from 'react'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
 
-const NewNotification: FC<any> = ({
-    showCardAddNotification,
-    toggleCardAddNotification,
-    addNotification,
+const UpdateNotification: FC<any> = ({
+    cardUpdateNotification,
+    onClose,
+    notification,
+    setNotification,
+    updateNotification,
 }) => {
     const [scheduleNotification, setScheduleNotification] = useState(false)
 
@@ -16,6 +18,7 @@ const NewNotification: FC<any> = ({
         setScheduleNotification(!scheduleNotification)
         if (scheduleNotification == true) {
             setNotification({
+                id_notificacion: notification.id_notificacion,
                 nombre: notification.nombre,
                 descripcion: notification.descripcion,
                 imagen_path: 'https://picsum.photos/200/200',
@@ -26,19 +29,25 @@ const NewNotification: FC<any> = ({
         }
     }
 
-    const [notification, setNotification] = useState({
-        nombre: '',
-        descripcion: '',
-        imagen_path: 'https://picsum.photos/200/200',
-        fecha_hora_programada: dateNow,
-        tipo: 0,
-        estado: 1,
-    })
+    const resetStateNotification = () => {
+        setNotification({
+            id_notificacion: 0,
+            nombre: '',
+            descripcion: '',
+            imagen_path: 'https://picsum.photos/200/200',
+            fecha_hora_programada: dateNow,
+            tipo: 0,
+            estado: 1,
+        })
+    }
 
     return (
-        <div style={showCardAddNotification == false ? {display: 'none'} : {display: 'block'}}>
+        <div
+            onLoad={() => resetStateNotification()}
+            style={cardUpdateNotification == false ? {display: 'none'} : {display: 'block'}}
+        >
             <Card className='py-9 px-9 mb-9 ms-xl-9' style={{maxWidth: '445px'}}>
-                <h2>Nueva notificación</h2>
+                <h2>Editar notificación</h2>
                 <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
                 <p>Imagen de notificación</p>
                 <div className='d-xl-flex mb-5'>
@@ -87,9 +96,9 @@ const NewNotification: FC<any> = ({
                             value={notification.nombre}
                             type='text'
                             name='titleNotification'
-                            placeholder='Ej. Nueva Actualización'
                             onChange={(e) => {
                                 setNotification({
+                                    id_notificacion: notification.id_notificacion,
                                     nombre: e.target.value,
                                     descripcion: notification.descripcion,
                                     imagen_path: 'https://picsum.photos/200/200',
@@ -108,10 +117,10 @@ const NewNotification: FC<any> = ({
                             as='textarea'
                             type='text'
                             name='descriptionNotification'
-                            placeholder='Escribe una breve descripción'
                             style={{height: '100px'}}
                             onChange={(e) => {
                                 setNotification({
+                                    id_notificacion: notification.id_notificacion,
                                     nombre: notification.nombre,
                                     descripcion: e.target.value,
                                     imagen_path: 'https://picsum.photos/200/200',
@@ -139,12 +148,12 @@ const NewNotification: FC<any> = ({
                         <Form.Group className='mt-9'>
                             <Form.Label>Fecha</Form.Label>
                             <Form.Control
-                                value={notification.fecha_hora_programada}
                                 min={today}
                                 type='datetime-local'
                                 name='scheduleNotification'
                                 onChange={(e) => {
                                     setNotification({
+                                        id_notificacion: notification.id_notificacion,
                                         nombre: notification.nombre,
                                         descripcion: notification.descripcion,
                                         imagen_path: 'https://picsum.photos/200/200',
@@ -165,15 +174,8 @@ const NewNotification: FC<any> = ({
                         variant='outline-danger'
                         className='flex-grow-1 m-2'
                         onClick={() => {
-                            setNotification({
-                                nombre: '',
-                                descripcion: '',
-                                imagen_path: 'https://picsum.photos/200/200',
-                                fecha_hora_programada: dateNow,
-                                tipo: 1,
-                                estado: 1,
-                            })
-                            toggleCardAddNotification(false)
+                            resetStateNotification()
+                            onClose()
                         }}
                     >
                         <span className='menu-icon me-0'>
@@ -188,6 +190,7 @@ const NewNotification: FC<any> = ({
                             className='flex-grow-1 m-2'
                             onClick={() => {
                                 setNotification({
+                                    id_notificacion: notification.id_notificacion,
                                     nombre: notification.nombre,
                                     descripcion: notification.descripcion,
                                     imagen_path: 'https://picsum.photos/200/200',
@@ -195,16 +198,10 @@ const NewNotification: FC<any> = ({
                                     tipo: 0,
                                     estado: 1,
                                 })
-                                addNotification(notification)
 
-                                setNotification({
-                                    nombre: '',
-                                    descripcion: '',
-                                    imagen_path: 'https://picsum.photos/200/200',
-                                    fecha_hora_programada: dateNow,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
+                                updateNotification(notification)
+
+                                resetStateNotification()
                             }}
                         >
                             <span className='menu-icon me-0'>
@@ -218,6 +215,7 @@ const NewNotification: FC<any> = ({
                             className='flex-grow-1 m-2'
                             onClick={() => {
                                 setNotification({
+                                    id_notificacion: notification.id_notificacion,
                                     nombre: notification.nombre,
                                     descripcion: notification.descripcion,
                                     imagen_path: 'https://picsum.photos/200/200',
@@ -225,16 +223,10 @@ const NewNotification: FC<any> = ({
                                     tipo: 1,
                                     estado: 1,
                                 })
-                                addNotification(notification)
 
-                                setNotification({
-                                    nombre: '',
-                                    descripcion: '',
-                                    imagen_path: 'https://picsum.photos/200/200',
-                                    fecha_hora_programada: dateNow,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
+                                updateNotification(notification)
+
+                                resetStateNotification()
                             }}
                         >
                             <span className='menu-icon me-0'>
@@ -249,4 +241,4 @@ const NewNotification: FC<any> = ({
     )
 }
 
-export default NewNotification
+export default UpdateNotification
