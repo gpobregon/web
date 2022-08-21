@@ -1,14 +1,16 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { DropdownButton, Dropdown } from 'react-bootstrap'
+import { ContentContext } from '../context'
 
 
 const Index = () => {
     const [changeLaguage, setChangeLaguage] = useState('español')
+    const { changeTypeEdit } = useContext(ContentContext)
     return (
         <div className="mt-8 d-flex justify-content-between">
             <div>
-                <p className="h2">Creador de Sitio - Version Móvil</p>
-                <p className="small text-muted">Lista de Sitios - Configuracion del Sitio - Creador móvil</p>
+                <p className="h2">Creador de Sitio{changeTypeEdit === 1 ? ' - Version Móvil' : 's - Version Web'}</p>
+                <p className="small text-muted">Lista de Sitios - Configuracion del Sitio -  {changeTypeEdit === 1 ? ' Creador móvil' : 'Creador Web'}</p>
             </div>
             <div>
                 <DropdownButton id="dropdown-item-button" size="sm" variant="dark" className="text-white px-8" title={ changeLaguage }>
