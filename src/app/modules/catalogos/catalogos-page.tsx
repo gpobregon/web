@@ -185,6 +185,10 @@ const CatalogosPage = () => {
         setModalUpdateTag({show: true, catalogo})
     }
 
+    const showModalUpdateIdioma = (language: any) =>{ 
+        setModalUpdateIdioma({show: true, language})
+    }
+
     let [pageNumber, setPageNumber] = useState(1)
     const [toggleButtonsPagination, setToggleButtonsPagination] = useState({
         previous: true,
