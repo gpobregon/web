@@ -1,17 +1,17 @@
 import { Form, Button } from 'react-bootstrap'; 
 import { Link } from 'react-router-dom'
 
-export function RestorePassword(){  
+export function NewPassword(){  
 
     return(
     <Form style={{ width: '50%' }} >
       <div className='text-left mb-10'> 
       <span>
-          {'/*Aparece al acceder al link*/'}
+          {'/*Cambio de contraseña al loguearse por primera vez*/'}
         </span>
         <h1 className='text-dark mb-3'>Nueva Contraseña</h1>
         <span>
-          {'Se ha enviado un mail para restablecer la contraseña. Por favor, revisa tu correo electronico para restablecer tu contraseña'}
+          {'Antes de continuar es necesario que crees una nueva Contraseña'}
         </span>
       </div>
 

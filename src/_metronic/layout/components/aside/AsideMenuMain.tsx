@@ -28,6 +28,13 @@ export function AsideMenuMain() {
         bsTitle='Reportes'
         fontIcon='bi bi-file-earmark-text'
         className='py-3'
+      /> 
+      <AsideMenuItem
+        to='/usuarios'
+        title='Usuarios'
+        bsTitle='Usuarios'
+        fontIcon='bi bi-people'
+        className='py-3'
       />
     </>
   )

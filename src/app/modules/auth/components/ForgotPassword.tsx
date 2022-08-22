@@ -7,7 +7,7 @@ import {requestPassword} from '../core/_requests'
 import { Form, Button } from 'react-bootstrap';
 
 const initialValues = {
-  email: 'admin@demo.com',
+  email: '',
 }
 
 const forgotPasswordSchema = Yup.object().shape({
@@ -52,14 +52,16 @@ export function ForgotPassword() {
         onSubmit={formik.handleSubmit}
       > 
         
-          <div className='text-center mb-10'>
+          <div className='text-left mb-10'>
             {/* begin::Title */}
-            <h1 className='text-dark mb-3'>¿Olvidaste tu contraseña?</h1>
+            <h1 className='text-dark mb-3'>Restablecer Contraseña</h1>
             {/* end::Title */}
           
 
             {/* begin::Link */}
-            <div className='text-gray-400 fw-bold fs-4'>Ingresa tu email para restablecer tu contraseña</div>
+            <span>
+            {'Se ha enviado un mail para restablecer la contraseña. Por favor, revisa tu correo electronico para restablecer tu contraseña'}
+            </span>
             {/* end::Link */}
           </div> 
         
@@ -86,7 +88,7 @@ export function ForgotPassword() {
           <label className='form-label fw-bolder text-gray-900 fs-6'>Email</label>
           <input
             type='email'
-            placeholder=''
+            placeholder='Ingresa tu email'
             autoComplete='off'
             {...formik.getFieldProps('email')}
             className={clsx(
@@ -108,13 +110,14 @@ export function ForgotPassword() {
         {/* end::Form group */}
 
         {/* begin::Form group */}
-        <div className='d-flex flex-wrap justify-content-center pb-lg-0'>
+        <div className='d-flex flex-wrap justify-content-center pb-lg-0'  >
           <button
             type='submit'
             id='kt_password_reset_submit'
-            className='btn btn-lg btn-primary fw-bolder me-4'
+            className='btn btn-lg btn-primary fw-bolder me-4' 
+            style={{ width: '100%' }}
           >
-            <span className='indicator-label'>Siguiente</span>
+              {'siguiente >'}
             {loading && (
               <span className='indicator-progress'>
                 Please wait...
@@ -122,7 +125,7 @@ export function ForgotPassword() {
               </span>
             )}
           </button>
-          <Link to='/auth/login'>
+          {/* <Link to='/auth/login'>
             <button
               type='button'
               id='kt_login_password_reset_form_cancel_button'
@@ -131,7 +134,7 @@ export function ForgotPassword() {
             >
               Cancelar
             </button>
-          </Link>{' '}
+          </Link>{' '} */}
         </div>
         {/* end::Form group */}
       </form>

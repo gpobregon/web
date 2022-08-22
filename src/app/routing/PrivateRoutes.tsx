@@ -7,7 +7,8 @@ import {MenuTestPage} from '../pages/MenuTestPage'
 import {getCSSVariableValue} from '../../_metronic/assets/ts/_utils'
 import {WithChildren} from '../../_metronic/helpers'
 import BuilderPageWrapper from '../pages/layout-builder/BuilderPageWrapper'
-import ReportsPage from '../modules/reports/ReportsPage'
+import ReportsPage from '../modules/reports/ReportsPage' 
+import UsersPage from '../modules/users/UsersPage'
 import CatalogosPage from '../modules/catalogos/catalogos-page'
 import SitiosPage from '../modules/sitios/SitiosPage'
 import MostVistedReport from '../modules/reports/MostVistedReport' 
@@ -17,8 +18,9 @@ import Template  from "../modules/template/movil/index";
 import ConfSite  from "../modules/sitios/ConfSite";
 import EditSite  from "../modules/sitios/edit-site";
 import AddPoin  from "../modules/sitios/components/sitios-interes/add-point-interes";
-import EditPoin  from "../modules/sitios/components/sitios-interes/edit-point-interes"; 
-import RestorePassword  from '../pages/RestorePassword'
+import EditPoin  from "../modules/sitios/components/sitios-interes/edit-point-interes";  
+import UserManagement  from '../modules/users/UserManagement'; 
+import RoleManagement from '../modules/users/RoleManagement'
 
 
 const PrivateRoutes = () => {
@@ -27,7 +29,7 @@ const PrivateRoutes = () => {
   const AccountPage = lazy(() => import('../modules/accounts/AccountPage'))
   const WidgetsPage = lazy(() => import('../modules/widgets/WidgetsPage'))
   const ChatPage = lazy(() => import('../modules/apps/chat/ChatPage'))
-  const UsersPage = lazy(() => import('../modules/apps/user-management/UsersPage'))
+  //const UsersPage = lazy(() => import('../modules/apps/user-management/UsersPage'))
 
   return (
     <Routes>
@@ -42,13 +44,14 @@ const PrivateRoutes = () => {
         <Route path='builder' element={<BuilderPageWrapper />} />
         <Route path='menu-test' element={<MenuTestPage />} />
         <Route path='catalogos' element={<CatalogosPage />} />
-        <Route path='reportes' element={<ReportsPage />} />
+        <Route path='reportes' element={<ReportsPage />} /> 
+        <Route path='usuarios' element={<UsersPage />} /> 
+        <Route path='/usuarios/user-management' element={<UserManagement />} />  
+        <Route path='/usuarios/role-management' element={<RoleManagement />} /> 
         <Route path='/reportes/sitios-mas-visitados' element={<MostVistedReport />} /> 
         <Route path='/reportes/sitios-por-calificacion' element={<SitesByRating />}  /> 
         <Route path='/reportes/reporte-de-usuario' element={<UserReport />}  />
         <Route path='sitios' element={<SitiosPage />} /> 
-        <Route path='restore-password' element={<RestorePassword />} /> 
-
         <Route path='template' element={<Template />} />
 
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
