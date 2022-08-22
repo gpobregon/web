@@ -42,12 +42,13 @@ const CatalogosPage = () => {
     })
 
     const getTags = async () => {
-        const catalogos: any = await postData(categorysMethod, {page: pageNumber, quantity: '18'})
+        const catalogos: any = await postData(categorysMethod, {page: pageNumber, quantity: '12'})
         setCatalogos(catalogos as CatalogTag[])
+
 
         const countNextResults: any = await postData(categorysMethod, {
             page: pageNumber + 1,
-            quantity: '18',
+            quantity: '12',
         })
 
         if (countNextResults.length == 0) {
