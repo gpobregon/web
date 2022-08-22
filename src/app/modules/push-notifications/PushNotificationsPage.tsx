@@ -149,7 +149,7 @@ const PushNotificationsPage = () => {
                 chooseGetNotifications()
 
                 swal({
-                    title: 'Se ha eliminado la etiqueta',
+                    title: 'Se ha eliminado la notificación',
                     icon: 'success',
                 })
             }
@@ -177,6 +177,54 @@ const PushNotificationsPage = () => {
 
             setOptionSort('Orden descendente')
             setResultIcon('bi-sort-down')
+        }
+    }
+
+    let arrayDeleteNotifications: Array<any> = []
+
+    const handleChangeCheckbox = (e: any) => {
+        let isChecked = e.target.checked
+
+        if (isChecked == true) {
+            arrayDeleteNotifications.push(e.target.id)
+        } else {
+            arrayDeleteNotifications = arrayDeleteNotifications.filter(
+                (data) => data != e.target.id
+            )
+        }
+    }
+
+    const deleteSelectedNotification = async () => {
+        if (arrayDeleteNotifications.length == 0) {
+            swal({
+                title: 'Selecciona notificaciones para eliminar',
+                icon: 'warning',
+            })
+        } else {
+            await swal({
+                title: '¿Estás seguro de eliminar estas notificaciones?',
+                icon: 'warning',
+                buttons: ['Cancelar', 'Eliminar'],
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    for (let i = 0; i < arrayDeleteNotifications.length; i++) {
+                        deleteData(deleteNotificationMethod, {
+                            id_notificacion: parseInt(arrayDeleteNotifications[i]),
+                        })
+                    }
+                    swal({
+                        title: 'Se han eliminado las notificaciones',
+                        icon: 'success',
+                    })
+                }
+            })
+
+            chooseGetNotifications()
+            chooseGetNotifications()
+            chooseGetNotifications()
+
+            arrayDeleteNotifications.length = 0
         }
     }
 
@@ -240,12 +288,13 @@ const PushNotificationsPage = () => {
                             <i className={`${resultIcon} fs-1 me-2`}></i>
                             {`${optionSort}`}
                         </div>
-                        <div className='d-flex align-items-center m-2'>
-                            <i className='bi bi-trash fs-1 me-6' style={{cursor: 'pointer'}}></i>
-                            <i
-                                className='bi bi-gear fs-1'
-                                style={{cursor: 'pointer', lineHeight: 0}}
-                            ></i>
+                        <div>
+                            <Button
+                                variant='outline-danger'
+                                onClick={() => deleteSelectedNotification()}
+                            >
+                                <i className='bi bi-trash fs-1'></i>
+                            </Button>
                         </div>
                     </div>
 
@@ -262,7 +311,12 @@ const PushNotificationsPage = () => {
                                 {notifications.map((notification) => (
                                     <tr key={notification.id_notificacion.toString()}>
                                         <td style={{width: '55px'}}>
-                                            <Form.Check className='ms-5' type='checkbox' id='1' />
+                                            <Form.Check
+                                                className='ms-5'
+                                                type='checkbox'
+                                                id={notification.id_notificacion.toString()}
+                                                onChange={(e) => handleChangeCheckbox(e)}
+                                            />
                                         </td>
                                         <td className='text-muted' style={{width: '200px'}}>
                                             {moment(notification.fecha_hora_programada).format(
