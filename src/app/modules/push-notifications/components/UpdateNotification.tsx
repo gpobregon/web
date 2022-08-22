@@ -1,6 +1,9 @@
 import React, {FC, useState} from 'react'
+import imgUpload from '../upload-image_03.jpg'
+import UploadImage from './UploadImage'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
+import {URLAWS} from '../../../services/api'
 
 const UpdateNotification: FC<any> = ({
     cardUpdateNotification,
@@ -21,7 +24,7 @@ const UpdateNotification: FC<any> = ({
                 id_notificacion: notification.id_notificacion,
                 nombre: notification.nombre,
                 descripcion: notification.descripcion,
-                imagen_path: 'https://picsum.photos/200/200',
+                imagen_path: notification.imagen_path,
                 fecha_hora_programada: dateNow,
                 tipo: 0,
                 estado: 1,
@@ -29,12 +32,29 @@ const UpdateNotification: FC<any> = ({
         }
     }
 
+    const uploadImage = async (image: string) => {
+        setNotification({
+            id_notificacion: notification.id_notificacion,
+            nombre: notification.nombre,
+            descripcion: notification.descripcion,
+            imagen_path: URLAWS + image,
+            fecha_hora_programada: notification.fecha_hora_programada,
+            tipo: notification.tipo,
+            estado: 1,
+        })
+        if (image != '') {
+            setModalUploadIMG(false)
+        }
+    }
+
+    const [modalUploadIMG, setModalUploadIMG] = useState(false)
+
     const resetStateNotification = () => {
         setNotification({
             id_notificacion: 0,
             nombre: '',
             descripcion: '',
-            imagen_path: 'https://picsum.photos/200/200',
+            imagen_path: '',
             fecha_hora_programada: dateNow,
             tipo: 0,
             estado: 1,
@@ -42,23 +62,27 @@ const UpdateNotification: FC<any> = ({
     }
 
     return (
-        <div
-            onLoad={() => resetStateNotification()}
-            style={cardUpdateNotification == false ? {display: 'none'} : {display: 'block'}}
-        >
+        <div style={cardUpdateNotification == false ? {display: 'none'} : {display: 'block'}}>
             <Card className='py-9 px-9 mb-9 ms-xl-9' style={{maxWidth: '445px'}}>
                 <h2>Editar notificación</h2>
                 <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
                 <p>Imagen de notificación</p>
                 <div className='d-xl-flex mb-5'>
-                    <div
+                    <img
+                        src={notification.imagen_path == '' ? imgUpload : notification.imagen_path}
+                        onClick={
+                            notification.imagen_path == ''
+                                ? () => {
+                                      setModalUploadIMG(true)
+                                  }
+                                : () => {}
+                        }
                         style={{
                             width: '192.5px',
                             height: '177px',
-                            backgroundImage: 'url(https://picsum.photos/200/200)',
                             borderRadius: '5px',
                         }}
-                    ></div>
+                    ></img>
 
                     <div className='px-4 py-sm-4 py-xl-0'>
                         <div className='mb-3'>
@@ -76,13 +100,37 @@ const UpdateNotification: FC<any> = ({
                         </div>
 
                         <div className='d-flex'>
-                            <Button variant='outline-primary' className='text-center'>
+                            <Button
+                                variant='outline-primary'
+                                className='text-center'
+                                onClick={
+                                    notification.imagen_path == ''
+                                        ? (e) => {
+                                              setModalUploadIMG(true)
+                                          }
+                                        : (e) => {}
+                                }
+                            >
                                 <i className='fs-2 bi-arrow-left-right px-0 fw-bolder'></i>
                             </Button>
                             <Button variant='outline-primary' className='text-center'>
                                 <i className='fs-2 bi-crop px-0 fw-bolder'></i>
                             </Button>
-                            <Button variant='outline-danger' className='text-center'>
+                            <Button
+                                variant='outline-danger'
+                                className='text-center'
+                                onClick={() => {
+                                    setNotification({
+                                        id_notificacion: notification.id_notificacion,
+                                        nombre: notification.nombre,
+                                        descripcion: notification.descripcion,
+                                        imagen_path: '',
+                                        fecha_hora_programada: notification.fecha_hora_programada,
+                                        tipo: notification.tipo,
+                                        estado: 1,
+                                    })
+                                }}
+                            >
                                 <i className='fs-2 bi-trash px-0 fw-bolder'></i>
                             </Button>
                         </div>
@@ -101,9 +149,9 @@ const UpdateNotification: FC<any> = ({
                                     id_notificacion: notification.id_notificacion,
                                     nombre: e.target.value,
                                     descripcion: notification.descripcion,
-                                    imagen_path: 'https://picsum.photos/200/200',
+                                    imagen_path: notification.imagen_path,
                                     fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: 0,
+                                    tipo: notification.tipo,
                                     estado: 1,
                                 })
                             }}
@@ -123,9 +171,9 @@ const UpdateNotification: FC<any> = ({
                                     id_notificacion: notification.id_notificacion,
                                     nombre: notification.nombre,
                                     descripcion: e.target.value,
-                                    imagen_path: 'https://picsum.photos/200/200',
+                                    imagen_path: notification.imagen_path,
                                     fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: 0,
+                                    tipo: notification.tipo,
                                     estado: 1,
                                 })
                             }}
@@ -156,7 +204,7 @@ const UpdateNotification: FC<any> = ({
                                         id_notificacion: notification.id_notificacion,
                                         nombre: notification.nombre,
                                         descripcion: notification.descripcion,
-                                        imagen_path: 'https://picsum.photos/200/200',
+                                        imagen_path: notification.imagen_path,
                                         fecha_hora_programada: e.target.value,
                                         tipo: 1,
                                         estado: 1,
@@ -193,15 +241,13 @@ const UpdateNotification: FC<any> = ({
                                     id_notificacion: notification.id_notificacion,
                                     nombre: notification.nombre,
                                     descripcion: notification.descripcion,
-                                    imagen_path: 'https://picsum.photos/200/200',
+                                    imagen_path: notification.imagen_path,
                                     fecha_hora_programada: dateNow,
                                     tipo: 0,
                                     estado: 1,
                                 })
 
                                 updateNotification(notification)
-
-                                resetStateNotification()
                             }}
                         >
                             <span className='menu-icon me-0'>
@@ -218,15 +264,13 @@ const UpdateNotification: FC<any> = ({
                                     id_notificacion: notification.id_notificacion,
                                     nombre: notification.nombre,
                                     descripcion: notification.descripcion,
-                                    imagen_path: 'https://picsum.photos/200/200',
+                                    imagen_path: notification.imagen_path,
                                     fecha_hora_programada: notification.fecha_hora_programada,
                                     tipo: 1,
                                     estado: 1,
                                 })
 
                                 updateNotification(notification)
-
-                                resetStateNotification()
                             }}
                         >
                             <span className='menu-icon me-0'>
@@ -237,6 +281,12 @@ const UpdateNotification: FC<any> = ({
                     )}
                 </div>
             </Card>
+
+            <UploadImage
+                show={modalUploadIMG}
+                onClose={() => setModalUploadIMG(false)}
+                uploadImage={uploadImage}
+            />
         </div>
     )
 }

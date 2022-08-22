@@ -107,7 +107,11 @@ const PushNotificationsPage = () => {
     }
 
     const addNotification = async (notification: any) => {
-        if (notification.nombre != '' && notification.descripcion != '') {
+        if (
+            notification.nombre != '' &&
+            notification.descripcion != '' &&
+            notification.imagen_path != ''
+        ) {
             await postData(addNotificationMethod, notification)
             setShowCardAddNotification(false)
             chooseGetNotifications()
@@ -117,7 +121,11 @@ const PushNotificationsPage = () => {
     }
 
     const updateNotification = async (notification: any) => {
-        if (notification.nombre != '' && notification.descripcion != '') {
+        if (
+            notification.nombre != '' &&
+            notification.descripcion != '' &&
+            notification.imagen_path != ''
+        ) {
             await postData(updateNotificationMethod, notification)
             setCardUpdateNotification({
                 show: false,
@@ -130,13 +138,26 @@ const PushNotificationsPage = () => {
     }
 
     const deleteNotification = async (tag: any) => {
-        await deleteData(deleteNotificationMethod, tag)
-        setShowCardAddNotification(false)
-        chooseGetNotifications()
-        swal({
-            title: 'Se ha eliminado la etiqueta',
-            icon: 'success',
+        await swal({
+            title: '¿Estás seguro de eliminar esta notificación?',
+            icon: 'warning',
+            buttons: ['Cancelar', 'Eliminar'],
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                deleteData(deleteNotificationMethod, tag)
+                chooseGetNotifications()
+
+                swal({
+                    title: 'Se ha eliminado la etiqueta',
+                    icon: 'success',
+                })
+            }
         })
+
+        chooseGetNotifications()
+        chooseGetNotifications()
+        chooseGetNotifications()
     }
 
     const toggleOptionSort = () => {
