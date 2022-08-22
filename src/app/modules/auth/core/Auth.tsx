@@ -8,15 +8,18 @@ import {
   Dispatch,
   SetStateAction,
 } from 'react'
-import {LayoutSplashScreen} from '../../../../_metronic/layout/core'
-import {AuthModel, UserModel} from './_models'
+import { LayoutSplashScreen } from '../../../../_metronic/layout/core'
+import { CognitoUser } from 'amazon-cognito-identity-js';
+
 import * as authHelper from './AuthHelpers'
-import {getUserByToken} from './_requests'
-import {WithChildren} from '../../../../_metronic/helpers'
+import { getUserByToken } from './_requests'
+import { WithChildren } from '../../../../_metronic/helpers'
+import { UserModel } from './_models';
+import { Auth } from 'aws-amplify';
 
 type AuthContextProps = {
-  auth: AuthModel | undefined
-  saveAuth: (auth: AuthModel | undefined) => void
+  auth: CognitoUser | undefined
+  saveAuth: (auth: CognitoUser | undefined) => void
   currentUser: UserModel | undefined
   setCurrentUser: Dispatch<SetStateAction<UserModel | undefined>>
   logout: () => void
@@ -24,10 +27,10 @@ type AuthContextProps = {
 
 const initAuthContextPropsState = {
   auth: authHelper.getAuth(),
-  saveAuth: () => {},
+  saveAuth: () => { },
   currentUser: undefined,
-  setCurrentUser: () => {},
-  logout: () => {},
+  setCurrentUser: () => { },
+  logout: () => { },
 }
 
 const AuthContext = createContext<AuthContextProps>(initAuthContextPropsState)
@@ -36,10 +39,10 @@ const useAuth = () => {
   return useContext(AuthContext)
 }
 
-const AuthProvider: FC<WithChildren> = ({children}) => {
-  const [auth, setAuth] = useState<AuthModel | undefined>(authHelper.getAuth())
+const AuthProvider: FC<WithChildren> = ({ children }) => {
+  const [auth, setAuth] = useState<CognitoUser | undefined>(authHelper.getAuth())
   const [currentUser, setCurrentUser] = useState<UserModel | undefined>()
-  const saveAuth = (auth: AuthModel | undefined) => {
+  const saveAuth = (auth: CognitoUser | undefined) => {
     setAuth(auth)
     if (auth) {
       authHelper.setAuth(auth)
@@ -54,22 +57,24 @@ const AuthProvider: FC<WithChildren> = ({children}) => {
   }
 
   return (
-    <AuthContext.Provider value={{auth, saveAuth, currentUser, setCurrentUser, logout}}>
+    <AuthContext.Provider value={{ auth, saveAuth, currentUser, setCurrentUser, logout }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-const AuthInit: FC<WithChildren> = ({children}) => {
-  const {auth, logout, setCurrentUser} = useAuth()
+const AuthInit: FC<WithChildren> = ({ children }) => {
+  const { auth, logout, setCurrentUser } = useAuth()
   const didRequest = useRef(false)
   const [showSplashScreen, setShowSplashScreen] = useState(true)
   // We should request user by authToken (IN OUR EXAMPLE IT'S API_TOKEN) before rendering the application
   useEffect(() => {
-    const requestUser = async (apiToken: string) => {
+    const requestUser = async () => {
       try {
         if (!didRequest.current) {
-          const {data} = await getUserByToken(apiToken)
+          const data = await Auth.currentAuthenticatedUser({
+            bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+          })
           if (data) {
             setCurrentUser(data)
           }
@@ -86,8 +91,8 @@ const AuthInit: FC<WithChildren> = ({children}) => {
       return () => (didRequest.current = true)
     }
 
-    if (auth && auth.api_token) {
-      requestUser(auth.api_token)
+    if (auth) {
+      requestUser()
     } else {
       logout()
       setShowSplashScreen(false)
@@ -98,4 +103,4 @@ const AuthInit: FC<WithChildren> = ({children}) => {
   return showSplashScreen ? <LayoutSplashScreen /> : <>{children}</>
 }
 
-export {AuthProvider, AuthInit, useAuth}
+export { AuthProvider, AuthInit, useAuth }

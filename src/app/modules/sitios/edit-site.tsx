@@ -698,19 +698,14 @@ const EditSite = () => {
                     </div>
                     <br></br>
                     <div className='row'>
+                    <Link to={`/template/${site.id_sitio}`}>
                       <Button
-                        onClick={() => {
-
-                          //   postSite(site)
-                          window.location.href = "../sitios";
-
-                          console.log('creado con el boton de sitio mobil')
-                        }}
                         className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                       >
                         {' '}
                         <i className='fa-solid fa-pencil' ></i> Crear
                       </Button>
+                      </Link>
                     </div>
                   </div>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
@@ -735,7 +730,7 @@ const EditSite = () => {
                         onClick={() => {
                           //   navigate('/site')
                           //   postSite(site)
-                          window.location.href = "../sitios";
+                          window.location.href = "/template";
                           console.log('creado con el boton de sitio web')
                         }}
                       >

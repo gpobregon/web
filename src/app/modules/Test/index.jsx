@@ -5,7 +5,7 @@ const Index = () => {
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="App">
-            <DragDrop />
+                <DragDrop />
             </div>
         </DndProvider>
     )

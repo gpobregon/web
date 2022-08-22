@@ -168,7 +168,7 @@ const AddPoint = () => {
       geoY: '323',
       portada_path: URLAWS + imagen,
       qr_path: 'sitio/interes/' + datospuntoInteres.id_sitio + "/" + datospuntoInteres.id_guia,
-      es_portada_de_sitio: true,
+      es_portada_de_sitio: false,
       estado: 1,
     })
 
@@ -434,7 +434,7 @@ const AddPoint = () => {
                         id_guia: datospuntoInteres.id_guia,
                         descripcion: sitio.descripcion,
                         id_lenguaje: sitio.id_lenguaje,
-                        nombre: e.target.value,
+                        nombre: sitio.nombre+e.target.value,
                         geoX: sitio.geoX,
                         geoY: sitio.geoY,
                         portada_path: sitio.portada_path,

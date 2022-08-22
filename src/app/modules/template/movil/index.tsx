@@ -7,7 +7,6 @@ import SerctionLeftToolbar from './toolbar/sectionLeftToolbar'
 import SerctionRightToolbar from './toolbar/sectionRightToolbar'
 import SectionHeader from './sectionHeader/index'
 import ContentMovil from './content/index'
-import '../../../../_metronic/assets/css/style.css'
 
 const Index = () => {
     return (
