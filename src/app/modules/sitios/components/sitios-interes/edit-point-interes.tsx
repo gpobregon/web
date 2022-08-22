@@ -1,67 +1,69 @@
 import React, { FC, useEffect, useState } from 'react';
+import Select from 'react-select'
 import { Col, Card, Button, Row, Modal, Form } from 'react-bootstrap';
-import { postData, addNewPointInteres ,updatePointInteres} from '../../../../services/api'
+import { postData, addNewPointInteres, updatePointInteres, sitesMethod, getValue, URLAWS, statePointInteres } from '../../../../services/api'
 import swal from "sweetalert";
 import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { status } from '../../../../models/status';
-
+import { Site } from '../../../../models/site';
+import logo from '../../upload-image_03.jpg';
+import { QRCodeCanvas } from 'qrcode.react';
+import UpImage from '../upload-image';
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
-        background: '#1b1b29',
-        borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
-        borderColor: state.isFocused ? '#565674' : '#1b1b29',
-        boxShadow: state.isFocused ? '#474761' : '#1b1b29',
-        color: '#1b1b29',
+        background: 'transparent',
+        borderColor: state.isFocused ? '#474761' : '#323248',
+        borderRadius: 6.175,
+        color: '#92929F',
         '&:hover': {
-            borderColor: state.isFocused ? 'white' : 'white',
+            borderColor: '#323248',
         },
-
+        '&:focus': {
+            borderColor: '#323248',
+        },
+        '&:active': {
+            borderColor: '#323248',
+        },
+    }),
+    input: (base: any, state: any) => ({
+        ...base,
+        color: '#92929f',
     }),
     option: (base: any, state: any) => ({
         ...base,
-        borderBottom: '1px dotted pink',
-        color: state.isSelected ? 'red' : 'gray',
+        background: state.isFocused ? '#7239ea' : '#323248',
+        color: state.isFocused ? '#fff' : '#92929F',
         padding: 10,
     }),
-    multiValue: (base: any,) => {
-
-        return {
-            ...base,
-            backgroundColor: '#white',
-        };
-    },
-    multiValueRemove: (base: any) => ({
+    singleValue: (base: any) => ({
         ...base,
-        color: 'gray',
-        // ':hover': {
-        //   backgroundColor: data.color,
-        //   color: 'white',
-        // },
-    }),
-
-    multiValueLabel: (base: any) => ({
-        ...base,
-        color: 'white',
+        color: '#fff',
     }),
     menu: (base: any) => ({
         ...base,
-        borderRadius: 0,
-        marginTop: 0,
-        color: 'white',
-        background: '#1b1b29',
+        borderRadius: 6.175,
+        background: '#323248',
     }),
     menuList: (base: any) => ({
         ...base,
         padding: 0,
-        color: 'white',
+        borderRadius: 6.175,
     }),
 }
+
+
 type datosPuntoInteres = {
     id_punto: number
-    lenguajes:[]
+    lenguajes: [
+        {
+            id_punto: number
+            id_lenguaje: number
+            descripcion: string
+        }
+    ]
     id_sitio: number
     id_guia: number
     nombre: string
@@ -71,10 +73,12 @@ type datosPuntoInteres = {
     portada_path: string
     qr_path: string
     es_portada_de_sitio: boolean
-    estado: number
+    estado: boolean
+    es_visible: boolean
 }
 const animatedComponents = makeAnimated()
 const EditPoint = () => {
+    const navigate = useNavigate()
     const handleClose = () => setShow(false)  //modal close qr
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
@@ -85,7 +89,7 @@ const EditPoint = () => {
         id_sitio: datospuntoInteres.id_sitio,
         id_guia: datospuntoInteres.id_guia,
         descripcion: datospuntoInteres.descripcion,
-        id_lenguaje: 1,
+        id_lenguaje: 0,
         nombre: datospuntoInteres.nombre,
         geoX: datospuntoInteres.geoX,
         geoY: datospuntoInteres.geoY,
@@ -93,20 +97,42 @@ const EditPoint = () => {
         qr_path: datospuntoInteres.qr_path,
         es_portada_de_sitio: datospuntoInteres.es_portada_de_sitio,
         estado: datospuntoInteres.estado,
-        es_visible: true,
+        es_visible: datospuntoInteres.es_visible,
     });
 
-    // useEffect(() => {
-    //   console.log(sitio)
-    // }, []);
-
-
+ //este state se borra mas adelante
     const [status, setStatus] = useState<status>({
         id_sitio: 0,
         favorito: true,
         publicado: true,
         oculto: false,
     })
+
+    const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
+        postData(statePointInteres, { id_punto: datospuntoInteres.id_punto, es_visible: oculto })
+        //este state se borra mas adelante
+        setStatus({
+          id_sitio: 0,
+          favorito: favorito,
+          publicado: publicado,
+          oculto: oculto,
+        })
+        setSitio({
+            id_punto: sitio.id_punto,
+            id_sitio: sitio.id_sitio,
+            id_guia: sitio.id_guia,
+            descripcion: sitio.descripcion,
+            id_lenguaje: sitio.id_lenguaje,
+            nombre: sitio.nombre,
+            geoX: sitio.geoX,
+            geoY: sitio.geoY,
+            portada_path: sitio.portada_path,
+            qr_path: sitio.qr_path,
+            es_portada_de_sitio: sitio.es_portada_de_sitio,
+            estado: sitio.estado,
+            es_visible: oculto,
+        })
+    }
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
         swal({
@@ -122,9 +148,9 @@ const EditPoint = () => {
                     timer: 2000,
 
                 })
-                window.location.href = "../sitios";
-
-
+                navigate('/sitios/edit', {
+                    state: sitios
+                })
             }
         });
     }
@@ -142,7 +168,10 @@ const EditPoint = () => {
                     timer: 2000,
 
                 })
-                window.location.href = "../sitios";
+                navigate('/sitios/edit', {
+                    state: sitios
+
+                })
             }
         });
     }
@@ -153,19 +182,100 @@ const EditPoint = () => {
     }
 
     const updatePoint = async () => {
-      const updatePoint= await postData(updatePointInteres, sitio)
+        console.log(sitio)
+        const updatePoint = await postData(updatePointInteres, sitio)
         console.log(updatePoint)
     }
+    //get sitio-------------------------------------------------------------------------------------
+    const [sitios, setSitios] = useState()
+    useEffect(() => {
+        getSites()
+    }, [])
 
+    const getSites = async () => {
+        const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
+
+        setSitios(site.site)
+
+    }
+    //obtener lenguajes-------------------------------------------------------------------------------------
+    const languagesOptions = datospuntoInteres.lenguajes?.map((language) => ({
+        value: language.id_lenguaje,
+        label: language.descripcion,
+    }))
+
+
+    const handleChangeLanguage = (event: any) => {
+        setSitio({
+            id_punto: datospuntoInteres.id_punto,
+            id_sitio: datospuntoInteres.id_sitio,
+            id_guia: datospuntoInteres.id_guia,
+            descripcion: sitio.descripcion,
+            id_lenguaje: event.value,
+            nombre: sitio.nombre,
+            geoX: sitio.geoX,
+            geoY: sitio.geoY,
+            portada_path: sitio.portada_path,
+            qr_path: sitio.qr_path,
+            es_portada_de_sitio: sitio.es_portada_de_sitio,
+            estado: sitio.estado,
+            es_visible: sitio.es_visible,
+        })
+        console.log(datospuntoInteres.lenguajes)
+    }
+    // UPLOAD IMAGE-------------------------------------------------------------------------
+    const [modalupimg, setModalupIMG] = useState(false)
+    const uploadImage = async (imagen: string) => {
+        setSitio({
+            id_punto: datospuntoInteres.id_punto,
+            id_sitio: datospuntoInteres.id_sitio,
+            id_guia: datospuntoInteres.id_guia,
+            descripcion: datospuntoInteres.descripcion,
+            id_lenguaje: sitio.id_lenguaje,
+            nombre: sitio.nombre,
+            geoX: sitio.geoX,
+            geoY: sitio.geoY,
+            portada_path: URLAWS + imagen,
+            qr_path: sitio.qr_path,
+            es_portada_de_sitio: sitio.es_portada_de_sitio,
+            estado: sitio.estado,
+            es_visible: sitio.es_visible,
+        })
+
+        if (imagen != '') {
+            setModalupIMG(false)
+        }
+    };
+
+    //DONWLOAD QR-------------------------------------------------------------------------
+      const downloadQRCode = () => {
+        const canvas = document.getElementById("qrCode") as HTMLCanvasElement;
+        const pngUrl = canvas!
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        let downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = "qr.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      };
     return (
         <>
             <div className=' '>
-                <div className='row'>
+                <div className='row' style={{ backgroundColor: '#1A1A27', backgroundSize: 'auto 100%' }}>
                     <div className='col-xs-12 col-md-5 col-lg-6 d-flex'>
                         <div id='center'>
-                            <Link to={'/sitios'}>
-                                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }} ></i>
-                            </Link>
+
+                            <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
+
+                                onClick={(event) => {
+                                    navigate('/sitios/edit', {
+                                        state: sitios
+                                    })
+                                }}
+                            ></i>
+
 
 
                         </div>
@@ -188,7 +298,7 @@ const EditPoint = () => {
                         <div id='center2'>
                             <ul className='nav justify-content-end '>
                                 <li className='nav-item'>
-                                    <i
+                                    {/* <i
                                         className={
                                             status.favorito == false
                                                 ? 'fa-regular fa-star background-button'
@@ -201,7 +311,7 @@ const EditPoint = () => {
                                             // changeStatus(status.favorito, status.publicado, status.oculto)
 
                                         }}
-                                        style={{ display: 'flex', marginRight: '4px' }} ></i>
+                                        style={{ display: 'flex', marginRight: '4px' }} ></i> */}
                                 </li>
                                 <li className='nav-item'>
                                     <i
@@ -216,19 +326,30 @@ const EditPoint = () => {
                                     <Modal.Header closeButton>
                                         <Modal.Title>Escanee su Código QR</Modal.Title>
                                     </Modal.Header>
-                                    <Modal.Body>
-                                        <Card.Img src='https://res.cloudinary.com/dte7upwcr/image/upload/blog/blog2/como-crear-codigo-qr/codigo-qr.jpg'></Card.Img>
+                                    <Modal.Body style={{ textAlign: 'center' }}>
+                                        <QRCodeCanvas
+                                             id="qrCode"
+                                            value={datospuntoInteres.qr_path}
+                                            size={300}
+
+                                            level={"H"}
+                                        />
+                                           
+
                                     </Modal.Body>
                                     <Modal.Footer>
                                         <Button variant='secondary' onClick={handleClose}>
                                             Close
                                         </Button>
+                                        <Button variant='primary' onClick={downloadQRCode}>
+                                                                Descargar
+                                                            </Button>
                                     </Modal.Footer>
                                 </Modal>
 
                                 <i
                                     className={
-                                        status.oculto == false
+                                        sitio.es_visible == false
                                             ? 'fa-solid fa-eye-slash background-button'
                                             : 'fa-solid fa-eye background-button'
                                     }
@@ -237,8 +358,8 @@ const EditPoint = () => {
                                         // status.oculto == false
                                         //   ? changeStatus(status.favorito, status.publicado, true)
                                         //   : changeStatus(status.favorito, status.publicado, false)
-                                        status.oculto = !status.oculto
-                                        // changeStatus(status.favorito, status.publicado, status.oculto)
+                                        sitio.es_visible = ! sitio.es_visible
+                                        changeStatus(status.favorito, status.publicado,  sitio.es_visible)
                                     }}
                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                 ></i>
@@ -260,22 +381,22 @@ const EditPoint = () => {
                                     className='fa-solid fa-floppy-disk background-button'
                                     id='center2'
                                     onClick={() => {
-                                        // console.log('site')
                                         updatePoint()
                                         saveChanges();
-                                        // console.log(site)
-                                        // navigate('/site')
+
+
+
                                     }}
                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                 ></i>
 
                                 <i
                                     onClick={() => {
-                                        // status.publicado == false
-                                        //   ? changeStatus(status.favorito, true, status.oculto)
-                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                         status.publicado == false
+                                          ? changeStatus(status.favorito, true, status.oculto)
+                                          : changeStatus(status.favorito, false, status.oculto)
                                         status.publicado = !status.publicado
-                                        // changeStatus(status.favorito, status.publicado, status.oculto)
+                                         changeStatus(status.favorito, status.publicado, status.oculto)
                                     }}
                                     className={
                                         status.publicado == false
@@ -292,7 +413,7 @@ const EditPoint = () => {
                 </div>
             </div>
             <br />
-            <h1 style={{ color: 'white', fontSize: '18px' }}>Configuración del punto de interes</h1>
+            <h1 style={{ color: 'white', fontSize: '18px' }}>Editar el punto de interes</h1>
             <h5 style={{ color: '#565674', fontSize: '14px' }}>Lista de Sitios - Configuración del punto de interes</h5>
             <br />
             <div className='row'>
@@ -306,7 +427,7 @@ const EditPoint = () => {
                                 <Card.Img
                                     src={
                                         sitio.portada_path == ''
-                                            ? 'https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'
+                                            ? logo
                                             : sitio.portada_path
                                     }
                                     alt='...'
@@ -314,7 +435,7 @@ const EditPoint = () => {
                                     onClick={
                                         sitio.portada_path == ''
                                             ? (e) => {
-                                                alert('subir imagen')
+                                                setModalupIMG(true)
                                             }
                                             : (e) => { }
                                     }
@@ -337,7 +458,7 @@ const EditPoint = () => {
                                                         id_punto: datospuntoInteres.id_punto,
                                                         id_sitio: datospuntoInteres.id_sitio,
                                                         id_guia: datospuntoInteres.id_guia,
-                                                        descripcion: sitio.descripcion,
+                                                        descripcion: datospuntoInteres.descripcion,
                                                         id_lenguaje: sitio.id_lenguaje,
                                                         nombre: sitio.nombre,
                                                         geoX: sitio.geoX,
@@ -409,34 +530,18 @@ const EditPoint = () => {
 
                                 </div>
                                 <br />
-                                <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Descripcion</label>
+                                <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Lenguajes</label>
                                 <br />
                                 <br />
-                                {/* <input  type='text'
-                  className='form-control'
-                  style={{ border: '0',  fontSize: '18px', color: '#FFFFFF' }}
-                  value={site.ubicacion != '' ? site.ubicacion : ''}
-                  onChange={(e) => {
-                    setSite({
-                      id_sitio: site.id_sitio,
-                      nombre: site.nombre,
-                      descripcion: site.descripcion,
-                      ubicacion: e.target.value,
-                      geoX: site.geoX,
-                      geoY: site.geoY,
-                      portada_path: site.portada_path,
-                      estado: site.estado,
-                      creado: site.creado,
-                      editado: site.editado,
-                      categorias:  site.categorias,
-                      id_municipio: site.id_municipio,
-                      favorito: status.favorito,
-                      publicado: status.publicado,
-                      oculto: status.oculto,
-                    })
-                  }}
-                ></input> */}
-                                <Form.Control
+
+
+                                <Select
+                                    options={languagesOptions}
+                                    styles={customStyles}
+                                    components={animatedComponents}
+                                    onChange={handleChangeLanguage}
+                                />
+                                {/* <Form.Control
                                     as="textarea"
                                     placeholder="Escribe una descripcion aqui"
                                     style={{ height: '100px' }}
@@ -458,9 +563,9 @@ const EditPoint = () => {
                                             es_visible: sitio.es_visible,
                                         })
                                     }}
-                                />
+                                /> */}
 
-                                <hr style={{ position: 'relative', top: '-20px' }}></hr>
+
                                 <br></br>
                                 {/* <label>Etiquetas</label>
                 <br />
@@ -486,8 +591,7 @@ const EditPoint = () => {
                                         <br></br>
                                         <div className='row text-center'>
                                             <i
-                                                className=' fa-solid fa-mobile-screen-button text-info fa-10x 
-                        text-center '
+                                                className=' fa-solid fa-mobile-screen-button text-info fa-10x text-center '
                                             ></i>
                                         </div>
                                         <br></br>
@@ -543,6 +647,11 @@ const EditPoint = () => {
                                                 <i className='fa-solid fa-pencil '></i> Crear
                                             </Button>
                                         </div>
+                                        <UpImage
+                                            show={modalupimg}
+                                            onClose={() => setModalupIMG(false)}
+                                            cargarIMG={uploadImage}
+                                        />
                                     </div>
                                 </div>
                             </div>

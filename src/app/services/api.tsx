@@ -2,7 +2,7 @@ import axios from 'axios'
 import {Route} from 'react-router-dom'
 
 export const URLAWS='https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/'
-const URL = 'https://416f-190-104-119-60.ngrok.io/dev2'
+const URL = 'https://84f7-190-104-119-60.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
 export const statesMethod = 'site/state'
@@ -63,6 +63,20 @@ export const deleteData = async (route: string, object: any) => {
 export const postData = async (route: string, object: any) => {
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}`, {method: 'POST', mode: 'cors', body: JSON.stringify(object)})
+            .then((response) => response.json())
+            .then((data) => {
+                resolve(data)
+            })
+            .catch((err) => {
+                resolve(null)
+                console.log(err.message)
+            })
+    })
+}
+
+export const getValue = async (route: string, id: number) => {
+    return new Promise((resolve, reject) => {
+        fetch(`${URL}/${route}/${id}`, {method: 'GET', mode: 'cors'})
             .then((response) => response.json())
             .then((data) => {
                 resolve(data)

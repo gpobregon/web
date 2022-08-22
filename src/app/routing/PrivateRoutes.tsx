@@ -47,9 +47,7 @@ const PrivateRoutes = () => {
                 <Route path='/reportes/sitios-por-calificacion' element={<SitesByRating />} />
                 <Route path='/reportes/reporte-de-usuario' element={<UserReport />} />
                 <Route path='sitios' element={<SitiosPage />} />
-
-                <Route path='template' element={<Template />} />
-
+                <Route path='template/:id' element={<Template />} />
                 <Route path='/sitios/create-point-interes' element={<AddPoin />} />
                 <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
 
