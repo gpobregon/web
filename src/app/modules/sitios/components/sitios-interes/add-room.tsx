@@ -56,6 +56,7 @@ const AddRoom: FC<any> = ({ show, onClose, addRoom, id_sitio }) => {
                     <Button
                         variant='primary'
                         onClick={() => {
+                            console.log(createRoom)
                             addRoom(createRoom)
                         }}
                     >

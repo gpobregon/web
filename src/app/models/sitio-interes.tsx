@@ -17,5 +17,6 @@ export interface PointInteres {
     es_portada_de_sitio:boolean
     nombre:string
     es_visible:boolean
+    publicado:boolean
   }
   

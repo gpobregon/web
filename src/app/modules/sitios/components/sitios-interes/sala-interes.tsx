@@ -138,8 +138,8 @@ const Interes: FC<id_sitio> = (props) => {
 
         }).then(async res => {
             if (res) {
-                await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
-
+           await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
+      console.log({ id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
                 setPuntoInteres([])
                 swal({
                     text: "Se elimino con éxito",
@@ -251,7 +251,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                     nombre: sala.nombre,
                                                     descripcion: sala.descripcion,
                                                     tipo: true,
-                                                    estado: 1,
+                                                    estado: 1
                                                 })
                                                 setModalUpdateRoom(true)
                                             }}
