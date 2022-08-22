@@ -23,10 +23,12 @@ export const deleteNotificationMethod = 'notification'
 
 export const RoomsMethod = sitesMethod + '/rooms'
 export const addRoom = RoomsMethod + '/add'
+export const editRoom = RoomsMethod+'/update'
 export const addNewPointInteres = RoomsMethod + '/points/add'
 export const updatePointInteres = RoomsMethod + '/points/update'
 export const delPointInteres = RoomsMethod + '/points'
 export const statePointInteres = addNewPointInteres + '/visibility'
+export const changePointOfInterestFront =RoomsMethod+'/points/changePointOfInterestFront'
 
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {
