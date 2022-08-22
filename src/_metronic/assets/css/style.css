@@ -142,3 +142,7 @@
 .list-group-squeare > .list-group-item::before {
   list-style-type : square;
 }
+
+.min-tumbnail.ps__thumb-x {
+  overflow-y: hidden;
+}

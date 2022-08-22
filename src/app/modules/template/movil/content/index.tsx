@@ -25,11 +25,10 @@ const Index = () => {
                                 <Button size="sm" className="text-white" variant={btnActive === 1 ? 'primary' : 'dark bkg-dark'} onClick={() => setBtnActive(1)}>{ changeTypeEdit === 1 ? 'Elementos' : 'Diseño' }</Button>
                                 <Button size="sm" className="text-white" variant={btnActive === 2 ? 'primary' : 'dark bkg-dark'} onClick={() => setBtnActive(2)}>Recursos</Button>
                             </ButtonGroup>
-                            <PerfectScrollbar className="h-75">
+                            
                                 {
-                                    btnActive === 1 ? <Elementos/> : <Recursos/>
+                                    btnActive === 1 ?<PerfectScrollbar className="h-75"> <Elementos/> </PerfectScrollbar>: <Recursos/>
                                 }
-                            </PerfectScrollbar>
                         </Card.Body>
                     </Col>
                     <Col lg={8}>

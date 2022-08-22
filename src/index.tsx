@@ -14,6 +14,7 @@ import './_metronic/assets/sass/plugins.scss'
 import './_metronic/assets/sass/style.scss'
 import './_metronic/assets/sass/style.react.scss'
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import "react-contexify/dist/ReactContexify.css";
 import './_metronic/assets/css/style.css'
 import {AppRoutes} from './app/routing/AppRoutes'
 import {AuthProvider} from './app/modules/auth'
