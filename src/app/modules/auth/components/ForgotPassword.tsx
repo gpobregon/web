@@ -3,10 +3,11 @@ import * as Yup from 'yup'
 import clsx from 'clsx'
 import {Link} from 'react-router-dom'
 import {useFormik} from 'formik'
-import {requestPassword} from '../core/_requests'
+import {requestPassword} from '../core/_requests' 
+import { Form, Button } from 'react-bootstrap';
 
 const initialValues = {
-  email: 'admin@demo.com',
+  email: '',
 }
 
 const forgotPasswordSchema = Yup.object().shape({
@@ -43,22 +44,28 @@ export function ForgotPassword() {
   })
 
   return (
-    <>
+    <Form style={{ width: '50%' }}>
       <form
         className='form w-100 fv-plugins-bootstrap5 fv-plugins-framework'
         noValidate
         id='kt_login_password_reset_form'
         onSubmit={formik.handleSubmit}
-      >
-        <div className='text-center mb-10'>
-          {/* begin::Title */}
-          <h1 className='text-dark mb-3'>Forgot Password ?</h1>
-          {/* end::Title */}
+      > 
+        
+          <div className='text-left mb-10'>
+            {/* begin::Title */}
+            <h1 className='text-dark mb-3'>Restablecer Contraseña</h1>
+            {/* end::Title */}
+          
 
-          {/* begin::Link */}
-          <div className='text-gray-400 fw-bold fs-4'>Enter your email to reset your password.</div>
-          {/* end::Link */}
-        </div>
+            {/* begin::Link */}
+            <span>
+            {'Se ha enviado un mail para restablecer la contraseña. Por favor, revisa tu correo electronico para restablecer tu contraseña'}
+            </span>
+            {/* end::Link */}
+          </div> 
+        
+        
 
         {/* begin::Title */}
         {hasErrors === true && (
@@ -81,7 +88,7 @@ export function ForgotPassword() {
           <label className='form-label fw-bolder text-gray-900 fs-6'>Email</label>
           <input
             type='email'
-            placeholder=''
+            placeholder='Ingresa tu email'
             autoComplete='off'
             {...formik.getFieldProps('email')}
             className={clsx(
@@ -103,13 +110,14 @@ export function ForgotPassword() {
         {/* end::Form group */}
 
         {/* begin::Form group */}
-        <div className='d-flex flex-wrap justify-content-center pb-lg-0'>
+        <div className='d-flex flex-wrap justify-content-center pb-lg-0'  >
           <button
             type='submit'
             id='kt_password_reset_submit'
-            className='btn btn-lg btn-primary fw-bolder me-4'
+            className='btn btn-lg btn-primary fw-bolder me-4' 
+            style={{ width: '100%' }}
           >
-            <span className='indicator-label'>Submit</span>
+              {'siguiente >'}
             {loading && (
               <span className='indicator-progress'>
                 Please wait...
@@ -117,19 +125,19 @@ export function ForgotPassword() {
               </span>
             )}
           </button>
-          <Link to='/auth/login'>
+          {/* <Link to='/auth/login'>
             <button
               type='button'
               id='kt_login_password_reset_form_cancel_button'
               className='btn btn-lg btn-light-primary fw-bolder'
               disabled={formik.isSubmitting || !formik.isValid}
             >
-              Cancel
+              Cancelar
             </button>
-          </Link>{' '}
+          </Link>{' '} */}
         </div>
         {/* end::Form group */}
       </form>
-    </>
+    </Form>
   )
 }
