@@ -12,7 +12,7 @@ export const categorysMethod = 'site/categories'
 export const addCategoryMethod = 'site/categories/add'
 export const updateCategoryMethod = 'site/categories/update'
 
-export const languagesMethod = 'language'
+export const languagesMethod = 'idioma'
 export const addLanguageMethod = 'language/add'
 export const updateLanguageMethod = 'language/update'
 
