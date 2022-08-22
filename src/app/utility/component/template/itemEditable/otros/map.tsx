@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
 import { Image, Row } from 'react-bootstrap';
-import ContentEditable from "react-contenteditable";
 import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
 
 type Model = {

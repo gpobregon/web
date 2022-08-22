@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { getData, sitesMethod, deleteData } from '../../services/api'
+import { getData, sitesMethod, deleteData, postData } from '../../services/api'
 import Sitio from './components/sitio';
 import { Site } from "../../models/site";
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
+import moment from 'moment';
+import logo from './upload-image_03.jpg';
+import QRCode from 'qrcode.react';
+
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -36,14 +40,14 @@ const SitiosPage = () => {
       }
 
     const getSites = async () => {
-        const site: any = await getData(sitesMethod)
-        // console.log(site)
+        const site: any = await postData(sitesMethod,{page:"1",quantity:"100"})
+        console.log(site)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
     }
 
     const ordernarAsc = () => {
-        const numAscending = [...sites].sort((a, b) => a.id_sitio - b.id_sitio)
+        const numAscending = [...sites].sort((a, b) =>  moment(a.creado).diff(b.creado))
         setSites(numAscending)
         setFilterSites(numAscending)
         console.log(numAscending)
@@ -52,13 +56,26 @@ const SitiosPage = () => {
       }
     
       const ordenarDesc = () => {
-        const numDescending = [...sites].sort((a, b) => b.id_sitio - a.id_sitio)
+        const numDescending = [...sites].sort((a, b) => moment(b.creado).diff(a.creado))
         setSites(numDescending)
         setFilterSites(numDescending)
         console.log(numDescending)
         setEstado(true)
         setUp(true)
       }
+
+      const downloadQR = () => {
+        const canvas = document.getElementById("123456") as HTMLCanvasElement;
+        const pngUrl = canvas!
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        let downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = "qr.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      };
     return (
 
         <Container fluid>
@@ -89,9 +106,6 @@ const SitiosPage = () => {
                                     onChange={handlerChange}
                                 />
 
-                                {/* Block input search: here we command to fetch the handlerChange function */}
-
-                                {/* block input search */}
                             </div>
                         </div>
 
@@ -119,16 +133,6 @@ const SitiosPage = () => {
                     <br />
                 </div>
             </div>
-            {/* <Row className='pb-10'>
-                
-                <Col xs={6} md={4}><h1>Gestor de sitios</h1></Col>
-                <Col xs={6} md={4}>
-                <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Buscar"/>
-                </Col>
-            </Row> */}
 
             <br></br>
             <br></br>
@@ -163,7 +167,7 @@ const SitiosPage = () => {
                 }
                 
                   <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                    <Card  style={{ backgroundColor: '#1e1e2d',margin:'20px', padding: 20, width: '95%', height: '395px', display: 'table' }}>
+                    <Card  style={{ backgroundColor: '#1e1e2d',margin:'20px', padding: 20, width: '95%', height: '420px', display: 'table' }}>
                     <Link to={'create'} style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
                      
                             <svg
@@ -180,11 +184,9 @@ const SitiosPage = () => {
                         </Link>
                     </Card>
                     </div>
-                
-                  
                     </div>
                    
-               
+             
         </Container>
     );
 }
