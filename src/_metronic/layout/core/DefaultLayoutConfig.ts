@@ -8,7 +8,7 @@ export const DefaultLayoutConfig: ILayout = {
     pageBgWhite: false,
   },
   loader: {
-    display: false,
+    display: true,
     type: 'default', // Set default|spinner-message|spinner-logo to hide or show page loader
   },
   scrolltop: {
@@ -25,14 +25,14 @@ export const DefaultLayoutConfig: ILayout = {
     menu: true,
   },
   megaMenu: {
-    display: true, // Set true|false to show or hide Mega Menu
+    display: false, // Set true|false to show or hide Mega Menu
   },
   aside: {
     fixed: true,
     menuIcon: 'font',
   },
   content: {
-    width: 'fixed', // Set fixed|fluid to change width
+    width: 'fluid', // Set fixed|fluid to change width
     layout: 'default',
   },
   toolbar: {

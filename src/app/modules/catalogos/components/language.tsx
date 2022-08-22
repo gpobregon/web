@@ -1,7 +1,7 @@
 import React, {FC} from 'react'
 import {Col, Card, Button, Figure} from 'react-bootstrap'
 
-const Language: FC<any> = ({data, onClickLanguage}) => {
+const Language: FC<any> = ({data, showModal}) => {
     return (
         <Col sm='4' md='12' className='mb-9'>
             <Card className='d-flex align-items-center flex-row py-3 px-8' style={{}}>
@@ -16,7 +16,7 @@ const Language: FC<any> = ({data, onClickLanguage}) => {
                     <div className='d-flex justify-content-end'>
                         <i
                             className='bi-three-dots fs-2 '
-                            onClick={onClickLanguage}
+                            onClick={showModal}
                             style={{cursor: 'pointer'}}
                         ></i>
                     </div>

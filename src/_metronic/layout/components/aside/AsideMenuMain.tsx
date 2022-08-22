@@ -22,6 +22,20 @@ export function AsideMenuMain() {
         fontIcon='bi bi-house-door'
         className='py-3'
       />
+      <AsideMenuItem
+        to='/notificaciones-push'
+        title='Alertas'
+        bsTitle='Alertas'
+        fontIcon='bi bi-bell'
+        className='py-3'
+      />
+      <AsideMenuItem
+        to='/reportes'
+        title='Reportes'
+        bsTitle='Reportes'
+        fontIcon='bi bi-file-earmark-text'
+        className='py-3'
+      />
     </>
   )
 }

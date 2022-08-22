@@ -162,6 +162,7 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                     <Form.Group>
                         <Form.Label>{'Idioma'}</Form.Label>
                         <Select
+                            onMenuOpen={() => getLanguages()}
                             options={languagesOptions}
                             styles={customStyles}
                             components={animatedComponents}

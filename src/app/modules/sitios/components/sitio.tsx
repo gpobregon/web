@@ -4,7 +4,7 @@ import { Site } from '../../../models/site';
 import { getData, sitesMethod, deleteData } from '../../../services/api'
 import  swal  from "sweetalert";
 import SitiosPage from '../SitiosPage';
-import { useNavigate} from 'react-router-dom'
+import { Link, useNavigate} from 'react-router-dom'
 type sitio = {
     id_sitio: number
     nombre: string
@@ -39,15 +39,16 @@ const Sitio: FC<sitio> = (props) => {
             icon: "warning",
             buttons:["No","Sí"],
             
-          }).then(res=>{
+          }).then(async res=>{
             if(res){
-                deleteData(sitesMethod, props.id_sitio)
+              await deleteData(sitesMethod, {id_sitio: props.id_sitio})
                 swal({text:"Se elimino con éxito",
                 icon:"success",
                 timer:2000,
                 
             })
-            window.location.reload(); //reload page
+      
+             window.location.reload(); //reload page
 
             }
           });
@@ -55,16 +56,15 @@ const Sitio: FC<sitio> = (props) => {
     }
     return (
       <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-            <Card style={{ backgroundColor: '#1e1e2d', padding: 20,margin:'20px', width: '95%', height: '395px' }}>
-
-                <Card.Img variant='top' src={`${props.portada_path}`} className='mb-5 'style={{ maxHeight:'70%' }} />
+            <Card style={{ backgroundColor: '#1e1e2d', padding: 20,margin:'20px', width: '95%', height: '420px' }}>
+               
+                <Card.Img variant='top' src={`${props.portada_path}`} className='mb-5 'style={{ maxHeight:'70%' }} /> 
 
                 <Card.Title style={{  }}>{props.nombre}</Card.Title>
                 <Card.Text className='text-muted'>{props.ubicacion}</Card.Text>
                 <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
-                    <Button style={{ width: '50%' }}
+                    <Button style={{ width: '47%'}}
                      onClick={(event) => {
-                      console.log(props)
                       navigate('/sitios/edit', {
                         state: {
                           id_sitio: props.id_sitio,
@@ -88,7 +88,7 @@ const Sitio: FC<sitio> = (props) => {
                         <i className="bi bi-pencil-square"></i>
                         Editar
                     </Button>
-                    <Button className='bg-secondary' style={{ width: '50%' }}  onClick={deleteSites}>
+                    <Button className='bg-secondary' style={{ width: '47%' }}  onClick={deleteSites}>
                         <i className="bi bi-trash3"></i>
                         Eliminar
                         

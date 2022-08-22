@@ -1,15 +1,18 @@
-import React, { useState, useEffect,FC } from 'react';
+import React, { useState, useEffect,FC, useRef } from 'react';
 import { Container, Row, Col, Button, Card, ListGroup, Form, Navbar, Nav, NavDropdown,Modal } from 'react-bootstrap';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import { Site } from '../../models/site';
 import Moment from 'moment'
-import { getData, sitesMethod, deleteData,postData,categorysMethod,statesMethod } from '../../services/api'
+import { getData, sitesMethod, deleteData,postData,categorysMethod,statesMethod,URLAWS } from '../../services/api'
 import {Tag }from '../../models/tag';
 import {status }from '../../models/status';
 import  swal  from "sweetalert";
 import { useForm } from 'react-hook-form';
+import  Interes  from "./components/sitios-interes/sala-interes";  
+import logo from './upload-image_03.jpg';
+import UpImage from './components/upload-image';
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     item => ({ label: item, value: item })
 );
@@ -103,13 +106,13 @@ const ConfSite = () => {
     const [show, setShow] = useState(false)
     const [categorys, setCategorys] = useState<Tag[]>([])
     const [site, setSite] = useState({
-        id_sitio: 1,
+        id_sitio: 0,
         nombre: '',
-        descripcion: 'eeee',
+        descripcion: '',
         ubicacion: '',
         geoX: '',
         geoY: '',
-        portada_path: 'https://picsum.photos/200/200',
+        portada_path: '',
         estado: 0,
         creado: new Date(),
         editado: new Date(),
@@ -132,7 +135,7 @@ const ConfSite = () => {
         category.map((cat: any) => {
           categorys.push({value: cat.id_categoria, label: cat.nombre})
         })
-        console.log(category)
+        // console.log(category)
       }
 
       const alertNotNullInputs = async () => {
@@ -144,13 +147,47 @@ const ConfSite = () => {
     
             }
 
+            const handleChange = (event:any) => {
 
+
+              var arrtempo:[{
+                id_categoria: number
+                nombre: string
+                estado: number
+              }] = [{id_categoria: 1, nombre: 's', estado: 0}];
+              arrtempo.shift();
+            
+              event.map((cat: any) => {
+                arrtempo.push({id_categoria: cat.value,nombre: cat.label,estado:1})
+              })
+              setSite({
+                id_sitio: site.id_sitio,
+                nombre: site.nombre,
+                descripcion: site.descripcion,
+                ubicacion: site.ubicacion,
+                geoX: site.geoX,
+                geoY: site.geoY,
+                portada_path: site.portada_path,
+                estado: site.estado,
+                creado: site.creado,
+                editado: site.editado,
+                categorias: arrtempo,
+                id_municipio: site.id_municipio,
+                favorito: status.favorito,
+                publicado: status.publicado,
+                oculto: status.oculto,
+              })
+            
+              console.log(site);
+            
+            };
       //methods to post data to api------------------------------------------------------
 
   async function postSite(sitee: any) {
     if (site.nombre!=''&& site.geoX!=''&& site.geoY!=''&& site.ubicacion!='') {
-    const sit: any = await postData(sitesMethod, sitee)
-    console.log(sitee)
+    const sit: any = await postData(sitesMethod+"/add", sitee)
+    // console.log(sit)
+    window.location.href = "../sitios";
     }else{
         alertNotNullInputs()
     }
@@ -167,7 +204,7 @@ const ConfSite = () => {
       publicado: publicado,
       oculto: oculto,
     })
-    console.log(status)
+    // console.log(status)
    postDefault(statesMethod, status)
     // const getSites = async () => {
     //   const site: any = await getData(sitesMethod)
@@ -201,16 +238,44 @@ const ConfSite = () => {
       
 }
 
+// UPLOAD IMAGE-------------------------------------------------------------------------
 
+const uploadImage = async (imagen:string) => {
+
+  setSite({
+    id_sitio: site.id_sitio,
+    nombre: site.nombre,
+    descripcion: site.descripcion,
+    ubicacion: site.ubicacion,
+    geoX: site.geoX,
+    geoY: site.geoY,
+    portada_path: URLAWS+imagen,
+    estado: site.estado,
+    creado: site.creado,
+    editado: site.editado,
+    categorias: site.categorias,
+    id_municipio: site.id_municipio,
+    favorito: status.favorito,
+    publicado: status.publicado,
+    oculto: status.oculto,
+  })
+if(imagen!=''){
+  setModalupIMG(false)
+}
+};
+const [modalupimg, setModalupIMG] = useState(false)
 
   return (
     <>
       <div className=' '>
-        <div className='row'>
+        <div className='row'style={{
+                        backgroundColor: '#1A1A27',
+                        backgroundSize: 'auto 100%',
+                    }}>
           <div className='col-xs-12 col-md-6 col-lg-6'>
             <div id='center'>
-              <Link to={'/sitios'}>
-                <i className='fa-solid fa-less-than background-button ' id='center2'></i>
+            <Link to={'/sitios'}>
+                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }} ></i>
               </Link>
             
               {/* {site.nombre != '' ? (
@@ -231,25 +296,26 @@ const ConfSite = () => {
                 <li className='nav-item'>
                 <i
                     className={
-                      status.favorito == false
-                        ? 'fa-regular fa-star background-button'
-                        : 'fas fa-star background-button'
+                      'fa-regular fa-star background-button'
+                      // status.favorito == false
+                      //   ? 'fa-regular fa-star background-button'
+                        // : 'fas fa-star background-button'
                     }
                     id='center2'
-                    onClick={() => {
-                      status.favorito == false
-                        ? changeStatus(true, status.publicado, status.oculto)
-                        : changeStatus(false, status.publicado, status.oculto)
-                    }}
-                    style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                    // onClick={() => {
+                    //   status.favorito == false
+                    //     ? changeStatus(true, status.publicado, status.oculto)
+                    //     : changeStatus(false, status.publicado, status.oculto)
+                    // }}
+                    style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                   ></i>
                 </li>
                 <li className='nav-item'>
                   <i
                     className='fa-solid fa-qrcode background-button '
                     id='center2'
-                    onClick={handleShow}
-                    style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                    // onClick={handleShow}
+                    style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                   ></i>
                 </li>
                 <Modal show={show} onHide={handleClose}>
@@ -267,28 +333,23 @@ const ConfSite = () => {
                 </Modal>
                 <i
                   className={
-                    status.oculto == false
-                      ? 'fa-solid fa-eye-slash background-button'
-                      : 'fa-solid fa-eye background-button'
+                    'fa-solid fa-eye background-button'
+                    // status.oculto == false
+                    //   ? 'fa-solid fa-eye-slash background-button'
+                    //   : 'fa-solid fa-eye background-button'
                   }
                   id='center2'
-                  onClick={() => {
-                    status.oculto == false
-                      ? changeStatus(status.favorito, status.publicado, true)
-                      : changeStatus(status.favorito, status.publicado, false)
-                  }}
-                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                  // onClick={() => {
+                  //   status.oculto == false
+                  //     ? changeStatus(status.favorito, status.publicado, true)
+                  //     : changeStatus(status.favorito, status.publicado, false)
+                  // }}
+                  style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                 ></i>
                 <i
                   className='fa-solid fa-xmark background-button'
                   id='center2'
-                  onClick={() => {
-                    // var n = window.confirm('Esta seguro que desea eliminar?')
-                    // if (n == true) {
-                    //   navigate('/site')
-                    // } else {
-                    // }
-                    
+                  onClick={() => {   
                     discardChanges()
                   }}
                   style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
@@ -297,35 +358,36 @@ const ConfSite = () => {
                   className='fa-solid fa-floppy-disk background-button'
                   id='center2'
                   onClick={() => {
-                    postSite(site)
+                    // postSite(site)
                     // navigate('/site')
                   }}
-                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                  style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                 ></i>
 
                 <i
-                  onClick={() => {
-                    status.publicado == false
-                      ? changeStatus(status.favorito, true, status.oculto)
-                      : changeStatus(status.favorito, false, status.oculto)
-                  }}
+                  // onClick={() => {
+                  //   status.publicado == false
+                  //     ? changeStatus(status.favorito, true, status.oculto)
+                  //     : changeStatus(status.favorito, false, status.oculto)
+                  // }}
                   className={
-                    status.publicado == false
-                      ? 'fa-solid fa-download background-button'
-                      : 'fa-solid fa-upload background-button'
+                    'fa-solid fa-upload background-button'
+                    // status.publicado == false
+                    //   ? 'fa-solid fa-download background-button'
+                    //   : 'fa-solid fa-upload background-button'
                   }
                   id='center2'
-                  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}
+                  style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}
                 ></i>
-                <i className='fa-solid fa-gear background-button' id='center2'  style={{color: '#92929F',display:'flex',marginRight:'4px'  }}></i>
+                <i className='fa-solid fa-gear background-button' id='center2'  style={{color: '#4F4B4B',display:'flex',marginRight:'4px'  }}></i>
               </ul>
             </div>
           </div>
         </div>
       </div>
       <br />
-      <h1 style={{ color: 'white', fontSize: '18px', fontFamily: 'Lato' }}>Configuración del sitio</h1>
-      <h5 style={{color: '#565674', fontSize: '14px', fontFamily: 'Lato' }}>Lista de Sitios - Configuración del Sitio</h5>
+      <h1 style={{ color: 'white', fontSize: '18px' }}>Configuración del sitio</h1>
+      <h5 style={{color: '#565674', fontSize: '14px'}}>Lista de Sitios - Configuración del Sitio</h5>
       <br />
       <div className='row'>
         <div className='card centrado'>
@@ -335,10 +397,10 @@ const ConfSite = () => {
             <div className='card-header row'>
               <div className='card div-image col-xs-12 col-md-3 col-lg-3'>
                 <br></br>
-                <Card.Img
+                <Card.Img 
                   src={
                     site.portada_path == ''
-                      ? 'https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'
+                      ? logo
                       : site.portada_path
                   }
                   alt='...'
@@ -346,12 +408,16 @@ const ConfSite = () => {
                   onClick={
                     site.portada_path == ''
                       ? (e) => {
-                          alert('subir imagen')
+                        setModalupIMG(true)
                         }
                       : (e) => {}
                   }
+                  
                 />
+               
+
                 <div>
+                {/* <Form.Control type="file" onChange={uploadImage} /> */}
                   <div className='card-body '>
                     <Row>
                       <Col>
@@ -375,7 +441,7 @@ const ConfSite = () => {
                         estado: site.estado,
                         creado: site.creado,
                         editado: site.editado,
-                        categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                        categorias:  site.categorias,
                         id_municipio: site.id_municipio,
                         favorito: site.favorito,
                         publicado: site.publicado,
@@ -391,13 +457,13 @@ const ConfSite = () => {
                 <br></br>
 
                 <div id='is-relative'>
-                  <label style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>Título</label>
+                  <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Título</label>
                   <br />
                   <input
                     type='text'
                     className='form-control'
                     value={site.nombre == '' ? '' : site.nombre}
-                    style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                    style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                     onChange={(e) => {
                       setSite({
                         id_sitio: site.id_sitio,
@@ -410,7 +476,7 @@ const ConfSite = () => {
                         estado: site.estado,
                         creado: site.creado,
                         editado: site.editado,
-                        categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                        categorias:  site.categorias,
                         id_municipio: site.id_municipio,
                         favorito: site.favorito,
                         publicado: site.publicado,
@@ -425,12 +491,12 @@ const ConfSite = () => {
                   <br></br>
                   <div className='row'>
                     <div className='col-6'>
-                      <label style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>GeoX</label>
+                      <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoX</label>
                       <input
                         type='number'
                         pattern='[0-9]*'
                         className='form-control'
-                        style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                        style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoX == '' ? '' : site.geoX}
                         onChange={(e) => {
                           setSite({
@@ -444,7 +510,7 @@ const ConfSite = () => {
                             estado: site.estado,
                             creado: site.creado,
                             editado: site.editado,
-                            categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                            categorias:  site.categorias,
                             id_municipio: site.id_municipio,
                             favorito: site.favorito,
                             publicado: site.publicado,
@@ -455,12 +521,12 @@ const ConfSite = () => {
                       <hr style={{ position: 'relative', top: '-20px' }}></hr>
                     </div>
                     <div className='col-6'>
-                      <label style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>GeoY</label>
+                      <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoY</label>
                       <input
                         type='number'
                         pattern='[0-9]*'
                         className='form-control'
-                        style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                        style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoY == '' ? '' : site.geoY}
                         onChange={(e) => {
                           setSite({
@@ -474,7 +540,7 @@ const ConfSite = () => {
                             estado: site.estado,
                             creado: site.creado,
                             editado: site.editado,
-                            categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                            categorias:  site.categorias,
                             id_municipio: site.id_municipio,
                             favorito: site.favorito,
                             publicado: site.publicado,
@@ -487,12 +553,12 @@ const ConfSite = () => {
                   </div>
                 </div>
                 <br />
-                <label  style={{fontFamily: 'Lato', fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
+                <label  style={{ fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
                 <br></br>
                 <input
                   type='text'
                   className='form-control'
-                  style={{ border: '0', fontFamily: 'Lato', fontSize: '18px', color: '#FFFFFF' }}
+                  style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                   value={site.ubicacion != '' ? site.ubicacion : ''}
                   onChange={(e) => {
                     setSite({
@@ -506,7 +572,7 @@ const ConfSite = () => {
                       estado: site.estado,
                       creado: site.creado,
                       editado: site.editado,
-                      categorias: [{id_categoria: 1, nombre: '', estado: 0}],
+                      categorias:  site.categorias,
                       id_municipio: site.id_municipio,
                       favorito: site.favorito,
                       publicado: site.publicado,
@@ -526,6 +592,7 @@ const ConfSite = () => {
                     // defaultValue={[options[4], options[5]]}
                     isMulti
                     options={categorys}
+                    onChange={handleChange}
                   ></Select>
                 </div>
               </div>
@@ -533,7 +600,7 @@ const ConfSite = () => {
                 <div className='row mt-6 gx-10 m-auto'>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
                     <div className='row'>
-                      <h2 className='col-md-12 mt-5 text-center' style={{fontFamily: 'Lato', fontSize: '18px'}}>Sitio Móvil</h2>
+                      <h2 className='col-md-12 mt-5 text-center' style={{ fontSize: '18px'}}>Sitio Móvil</h2>
                     </div>
                     <br></br>
                     <div className='row text-center'>
@@ -545,7 +612,7 @@ const ConfSite = () => {
                     <br></br>
                     <br />
                     <div className='row'>
-                      <p className=' text-movil col-md-12 text-center mt-5'>
+                      <p className=' col-md-12 text-center mt-5'>
                         Maquetar los elementos del sitio para versión móvil.
                       </p>
                     </div>
@@ -555,7 +622,7 @@ const ConfSite = () => {
                         onClick={() => {
                          
                           postSite(site)
-                          window.location.href = "../sitios";
+                          
 
                           console.log('creado con el boton de sitio mobil')
                         }}
@@ -568,7 +635,7 @@ const ConfSite = () => {
                   </div>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
                     <div className='row text-center'>
-                      <h2 className='col-md-12 text-center mt-5' style={{fontFamily: 'Lato', fontSize: '18px'}}>Sitio Web</h2>
+                      <h2 className='col-md-12 text-center mt-5' style={{ fontSize: '18px'}}>Sitio Web</h2>
                     </div>
                     <br />
                     <div className='row text-center'>
@@ -577,7 +644,7 @@ const ConfSite = () => {
                     <br></br>
                     <br />
                     <div className='row'>
-                      <p className=' text-movil col-md-12 text-center mt-5'>
+                      <p className=' col-md-12 text-center mt-5'>
                         Maquetar los elementos del sitio para versión web
                       </p>
                     </div>
@@ -604,35 +671,16 @@ const ConfSite = () => {
       </div>
       <br />
       <br />
-      {/*<h3>Puntos de interés</h3>
-      <br />
       <div className='row'>
-        <div className='col-10'>
-          <div className='card'>Hola</div>
-        </div>
-        <div className='col-2'>
-          <div className='card div-image'>
-            <br />
-            <h4>Vista Previa de Sala</h4>
-            <Card.Img
-              src={
-                site == null
-                  ? 'https://icon-library.com/images/upload-file-icon/upload-file-icon-24.jpg'
-                  : site.portada_path
-              }
-              alt='...'
-              className='card-img-top img2'
-              onClick={
-                site == null
-                  ? (e) => {
-                      alert('subir imagen')
-                    }
-                  : (e) => {}
-              }
-            />
-          </div>
-        </div>
-            </div>*/}
+       {/* <h3>Puntos de interés</h3>
+      <Interes id_sitio={site.id_sitio} /> */}
+      </div>
+                    <UpImage
+                        show={modalupimg}
+                        onClose={() => setModalupIMG(false)}
+                        cargarIMG={uploadImage}
+                    />
+     
     </>
   )
 

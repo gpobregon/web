@@ -4,6 +4,7 @@ import moment from 'moment'
 
 import Catalogo from './components/catalogo'
 import UpdateCatalogo from './components/update-catalogo'
+import UpdateLanguage from './components/update-language'
 import Language from './components/language'
 import AddLanguaje from './components/add-language'
 import AddCatalogo from './components/add-catalogo'
@@ -18,6 +19,7 @@ import {
     languagesMethod,
     postData,
     updateCategoryMethod,
+    updateLanguageMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
 
@@ -26,6 +28,7 @@ const CatalogosPage = () => {
     const [modalAddLanguage, setModalAddLanguage] = useState(false)
 
     const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
+    const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
 
     const [optionSort, setOptionSort] = useState('Agregado recientemente')
     const [searchInput, setSearchInput] = useState('')
@@ -109,6 +112,17 @@ const CatalogosPage = () => {
         }
     }
 
+    // TODO: updateIdioma
+    const updateIdioma = async (idioma: any) => {
+        if (idioma.nombre != '' && idioma.descripcion != '') {
+            await postData(updateLanguageMethod, idioma)
+            setModalUpdateIdioma({show: false, language: {}})
+            getLanguages()
+        } else {
+            alertNotNullInputs()
+        }
+    }
+
     // TODO: deleteTag
     const deleteTag = async (tag: any) => {
         await deleteData(categorysMethod, tag)
@@ -116,6 +130,17 @@ const CatalogosPage = () => {
         getTags()
         swal({
             title: 'Se ha eliminado la etiqueta',
+            icon: 'success',
+        })
+    }
+
+    //TODO: deleteLanguage
+    const deleteIdioma = async (idioma: any) => {
+        await deleteData(languagesMethod, idioma)
+        setModalUpdateIdioma({show: false, language: {}})
+        getLanguages()
+        swal({
+            title: 'Se ha eliminado el idioma',
             icon: 'success',
         })
     }
@@ -193,8 +218,8 @@ const CatalogosPage = () => {
     return (
         <>
             <Container fluid>
-                <Row className='pb-9'>
-                    <div className='text-left'>
+                <Row>
+                    <div className='text-left mb-10'>
                         <h1 className='text-dark mt-0'>Categorías</h1>
                         <h2 className='text-muted mb-0'>Lista de categorías</h2>
                     </div>
@@ -335,7 +360,7 @@ const CatalogosPage = () => {
                         <Language
                             key={language.id_lenguaje.toString()}
                             data={language}
-                            showModal={() => showModalLanguage()}
+                            showModal={() => showModalUpdateIdioma(language)}
                         />
                     ))}
                 </Row>
@@ -344,6 +369,14 @@ const CatalogosPage = () => {
                     show={modalAddLanguage}
                     onClose={() => setModalAddLanguage(false)}
                     addLanguage={addLanguage}
+                />
+
+                <UpdateLanguage
+                    show={modalUpdateIdioma.show}
+                    onClose={() => setModalUpdateIdioma({show: false, language: {}})}
+                    language={modalUpdateIdioma.language}
+                    updateIdioma={updateIdioma}
+                    deleteIdioma={deleteIdioma}
                 />
             </Container>
         </>

@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { getData, sitesMethod, deleteData } from '../../services/api'
+import { getData, sitesMethod, deleteData, postData } from '../../services/api'
 import Sitio from './components/sitio';
 import { Site } from "../../models/site";
+import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
+import moment from 'moment';
+import logo from './upload-image_03.jpg';
+import QRCode from 'qrcode.react';
 
 
 const SitiosPage = () => {
@@ -36,14 +40,14 @@ const SitiosPage = () => {
       }
 
     const getSites = async () => {
-        const site: any = await getData(sitesMethod)
+        const site: any = await postData(sitesMethod,{page:"1",quantity:"100"})
         console.log(site)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
     }
 
     const ordernarAsc = () => {
-        const numAscending = [...sites].sort((a, b) => a.id_sitio - b.id_sitio)
+        const numAscending = [...sites].sort((a, b) =>  moment(a.creado).diff(b.creado))
         setSites(numAscending)
         setFilterSites(numAscending)
         console.log(numAscending)
@@ -52,13 +56,26 @@ const SitiosPage = () => {
       }
     
       const ordenarDesc = () => {
-        const numDescending = [...sites].sort((a, b) => b.id_sitio - a.id_sitio)
+        const numDescending = [...sites].sort((a, b) => moment(b.creado).diff(a.creado))
         setSites(numDescending)
         setFilterSites(numDescending)
         console.log(numDescending)
         setEstado(true)
         setUp(true)
       }
+
+      const downloadQR = () => {
+        const canvas = document.getElementById("123456") as HTMLCanvasElement;
+        const pngUrl = canvas!
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        let downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = "qr.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      };
     return (
 
         <Container fluid>
@@ -89,9 +106,6 @@ const SitiosPage = () => {
                                     onChange={handlerChange}
                                 />
 
-                                {/* Block input search: here we command to fetch the handlerChange function */}
-
-                                {/* block input search */}
                             </div>
                         </div>
 
@@ -116,18 +130,9 @@ const SitiosPage = () => {
                             </ul>
                         </div>
                     </div>
+                    <br />
                 </div>
             </div>
-            {/* <Row className='pb-10'>
-                
-                <Col xs={6} md={4}><h1>Gestor de sitios</h1></Col>
-                <Col xs={6} md={4}>
-                <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Buscar"/>
-                </Col>
-            </Row> */}
 
             <br></br>
             <br></br>
@@ -143,20 +148,28 @@ const SitiosPage = () => {
             
                 </Col>
                 <Col md={{ span: 2, offset: 6 }} >
-                    <Button className="btn btn-primary" href="sitios/create">
-                        <i className="bi bi-file-earmark-plus"></i>
-                        {'Nuevo sitio'}
+                <Link to={'create'}>
+                    <Button className="btn btn-primary" >
+                    
+                    <i className="bi bi-file-earmark-plus"></i>
+                    {'Nuevo sitio'}
+                    
+                        
                     </Button>
+                    </Link>
                 </Col>
             </Row>
             <div className='row g-4'>
           
                 {
-                    filterSites?.map(sitio => <Sitio {...sitio} key={sitio.id_sitio.toString()} />)
+                    filterSites?.map(sitio => <Sitio {...sitio} key={sitio.id_sitio.toString() }  />)
+                    
                 }
+                
                   <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                    <Card  style={{ backgroundColor: '#1e1e2d',margin:'20px', padding: 20, width: '95%', height: '395px', display: 'table' }}>
-                        <a href="sitios/create" style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
+                    <Card  style={{ backgroundColor: '#1e1e2d',margin:'20px', padding: 20, width: '95%', height: '420px', display: 'table' }}>
+                    <Link to={'create'} style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
+                     
                             <svg
 
                                 xmlns="http://www.w3.org/2000/svg" width="
@@ -167,15 +180,13 @@ const SitiosPage = () => {
                             </svg>
                             <Card.Text style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden' }} >Nuevo Sitio</Card.Text>
 
-                        </a>
-
+                  
+                        </Link>
                     </Card>
                     </div>
-                
-                  
                     </div>
                    
-               
+             
         </Container>
     );
 }
