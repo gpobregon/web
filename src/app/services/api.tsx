@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {Route} from 'react-router-dom'
 
+export const URLAWS='https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/'
 const URL = 'https://416f-190-104-119-60.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
@@ -30,27 +31,6 @@ export const statePointInteres = addNewPointInteres + '/visibility'
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}/`, {method: 'GET', mode: 'cors'})
-            .then((response) => response.json())
-            .then((data) => {
-                resolve(data)
-            })
-            .catch((err) => {
-                resolve(null)
-                console.log(err.message)
-            })
-    })
-}
-
-export const getDataPOST = async (route: string) => {
-    return new Promise((resolve, reject) => {
-        fetch(`${URL}/${route}/`, {
-            method: 'POST',
-            mode: 'cors',
-            body: JSON.stringify({
-                page: '1',
-                quantity: '8',
-            }),
-        })
             .then((response) => response.json())
             .then((data) => {
                 resolve(data)

@@ -15,7 +15,6 @@ import {
     categorysMethod,
     deleteData,
     getData,
-    getDataPOST,
     languagesMethod,
     postData,
     updateCategoryMethod,
@@ -49,7 +48,7 @@ const CatalogosPage = () => {
     }, [])
 
     const getTags = async () => {
-        const catalogos: any = await getDataPOST(categorysMethod)
+        const catalogos: any = await postData(categorysMethod, {page: '1', quantity: '8'})
         setCatalogos(catalogos as CatalogTag[])
     }
 

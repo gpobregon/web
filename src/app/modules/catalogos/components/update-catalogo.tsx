@@ -170,6 +170,7 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                                 label: catalogo?.idioma?.nombre,
                                 value: catalogo?.idioma?.id,
                             }}
+                            onMenuOpen={() => getLanguages()}
                             options={languagesOptions}
                             styles={customStyles}
                             components={animatedComponents}

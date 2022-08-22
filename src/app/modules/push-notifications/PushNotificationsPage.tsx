@@ -11,7 +11,6 @@ import {
     deleteData,
     deleteNotificationMethod,
     getData,
-    getDataPOST,
     notificationMethod,
     postData,
     updateNotificationMethod,
@@ -46,7 +45,10 @@ const PushNotificationsPage = () => {
     }
 
     const getNotificationsProgrammed = async () => {
-        const notificationsData: any = await getDataPOST(notificationMethod)
+        const notificationsData: any = await postData(notificationMethod, {
+            page: '1',
+            quantity: '8',
+        })
         setNotifications(
             notificationsData.data.filter(
                 (notification: any) => notification.tipo == 1
@@ -56,7 +58,10 @@ const PushNotificationsPage = () => {
     }
 
     const getNotificationsHistory = async () => {
-        const notificationsData: any = await getDataPOST(notificationMethod)
+        const notificationsData: any = await postData(notificationMethod, {
+            page: '1',
+            quantity: '8',
+        })
         setNotifications(
             notificationsData.data.filter(
                 (notification: any) => notification.tipo == 0
@@ -244,14 +249,6 @@ const PushNotificationsPage = () => {
                                             )}
                                         </td>
                                         <td style={{width: '50px'}}>
-                                            {/* <div
-                                                style={{
-                                                    width: '40px',
-                                                    height: '40px',
-                                                    backgroundImage: `url(${notification.image})`,
-                                                    borderRadius: '10px',
-                                                }}
-                                            ></div> */}
                                             <img
                                                 style={{
                                                     width: '40px',
