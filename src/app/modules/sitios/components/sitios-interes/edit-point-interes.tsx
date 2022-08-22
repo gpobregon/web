@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import Select from 'react-select'
 import { Col, Card, Button, Row, Modal, Form } from 'react-bootstrap';
-import { postData, addNewPointInteres, updatePointInteres, sitesMethod, getValue, URLAWS } from '../../../../services/api'
+import { postData, addNewPointInteres, updatePointInteres, sitesMethod, getValue, URLAWS, statePointInteres } from '../../../../services/api'
 import swal from "sweetalert";
 import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
@@ -73,7 +73,8 @@ type datosPuntoInteres = {
     portada_path: string
     qr_path: string
     es_portada_de_sitio: boolean
-    estado: number
+    estado: boolean
+    es_visible: boolean
 }
 const animatedComponents = makeAnimated()
 const EditPoint = () => {
@@ -96,20 +97,42 @@ const EditPoint = () => {
         qr_path: datospuntoInteres.qr_path,
         es_portada_de_sitio: datospuntoInteres.es_portada_de_sitio,
         estado: datospuntoInteres.estado,
-        es_visible: true,
+        es_visible: datospuntoInteres.es_visible,
     });
 
-    // useEffect(() => {
-    //   console.log(sitio)
-    // }, []);
-
-
+ //este state se borra mas adelante
     const [status, setStatus] = useState<status>({
         id_sitio: 0,
         favorito: true,
         publicado: true,
         oculto: false,
     })
+
+    const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
+        postData(statePointInteres, { id_punto: datospuntoInteres.id_punto, es_visible: oculto })
+        //este state se borra mas adelante
+        setStatus({
+          id_sitio: 0,
+          favorito: favorito,
+          publicado: publicado,
+          oculto: oculto,
+        })
+        setSitio({
+            id_punto: sitio.id_punto,
+            id_sitio: sitio.id_sitio,
+            id_guia: sitio.id_guia,
+            descripcion: sitio.descripcion,
+            id_lenguaje: sitio.id_lenguaje,
+            nombre: sitio.nombre,
+            geoX: sitio.geoX,
+            geoY: sitio.geoY,
+            portada_path: sitio.portada_path,
+            qr_path: sitio.qr_path,
+            es_portada_de_sitio: sitio.es_portada_de_sitio,
+            estado: sitio.estado,
+            es_visible: oculto,
+        })
+    }
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
         swal({
@@ -326,7 +349,7 @@ const EditPoint = () => {
 
                                 <i
                                     className={
-                                        status.oculto == false
+                                        sitio.es_visible == false
                                             ? 'fa-solid fa-eye-slash background-button'
                                             : 'fa-solid fa-eye background-button'
                                     }
@@ -335,8 +358,8 @@ const EditPoint = () => {
                                         // status.oculto == false
                                         //   ? changeStatus(status.favorito, status.publicado, true)
                                         //   : changeStatus(status.favorito, status.publicado, false)
-                                        status.oculto = !status.oculto
-                                        // changeStatus(status.favorito, status.publicado, status.oculto)
+                                        sitio.es_visible = ! sitio.es_visible
+                                        changeStatus(status.favorito, status.publicado,  sitio.es_visible)
                                     }}
                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                 ></i>
@@ -369,11 +392,11 @@ const EditPoint = () => {
 
                                 <i
                                     onClick={() => {
-                                        // status.publicado == false
-                                        //   ? changeStatus(status.favorito, true, status.oculto)
-                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                         status.publicado == false
+                                          ? changeStatus(status.favorito, true, status.oculto)
+                                          : changeStatus(status.favorito, false, status.oculto)
                                         status.publicado = !status.publicado
-                                        // changeStatus(status.favorito, status.publicado, status.oculto)
+                                         changeStatus(status.favorito, status.publicado, status.oculto)
                                     }}
                                     className={
                                         status.publicado == false
@@ -390,7 +413,7 @@ const EditPoint = () => {
                 </div>
             </div>
             <br />
-            <h1 style={{ color: 'white', fontSize: '18px' }}>Configuración del punto de interes</h1>
+            <h1 style={{ color: 'white', fontSize: '18px' }}>Editar el punto de interes</h1>
             <h5 style={{ color: '#565674', fontSize: '14px' }}>Lista de Sitios - Configuración del punto de interes</h5>
             <br />
             <div className='row'>

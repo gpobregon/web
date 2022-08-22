@@ -13,7 +13,7 @@ import logo from '../../upload-image_03.jpg';
 import AddRoom from './add-room';
 import UpdateRoom from './update-room';
 import domtoimage from 'dom-to-image';
-import {SortableContainer, SortableElement} from 'react-sortable-hoc';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 
 type id_sitio = {
     id_sitio: number
@@ -44,13 +44,14 @@ const Interes: FC<id_sitio> = (props) => {
     const changeStatus = (idpunto: number, oculto: boolean) => {
         postData(statePointInteres, { id_punto: idpunto, es_visible: oculto })
         setPuntoInteres([])
+        getSalas()
         swal({
             text: "Se cambio visibilidad con éxito",
             icon: "success",
             timer: 2000,
 
         })
-        
+
     }
     const changeImagePrincipal = (idpunto: number, idsitio: number) => {
         postData(changePointOfInterestFront, { id_punto: idpunto, id_sitio: idsitio })
@@ -61,7 +62,7 @@ const Interes: FC<id_sitio> = (props) => {
             timer: 2000,
 
         })
-      
+        getSalas()
     }
 
     useEffect(() => {
@@ -168,7 +169,42 @@ const Interes: FC<id_sitio> = (props) => {
     };
 
 
+    //ordenamiento drag and drop------------------------------------------------------
 
+    const [newFruitItem, setNewFruitItem] = React.useState("")
+
+    //save reference for dragItem and dragOverItem
+    const dragItem = React.useRef<any>(null)
+    const dragOverItem = React.useRef<any>(null)
+    const handleSort = () => {
+        //duplicate items
+        let _fruitItems = [...puntoInteres]
+
+        //remove and save the dragged item content
+        const draggedItemContent = _fruitItems.splice(dragItem.current, 1)[0]
+
+        //switch the position
+        _fruitItems.splice(dragOverItem.current, 0, draggedItemContent)
+
+        //reset the position ref
+        dragItem.current = null
+        dragOverItem.current = null
+
+        //update the actual array
+        setPuntoInteres(_fruitItems)
+        console.log(_fruitItems)
+    }
+    //handle name change
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewFruitItem(e.target.value)
+    }
+
+    //handle new item addition
+    // const handleAddItem = () => {
+    // 	const _fruitItems = [...puntoInteres]
+    // 	_fruitItems.push(newFruitItem)
+    // 	setPuntoInteres(_fruitItems)
+    // }
 
 
     return (
@@ -249,7 +285,7 @@ const Interes: FC<id_sitio> = (props) => {
                             </div>
                             <hr style={{ position: 'relative' }}></hr>
                             <br></br>
-                            <div className='row'>
+                            {/* <div className='row'>
                                 <div className='col-xs-12 col-md-6 col-lg-6'>
 
 
@@ -315,151 +351,160 @@ const Interes: FC<id_sitio> = (props) => {
                                     </div>
 
                                 </div>
-                            </div>
+                            </div> */}
 
 
                             <br></br>
                             <br></br>
 
-                            {
-                                puntoInteres?.map((punto) => (
-                                    <div className='row'>
-                                           <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-start'>
 
-                                            <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column', }}>
-                                                <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
+                            <div className="list-container">
+                                {puntoInteres.map((punto, index) => (
+                                    <div
+                                        key={index}
+                                        className="list-item"
+                                        draggable
+                                        onDragStart={(e) => (dragItem.current = index)}
+                                        onDragEnter={(e) => (dragOverItem.current = index)}
+                                        onDragEnd={handleSort}
+                                        onDragOver={(e) => e.preventDefault()}>
 
-                                                </Card.Title>
-                                                <Card.Subtitle className="text-white" style={{ alignItems: 'flex-start', paddingLeft: 10, marginLeft: '75px' }} >{punto.nombre}</Card.Subtitle>
-                                                <Card.Subtitle className='text-muted' style={{ alignItems: 'flex-start', paddingLeft: 10, paddingTop: 5, marginLeft: '75px' }} >{punto.descripcion}</Card.Subtitle>
-                                                <span className='menu-ico' style={{ left: 10, position: 'absolute' }}>
+                                        <div className='row'>
+                                            <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-start'>
 
-                                                    <i className={`bi bi-list`} style={{ fontSize: 20, marginRight: '10px' }}></i>
-                                                    <Card.Img
-                                                        src=
+                                                <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column', }}>
+                                                    <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
 
-                                                        {`${punto.portada_path}`}
+                                                    </Card.Title>
+                                                    <Card.Subtitle className="text-white" style={{ alignItems: 'flex-start', paddingLeft: 10, marginLeft: '75px' }} >{punto.nombre}</Card.Subtitle>
+                                                    <Card.Subtitle className='text-muted' style={{ alignItems: 'flex-start', paddingLeft: 10, paddingTop: 5, marginLeft: '75px' }} >{punto.descripcion}</Card.Subtitle>
+                                                    <span className='menu-ico' style={{ left: 10, position: 'absolute' }}>
+
+                                                        <i className={`bi bi-list`} style={{ fontSize: 20, marginRight: '10px' }}></i>
+                                                        <Card.Img
+                                                            src=
+
+                                                            {`${punto.portada_path}`}
 
 
-                                                        style={{ width: '25%', height: '25%', borderRadius: '10px' }}
-                                                        alt='...'
-                                                        className='card-img-top img1'
-                                                        onClick={() => {
-                                                            setVistaPrevia(true)
-                                                            setImagenPrevia(punto.portada_path)
-                                                        }}
-
-                                                    />
-                                                </span>
-                                            </Card>
-                                        </div>
-                                        <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-end'>
-
-                                            <div id='center2'>
-                                                <ul className='nav justify-content-end'>
-                                                    <li className='nav-item '>
-                                                        <i className="fa-solid fa-qrcode background-button "
-                                                            style={{ color: '#92929F', display: 'flex', marginRight: '30px', fontSize: '23px' }}
+                                                            style={{ width: '25%', height: '25%', borderRadius: '10px' }}
+                                                            alt='...'
+                                                            className='card-img-top img1'
                                                             onClick={() => {
-                                                                setQr(punto.qr_path)
-                                                                handleShow()
-                                                                console.log(punto)
+                                                                setVistaPrevia(true)
+                                                                setImagenPrevia(punto.portada_path)
                                                             }}
 
-                                                        ></i>
+                                                        />
+                                                    </span>
+                                                </Card>
+                                            </div>
+                                            <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-end'>
 
-                                                    </li>
-                                                    <Modal show={show} onHide={handleClose}>
-                                                        <Modal.Header closeButton>
-                                                            <Modal.Title>Escanee su Código QR</Modal.Title>
-                                                        </Modal.Header>
-                                                        <Modal.Body style={{ textAlign: 'center' }}>
-
-                                                            <QRCodeCanvas
-                                                                id="qrCode"
-                                                                value={qr}
-                                                                size={300}
-
-                                                                level={"H"}
-                                                            />
-
-                                                        </Modal.Body>
-                                                        <Modal.Footer>
-
-                                                            <Button variant='secondary' onClick={handleClose}>
-                                                                Close
-                                                            </Button>
-                                                            <Button variant='primary' onClick={downloadQRCode}>
-                                                                Descargar
-                                                            </Button>
-                                                        </Modal.Footer>
-
-                                                    </Modal>
-                                                    <li className='nav-item '>
-
-                                                        <p style={{ display: 'flex', marginRight: '30px', fontSize: '14px', marginTop: '15px' }}>
-                                                            <i className=
-                                                                {
-                                                                    punto.es_portada_de_sitio == false
-                                                                        ? "bi bi bi-circle"
-                                                                        : "bi bi-record-circle"
-                                                                }
+                                                <div id='center2'>
+                                                    <ul className='nav justify-content-end'>
+                                                        <li className='nav-item '>
+                                                            <i className="fa-solid fa-qrcode background-button "
+                                                                style={{ color: '#92929F', display: 'flex', marginRight: '30px', fontSize: '23px' }}
                                                                 onClick={() => {
-                                                                    punto.es_portada_de_sitio = !punto.es_portada_de_sitio
-                                                                    changeImagePrincipal(punto.id_punto,punto.id_sitio)
-                                                                }    }
-                                                                style={{ color: '#92929F', display: 'flex', marginRight: '8px', fontSize: '23px' }}></i>imagen principal</p>
-                                                    </li>
+                                                                    setQr(punto.qr_path)
+                                                                    handleShow()
+                                                                }}
 
-                                                    <li className='nav-item'>
+                                                            ></i>
 
-                                                        <i
-                                                            className={
-                                                                punto.es_visible == false
-                                                                    ? 'fa-solid fa-eye-slash background-button'
-                                                                    : 'fa-solid fa-eye background-button'
-                                                            }
-                                                            id='center2'
-                                                            onClick={() => {
-                                                                punto.es_visible = !punto.es_visible
-                                                                changeStatus(punto.id_punto, punto.es_visible)
-                                                            }}
+                                                        </li>
+                                                        <Modal show={show} onHide={handleClose}>
+                                                            <Modal.Header closeButton>
+                                                                <Modal.Title>Escanee su Código QR</Modal.Title>
+                                                            </Modal.Header>
+                                                            <Modal.Body style={{ textAlign: 'center' }}>
+
+                                                                <QRCodeCanvas
+                                                                    id="qrCode"
+                                                                    value={qr}
+                                                                    size={300}
+
+                                                                    level={"H"}
+                                                                />
+
+                                                            </Modal.Body>
+                                                            <Modal.Footer>
+
+                                                                <Button variant='secondary' onClick={handleClose}>
+                                                                    Close
+                                                                </Button>
+                                                                <Button variant='primary' onClick={downloadQRCode}>
+                                                                    Descargar
+                                                                </Button>
+                                                            </Modal.Footer>
+
+                                                        </Modal>
+                                                        <li className='nav-item '>
+
+                                                            <p style={{ display: 'flex', marginRight: '30px', fontSize: '14px', marginTop: '15px' }}>
+                                                                <i className=
+                                                                    {
+                                                                        punto.es_portada_de_sitio == false
+                                                                            ? "bi bi bi-circle"
+                                                                            : "bi bi-record-circle"
+                                                                    }
+                                                                    onClick={() => {
+                                                                        punto.es_portada_de_sitio = !punto.es_portada_de_sitio
+                                                                        changeImagePrincipal(punto.id_punto, punto.id_sitio)
+                                                                    }}
+                                                                    style={{ color: '#92929F', display: 'flex', marginRight: '8px', fontSize: '23px' }}></i>imagen principal</p>
+                                                        </li>
+
+                                                        <li className='nav-item'>
+
+                                                            <i
+                                                                className={
+                                                                    punto.es_visible == false
+                                                                        ? 'fa-solid fa-eye-slash background-button'
+                                                                        : 'fa-solid fa-eye background-button'
+                                                                }
+                                                                id='center2'
+                                                                onClick={() => {
+                                                                    punto.es_visible = !punto.es_visible
+                                                                    changeStatus(punto.id_punto, punto.es_visible)
+                                                                }}
+                                                                style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
+                                                            ></i>
+                                                        </li>
+                                                        <i className="fa-solid  fa-pencil background-button"
                                                             style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
+                                                            onClick={(event) => {
+                                                                navigate('/sitios/edit-point-interes', {
+                                                                    state: {
+                                                                        id_punto: punto.id_punto,
+                                                                        lenguajes: punto.lenguajes,
+                                                                        id_sitio: punto.id_sitio,
+                                                                        id_guia: idsala,
+                                                                        nombre: punto.nombre,
+                                                                        descripcion: punto.descripcion,
+                                                                        geoX: punto.geoX,
+                                                                        geoY: punto.geoY,
+                                                                        portada_path: punto.portada_path,
+                                                                        qr_path: punto.qr_path,
+                                                                        es_portada_de_sitio: punto.es_portada_de_sitio,
+                                                                        estado: punto.estado,
+                                                                        es_visible: punto.es_visible,
+                                                                    },
+                                                                })
+                                                            }}
                                                         ></i>
-                                                    </li>
-                                                    <i className="fa-solid  fa-pencil background-button"
-                                                        style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                                                        onClick={(event) => {
-                                                            navigate('/sitios/edit-point-interes', {
-                                                                state: {
-                                                                    id_punto: punto.id_punto,
-                                                                    lenguajes: punto.lenguajes,
-                                                                    id_sitio: punto.id_sitio,
-                                                                    id_guia: idsala,
-                                                                    nombre: punto.nombre,
-                                                                    descripcion: punto.descripcion,
-                                                                    geoX: punto.geoX,
-                                                                    geoY: punto.geoY,
-                                                                    portada_path: punto.portada_path,
-                                                                    qr_path: punto.qr_path,
-                                                                    es_portada_de_sitio: punto.es_portada_de_sitio,
-                                                                    estado: punto.estado,
-                                                                    es_visible: punto.es_visible,
-                                                                },
-                                                            })
-                                                        }}
-                                                    ></i>
-                                                    <i className="bi-solid bi-trash3 background-button"
-                                                        id='center2'
-                                                        style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
-                                                        onClick={() => {
-                                                            // console.log(punto.es_portada_de_sitio)
-                                                            deletePointInteres(punto.id_punto, punto.id_sitio);
-                                                            getSalas()
-                                                        }}
-                                                    ></i>
+                                                        <i className="bi-solid bi-trash3 background-button"
+                                                            id='center2'
+                                                            style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
+                                                            onClick={() => {
+                                                                // console.log(punto.es_portada_de_sitio)
+                                                                deletePointInteres(punto.id_punto, punto.id_sitio);
+                                                                getSalas()
+                                                            }}
+                                                        ></i>
 
-                                                    {/* <i
+                                                        {/* <i
                                                         className='fa-solid fa-gear background-button'
                                                         id='center2'
                                                         onClick={() => {
@@ -468,19 +513,15 @@ const Interes: FC<id_sitio> = (props) => {
                                                         }}
                                                         style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
                                                     ></i> */}
-                                                </ul>
-                                            </div>
+                                                    </ul>
+                                                </div>
 
+                                            </div>
                                         </div>
                                     </div>
-                                ))
-                            }
+                                ))}
 
-
-
-                        
-
-
+                            </div>
                             <br></br>
                             <br></br>
 
