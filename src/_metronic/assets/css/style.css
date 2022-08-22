@@ -5,8 +5,13 @@
 .content-section {
   background: #1E1E2D;
 }
+
 .height-section {
   height: 650px;
+}
+
+.height-section-editable {
+  height: 550px;
 }
 
 .seccion-dark {
@@ -85,9 +90,59 @@
 .active-collapse {
   display: block;
 }
+.editable {
+  margin: 1rem 0.5rem 1rem 0.5rem;
+  padding: 2px;
+}
+
+.editable:hover {
+  outline: 1px dashed #009EF7;
+  background: #009cf72c;
+  cursor: grabbing;
+}
 
 .editable:focus-visible {
   outline: 1px dashed #009EF7;
-  padding: 2px;
   background: #009cf72c;
+  cursor: text;
+}
+
+.item-list {
+  background: none;
+  border: none;
+}
+
+.active-svg svg path{
+  /* color: #009EF7 !important; */
+  fill: red;
+  stroke: red;
+}
+
+
+.input {
+	box-sizing: border-box;
+	padding: 2px 2px 2px 35px;
+}
+
+.input-icon {
+	position: absolute;
+  color: #fff;
+	width: 20px;
+	height: 20px;
+	left: 12px;
+	top: 14px;
+	transform: translateY(-50%);
+}
+
+.btn-style {
+  width: 10px;
+  height: 10px;
+}
+
+.list-group-squeare > .list-group-item::before {
+  list-style-type : square;
+}
+
+.min-tumbnail.ps__thumb-x {
+  overflow-y: hidden;
 }

@@ -57,17 +57,6 @@ const options = [
     {value: 'airplane', label: 'airplane'},
 ]
 
-const languages = [
-    {
-        value: 'Español (Guatemala)',
-        label: 'Español (Guatemala)',
-    },
-    {
-        value: 'Inglés (EEUU)',
-        label: 'Inglés (EEUU)',
-    },
-]
-
 const optionTemplate = (option: any) => (
     <span>
         <i className={`bi-${option.value} text-white`} style={{fontSize: 16}}></i>
@@ -181,6 +170,7 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                                 label: catalogo?.idioma?.nombre,
                                 value: catalogo?.idioma?.id,
                             }}
+                            onMenuOpen={() => getLanguages()}
                             options={languagesOptions}
                             styles={customStyles}
                             components={animatedComponents}
@@ -193,11 +183,30 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                         variant='secondary'
                         onClick={() => {
                             deleteTag(modifiedTagDelete)
+                            setTag({
+                                id_categoria: 0,
+                                nombre: '',
+                                icono: '',
+                                estado: 1,
+                                id_lenguaje: 0,
+                            })
                         }}
                     >
                         <i className={`bi-trash text-white fs-3`}></i>
                     </Button>
-                    <Button variant='secondary' onClick={onClose}>
+                    <Button
+                        variant='secondary'
+                        onClick={() => {
+                            onClose()
+                            setTag({
+                                id_categoria: 0,
+                                nombre: '',
+                                icono: '',
+                                estado: 1,
+                                id_lenguaje: 0,
+                            })
+                        }}
+                    >
                         {'Cancelar '}
                         <i className={`bi-x text-white fs-3`}></i>
                     </Button>
@@ -211,7 +220,16 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                                 estado: 1,
                                 id_lenguaje: tag.id_lenguaje,
                             })
+                            
                             updateTag(tag)
+
+                            setTag({
+                                id_categoria: 0,
+                                nombre: '',
+                                icono: '',
+                                estado: 1,
+                                id_lenguaje: 0,
+                            })
                         }}
                     >
                         {'Aplicar '}

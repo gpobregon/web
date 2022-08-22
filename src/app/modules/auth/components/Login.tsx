@@ -5,6 +5,7 @@ import { Amplify, Auth } from 'aws-amplify';
 import { awsconfig } from '../../../../aws-exports';
 import { useAuth } from '../core/Auth';
 Amplify.configure(awsconfig);
+Amplify.configure(awsconfig);
 
 export function Login() {
   const [loading, setLoading] = useState(false)

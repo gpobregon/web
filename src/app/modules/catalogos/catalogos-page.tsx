@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import {Container, Col, Row, Button, InputGroup, Form, Stack} from 'react-bootstrap'
+import moment from 'moment'
 
 import Catalogo from './components/catalogo'
-import UpdateCatalogo from './components/update-catalogo' 
+import UpdateCatalogo from './components/update-catalogo'
 import UpdateLanguage from './components/update-language'
 import Language from './components/language'
-import AddLanguaje from './components/add-language' 
+import AddLanguaje from './components/add-language'
 import AddCatalogo from './components/add-catalogo'
 import {CatalogTag} from '../../models/catalogTag'
 import {CatalogLanguage} from '../../models/catalogLanguage'
@@ -26,13 +27,14 @@ const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
     const [modalAddLanguage, setModalAddLanguage] = useState(false)
 
-    const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}}) 
+    const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
     const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
 
     const [optionSort, setOptionSort] = useState('Agregado recientemente')
     const [searchInput, setSearchInput] = useState('')
     const [catalogos, setCatalogos] = useState<CatalogTag[]>([])
     const [filteredResults, setFilteredResults] = useState(catalogos)
+    const [resultIcon, setResultIcon] = useState('bi-sort-up')
 
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
     const [language, setLanguage] = useState({
@@ -42,14 +44,27 @@ const CatalogosPage = () => {
         estado: 1,
     })
 
-    useEffect(() => {
-        getTags()
-        getLanguages()
-    }, [])
-
     const getTags = async () => {
-        const catalogos: any = await getData(categorysMethod)
+        const catalogos: any = await postData(categorysMethod, {page: pageNumber, quantity: '12'})
         setCatalogos(catalogos as CatalogTag[])
+
+
+        const countNextResults: any = await postData(categorysMethod, {
+            page: pageNumber + 1,
+            quantity: '12',
+        })
+
+        if (countNextResults.length == 0) {
+            setToggleButtonsPagination({
+                previous: false,
+                next: true,
+            })
+        } else if (countNextResults.length > 0) {
+            setToggleButtonsPagination({
+                previous: toggleButtonsPagination.previous,
+                next: false,
+            })
+        }
     }
 
     const getLanguages = async () => {
@@ -91,17 +106,17 @@ const CatalogosPage = () => {
         if (tag.nombre != '' && tag.icono != '') {
             await postData(updateCategoryMethod, tag)
             setModalUpdateTag({show: false, catalogo: {}})
-            getTags() 
+            getTags()
         } else {
             alertNotNullInputs()
         }
-    } 
+    }
 
-    // TODO: updateIdioma 
-    const updateIdioma = async (idioma: any)=> {
-        if (idioma.nombre != '' && idioma.descripcion !='') {
-            await postData(updateLanguageMethod, idioma) 
-            setModalUpdateIdioma({show: false, language: {}}) 
+    // TODO: updateIdioma
+    const updateIdioma = async (idioma: any) => {
+        if (idioma.nombre != '' && idioma.descripcion != '') {
+            await postData(updateLanguageMethod, idioma)
+            setModalUpdateIdioma({show: false, language: {}})
             getLanguages()
         } else {
             alertNotNullInputs()
@@ -117,16 +132,16 @@ const CatalogosPage = () => {
             title: 'Se ha eliminado la etiqueta',
             icon: 'success',
         })
-    } 
+    }
 
-    //TODO: deleteLanguage 
-    const deleteIdioma = async (idioma: any)=>{ 
-        await deleteData(languagesMethod, idioma) 
-        setModalUpdateIdioma({show: false, language: {}}) 
-        getLanguages() 
-        swal({ 
-            title: 'Se ha eliminado el idioma', 
-            icon: 'success'
+    //TODO: deleteLanguage
+    const deleteIdioma = async (idioma: any) => {
+        await deleteData(languagesMethod, idioma)
+        setModalUpdateIdioma({show: false, language: {}})
+        getLanguages()
+        swal({
+            title: 'Se ha eliminado el idioma',
+            icon: 'success',
         })
     }
 
@@ -147,13 +162,15 @@ const CatalogosPage = () => {
 
     const toggleOptionSort = () => {
         if (optionSort == 'Agregado recientemente') {
-            const sortAscending = [...catalogos].sort((a, b) => a.id_categoria - b.id_categoria)
+            const sortAscending = [...catalogos].sort((a, b) => moment(b.creado).diff(a.creado))
             setCatalogos(sortAscending)
             setOptionSort('Agregado anteriormente')
+            setResultIcon('bi-sort-down')
         } else if (optionSort == 'Agregado anteriormente') {
-            const sortDescending = [...catalogos].sort((a, b) => b.id_categoria - a.id_categoria)
+            const sortDescending = [...catalogos].sort((a, b) => moment(a.creado).diff(b.creado))
             setCatalogos(sortDescending)
             setOptionSort('Agregado recientemente')
+            setResultIcon('bi-sort-up')
         }
     }
 
@@ -166,35 +183,100 @@ const CatalogosPage = () => {
 
     const showModalUpdateTag = (catalogo: any) => {
         setModalUpdateTag({show: true, catalogo})
-    } 
+    }
 
     const showModalUpdateIdioma = (language: any) =>{ 
         setModalUpdateIdioma({show: true, language})
     }
 
+    let [pageNumber, setPageNumber] = useState(1)
+    const [toggleButtonsPagination, setToggleButtonsPagination] = useState({
+        previous: true,
+        next: false,
+    })
+
+    const handlePrevPage = () => {
+        if (pageNumber == 1) {
+            setToggleButtonsPagination({
+                previous: true,
+                next: toggleButtonsPagination.next,
+            })
+        } else {
+            setPageNumber(pageNumber - 1)
+        }
+    }
+
+    const handleNextPage = () => {
+        setPageNumber(pageNumber + 1)
+        setToggleButtonsPagination({
+            previous: false,
+            next: false,
+        })
+    }
+
+    useEffect(() => {
+        getTags()
+        getLanguages()
+    }, [pageNumber])
+
     return (
         <>
-        
             <Container fluid>
                 <Row>
-                    <div className='text-left mb-10' >                        
+                    <div className='text-left mb-10'>
                         <h1 className='text-dark mt-0'>Categorías</h1>
                         <h2 className='text-muted mb-0'>Lista de categorías</h2>
                     </div>
                 </Row>
 
                 <Row className='pb-9'>
-                    <div className='d-flex'>
-                        <Form.Control
-                            className='me-5'
-                            style={{maxWidth: '300px', height: '46px'}}
-                            placeholder='Buscar categoría'
-                            onChange={(event) => searchItems(event.target.value)}
-                        />
+                    <div className='d-flex justify-content-between'>
+                        <div className='d-flex'>
+                            <Form.Control
+                                className='me-5'
+                                style={{maxWidth: '300px'}}
+                                placeholder='Buscar categoría'
+                                onChange={(event) => searchItems(event.target.value)}
+                            />
 
-                        <Button variant='secondary' className='text-center'>
-                            <i className='fs-2 bi-search px-0 fw-bolder'></i>
-                        </Button>
+                            <Button variant='secondary' className='text-center'>
+                                <i className='fs-2 bi-search px-0 fw-bolder'></i>
+                            </Button>
+                        </div>
+
+                        <div className='d-flex'>
+                            <Button
+                                variant='outline-secondary'
+                                className='text-center'
+                                title='Página anterior'
+                                disabled={toggleButtonsPagination.previous}
+                                onClick={() => handlePrevPage()}
+                            >
+                                <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
+                            </Button>
+
+                            <div
+                                className='d-flex align-items-center justify-content-center'
+                                style={{
+                                    width: '46px',
+                                    height: '46px',
+                                    backgroundColor: '#2B2B40',
+                                    borderRadius: '5px',
+                                }}
+                            >
+                                {`${pageNumber}`}
+                            </div>
+
+                            <Button
+                                variant='outline-secondary'
+                                className='text-center'
+                                title='Página siguiente'
+                                disabled={toggleButtonsPagination.next}
+                                onClick={() => handleNextPage()}
+                            >
+                                <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
+                            </Button>
+                        </div>
                     </div>
                 </Row>
 
@@ -205,7 +287,7 @@ const CatalogosPage = () => {
                             style={{cursor: 'pointer'}}
                             onClick={toggleOptionSort}
                         >
-                            <i className='bi-sort-up fs-1 me-2'></i>
+                            <i className={`${resultIcon} fs-1 me-2`}></i>
                             {`${optionSort}`}
                         </div>
 
@@ -291,16 +373,15 @@ const CatalogosPage = () => {
                     show={modalAddLanguage}
                     onClose={() => setModalAddLanguage(false)}
                     addLanguage={addLanguage}
-                /> 
-
-                <UpdateLanguage  
-                    show = {modalUpdateIdioma.show} 
-                    onClose={()=>({setModalUpdateIdioma, language: {show: false, language: {}}}) } 
-                    language={modalUpdateIdioma.language} 
-                    updateIdioma={updateIdioma} 
-                    deleteIdioma={deleteIdioma}
                 />
 
+                <UpdateLanguage
+                    show={modalUpdateIdioma.show}
+                    onClose={() => setModalUpdateIdioma({show: false, language: {}})}
+                    language={modalUpdateIdioma.language}
+                    updateIdioma={updateIdioma}
+                    deleteIdioma={deleteIdioma}
+                />
             </Container>
         </>
     )

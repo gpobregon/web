@@ -48,7 +48,7 @@ const Sitio: FC<sitio> = (props) => {
                 
             })
       
-            // window.location.reload(); //reload page
+             window.location.reload(); //reload page
 
             }
           });
@@ -56,14 +56,14 @@ const Sitio: FC<sitio> = (props) => {
     }
     return (
       <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-            <Card style={{ backgroundColor: '#1e1e2d', padding: 20,margin:'20px', width: '95%', height: '395px' }}>
-
-                <Card.Img variant='top' src={`${props.portada_path}`} className='mb-5 'style={{ maxHeight:'70%' }} />
+            <Card style={{ backgroundColor: '#1e1e2d', padding: 20,margin:'20px', width: '95%', height: '420px' }}>
+               
+                <Card.Img variant='top' src={`${props.portada_path}`} className='mb-5 'style={{ maxHeight:'70%' }} /> 
 
                 <Card.Title style={{  }}>{props.nombre}</Card.Title>
                 <Card.Text className='text-muted'>{props.ubicacion}</Card.Text>
                 <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
-                    <Button style={{ width: '50%' }}
+                    <Button style={{ width: '47%'}}
                      onClick={(event) => {
                       navigate('/sitios/edit', {
                         state: {
@@ -88,7 +88,7 @@ const Sitio: FC<sitio> = (props) => {
                         <i className="bi bi-pencil-square"></i>
                         Editar
                     </Button>
-                    <Button className='bg-secondary' style={{ width: '50%' }}  onClick={deleteSites}>
+                    <Button className='bg-secondary' style={{ width: '47%' }}  onClick={deleteSites}>
                         <i className="bi bi-trash3"></i>
                         Eliminar
                         

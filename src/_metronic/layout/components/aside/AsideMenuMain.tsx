@@ -23,6 +23,13 @@ export function AsideMenuMain() {
         className='py-3'
       />
       <AsideMenuItem
+        to='/notificaciones-push'
+        title='Alertas'
+        bsTitle='Alertas'
+        fontIcon='bi bi-bell'
+        className='py-3'
+      />
+      <AsideMenuItem
         to='/reportes'
         title='Reportes'
         bsTitle='Reportes'
