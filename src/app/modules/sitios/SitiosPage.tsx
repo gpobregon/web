@@ -89,8 +89,8 @@ const SitiosPage = () => {
                 >
                     <div className='col-xs-12 col-md-12 col-lg-12 row align-items-start'>
                         <div className='col-md-4 '>
-                            <h3 className='letterTitle'>
-                                Gestor de Sitios <span className='lettersmall'>| 272 en total</span>
+                         <h3 className='letterTitle'>
+                             Gestor de Sitios <span className='lettersmall'>| 272 en total</span>
                             </h3>
                         </div>
 

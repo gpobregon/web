@@ -75,6 +75,7 @@ type datosPuntoInteres = {
     es_portada_de_sitio: boolean
     estado: boolean
     es_visible: boolean
+    publicado:boolean
 }
 const animatedComponents = makeAnimated()
 const EditPoint = () => {
@@ -98,6 +99,7 @@ const EditPoint = () => {
         es_portada_de_sitio: datospuntoInteres.es_portada_de_sitio,
         estado: datospuntoInteres.estado,
         es_visible: datospuntoInteres.es_visible,
+        publicado: true,
     });
 
  //este state se borra mas adelante
@@ -131,6 +133,7 @@ const EditPoint = () => {
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
             es_visible: oculto,
+            publicado: true,
         })
     }
     //alert methods-----------------------------------------------------------------------
@@ -220,6 +223,7 @@ const EditPoint = () => {
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
             es_visible: sitio.es_visible,
+            publicado: true,
         })
         console.log(datospuntoInteres.lenguajes)
     }
@@ -240,6 +244,7 @@ const EditPoint = () => {
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
             es_visible: sitio.es_visible,
+            publicado: true,
         })
 
         if (imagen != '') {
@@ -468,6 +473,7 @@ const EditPoint = () => {
                                                         es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                         estado: sitio.estado,
                                                         es_visible: sitio.es_visible,
+                                                        publicado: true,
                                                     })}
                                                 >
                                                 </Link>
@@ -520,7 +526,8 @@ const EditPoint = () => {
                                                 qr_path: sitio.qr_path,
                                                 es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                 estado: sitio.estado,
-                                                es_visible: sitio.es_visible
+                                                es_visible: sitio.es_visible,
+                                                publicado: true,
                                             })
                                         }}
 
