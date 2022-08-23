@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, Fragment } from "react";
+import { FC, Fragment, useState } from "react";
 import ContentEditable from "react-contenteditable";
 import {
     Menu,
@@ -28,12 +28,13 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       function handleItemClick( handlerId : any){
         removeItem(data);
       }
-    
+    const [ editable, setEditable] = useState<boolean>(false)
     const changeText = (e : any) => {
         const edit = {
           ...data,
           text: e.target.value
         }
+        // setEditable(!editable)
         updateElement(edit)
     }
     return ( 
@@ -42,9 +43,9 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
         <ContentEditable
                 innerRef={referencia}
                 data-handler-id={handlerId}
-                className={`editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
+                className={`p-5 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
                 html={ `${data.text}` } // innerHTML of the editable div
-                disabled={false} // use true to disable edition
+                disabled={editable} // use true to disable edition
                 onChange={changeText} // handle innerHTML change
                 onClick={() => setEditItem(data)}
             />

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
-import CustomCarusel from '../../../carousel/index'
+import Img360 from '../../../carousel/image360'
 
 type Model = {
     data: any
@@ -20,7 +20,7 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
             data-handler-id={handlerId}
             className={`editable p-5`}
         >
-            <CustomCarusel/>
+            <Img360/>
         </div>
 
     )

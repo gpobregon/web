@@ -11,6 +11,7 @@ import Map from "./otros/map"
 import Video from "./multimedia/video"
 import Audio from "./multimedia/audio"
 import Carousel from "./multimedia/carousel"
+import Image360 from "./multimedia/image360"
 
 export interface CardProps {
   id: any
@@ -112,6 +113,7 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateE
       { data.type === 'video' && <Video referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'audio' && <Audio referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'carousel' && <Carousel referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'image-360' && <Image360 referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
     </Fragment>
   )
 }
