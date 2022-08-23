@@ -138,8 +138,9 @@ const AddPoint = () => {
   }
   //petitions----------------------------------------------------------------------------
   const addNewPoint = async () => {
-    await postData(addNewPointInteres, sitio)
-    //  console.log(sitio)
+       console.log(sitio)
+     await postData(addNewPointInteres, sitio)
+  
   }
 
   //get sitio-------------------------------------------------------------------------------------

@@ -2,7 +2,7 @@ import axios from 'axios'
 import {Route} from 'react-router-dom'
 
 export const URLAWS='https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/'
-const URL = 'https://84f7-190-104-119-60.ngrok.io/dev2'
+const URL = 'https://dcef-190-104-119-60.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
 export const statesMethod = 'site/state'
@@ -12,7 +12,7 @@ export const categorysMethod = 'site/categories'
 export const addCategoryMethod = 'site/categories/add'
 export const updateCategoryMethod = 'site/categories/update'
 
-export const languagesMethod = 'idioma'
+export const languagesMethod = 'language'
 export const addLanguageMethod = 'language/add'
 export const updateLanguageMethod = 'language/update'
 
