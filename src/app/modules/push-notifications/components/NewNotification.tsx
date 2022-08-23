@@ -92,7 +92,7 @@ const NewNotification: FC<any> = ({
                             </div>
                         </div>
 
-                        <div className='d-flex'>
+                        <div className='d-flex justify-content-between'>
                             <Button
                                 variant='outline-primary'
                                 className='text-center'
@@ -104,10 +104,7 @@ const NewNotification: FC<any> = ({
                                         : (e) => {}
                                 }
                             >
-                                <i className='fs-2 bi-arrow-left-right px-0 fw-bolder'></i>
-                            </Button>
-                            <Button variant='outline-primary' className='text-center'>
-                                <i className='fs-2 bi-crop px-0 fw-bolder'></i>
+                                <i className='fs-2 bi-upload px-0 fw-bolder'></i>
                             </Button>
                             <Button
                                 variant='outline-danger'
