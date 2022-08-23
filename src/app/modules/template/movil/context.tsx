@@ -11,6 +11,7 @@ export const ContentContext = createContext<any | null>(null)
 
 export const ContentProvider: FC<WithChildren> = ({children}) => {
     const [board, setBoard] = useState<any>([])
+    const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<number>(1)
@@ -66,38 +67,54 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     setChangeLaguage(response.data[0])
     oneData(response.data[0])
   }
-
+  // obtenermos el template 
   const oneData = async ( item : any) => {
     const data = {
             "id_punto": 1,
             "id_lenguaje": item.value
           }
     const response: any = await postData('site/mobile/getone', data)
-   response.data.length > 0 ? setBoard(JSON.parse(response.data[0].contenido)) : setBoard([])
+   if (response.data.length > 0 ) { 
+      setBoard(JSON.parse(response.data[0].contenido))
+      setOldBoard(JSON.parse(response.data[0].contenido))
+    } else {
+      setBoard([])
+      setOldBoard([])
+    }
+  }
+  // guardamos el template
+  const storeTemplate = async () => {
+    const dataTemplate = {
+        "id_punto": 1,
+        "id_lenguaje": changeLaguage.value,
+        "nombre":"Nombre editado3 sitio movil 1",
+        "descripcion":"descripcion2 editado sitio movil 1",
+        "contenido": JSON.stringify(board),
+        "version": "version sitio movil 1",
+        "estado":1
+    }
+    const response: any = await postData('site/mobile/set', dataTemplate)
+    response &&
+      swal(
+        {
+          text: '¡Configuración almacenada exitosamente!',
+          icon: 'success',
+        }
+      )
   }
 
-  const storeTemplate = async () => {
-    if (board.length > 0) {
-      const dataTemplate = {
-          "id_punto": 1,
-          "id_lenguaje": changeLaguage.value,
-          "nombre":"Nombre editado3 sitio movil 1",
-          "descripcion":"descripcion2 editado sitio movil 1",
-          "contenido": JSON.stringify(board),
-          "version": "version sitio movil 1",
-          "estado":1
-      }
-      const response: any = await postData('site/mobile/set', dataTemplate)
-      response &&
-        swal(
-          {
-            text: '¡Configuración almacenada exitosamente!',
-            icon: 'success',
-          }
-        )
-      }
-    
+  // elimina items dragados en el editor
+  const removeItem = (data : any) => {
+    console.log(board)
+    const newBoard = board.filter((item : any) => item.index !== data.index)
+    console.log(newBoard, data)
+    setBoard(newBoard)
   }
+  // descarta los cambios realizados dentro del editor
+  const discardChange = () => {
+    setBoard(oldBoard)
+  }
+
   useEffect(() => {
     getLenguate()
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -110,7 +127,9 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         language,
         editItem,
         moveCard,
+        removeItem,
         setEditItem,
+        discardChange,
         updateElement,
         storeTemplate,
         changeLaguage,

@@ -4,8 +4,6 @@ import ContentEditable from "react-contenteditable";
 import {
     Menu,
     Item,
-    Separator,
-    Submenu,
     useContextMenu
   } from "react-contexify";
 
@@ -20,14 +18,15 @@ type Model = {
     isDragging : any
     setEditItem: (data : any) => void
     updateElement: (data : any) => void
+    removeItem: (data : any) => void
 }
 const MENU_ID = "menu-id";
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement }) => { 
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
     const { show } = useContextMenu({
         id: MENU_ID
       });
       function handleItemClick( handlerId : any){
-        console.log(handlerId, data);
+        removeItem(data);
       }
     
     const changeText = (e : any) => {

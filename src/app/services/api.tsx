@@ -2,7 +2,7 @@ import axios from 'axios'
 import {Route} from 'react-router-dom'
 
 
-const URL = 'https://416f-190-104-119-60.ngrok.io/dev2'
+const URL = 'https://84f7-190-104-119-60.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
 export const statesMethod = 'site/state'
@@ -23,8 +23,6 @@ export const addNewPointInteres= RoomsMethod+'/points/add'
 export const updatePointInteres= RoomsMethod+'/points/update'
 export const delPointInteres= RoomsMethod+'/points'
 export const statePointInteres = addNewPointInteres+'/visibility'
-
-
 
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {
