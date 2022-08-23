@@ -220,6 +220,7 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                                 estado: 1,
                                 id_lenguaje: tag.id_lenguaje,
                             })
+                            
                             updateTag(tag)
 
                             setTag({

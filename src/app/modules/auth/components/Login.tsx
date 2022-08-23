@@ -1,10 +1,10 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Form, Button } from 'react-bootstrap';
 import { Amplify, Auth } from 'aws-amplify';
 import { awsconfig } from '../../../../aws-exports';
 import { useAuth } from '../core/Auth';
+Amplify.configure(awsconfig);
 Amplify.configure(awsconfig);
 
 export function Login() {
@@ -84,7 +84,17 @@ export function Login() {
             <Form.Group className="mb-3">
               <Form.Label>{'Contraseña'}</Form.Label>
               <Form.Control type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Introduce tu contraseña" />
-            </Form.Group>
+            </Form.Group> 
+
+            <div className='d-flex mb-10 mt-10 justify-content-between '  >
+              <Form.Group className="">
+                <Form.Check type="checkbox" label="Recuerdame" />  
+              </Form.Group>   
+              <Link to='/auth/forgot-password'>{'Olvidé mi contraseña'}</Link>
+            </div>
+
+
+
             <Button variant="primary" onClick={handleSubmit} style={{ width: '100%' }}>
               {'Iniciar sesión'}
             </Button>
@@ -113,14 +123,7 @@ export function Login() {
       }
 
 
-      <div className='text-center mt-10'>
-        <div className='text-gray-400 fw-bold fs-4'>
-          {'¿Eres nuevo? '}
-          <Link to='/auth/registration' className='link-primary fw-bolder'>
-            {'Solicita tu usuario'}
-          </Link>
-        </div>
-      </div>
+   
     </Form>
   )
 }

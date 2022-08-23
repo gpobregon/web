@@ -96,7 +96,7 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
     }))
 
     const [tag, setTag] = useState({
-        id_categoria: 1,
+        id_categoria: 0,
         nombre: '',
         icono: '',
         estado: 1,
@@ -178,6 +178,13 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                     <Button
                         variant='primary'
                         onClick={() => {
+                            setTag({
+                                id_categoria: 0,
+                                nombre: '',
+                                icono: '',
+                                estado: 1,
+                                id_lenguaje: 1,
+                            })
                             addTag(tag)
                         }}
                     >
