@@ -186,8 +186,6 @@ const ConfSite = () => {
   async function postSite(sitee: any) {
     if (site.nombre!=''&& site.geoX!=''&& site.geoY!=''&& site.ubicacion!='') {
     const sit: any = await postData(sitesMethod+"/add", sitee)
-    // console.log(sit)
-    window.location.href = "../sitios";
     }else{
         alertNotNullInputs()
     }
@@ -417,9 +415,12 @@ const [modalupimg, setModalupIMG] = useState(false)
                
 
                 <div>
-                {/* <Form.Control type="file" onChange={uploadImage} /> */}
                   <div className='card-body '>
                     <Row>
+                    <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      
                       <Col>
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
@@ -427,7 +428,10 @@ const [modalupimg, setModalupIMG] = useState(false)
                         ></Link>
                       </Col>
                       <Col>
-                        <Link className='bi bi-crop background-button text-info' to={''}></Link>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                       </Col>
                       <Col>
                         <Link className='bi bi-trash background-button text-danger' to={''} onClick={() =>   setSite({
@@ -618,6 +622,7 @@ const [modalupimg, setModalupIMG] = useState(false)
                     </div>
                     <br></br>
                     <div className='row'>
+                    <Link to={`/template/${site.id_sitio}`}>
                       <Button
                         onClick={() => {
                          
@@ -631,6 +636,7 @@ const [modalupimg, setModalupIMG] = useState(false)
                         {' '}
                         <i className='fa-solid fa-pencil' ></i> Crear
                       </Button>
+                      </Link>
                     </div>
                   </div>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
