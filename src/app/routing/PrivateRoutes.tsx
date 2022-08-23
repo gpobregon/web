@@ -21,7 +21,8 @@ import AddPoin  from "../modules/sitios/components/sitios-interes/add-point-inte
 import EditPoin  from "../modules/sitios/components/sitios-interes/edit-point-interes";  
 import UserManagement  from '../modules/users/UserManagement'; 
 import RoleManagement from '../modules/users/RoleManagement' 
-import PushNotificationsPage from '../modules/push-notifications/PushNotificationsPage'
+import PushNotificationsPage from '../modules/push-notifications/PushNotificationsPage' 
+import OfflineManagement from '../modules/offline/OfflinePage';
 
 
 const PrivateRoutes = () => {
@@ -54,8 +55,8 @@ const PrivateRoutes = () => {
         <Route path='/reportes/reporte-de-usuario' element={<UserReport />}  />
         <Route path='sitios' element={<SitiosPage />} /> 
         <Route path='template/:id' element={<Template />} />
-        <Route path='notificaciones-push' element={<PushNotificationsPage />} />
-
+        <Route path='notificaciones-push' element={<PushNotificationsPage />} /> 
+        <Route path='offline' element={<OfflineManagement />} />
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
         <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
 
