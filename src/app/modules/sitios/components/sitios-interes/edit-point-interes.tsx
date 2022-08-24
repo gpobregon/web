@@ -103,7 +103,7 @@ const EditPoint = () => {
         publicado: true,
     });
 
-   
+
 
     const changeOculto = (oculto: boolean) => {
         postData(statePointInteres, { id_punto: datospuntoInteres.id_punto, es_visible: oculto })
@@ -125,7 +125,7 @@ const EditPoint = () => {
         })
     }
     const changePublicado = (publicado: boolean) => {
-        postData(statePointInteresPublished, { id_punto: datospuntoInteres.id_punto,publicado: publicado })
+        postData(statePointInteresPublished, { id_punto: datospuntoInteres.id_punto, publicado: publicado })
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
@@ -215,19 +215,19 @@ const EditPoint = () => {
         value: language.id_lenguaje,
         label: language.descripcion,
     }))
-   
 
 
-  const getLanguages = async () => {
-    const language: any = await getData(languagesMethod)
-    setLanguages(language.data as CatalogLanguage[])
-    console.log(language)
-  }
 
-  const languagesOptions = languages?.map((language) => ({
-    value: language.id_lenguaje,
-    label: language.descripcion,
-  }))
+    const getLanguages = async () => {
+        const language: any = await getData(languagesMethod)
+        setLanguages(language.data as CatalogLanguage[])
+        console.log(language)
+    }
+
+    const languagesOptions = languages?.map((language) => ({
+        value: language.id_lenguaje,
+        label: language.descripcion,
+    }))
 
 
     const handleChangeLanguage = (event: any) => {
@@ -411,7 +411,7 @@ const EditPoint = () => {
                                 <i
                                     onClick={() => {
                                         sitio.publicado = !sitio.publicado
-                                        changePublicado(  sitio.publicado)
+                                        changePublicado(sitio.publicado)
                                     }}
                                     className={
                                         sitio.publicado == false
