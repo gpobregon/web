@@ -82,7 +82,7 @@ const EditSite = () => {
   let [categorys, setCategorys] = useState<Tag[]>([])
   const [editcategorys, setEditCategory] = useState<Tag[]>([])
   const [categorysHolder, setCategorysHolder] = useState("")
-
+  const navigate = useNavigate()
 
   useEffect(() => {
     getCategorys();
@@ -207,7 +207,7 @@ const EditSite = () => {
           timer: 2000,
 
         })
-        window.location.href = "../sitios";
+        navigate('/sitios')
 
 
       }
@@ -227,7 +227,8 @@ const EditSite = () => {
           timer: 2000,
 
         })
-        window.location.href = "../sitios";
+        navigate('/sitios')
+          // window.location.href = "../sitios";
       }
     });
   }
@@ -240,8 +241,7 @@ const EditSite = () => {
     }]
   )
   const handleChange = (event: any) => {
-
-
+  
     var arrtempo: [{
       id_categoria: number
       nombre: string
@@ -322,9 +322,14 @@ const EditSite = () => {
         }}>
           <div className='col-xs-12 col-md-5 col-lg-6 d-flex' >
             <div id='center'>
-              <Link to={'/sitios'}>
-                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }} ></i>
-              </Link>
+              
+                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}   onClick={() => {
+           
+                    
+                    discardChanges();
+               
+                  }} ></i>
+           
 
 
             </div>
@@ -351,7 +356,7 @@ const EditSite = () => {
                     className={
                       status.favorito == false
                         ? 'text-white  fa-regular fa-star background-button'
-                        : 'text-white fas fa-star background-button'
+                        : 'text-primary fas fa-star background-button'
                     }
                     id='center2'
                     onClick={() => {
@@ -499,6 +504,10 @@ const EditSite = () => {
                 <div>
                   <div className='card-body '>
                     <Row>
+                    <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      
                       <Col>
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
@@ -506,7 +515,10 @@ const EditSite = () => {
                         ></Link>
                       </Col>
                       <Col>
-                        <Link className='bi bi-crop background-button text-info' to={''}></Link>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                       </Col>
                       <Col>
                         <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => setSite({
@@ -668,10 +680,10 @@ const EditSite = () => {
                     closeMenuOnSelect={false}
                     styles={customStyles}
                     components={animatedComponents}
-                    // value={editcategorys}
+                    defaultValue={editcategorys}
                     isMulti
                     options={categorys}
-                    placeholder={categorysHolder}
+                    // placeholder={categorysHolder}
                     onChange={handleChange}
                   ></Select>
                 </div>
@@ -692,13 +704,13 @@ const EditSite = () => {
                     <br></br>
                     <br />
                     <div className='row'>
-                      <p className=' text-movil col-md-12 text-center mt-5'>
+                      <p className='  col-md-12 text-center mt-5'>
                         Maquetar los elementos del sitio para versión móvil.
                       </p>
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={`/template/${site.id_sitio}`}>
+                    <Link to={`/template/movil/${site.id_sitio}`}>
                       <Button
                         className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                       >
@@ -719,23 +731,24 @@ const EditSite = () => {
                     <br></br>
                     <br />
                     <div className='row'>
-                      <p className=' text-movil col-md-12 text-center mt-5'>
+                      <p className='col-md-12 text-center mt-5'>
                         Maquetar los elementos del sitio para versión web
                       </p>
                     </div>
                     <br></br>
                     <div className='row'>
+                    <Link to={`/template/web/${site.id_sitio}`}>
                       <Button
                         className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                         onClick={() => {
-                          //   navigate('/site')
-                          //   postSite(site)
-                          window.location.href = "/template";
+                        
                           console.log('creado con el boton de sitio web')
                         }}
                       >
+                        
                         <i className='fa-solid fa-pencil '></i> Crear
                       </Button>
+                      </Link>
                     </div>
                   </div>
                 </div>

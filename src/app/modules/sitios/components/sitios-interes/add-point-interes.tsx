@@ -138,8 +138,9 @@ const AddPoint = () => {
   }
   //petitions----------------------------------------------------------------------------
   const addNewPoint = async () => {
-    await postData(addNewPointInteres, sitio)
-    // console.log(sitio)
+       console.log(sitio)
+     await postData(addNewPointInteres, sitio)
+  
   }
 
   //get sitio-------------------------------------------------------------------------------------
@@ -158,20 +159,22 @@ const AddPoint = () => {
   // UPLOAD IMAGE-------------------------------------------------------------------------
   const [modalupimg, setModalupIMG] = useState(false)
   const uploadImage = async (imagen: string) => {
-    setSitio({
-      id_sitio: datospuntoInteres.id_sitio,
-      id_guia: datospuntoInteres.id_guia,
-      descripcion: '',
-      id_lenguaje: 1,
-      nombre: '',
-      geoX: '232',
-      geoY: '323',
-      portada_path: URLAWS + imagen,
-      qr_path: 'sitio/interes/' + datospuntoInteres.id_sitio + "/" + datospuntoInteres.id_guia,
-      es_portada_de_sitio: false,
-      estado: 1,
-    })
-
+    setSitio(
+      {
+        id_sitio: datospuntoInteres.id_sitio,
+        id_guia: datospuntoInteres.id_guia,
+        descripcion: sitio.descripcion,
+        id_lenguaje: sitio.id_lenguaje,
+        nombre: sitio.nombre,
+        geoX: sitio.geoX,
+        geoY: sitio.geoY,
+        portada_path: URLAWS + imagen,
+        qr_path:  sitio.qr_path,
+        es_portada_de_sitio: sitio.es_portada_de_sitio,
+        estado: sitio.estado
+      }
+    )
+    
     // console.log(sitio)
     if (imagen != '') {
       setModalupIMG(false)
@@ -217,10 +220,7 @@ const AddPoint = () => {
 
               <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
                 onClick={(event) => {
-                  navigate('/sitios/edit', {
-                    state: sitios
-
-                  })
+                  discardChanges()
                 }}></i>
 
 
@@ -367,6 +367,10 @@ const AddPoint = () => {
                 <div>
                   <div className='card-body '>
                     <Row>
+                    <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      
                       <Col>
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
@@ -374,7 +378,10 @@ const AddPoint = () => {
                         ></Link>
                       </Col>
                       <Col>
-                        <Link className='bi bi-crop background-button text-info' to={''}></Link>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                       </Col>
                       <Col>
                         <Link className='bi bi-trash background-button text-danger' to={''}
@@ -434,7 +441,7 @@ const AddPoint = () => {
                         id_guia: datospuntoInteres.id_guia,
                         descripcion: sitio.descripcion,
                         id_lenguaje: sitio.id_lenguaje,
-                        nombre: sitio.nombre+e.target.value,
+                        nombre: e.target.value,
                         geoX: sitio.geoX,
                         geoY: sitio.geoY,
                         portada_path: sitio.portada_path,

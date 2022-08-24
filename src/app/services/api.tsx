@@ -2,7 +2,7 @@ import axios from 'axios'
 import {Route} from 'react-router-dom'
 
 export const URLAWS='https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/'
-const URL = 'https://84f7-190-104-119-60.ngrok.io/dev2'
+const URL = 'https://htty66h65h.execute-api.us-east-1.amazonaws.com/dev2'
 
 export const sitesMethod = 'site'
 export const statesMethod = 'site/state'
@@ -27,8 +27,10 @@ export const editRoom = RoomsMethod+'/update'
 export const addNewPointInteres = RoomsMethod + '/points/add'
 export const updatePointInteres = RoomsMethod + '/points/update'
 export const delPointInteres = RoomsMethod + '/points'
-export const statePointInteres = addNewPointInteres + '/visibility'
+export const statePointInteres = RoomsMethod + '/points/visibility'
 export const changePointOfInterestFront =RoomsMethod+'/points/changePointOfInterestFront'
+export const OrderPointOfInterest =RoomsMethod+'/points/changeorder'
+export const statePointInteresPublished = RoomsMethod + '/points/changepublishedpointofinterest'
 
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {

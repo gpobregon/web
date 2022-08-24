@@ -1,17 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, Fragment } from "react";
+import { FC } from "react";
 import ContentEditable from "react-contenteditable";
-import {
-    Menu,
-    Item,
-    Separator,
-    Submenu,
-    useContextMenu
-  } from "react-contexify";
-
-// const style = {
-
-// }
+import { Menu, Item, useContextMenu } from "react-contexify";
 
 type Model = {
     data: any
@@ -20,43 +10,50 @@ type Model = {
     isDragging : any
     setEditItem: (data : any) => void
     updateElement: (data : any) => void
+    removeItem: (data : any) => void
 }
-const MENU_ID = "menu-id";
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement }) => { 
-    const { show } = useContextMenu({
-        id: MENU_ID
-      });
-      function handleItemClick( handlerId : any){
-        console.log(handlerId, data);
-      }
-    
-    const changeText = (e : any) => {
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
+  
+  const { show } = useContextMenu({ id: "menu-id" });  
+  
+  const changeText = (e : any) => {
         const edit = {
           ...data,
           text: e.target.value
         }
         updateElement(edit)
     }
+  
+    const destroyItem = ( e : any) => {
+      removeItem(e.triggerEvent.target.id);
+    }
+
     return ( 
-        <Fragment>
-        <div onContextMenu={show}>        
-        <ContentEditable
-                innerRef={referencia}
-                data-handler-id={handlerId}
-                className={`editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
+          <div
+            onContextMenu={show}
+            ref={referencia}
+            data-handler-id={handlerId}
+            className="d-flex cursor-grabbing"
+          >
+            <div className="p-1 py-1 d-flex align-items-center">
+              <i className="bi bi-grip-vertical fa-2x"/>
+            </div>
+            <ContentEditable
+                id={data.id}
+                className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
                 html={ `${data.text}` } // innerHTML of the editable div
-                disabled={false} // use true to disable edition
+                disabled={isDragging} // use true to disable edition
                 onChange={changeText} // handle innerHTML change
                 onClick={() => setEditItem(data)}
             />
-            </div>
-            <Menu id={MENU_ID} theme="dark">
-                <Item onClick={() => handleItemClick(handlerId)}>
+            <Menu id={"menu-id"} theme="dark" data-test={data}>
+              <Item onClick={(e : any) => destroyItem(e)}>
+                <div>
                     <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
-                </Item>
+                </div>
+              </Item>
             </Menu>
-        </Fragment>
-        
+          </div>
     )
 }
 
