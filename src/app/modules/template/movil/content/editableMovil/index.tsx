@@ -6,7 +6,7 @@ import ItemEditable from '../../../../../utility/component/template/itemEditable
 import { ContentContext } from '../../context'
 
 const EditableMovil = () => {
-    const { drop, board, editItem, updateElement, moveCard, setEditItem } = useContext(ContentContext)
+    const { drop, board, editItem, updateElement, moveCard, setEditItem, removeItem } = useContext(ContentContext)
     return (
         <Fragment>
             <Col lg={6}>
@@ -19,9 +19,10 @@ const EditableMovil = () => {
                                     <div key={index}>
                                         <ItemEditable 
                                             key={index} 
-                                            data={item} 
+                                            data={item}
+                                            id={item.id}
                                             index={index}
-                                            id={item.id} 
+                                            removeItem={removeItem}
                                             moveCard={moveCard}
                                             setEditItem={setEditItem}
                                             updateElement={updateElement}
