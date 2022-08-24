@@ -710,7 +710,7 @@ const EditSite = () => {
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={`/template/${site.id_sitio}`}>
+                    <Link to={`/template/movil/${site.id_sitio}`}>
                       <Button
                         className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                       >
@@ -737,17 +737,18 @@ const EditSite = () => {
                     </div>
                     <br></br>
                     <div className='row'>
+                    <Link to={`/template/web/${site.id_sitio}`}>
                       <Button
                         className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                         onClick={() => {
-                          //   navigate('/site')
-                          //   postSite(site)
-                          window.location.href = "/template";
+                        
                           console.log('creado con el boton de sitio web')
                         }}
                       >
+                        
                         <i className='fa-solid fa-pencil '></i> Crear
                       </Button>
+                      </Link>
                     </div>
                   </div>
                 </div>
