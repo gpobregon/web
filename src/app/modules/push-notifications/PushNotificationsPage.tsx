@@ -30,13 +30,9 @@ const PushNotificationsPage = () => {
         estado: 1,
     })
 
-    useEffect(() => {
-        getNotificationsProgrammed()
-    }, [])
-
     const [optionGetNotifications, setOptionGetNotifications] = useState('programadas')
 
-    const chooseGetNotifications = () => {
+    const chooseGetNotifications = async () => {
         if (optionGetNotifications == 'historial') {
             getNotificationsHistory()
         } else {
@@ -45,29 +41,37 @@ const PushNotificationsPage = () => {
     }
 
     const getNotificationsProgrammed = async () => {
-        const notificationsData: any = await postData(notificationMethod, {
-            page: '1',
-            quantity: '8',
+        const notificationsData: any = await postData(`${notificationMethod}/programmed`, {
+            id_usuario: 'lenguaje 1',
         })
-        setNotifications(
-            notificationsData.data.filter(
-                (notification: any) => notification.tipo == 1
-            ) as Notification[]
-        )
+        setNotifications(notificationsData.data as Notification[])
         setOptionGetNotifications('programadas')
     }
 
     const getNotificationsHistory = async () => {
-        const notificationsData: any = await postData(notificationMethod, {
-            page: '1',
-            quantity: '8',
+        const notificationsData: any = await postData(`${notificationMethod}/history`, {
+            page: pageNumber,
+            quantity: '2',
         })
-        setNotifications(
-            notificationsData.data.filter(
-                (notification: any) => notification.tipo == 0
-            ) as Notification[]
-        )
+        setNotifications(notificationsData.data as Notification[])
         setOptionGetNotifications('historial')
+
+        const countNextResults: any = await postData(`${notificationMethod}/history`, {
+            page: pageNumber + 1,
+            quantity: '2',
+        })
+
+        if (countNextResults.data.length == 0) {
+            setToggleButtonsPagination({
+                previous: false,
+                next: true,
+            })
+        } else if (countNextResults.data.length > 0) {
+            setToggleButtonsPagination({
+                previous: toggleButtonsPagination.previous,
+                next: false,
+            })
+        }
     }
 
     const [optionSort, setOptionSort] = useState('Orden descendente')
@@ -112,6 +116,10 @@ const PushNotificationsPage = () => {
             notification.descripcion != '' &&
             notification.imagen_path != ''
         ) {
+            notification.fecha_hora_programada = moment(
+                notification.fecha_hora_programada
+            ).toISOString()
+
             await postData(addNotificationMethod, notification)
             setShowCardAddNotification(false)
             chooseGetNotifications()
@@ -126,6 +134,10 @@ const PushNotificationsPage = () => {
             notification.descripcion != '' &&
             notification.imagen_path != ''
         ) {
+            notification.fecha_hora_programada = moment(
+                notification.fecha_hora_programada
+            ).toISOString()
+
             await postData(updateNotificationMethod, notification)
             setCardUpdateNotification({
                 show: false,
@@ -223,10 +235,43 @@ const PushNotificationsPage = () => {
             chooseGetNotifications()
             chooseGetNotifications()
             chooseGetNotifications()
+            chooseGetNotifications()
+            chooseGetNotifications()
+            chooseGetNotifications()
+            chooseGetNotifications()
 
             arrayDeleteNotifications.length = 0
         }
     }
+
+    let [pageNumber, setPageNumber] = useState(1)
+    const [toggleButtonsPagination, setToggleButtonsPagination] = useState({
+        previous: true,
+        next: false,
+    })
+
+    const handlePrevPage = () => {
+        if (pageNumber == 1) {
+            setToggleButtonsPagination({
+                previous: true,
+                next: toggleButtonsPagination.next,
+            })
+        } else {
+            setPageNumber(pageNumber - 1)
+        }
+    }
+
+    const handleNextPage = () => {
+        setPageNumber(pageNumber + 1)
+        setToggleButtonsPagination({
+            previous: false,
+            next: false,
+        })
+    }
+
+    useEffect(() => {
+        chooseGetNotifications()
+    }, [pageNumber])
 
     return (
         <>
@@ -277,6 +322,50 @@ const PushNotificationsPage = () => {
                         </Button>
                     </div>
 
+                    <div
+                        style={
+                            optionGetNotifications != 'historial'
+                                ? {display: 'none'}
+                                : {display: 'flex', justifyContent: 'end'}
+                        }
+                    >
+                        <div className='d-flex justify-content-end mt-9'>
+                            <div className='d-flex'>
+                                <Button
+                                    variant='outline-secondary'
+                                    className='text-center'
+                                    title='Página anterior'
+                                    disabled={toggleButtonsPagination.previous}
+                                    onClick={() => handlePrevPage()}
+                                >
+                                    <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
+                                </Button>
+
+                                <div
+                                    className='d-flex align-items-center justify-content-center'
+                                    style={{
+                                        width: '46px',
+                                        height: '46px',
+                                        backgroundColor: '#2B2B40',
+                                        borderRadius: '5px',
+                                    }}
+                                >
+                                    {`${pageNumber}`}
+                                </div>
+
+                                <Button
+                                    variant='outline-secondary'
+                                    className='text-center'
+                                    title='Página siguiente'
+                                    disabled={toggleButtonsPagination.next}
+                                    onClick={() => handleNextPage()}
+                                >
+                                    <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+
                     <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
 
                     <div className='d-sm-flex justify-content-between align-items-center mb-5'>
@@ -320,7 +409,7 @@ const PushNotificationsPage = () => {
                                         </td>
                                         <td className='text-muted' style={{width: '200px'}}>
                                             {moment(notification.fecha_hora_programada).format(
-                                                'MMMM DD, YYYY hh:mm'
+                                                'LLLL'
                                             )}
                                         </td>
                                         <td style={{width: '50px'}}>

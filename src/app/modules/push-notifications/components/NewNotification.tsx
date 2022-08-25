@@ -29,7 +29,7 @@ const NewNotification: FC<any> = ({
         }
     }
 
-    const [notification, setNotification] = useState({
+    let [notification, setNotification] = useState({
         nombre: '',
         descripcion: '',
         imagen_path: '',
@@ -73,6 +73,7 @@ const NewNotification: FC<any> = ({
                         style={{
                             width: '192.5px',
                             height: '177px',
+                            objectFit: 'cover',
                             borderRadius: '5px',
                         }}
                     ></img>
@@ -241,6 +242,7 @@ const NewNotification: FC<any> = ({
                                     tipo: 0,
                                     estado: 1,
                                 })
+
                                 addNotification(notification)
 
                                 setNotification({
@@ -271,6 +273,7 @@ const NewNotification: FC<any> = ({
                                     tipo: 1,
                                     estado: 1,
                                 })
+
                                 addNotification(notification)
 
                                 setNotification({
