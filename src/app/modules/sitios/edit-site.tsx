@@ -16,6 +16,7 @@ import Interes from "./components/sitios-interes/sala-interes";
 import { QRCodeCanvas } from "qrcode.react";
 import logo from './upload-image_03.jpg';
 import UpImage from './components/upload-image';
+import { ModelOperation } from '@aws-amplify/datastore';
 
 const customStyles = {
   control: (base: any, state: any) => ({
@@ -319,11 +320,12 @@ const EditSite = () => {
         <div className='row' style={{
           backgroundColor: '#1A1A27',
           backgroundSize: 'auto 100%',
+          borderRadius: '5px',
         }}>
-          <div className='col-xs-12 col-md-5 col-lg-6 d-flex' >
+          <div className='col-xs-12 col-md-5 col-lg-6 d-flex py-5 px-9' >
             <div id='center'>
               
-                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}   onClick={() => {
+                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px',color: '#FFFFFF' }}   onClick={() => {
            
                     
                     discardChanges();
@@ -348,7 +350,7 @@ const EditSite = () => {
               <p style={{ marginTop: '16px' }} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>
             </div>
           </div>
-          <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
+          <div className='col-xs-12 col-md-6 col-lg-6 d-flex py-5 px-9 justify-content-end'>
             <div id='center2'>
               <ul className='nav justify-content-end '>
                 <li className='nav-item'>
@@ -384,9 +386,11 @@ const EditSite = () => {
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
                     <Modal.Title>Escanee su Código QR</Modal.Title>
+                   
+                   
                   </Modal.Header>
                   <Modal.Body style={{ textAlign: 'center' }}>
-
+                  <Modal.Dialog>Sitio: {site.nombre}</Modal.Dialog>
                     <QRCodeCanvas
                       id="qrCode"
                       value={qr}

@@ -108,22 +108,22 @@ const SitiosPage = () => {
     return (
 
         <Container fluid>
-            <div className='col-xs-12'>
+            <div className='col-xs-12 '>
                 <div
                     className=' card rounded-0 bgi-no-repeat bgi-position-x-end bgi-size-cover '
                     style={{
                         backgroundColor: '#1A1A27',
-                        backgroundSize: 'auto 100%',
+                        borderRadius: '5px',
                     }}
                 >
                     <div className='col-xs-12 col-md-12 col-lg-12 row align-items-start'>
-                        <div className='col-md-4 '>
-                         <h3 className='letterTitle'>
+                    <div className='col-md-4 col-xs-12 searchDash  py-5 px-9'>
+                         <h3 className=''>
                              Gestor de Sitios <span className='lettersmall'>| 272 en total</span>
                             </h3>
                         </div>
 
-                        <div className='col-md-5 col-xs-12 searchDash'>
+                        <div className='col-md-5 col-xs-12 searchDash  py-5 px-9'>
                             <div className='d-flex align-items-center position-relative me-2'>
 
                                 <input
@@ -138,7 +138,7 @@ const SitiosPage = () => {
                             </div>
                         </div>
 
-                        <div className='col-md-3 col-xs-2'>
+                        <div className='col-md-3 col-xs-2  py-5 px-9 '>
                         <div className='d-flex'>
                         <Button
                                 variant='outline-secondary'
@@ -151,7 +151,7 @@ const SitiosPage = () => {
                             </Button>
 
                             <div
-                                className='d-flex align-items-center justify-content-center'
+                                className='d-flex align-items-center  py-5 px-9 justify-content-center'
                                 style={{
                                     width: '46px',
                                     height: '46px',
@@ -174,7 +174,7 @@ const SitiosPage = () => {
                             </div>
                         </div>
                     </div>
-                    <br />
+                   
                 </div>
             </div>
 

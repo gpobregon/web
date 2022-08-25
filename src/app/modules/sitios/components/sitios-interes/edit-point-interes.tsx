@@ -12,6 +12,7 @@ import logo from '../../upload-image_03.jpg';
 import { QRCodeCanvas } from 'qrcode.react';
 import UpImage from '../upload-image';
 import { CatalogLanguage } from '../../../../models/catalogLanguage';
+import SalaRutas from '../rutas-sitios-interes/sala-rutas';
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -291,7 +292,7 @@ const EditPoint = () => {
         <>
             <div className=' '>
                 <div className='row' style={{ backgroundColor: '#1A1A27', backgroundSize: 'auto 100%' }}>
-                    <div className='col-xs-12 col-md-5 col-lg-6 d-flex'>
+                    <div className='col-xs-12 col-md-5 col-lg-6 d-flex  py-5 px-9'>
                         <div id='center'>
 
                             <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
@@ -320,7 +321,7 @@ const EditPoint = () => {
                             {/* <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>  */}
                         </div>
                     </div>
-                    <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
+                    <div className='col-xs-12 col-md-6 col-lg-6 d-flex  py-5 px-9 justify-content-end'>
                         <div id='center2'>
                             <ul className='nav justify-content-end '>
                                 <li className='nav-item'>
@@ -353,6 +354,7 @@ const EditPoint = () => {
                                         <Modal.Title>Escanee su Código QR</Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body style={{ textAlign: 'center' }}>
+                                    <Modal.Dialog>Sitio: {sitio.nombre}</Modal.Dialog>
                                         <QRCodeCanvas
                                             id="qrCode"
                                             value={datospuntoInteres.qr_path}
@@ -681,9 +683,15 @@ const EditPoint = () => {
                                 </div>
                             </div>
                         </div>
+                       
                     </div>
+                 
                 </div>
             </div>
+            <br />
+      <br />
+      <h3>Creación de rutas entre puntos de interés</h3>
+      <SalaRutas/>
         </>
     )
 }
