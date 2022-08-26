@@ -3,9 +3,56 @@ import { Link } from 'react-router-dom'
 import { Form, Button } from 'react-bootstrap';
 import { Amplify, Auth } from 'aws-amplify';
 import { awsconfig } from '../../../../aws-exports';
-import { useAuth } from '../core/Auth';
+import { useAuth } from '../core/Auth'; 
+import swal from "sweetalert"; 
+import { PasswordRequisite } from './PasswordRequisite';
 Amplify.configure(awsconfig);
-Amplify.configure(awsconfig);
+Amplify.configure(awsconfig); 
+
+const alertNotNullInputs = async () => {
+  swal({
+    text: "Credenciales incorrectas",
+    icon: "warning",
+
+  })
+
+} 
+
+const alertEmail = async () => {
+  swal({
+    text: "¡Email no valido!",
+    icon: "warning",
+
+  })
+
+}  
+
+const alertEmailNoIngresado = async () => {
+  swal({
+    text: "¡Email no ingresado!",
+    icon: "warning",
+
+  })
+
+}
+
+const alertPassword = async () => {
+  swal({
+    text: "¡Contraseña incorrecta!",
+    icon: "warning",
+
+  })
+
+}  
+
+const alertPasswordNoEnviado = async () => {
+  swal({
+    text: "¡Contraseña no Ingresada!",
+    icon: "warning",
+
+  })
+
+}
 
 export function Login() {
   const [loading, setLoading] = useState(false)
@@ -15,7 +62,17 @@ export function Login() {
   const [newPassword, setNewPassword] = useState('')
   const [changePassword, setChangePassword] = useState(false)
   const [user, setUser] = useState(null)
-  const { saveAuth, setCurrentUser } = useAuth()
+  const { saveAuth, setCurrentUser } = useAuth()  
+  const [message, setMessage] = useState('');  
+  const [pwdRequisite, setPwdRequisite] = useState(false); 
+  const [checks, setChecks] = useState({ 
+    capsLettercheck: false,  
+    numberCheck: false, 
+    pwdLengthCheck: false, 
+    specialChaCheck: false,
+  })
+
+  
 
   const login = async (email: string, password: string) => {
     try {
@@ -27,7 +84,8 @@ export function Login() {
       setCurrentUser(user)
       saveAuth(user)
       return user
-    } catch (error) {
+    } catch (error) { 
+      alertNotNullInputs()
       console.log(error);
       return null
     }
@@ -50,7 +108,7 @@ export function Login() {
   }
 
   const handleSubmit = async (values: any) => {
-    setLoading(true)
+    setLoading(true) 
     try {
       if (changePassword) {
         const user = await onChangePassword()
@@ -62,7 +120,31 @@ export function Login() {
       setLoading(false)
     }
     return false;
-  }
+  } 
+
+  const emailValidation =()=>{   
+    const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9·-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g 
+    if(regEx.test(email)){ 
+      passwordValidation()
+
+    }else if(!regEx.test(email) && email !== "" ){ 
+      alertEmail()
+    }else{ 
+      alertEmailNoIngresado()
+    }
+  }  
+
+  const passwordValidation=()=>{  
+    const regEx = /^[0-9]{9}$/g  
+    if(regEx.test(password)){ 
+      handleSubmit(true) 
+    }else if(!regEx.test(password) && password !== "" ){ 
+      alertPassword()
+    }else{ 
+      alertPasswordNoEnviado()
+    }
+
+  } 
 
   return (
     <Form style={{ width: '50%' }}>
@@ -78,8 +160,9 @@ export function Login() {
             </div>
             <Form.Group className="mb-3">
               <Form.Label>Correo electronico</Form.Label>
-              <Form.Control type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Introduce tu correo electronico" />
-            </Form.Group>
+              <Form.Control type="email" value={email} onChange={(event) => setEmail(event.target.value)} 
+              placeholder="Introduce tu correo electronico" />
+            </Form.Group>{message}
 
             <Form.Group className="mb-3">
               <Form.Label>{'Contraseña'}</Form.Label>
@@ -95,7 +178,7 @@ export function Login() {
 
 
 
-            <Button variant="primary" onClick={handleSubmit} style={{ width: '100%' }}>
+            <Button variant="primary" onClick={emailValidation} style={{ width: '100%' }}>
               {'Iniciar sesión'}
             </Button>
           </>

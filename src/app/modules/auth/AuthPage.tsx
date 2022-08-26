@@ -7,6 +7,7 @@ import { RestorePassword } from './components/RestorePassword'
 import { NewPassword } from './components/NewPassoword'
 import { Login } from './components/Login'
 import { Container, Row, Col } from 'react-bootstrap';
+import CodeRegister from './components/CodeRegister'
 
 const AuthLayout = () => {
   useEffect(() => {
@@ -35,7 +36,8 @@ const AuthPage = () => (
       <Route path='registration' element={<Registration />} />
       <Route path='forgot-password' element={<ForgotPassword />} /> 
       <Route path='restore-password' element={<RestorePassword />} /> 
-      <Route path= 'new-password' element={<NewPassword /> } />
+      <Route path= 'new-password' element={<NewPassword /> } /> 
+      <Route path= 'code-register' element={<CodeRegister /> } />
       <Route index element={<Login />} />
     </Route>
   </Routes>

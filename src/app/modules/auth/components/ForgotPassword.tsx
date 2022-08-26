@@ -41,7 +41,7 @@ export function ForgotPassword() {
           })
       }, 1000)
     },
-  })
+  }) 
 
   return (
     <Form style={{ width: '50%' }}>
