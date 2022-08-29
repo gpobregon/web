@@ -94,7 +94,8 @@
     "eject": "react-scripts eject",
     "lint": "prettier --check .",
     "format": "prettier --write .",
-    "rtl": "webpack --config webpack-rtl.config.js"
+    "rtl": "webpack --config webpack-rtl.config.js",
+    "deploy":"aws s3 sync build/ s3://mcd-demo-cg"
   },
   "eslintConfig": {
     "extends": [
