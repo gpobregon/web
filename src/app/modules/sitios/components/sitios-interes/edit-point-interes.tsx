@@ -193,16 +193,10 @@ const EditPoint = () => {
     }
 
     const updatePoint = async () => {
-        console.log(sitio)
         const updatePoint = await postData(updatePointInteres, sitio)
-        console.log(updatePoint)
     }
     //get sitio-------------------------------------------------------------------------------------
     const [sitios, setSitios] = useState()
-    useEffect(() => {
-        getSites()
-        getLanguages()
-    }, [])
 
     const getSites = async () => {
         const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
@@ -212,13 +206,23 @@ const EditPoint = () => {
     }
     //obtener lenguajes-------------------------------------------------------------------------------------
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
-    const languageEscogido = datospuntoInteres.lenguajes?.map((language) => ({
-        value: language.id_lenguaje,
-        label: language.descripcion,
-    }))
+    let lenaguajeDefault = ""
+    for (let i = 0; i < languages.length; i++) {
+        if (languages[i].id_lenguaje === datospuntoInteres.lenguajes[0].id_lenguaje) {
+            // setLenaguajeDefault(languages[i].descripcion)
+            lenaguajeDefault = languages[i].descripcion
+        }
+    }
+
+    const languageEscogido = datospuntoInteres.lenguajes?.map((language) =>
+    (
+        {
+            value: language.id_lenguaje,
+            label: lenaguajeDefault,
+        }))
 
 
-
+    console.log(languageEscogido)
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
@@ -248,7 +252,7 @@ const EditPoint = () => {
             es_visible: sitio.es_visible,
             publicado: true,
         })
-        console.log(datospuntoInteres.lenguajes)
+
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
     const [modalupimg, setModalupIMG] = useState(false)
@@ -288,6 +292,11 @@ const EditPoint = () => {
         downloadLink.click();
         document.body.removeChild(downloadLink);
     };
+    useEffect(() => {
+        getSites()
+        getLanguages()
+    }, [])
+
     return (
         <>
             <div className=' '>
@@ -354,7 +363,7 @@ const EditPoint = () => {
                                         <Modal.Title>Escanee su Código QR</Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body style={{ textAlign: 'center' }}>
-                                    <Modal.Dialog>Sitio: {sitio.nombre}</Modal.Dialog>
+                                        <Modal.Dialog>Sitio: {sitio.nombre}</Modal.Dialog>
                                         <QRCodeCanvas
                                             id="qrCode"
                                             value={datospuntoInteres.qr_path}
@@ -562,7 +571,7 @@ const EditPoint = () => {
 
 
                                 <Select
-                                    defaultValue={languageEscogido}
+                                    value={languageEscogido}
                                     options={languagesOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
@@ -683,15 +692,18 @@ const EditPoint = () => {
                                 </div>
                             </div>
                         </div>
-                       
+
                     </div>
-                 
+
                 </div>
             </div>
             <br />
-      <br />
-      <h3>Creación de rutas entre puntos de interés</h3>
-      <SalaRutas/>
+            <br />
+            <h3>Creación de rutas entre puntos de interés</h3>
+            <SalaRutas
+                id_punto_a={sitio.id_punto}
+                id_sitio={sitio.id_sitio} 
+                puntosIteres={datospuntoInteres}/>
         </>
     )
 }

@@ -78,6 +78,7 @@ const Interes: FC<id_sitio> = (props) => {
         const rooms: any = await postData(RoomsMethod, props)
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
+        console.log(rooms.salas)
     }
 
     const seteatPuntoInteres = (interes: any) => {

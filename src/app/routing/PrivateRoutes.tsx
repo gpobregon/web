@@ -63,7 +63,6 @@ const PrivateRoutes = () => {
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
         <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
         <Route path='/sitios/add-route' element={<AddRoute />} />
-
                 {/* Lazy Modules */}
                 {/* <Route
                     path='crafted/pages/profile/*'

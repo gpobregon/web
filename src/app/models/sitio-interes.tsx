@@ -18,5 +18,6 @@ export interface PointInteres {
     nombre:string
     es_visible:boolean
     publicado:boolean
+    rutaActiva:boolean
   }
   

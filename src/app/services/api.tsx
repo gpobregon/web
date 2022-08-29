@@ -34,6 +34,13 @@ export const OrderPointOfInterest =RoomsMethod+'/points/changeorder'
 export const statePointInteresPublished = RoomsMethod + '/points/changepublishedpointofinterest'
 
 export const getRoutefInterest = RoomsMethod + '/points/getpointswithroute'
+export const addRoute = RoomsMethod +'/points/route/add'
+export const ObtenerRuta = RoomsMethod + '/points/route'
+export const addPasos = ObtenerRuta+'/steps'
+export const addImagePrincipal=ObtenerRuta+'/principalimage'
+export const addImages=ObtenerRuta+'/images'
+export const deleteRuta=ObtenerRuta+'/delete'
+
 
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {
