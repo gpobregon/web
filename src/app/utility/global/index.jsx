@@ -17,7 +17,6 @@ export const setDataList = (el) => {
         }
         
     }
-    // el.innerHTML = ''
     return Array
 }
 
