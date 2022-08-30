@@ -47,20 +47,33 @@ const Sitio: FC<sitio> = (props) => {
                 timer:2000,
                 
             })
-      
-             window.location.reload(); //reload page
+            navigate('/sitios')
+            //  window.location.reload(); //reload page
 
             }
           });
       
     }
+    
     return (
+      
       <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-            <Card style={{ backgroundColor: '#1e1e2d', padding: 20,margin:'20px', width: '95%', height: '420px' }}>
+            <Card style={{ backgroundColor: '#1e1e2d', padding: 20,margin:'20px', width: '95%' }}>
                
-                <Card.Img variant='top' src={`${props.portada_path}`} className='mb-5 'style={{ maxHeight:'70%' }} /> 
-
+                <Card.Img variant='top' src={`${props.portada_path}`} className='mb-5 card-img-top img1' style={{width:"100%", height:"260px"}} /> 
+              
+                <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
                 <Card.Title style={{  }}>{props.nombre}</Card.Title>
+                {
+                    props.favorito === true ?   
+                    <i className={ 'fas fa-star '  } style={{color: '#009EF7', fontSize: '17px'  }} ></i> 
+                    
+                 
+                    :
+                    <i className={     'fa-regular fa-star '   }  style={{color: '#474761', fontSize: '17px'  }} ></i>
+                }
+                  </div>
+              
                 <Card.Text className='text-muted'>{props.ubicacion}</Card.Text>
                 <div className='d-flex flex-row' style={{ justifyContent: 'space-between' }}>
                     <Button style={{ width: '47%'}}
@@ -95,8 +108,7 @@ const Sitio: FC<sitio> = (props) => {
                         </Button>
                         
                 </div>
-                <br></br>
-                <br></br>
+         
             </Card>
            
         </div >

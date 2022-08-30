@@ -1,7 +1,7 @@
 import React, {useState, useRef} from 'react'  
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import {Button, Col, Form, Row, Overlay} from 'react-bootstrap'
+import {Button, Col, Form, Row, Overlay, Container} from 'react-bootstrap'
 import {Link} from 'react-router-dom' 
 import ResultSitestByRating from './components/ResultSitesByRating'
 
@@ -80,7 +80,7 @@ const SitesByRating = ()=>{
     }
 
     return( 
-        <> 
+        <Container fluid> 
             <div
                 className=''
                 style={{
@@ -176,7 +176,7 @@ const SitesByRating = ()=>{
             <div>
                 <ResultSitestByRating show={showResult}  />
             </div>
-        </>
+        </Container>
     )
 }
 

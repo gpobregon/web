@@ -8,9 +8,6 @@ import Text from "../../../../utility/component/template/item/textos/text";
 import Paragraph from "../../../../utility/component/template/item/textos/paragraph";
 import List from "../../../../utility/component/template/item/textos/list";
 // informacion
-import CuriousFact from "../../../../utility/component/template/item/informacion/curiousFact";
-import Regulation from "../../../../utility/component/template/item/informacion/regulation";
-import Calendar from "../../../../utility/component/template/item/informacion/calendar";
 import Event from "../../../../utility/component/template/item/informacion/event";
 import Schedule from "../../../../utility/component/template/item/informacion/schedule";
 // Multimedia
@@ -22,10 +19,6 @@ import Image360 from "../../../../utility/component/template/item/multimedia/ima
 // otros
 import Url from "../../../../utility/component/template/item/otros/url";
 import Map from "../../../../utility/component/template/item/otros/map";
-import Document from "../../../../utility/component/template/item/otros/document";
-import Transportation from "../../../../utility/component/template/item/otros/transportation";
-import Climate from "../../../../utility/component/template/item/otros/climate";
-import Ticket from "../../../../utility/component/template/item/otros/ticket";
 
 const Elementos = () => {
     const { setEditItem, updateElement } = useContext(ContentContext)
@@ -70,32 +63,8 @@ const Elementos = () => {
                     {Information.map((item : any, index : number) => {
                         return (
                             <Col lg={4} key={index}>
-                                { item.type === 'curious-fact' &&
-                                    <CuriousFact
-                                        key={index}
-                                        data={item}
-                                        setEditItem={setEditItem}
-                                        updateElement={updateElement}
-                                    />
-                                }
-                                { item.type === 'regulation' &&
-                                    <Regulation
-                                        key={index}
-                                        data={item}
-                                        setEditItem={setEditItem}
-                                        updateElement={updateElement}
-                                    />
-                                }
                                 { item.type === 'schedule' &&
                                     <Schedule
-                                        key={index}
-                                        data={item}
-                                        setEditItem={setEditItem}
-                                        updateElement={updateElement}
-                                    />
-                                }
-                                { item.type === 'calendar' &&
-                                    <Calendar
                                         key={index}
                                         data={item}
                                         setEditItem={setEditItem}
@@ -176,40 +145,8 @@ const Elementos = () => {
                                         data={item}
                                     />
                                 }
-                                { item.type === 'document' &&
-                                    <Document
-                                        key={index}
-                                        data={item}
-                                        setEditItem={setEditItem}
-                                        updateElement={updateElement}
-                                    />
-                                }
-                                { item.type === 'transportation' &&
-                                    <Transportation
-                                        key={index}
-                                        data={item}
-                                        setEditItem={setEditItem}
-                                        updateElement={updateElement}
-                                    />
-                                }
                                 { item.type === 'map' &&
                                     <Map
-                                        key={index}
-                                        data={item}
-                                        setEditItem={setEditItem}
-                                        updateElement={updateElement}
-                                    />
-                                }
-                                { item.type === 'climate' &&
-                                    <Climate
-                                        key={index}
-                                        data={item}
-                                        setEditItem={setEditItem}
-                                        updateElement={updateElement}
-                                    />
-                                }
-                                 { item.type === 'ticket' &&
-                                    <Ticket
                                         key={index}
                                         data={item}
                                         setEditItem={setEditItem}

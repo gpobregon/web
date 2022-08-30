@@ -1,42 +1,61 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
+import { stripHtml } from '../../../../../utility/global/index'
 import ContentEditable from "react-contenteditable";
-
-const style = {
-  padding: '0.5rem 1rem',
-  marginBottom: '.5rem',
-  cursor: 'grabbing',
-}
+import { Menu, Item, useContextMenu } from "react-contexify";
 
 type Model = {
     data: any
     referencia: any
     handlerId: any
-    isDragging: any
+    isDragging : any
     setEditItem: (data : any) => void
     updateElement: (data : any) => void
+    removeItem: (data : any) => void
 }
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
+  
+  const { show } = useContextMenu({ id: "menu-id" });  
 
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement }) => { 
-
-    const changeText = (e : any) => {
+  const changeText = (e : any) => {
         const edit = {
           ...data,
-          text: e.target.value
+          text: stripHtml(e.target.value)
         }
         updateElement(edit)
     }
-    return (
-        <ContentEditable
-            style={{ ...style, border: isDragging ? "1px dashed #009EF7" : "0px" }}
-            innerRef={referencia}
+  
+    const destroyItem = ( e : any) => {
+      removeItem(e.triggerEvent.target.id);
+      setEditItem([])
+    }
+
+    return ( 
+          <div
+            onContextMenu={show}
+            ref={referencia}
             data-handler-id={handlerId}
-            className={`editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
-            html={ `${data.text}` } // innerHTML of the editable div
-            disabled={false} // use true to disable edition
-            onChange={changeText} // handle innerHTML change
-            onClick={() => setEditItem(data)}
-        />
+            className="d-flex cursor-grabbing"
+          >
+            <div className="p-1 d-flex align-items-center">
+              <i className="bi bi-grip-vertical fa-2x"/>
+            </div>
+            <ContentEditable
+                id={data.id}
+                className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
+                html={ `${data.text}` } // innerHTML of the editable div
+                disabled={isDragging} // use true to disable edition
+                onChange={changeText} // handle innerHTML change
+                onClick={() => setEditItem(data)}
+            />
+            <Menu id={"menu-id"} theme="dark" data-test={data}>
+              <Item onClick={(e : any) => destroyItem(e)}>
+                <div>
+                    <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
+                </div>
+              </Item>
+            </Menu>
+          </div>
     )
 }
 

@@ -91,8 +91,7 @@
   display: block;
 }
 .editable {
-  margin: 1rem 0.5rem 1rem 0.5rem;
-  padding: 2px;
+  margin: 0.5rem 0.5rem 0rem 0rem;
 }
 
 .editable:hover {
@@ -145,4 +144,8 @@
 
 .min-tumbnail.ps__thumb-x {
   overflow-y: hidden;
+}
+
+.cursor-grabbing {
+  cursor: grabbing;
 }

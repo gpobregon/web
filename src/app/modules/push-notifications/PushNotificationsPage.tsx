@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import moment from 'moment'
-import {Button, Card, Col, Form, Row, Table} from 'react-bootstrap'
+import {Button, Card, Col, Container, Form, Row, Table} from 'react-bootstrap'
 import ReactSelect from 'react-select'
 import makeAnimated from 'react-select/animated'
 import NewNotification from './components/NewNotification'
@@ -274,7 +274,7 @@ const PushNotificationsPage = () => {
     }, [pageNumber])
 
     return (
-        <>
+        <Container fluid>
             <div
                 className='mb-9'
                 style={{
@@ -474,7 +474,7 @@ const PushNotificationsPage = () => {
                     updateNotification={updateNotification}
                 />
             </div>
-        </>
+        </Container>
     )
 }
 

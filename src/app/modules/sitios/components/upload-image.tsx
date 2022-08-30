@@ -33,11 +33,11 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG }) => {
 
     const handleFileInput = (e: any) => {
         setSelectedFile(e.target.files[0]);
-      
+        setImg(e.target.files[0].name)
     }
 
     const uploadFile = (file: any) => {
-        setImg(file.name)
+        
         const params = {
             ACL: 'public-read',
             Body: file,
