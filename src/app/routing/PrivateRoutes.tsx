@@ -62,7 +62,7 @@ const PrivateRoutes = () => {
             <Route path="web/:id" element={<Template />} />
         </Route>
         <Route path='notificaciones-push' element={<PushNotificationsPage />} /> 
-        <Route path='offline' element={<OfflineManagement />} />
+        <Route path='/offline' element={<OfflineManagement />} />
         <Route path="/template">
             <Route path="movil/:id" element={<Template />} />
             <Route path="web/:id" element={<Template />} />
