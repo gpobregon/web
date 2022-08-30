@@ -62,28 +62,29 @@ const SalaRutas: FC<id_punto_a> = (props) => {
             setRutas([{ id_punto: 0 }])
         }
         console.log(data);
-        for (let i = 0; i < puntoInteres.length; i++) {
-            for (let j = 0; j < data.length; j++) {
-                if (puntoInteres[i].id_punto === data[j].id_punto) {
+        // for (let i = 0; i < puntoInteres.length; i++) {
+        //     for (let j = 0; j < data.length; j++) {
+        //         if (puntoInteres[i].id_punto === data[j].id_punto) {
 
-                    puntoInteres[i].rutaActiva = true
-                } else {
-                    if (puntoInteres[i].rutaActiva) {
+        //             puntoInteres[i].rutaActiva = true
+        //         } else {
+        //             if (puntoInteres[i].rutaActiva) {
 
-                    } else {
-                        puntoInteres[i].rutaActiva = false
-                    }
-                }
-            }
+        //             } else {
+        //                 puntoInteres[i].rutaActiva = false
+        //             }
+        //         }
+        //     }
 
 
-        }
+        // }
         console.log(puntoInteres);
 
     }
 
     const getSalas = async () => {
         const rooms: any = await postData(RoomsMethod, { id_sitio: props.id_sitio })
+        await getRutas()
         console.log(rooms);
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
@@ -190,9 +191,26 @@ const SalaRutas: FC<id_punto_a> = (props) => {
 
                                     <>
                                         <Button variant="outline-dark" size="sm" onClick={() => {
-                                            seteatPuntoInteres(sala.points_of_interest as PointInteres[]);
+                                            var temporal = sala.points_of_interest as PointInteres[]
+                                            for (let i = 0; i < temporal.length; i++) {
+                                                for (let j = 0; j < rutas.length; j++) {
+                                                    if (temporal[i].id_punto === rutas[j].id_punto) {
+                                    
+                                                        temporal[i].rutaActiva = true
+                                                    } else {
+                                                        if (temporal[i].rutaActiva) {
+                                    
+                                                        } else {
+                                                            temporal[i].rutaActiva = false
+                                                        }
+                                                    }
+                                                }
+                                    
+                                    
+                                            }
+                                            seteatPuntoInteres(temporal);
                                             setIdSala(sala.id_sala);
-                                            getRutas();
+                                            // getRutas();
                                             setVistaPrevia(false)
                                         }}
                                         >
@@ -363,7 +381,7 @@ const SalaRutas: FC<id_punto_a> = (props) => {
 
                                                             <ul className='nav justify-content-end'>
                                                                 {
-
+                                                                    
                                                                     punto.rutaActiva === true ?
                                                                         <>
                                                                             <Button className="btn btn-secondary " style={{ marginRight: '10px' }}

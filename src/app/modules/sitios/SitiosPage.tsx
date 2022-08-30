@@ -119,8 +119,9 @@ const SitiosPage = () => {
                     <div className='col-xs-12 col-md-12 col-lg-12 row align-items-start'>
                         <div className='col-md-4 col-xs-12 searchDash  py-5 px-9'>
                             <h3 className=''>
-                                Gestor de Sitios <h5 className='' style={{ color: '#565674', fontSize: '10px' }}    >| 272 en total</h5>
+                                Gestor de Sitios
                             </h3>
+                            <h5 className='' style={{ color: '#565674', fontSize: '10px' }}    >| 272 en total</h5>
                         </div>
 
                         <div className='col-md-5 col-xs-12 searchDash  py-4 px-10'>

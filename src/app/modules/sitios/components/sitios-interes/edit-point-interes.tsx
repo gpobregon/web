@@ -200,7 +200,7 @@ const EditPoint = () => {
 
     const getSites = async () => {
         const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
-
+        console.log(site)
         setSitios(site.site)
 
     }
@@ -633,7 +633,7 @@ const EditPoint = () => {
                                         <br></br>
                                         <br />
                                         <div className='row'>
-                                            <p className=' text-movil col-md-12 text-center mt-5'>
+                                            <p className='  col-md-12 text-center mt-5'>
                                                 Maquetar los elementos del sitio para versión móvil.
                                             </p>
                                         </div>
@@ -665,7 +665,7 @@ const EditPoint = () => {
                                         <br></br>
                                         <br />
                                         <div className='row'>
-                                            <p className=' text-movil col-md-12 text-center mt-5'>
+                                            <p className='  col-md-12 text-center mt-5'>
                                                 Maquetar los elementos del sitio para versión web
                                             </p>
                                         </div>
