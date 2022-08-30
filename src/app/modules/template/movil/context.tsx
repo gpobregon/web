@@ -70,8 +70,8 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
   const getLenguate = async () => {
     const response: any = await getData('language/select')
     setLanguage(response ? response.data : [])
-    setChangeLaguage(response.data[0])
-    oneData(response.data[0])
+    setChangeLaguage(response ? response.data : [])
+    oneData(response ? response.data : [])
   }
   // obtenermos el template 
   const oneData = async ( item : any) => {

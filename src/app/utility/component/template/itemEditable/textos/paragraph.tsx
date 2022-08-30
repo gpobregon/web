@@ -27,6 +27,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   
     const destroyItem = ( e : any) => {
       removeItem(e.triggerEvent.target.id);
+      setEditItem([])
     }
 
     return ( 

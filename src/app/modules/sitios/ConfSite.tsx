@@ -105,6 +105,7 @@ const ConfSite = () => {
   const handleShow = () => setShow(true)
   const [show, setShow] = useState(false)
   const [categorys, setCategorys] = useState<Tag[]>([])
+  const navigate = useNavigate()
   const [site, setSite] = useState({
     id_sitio: 0,
     nombre: '',
@@ -184,7 +185,7 @@ const ConfSite = () => {
   //methods to post data to api------------------------------------------------------
 
   async function postSite(sitee: any) {
-    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != '') {
+    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != ''&& site.portada_path != '') {
       const sit: any = await postData(sitesMethod + "/add", sitee)
     } else {
       alertNotNullInputs()
@@ -227,7 +228,7 @@ const ConfSite = () => {
           timer: 2000,
 
         })
-        window.location.href = "../sitios";
+        navigate('/sitios')
 
 
       }
@@ -266,29 +267,19 @@ const ConfSite = () => {
   return (
     <>
       <div className=' '>
-        <div className='row' style={{
+        <div className='row ' style={{
           backgroundColor: '#1A1A27',
-          backgroundSize: 'auto 100%',
+          borderRadius: '5px',
         }}>
-          <div className='col-xs-12 col-md-6 col-lg-6'>
+          <div className='col-xs-12 col-md-6 col-lg-6  py-5 px-9'>
             <div id='center'>
               <Link to={'/sitios'}>
-                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }} ></i>
+                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px',color:"#FFFFFF" }} ></i>
               </Link>
-
-              {/* {site.nombre != '' ? (
-                <span className='font-size: 25px;  font-family:Lato;'>
-                {site.nombre}
-                  Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}
-                  
-                </span>
-              ) : (
-                <p></p>
-              )} */}
 
             </div>
           </div>
-          <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
+          <div className='col-xs-12 col-md-6 col-lg-6 d-flex  py-5 px-9 justify-content-end'>
             <div id='center2'>
               <ul className='nav justify-content-end'>
                 <li className='nav-item'>
@@ -350,7 +341,7 @@ const ConfSite = () => {
                   onClick={() => {
                     discardChanges()
                   }}
-                  style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
+                  style={{ color: '#FFFFFF', display: 'flex', marginRight: '4px' }}
                 ></i>
                 <i
                   className='fa-solid fa-floppy-disk background-button'

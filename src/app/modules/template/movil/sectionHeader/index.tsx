@@ -5,6 +5,8 @@ import { ContentContext } from '../context'
 
 const Index = () => {
     const { changeTypeEdit, language, changeLangegeSelect, changeLaguage } = useContext(ContentContext)
+
+    console.log()
     return (
         <div className="mt-8 d-flex justify-content-between">
             <div>
@@ -12,7 +14,7 @@ const Index = () => {
                 <p className="small text-muted">Lista de Sitios - Configuracion del Sitio -  {changeTypeEdit === 1 ? ' Creador móvil' : 'Creador Web'}</p>
             </div>
             <div>
-                <DropdownButton id="dropdown-item-button" size="sm" variant="dark" className="text-white px-8" title={ changeLaguage.label || 'Idioma' }>
+                <DropdownButton id="dropdown-item-button" size="sm" variant="dark" className="text-white px-8" title={ changeLaguage.length > 0 ? changeLaguage.label : 'Idioma' }>
                     {
                         language.map((item : any, index: number) => <Dropdown.Item key={index} as="button" onClick={() => changeLangegeSelect(item)}>{ item.label }</Dropdown.Item> )
                     }

@@ -2,9 +2,9 @@ import { Fragment, useEffect, useState } from 'react'
 import { Row, Col, InputGroup, Form } from 'react-bootstrap'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {useDropzone} from 'react-dropzone';
+import AudioResource from '../../../../utility/component/resource/audio';
 import Image from '../../../../utility/component/template/item/recursos/image'
-// import { Image } from 'react-bootstrap';
-  
+import { testRecursos } from '../../../../utility/global/data'
 const Recursos = () => {
 
     const [files, setFiles] = useState<any>([])
@@ -19,10 +19,12 @@ const Recursos = () => {
         setFiles([...files, item ]);
       }
     });
-    console.log(files)
-    const thumbs = files.map((file : any) => (
-        <Col key={file[0].name} lg={6}>
-            <Image data={file[0]} />
+    const thumbs = files.map((file : any, index : number) => (
+        <Col key={index} lg={6}>
+            {
+                file[0] ? <Image data={file[0]} /> : <AudioResource item={file} />
+            }
+            
         </Col>
     ));
 
@@ -31,7 +33,11 @@ const Recursos = () => {
         return () => files.forEach((file : any)=> URL.revokeObjectURL(file.preview));
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
-
+    
+    useEffect(() => {
+        setFiles(testRecursos)
+    },[])
+    console.log(testRecursos)
     return (
         <Fragment>
             <Row>
