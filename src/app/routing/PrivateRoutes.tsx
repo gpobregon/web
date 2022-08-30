@@ -21,17 +21,18 @@ import AddPoin from '../modules/sitios/components/sitios-interes/add-point-inter
 import EditPoin from '../modules/sitios/components/sitios-interes/edit-point-interes'
 import UserManagement from '../modules/users/UserManagement'
 import RoleManagement from '../modules/users/RoleManagement'
-import PushNotificationsPage from '../modules/push-notifications/PushNotificationsPage'
+import PushNotificationsPage from '../modules/push-notifications/PushNotificationsPage' 
 import UserProfilePage from '../modules/UserProfile/UserProfilePage'
 import AddRoute from '../modules/sitios/components/rutas-sitios-interes/add-route'
+import OfflineManagement from '../modules/offline/OfflinePage';
 
 
 const PrivateRoutes = () => {
-    // const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
-    // const WizardsPage = lazy(() => import('../modules/wizards/WizardsPage'))
-    // const AccountPage = lazy(() => import('../modules/accounts/AccountPage'))
-    // const WidgetsPage = lazy(() => import('../modules/widgets/WidgetsPage'))
-    // const ChatPage = lazy(() => import('../modules/apps/chat/ChatPage'))
+    // // const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
+    // // const WizardsPage = lazy(() => import('../modules/wizards/WizardsPage'))
+    // // const AccountPage = lazy(() => import('../modules/accounts/AccountPage'))
+    // // const WidgetsPage = lazy(() => import('../modules/widgets/WidgetsPage'))
+    // // const ChatPage = lazy(() => import('../modules/apps/chat/ChatPage'))
     //const UsersPage = lazy(() => import('../modules/apps/user-management/UsersPage'))
 
     return (
@@ -60,13 +61,18 @@ const PrivateRoutes = () => {
             <Route path="movil/:id" element={<Template />} />
             <Route path="web/:id" element={<Template />} />
         </Route>
+        <Route path='notificaciones-push' element={<PushNotificationsPage />} /> 
+        <Route path='offline' element={<OfflineManagement />} />
+        <Route path="/template">
+            <Route path="movil/:id" element={<Template />} />
+            <Route path="web/:id" element={<Template />} />
+        </Route>
         <Route path='notificaciones-push' element={<PushNotificationsPage />} />
-
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
         <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
         <Route path='/sitios/add-route' element={<AddRoute />} />
                 {/* Lazy Modules */}
-                {/* <Route
+                {/* {/* <Route
                     path='crafted/pages/profile/*'
                     element={
                         <SuspensedView>
@@ -113,7 +119,7 @@ const PrivateRoutes = () => {
                             <UsersPage />
                         </SuspensedView>
                     }
-                /> */}
+                /> */} 
                 {/* Page Not Found */}
                 <Route path='*' element={<Navigate to='/error/404' />} />
             </Route>
@@ -121,16 +127,16 @@ const PrivateRoutes = () => {
     )
 }
 
-// const SuspensedView: FC<WithChildren> = ({children}) => {
-//     const baseColor = getCSSVariableValue('--kt-primary')
-//     TopBarProgress.config({
-//         barColors: {
-//             '0': baseColor,
-//         },
-//         barThickness: 1,
-//         shadowBlur: 5,
-//     })
-//     return <Suspense fallback={<TopBarProgress />}>{children}</Suspense>
-// }
+// // const SuspensedView: FC<WithChildren> = ({children}) => {
+// //     const baseColor = getCSSVariableValue('--kt-primary')
+// //     TopBarProgress.config({
+// //         barColors: {
+// //             '0': baseColor,
+// //         },
+// //         barThickness: 1,
+// //         shadowBlur: 5,
+// //     })
+// //     return <Suspense fallback={<TopBarProgress />}>{children}</Suspense>
+// // }
 
 export {PrivateRoutes}
