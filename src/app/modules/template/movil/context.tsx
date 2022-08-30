@@ -1,7 +1,7 @@
 // context/todoContext.tsx
 import { createContext, FC, useState, useCallback, useEffect } from 'react'
 import { WithChildren } from '../../../utility/models/childrenContext'
-import { updateData, validElement } from '../../../utility/global/index'
+import { updateData, validElement, generateRandomString } from '../../../utility/global/index'
 import { getData, postData } from '../../../services/api'
 import update from 'immutability-helper'
 import { useDrop } from "react-dnd"
@@ -15,24 +15,30 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     const [language, setLanguage] = useState<any>([])
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<number>(1)
-    let [N, setN] = useState(0)
+    let [count, setCount] = useState(0)
     const [editItem, setEditItem] = useState<any>([])
 
-    const addElement = (data : any, items : any) => {
+    const addElement = (data : any) => {
         const response = validElement(data.type)
         const result = response.filter((item : any) => data.id === item.id);
-
-        setN(N+=1)
+        setCount(count+=1)
         const item = result[0]
-        const newItem = { ...item, index: N, text: `${item.text} ${N}`}
-        setEditItem(newItem)
-        setBoard((board: [] ) => [...board, newItem]);
+        setBoard((board: [] ) => 
+          [
+            ...board,
+            { 
+              ...item,
+              id: generateRandomString(7),
+              text: `${item.text} ${(board.length + 1)}`,
+              index: (board.length + 1) }
+          ]
+        );
       };
-
+      
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "image",
-    drop: (item : any) => addElement(item.data, board),
+    drop: (item : any) => addElement(item.data),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
@@ -64,8 +70,8 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
   const getLenguate = async () => {
     const response: any = await getData('language/select')
     setLanguage(response ? response.data : [])
-    setChangeLaguage(response.data[0])
-    oneData(response.data[0])
+    setChangeLaguage(response ? response.data : [])
+    oneData(response ? response.data : [])
   }
   // obtenermos el template 
   const oneData = async ( item : any) => {
@@ -105,21 +111,27 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
 
   // elimina items dragados en el editor
   const removeItem = (data : any) => {
-    console.log(board)
-    const newBoard = board.filter((item : any) => item.index !== data.index)
-    console.log(newBoard, data)
+    const newBoard = board.filter((item : any) => String(item.id) !== String(data))
     setBoard(newBoard)
   }
   // descarta los cambios realizados dentro del editor
   const discardChange = () => {
     setBoard(oldBoard)
   }
-
+  
   useEffect(() => {
     getLenguate()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  
+
+//   useEffect(() => {
+//     if (count === 1) {
+//         setEditItem(board[board.length-1])
+//         setCount(0)
+//     }
+//   // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [count, board])
+
     const value = {
         drop,
         board,

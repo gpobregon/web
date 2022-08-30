@@ -70,7 +70,7 @@ const AddPoint = () => {
     id_sitio: datospuntoInteres.id_sitio,
     id_guia: datospuntoInteres.id_guia,
     descripcion: '',
-    id_lenguaje: 1,
+    id_lenguaje: 0,
     nombre: '',
     geoX: '232',
     geoY: '323',
@@ -138,11 +138,21 @@ const AddPoint = () => {
   }
   //petitions----------------------------------------------------------------------------
   const addNewPoint = async () => {
-       console.log(sitio)
-     await postData(addNewPointInteres, sitio)
-  
+    // console.log(sitio)
+    if(sitio.nombre !=''  && sitio.id_lenguaje != 0 && sitio.portada_path != ''){
+    await postData(addNewPointInteres, sitio)
+  }else{
+    alertNotNullInputs()
   }
+}
+  const alertNotNullInputs = async () => {
+    swal({
+      text: "¡Faltan campos por completar!",
+      icon: "warning",
 
+    })
+
+  }
   //get sitio-------------------------------------------------------------------------------------
   const [sitios, setSitios] = useState()
   useEffect(() => {
@@ -169,12 +179,12 @@ const AddPoint = () => {
         geoX: sitio.geoX,
         geoY: sitio.geoY,
         portada_path: URLAWS + imagen,
-        qr_path:  sitio.qr_path,
+        qr_path: sitio.qr_path,
         es_portada_de_sitio: sitio.es_portada_de_sitio,
         estado: sitio.estado
       }
     )
-    
+
     // console.log(sitio)
     if (imagen != '') {
       setModalupIMG(false)
@@ -215,15 +225,12 @@ const AddPoint = () => {
     <>
       <div className=' '>
         <div className='row' style={{ backgroundColor: '#1A1A27', backgroundSize: 'auto 100%' }}>
-          <div className='col-xs-12 col-md-5 col-lg-6 d-flex'>
+          <div className='col-xs-12 col-md-5 col-lg-6 d-flex  py-5 px-9'>
             <div id='center'>
 
               <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
                 onClick={(event) => {
-                  navigate('/sitios/edit', {
-                    state: sitios
-
-                  })
+                  discardChanges()
                 }}></i>
 
 
@@ -244,7 +251,7 @@ const AddPoint = () => {
               {/* <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>  */}
             </div>
           </div>
-          <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
+          <div className='col-xs-12 col-md-6 col-lg-6 d-flex  py-5 px-9 justify-content-end'>
             <div id='center2'>
               <ul className='nav justify-content-end '>
                 <li className='nav-item'>
@@ -371,13 +378,20 @@ const AddPoint = () => {
                   <div className='card-body '>
                     <Row>
                       <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+
+                      <Col>
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
                           to={''}
                         ></Link>
                       </Col>
                       <Col>
-                        <Link className='bi bi-crop background-button text-info' to={''}></Link>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                       </Col>
                       <Col>
                         <Link className='bi bi-trash background-button text-danger' to={''}
@@ -456,14 +470,14 @@ const AddPoint = () => {
                 <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Selecciona Lenguaje</label>
                 <br />
                 <br />
-          
-            
+
+
                 <Select
-                                    options={languagesOptions}
-                                    styles={customStyles}
-                                    components={animatedComponents}
-                                    onChange={handleChangeLanguage}
-                                />
+                  options={languagesOptions}
+                  styles={customStyles}
+                  components={animatedComponents}
+                  onChange={handleChangeLanguage}
+                />
                 <br></br>
               </div>
               <div className='col-xs-12 col-md-5 col-lg-5 mb-5'>

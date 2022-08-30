@@ -1,40 +1,60 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
 import ContentEditable from "react-contenteditable";
+import { Menu, Item, useContextMenu } from "react-contexify";
 
 type Model = {
     data: any
     referencia: any
     handlerId: any
+    isDragging : any
     setEditItem: (data : any) => void
     updateElement: (data : any) => void
+    removeItem: (data : any) => void
 }
-
-const Url: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElement }) => { 
-
-    const changeText = (e : any) => {
+const Url: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
+  
+  const { show } = useContextMenu({ id: "menu-id" });  
+  
+  const changeText = (e : any) => {
         const edit = {
           ...data,
           text: e.target.value
         }
         updateElement(edit)
     }
-    return (
+  
+    const destroyItem = ( e : any) => {
+      removeItem(e.triggerEvent.target.id);
+      setEditItem([])
+    }
 
-        <div 
-            className="position-relative"
-            onClick={() => setEditItem(data)}
-        >
+    return ( 
+          <div
+            onContextMenu={show}
+            ref={referencia}
+            data-handler-id={handlerId}
+            className="d-flex cursor-grabbing"
+          >
+            <div className="p-1 py-1 d-flex align-items-center">
+              <i className="bi bi-grip-vertical fa-2x"/>
+            </div>
             <ContentEditable
-                innerRef={referencia}
-                data-handler-id={handlerId}
-                className={`editable input small ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
+                id={data.id}
+                className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
                 html={ `${data.text}` } // innerHTML of the editable div
-                disabled={false} // use true to disable edition
+                disabled={isDragging} // use true to disable edition
                 onChange={changeText} // handle innerHTML change
+                onClick={() => setEditItem(data)}
             />
-            <i className="fa fa-link input-icon"/>
-        </div>
+            <Menu id={"menu-id"} theme="dark" data-test={data}>
+              <Item onClick={(e : any) => destroyItem(e)}>
+                <div>
+                    <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
+                </div>
+              </Item>
+            </Menu>
+          </div>
     )
 }
 

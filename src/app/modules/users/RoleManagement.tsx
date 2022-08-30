@@ -1,11 +1,11 @@
 import React, {FC, useState} from "react";  
 import {Link} from 'react-router-dom' 
-import { Button, Col, Form, Row, Table, Card } from 'react-bootstrap' 
+import { Button, Col, Form, Row, Table, Card, Container } from 'react-bootstrap' 
 import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
 
 const RoleManagement: FC<any> = ({show}) =>{ 
     return(  
-        <> 
+        <Container fluid> 
             <div
                         className=''
                         style={{
@@ -203,7 +203,7 @@ const RoleManagement: FC<any> = ({show}) =>{
                 
             </div>
 
-        </>
+        </Container>
 
     )
 } 

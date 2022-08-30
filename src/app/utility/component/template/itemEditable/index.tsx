@@ -13,10 +13,12 @@ import Audio from "./multimedia/audio"
 import Carousel from "./multimedia/carousel"
 import Image360 from "./multimedia/image360"
 
+import Event from "./informacion/event"
+
 export interface CardProps {
   id: any
   data : any
-  index: number
+  index: any
   moveCard: (dragIndex: number, hoverIndex: number) => void
   setEditItem: (data : any) => void
   updateElement: (data : any) => void
@@ -25,11 +27,7 @@ export interface CardProps {
 
 export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateElement, setEditItem, removeItem }) => {
   const ref = useRef<HTMLDivElement>(null)
-  const [{ handlerId }, drop] = useDrop<
-    any,
-    void,
-    { handlerId: Identifier | null }
-  >({
+  const [{ handlerId }, drop] = useDrop<any, void, { handlerId: Identifier | null }>({
     accept: 'card',
     collect(monitor) {
       return {
@@ -88,9 +86,7 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateE
 
   const [{ isDragging }, drag] = useDrag({
     type: 'card',
-    item: () => {
-      return { id, index }
-    },
+    item: () => { return { id, index } },
     collect: (monitor: any) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -104,16 +100,17 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateE
     // </div>
     <Fragment>
       { data.type === 'title' && <Text removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'paragraph' && <Paragraph isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'list' && <List isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'schedule' && <Schedule referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'url' && <Url referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'paragraph' && <Paragraph removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'list' && <List removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'schedule' && <Schedule removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'url' && <Url removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'map' && <Map referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       
       { data.type === 'video' && <Video referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'audio' && <Audio referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'audio' && <Audio removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'carousel' && <Carousel referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'image-360' && <Image360 referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'event' && <Event />}
     </Fragment>
   )
 }
