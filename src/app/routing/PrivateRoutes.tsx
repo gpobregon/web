@@ -23,6 +23,7 @@ import UserManagement from '../modules/users/UserManagement'
 import RoleManagement from '../modules/users/RoleManagement'
 import PushNotificationsPage from '../modules/push-notifications/PushNotificationsPage'
 import UserProfilePage from '../modules/UserProfile/UserProfilePage'
+import AddRoute from '../modules/sitios/components/rutas-sitios-interes/add-route'
 
 
 const PrivateRoutes = () => {
@@ -63,7 +64,7 @@ const PrivateRoutes = () => {
 
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
         <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
-
+        <Route path='/sitios/add-route' element={<AddRoute />} />
                 {/* Lazy Modules */}
                 {/* <Route
                     path='crafted/pages/profile/*'

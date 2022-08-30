@@ -196,8 +196,8 @@ const Interes: FC<id_sitio> = (props) => {
         //update the actual array
         setPuntoInteres(_fruitItems)
         // console.log(_fruitItems)
-       await postData(OrderPointOfInterest, {puntos:_fruitItems})
-     
+      const a= await postData(OrderPointOfInterest, {puntos:_fruitItems})
+     console.log(a)
     }
     //handle name change
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
