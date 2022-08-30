@@ -22,6 +22,7 @@ import EditPoin from '../modules/sitios/components/sitios-interes/edit-point-int
 import UserManagement from '../modules/users/UserManagement'
 import RoleManagement from '../modules/users/RoleManagement'
 import PushNotificationsPage from '../modules/push-notifications/PushNotificationsPage'
+import UserProfilePage from '../modules/UserProfile/UserProfilePage'
 
 
 const PrivateRoutes = () => {
@@ -47,6 +48,7 @@ const PrivateRoutes = () => {
         <Route path='catalogos' element={<CatalogosPage />} />
         <Route path='reportes' element={<ReportsPage />} /> 
         <Route path='usuarios' element={<UsersPage />} /> 
+        <Route path='perfil' element={<UserProfilePage />} /> 
         <Route path='/usuarios/user-management' element={<UserManagement />} />  
         <Route path='/usuarios/role-management' element={<RoleManagement />} /> 
         <Route path='/reportes/sitios-mas-visitados' element={<MostVistedReport />} /> 
