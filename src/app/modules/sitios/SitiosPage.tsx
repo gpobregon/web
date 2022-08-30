@@ -15,10 +15,7 @@ const SitiosPage = () => {
     const [filterSites, setFilterSites] = useState<Site[]>([])
     const [estado, setEstado] = useState(true)
     const [up, setUp] = useState(true)
-    useEffect(() => {
-        getSites();
-
-    }, [])
+   
     const search = (search: string) => {
         if (!search) {
           setFilterSites(sites)
@@ -40,7 +37,7 @@ const SitiosPage = () => {
       }
 
     const getSites = async () => {
-        const site: any = await postData(sitesMethod,{page:"1",quantity:"100"})
+        const site: any = await postData(sitesMethod,{page: pageNumber, quantity: '8'})
         console.log(site)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
@@ -76,6 +73,38 @@ const SitiosPage = () => {
         downloadLink.click();
         document.body.removeChild(downloadLink);
       };
+
+      //paginacion de sitios por pagina --------------------------------------------------------------
+      
+    let [pageNumber, setPageNumber] = useState(1)
+    const [toggleButtonsPagination, setToggleButtonsPagination] = useState({
+        previous: true,
+        next: false,
+    })
+      const handlePrevPage = () => {
+        if (pageNumber == 1) {
+            setToggleButtonsPagination({
+                previous: true,
+                next: toggleButtonsPagination.next,
+            })
+        } else {
+            setPageNumber(pageNumber - 1)
+        }
+    }
+
+    const handleNextPage = () => {
+        setPageNumber(pageNumber + 1)
+        setToggleButtonsPagination({
+            previous: false,
+            next: false,
+        })
+    }
+
+    //UseEffect para obtener los sitios --------------------------------------------------------------
+    useEffect(() => {
+        getSites();
+
+    }, [pageNumber])
     return (
 
         <Container fluid>
@@ -110,24 +139,39 @@ const SitiosPage = () => {
                         </div>
 
                         <div className='col-md-3 col-xs-2'>
-                            <ul className='pagination'>
-                                <li className='page-item previous disabled'>
-                                    <a href='#' className='page-link'>
-                                        <i className='previous'></i>
-                                    </a>
-                                </li>
-                                <li className='page-item'>
-                                    <a href='#' className='page-link'>
-                                        1
-                                    </a>
-                                </li>
-                                <span className='letra'>de</span>
-                                <li className='page-item letra1'>
-                                    <a href='#' className='page-link'>
-                                        22
-                                    </a>
-                                </li>
-                            </ul>
+                        <div className='d-flex'>
+                        <Button
+                                variant='outline-secondary'
+                                className='text-center'
+                                title='Página anterior'
+                                disabled={toggleButtonsPagination.previous}
+                                onClick={() => handlePrevPage()}
+                            >
+                                <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
+                            </Button>
+
+                            <div
+                                className='d-flex align-items-center justify-content-center'
+                                style={{
+                                    width: '46px',
+                                    height: '46px',
+                                    backgroundColor: '#2B2B40',
+                                    borderRadius: '5px',
+                                }}
+                            >
+                                {`${pageNumber}`}
+                            </div>
+
+                            <Button
+                                variant='outline-secondary'
+                                className='text-center'
+                                title='Página siguiente'
+                                disabled={toggleButtonsPagination.next}
+                                onClick={() => handleNextPage()}
+                            >
+                                <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
+                            </Button>
+                            </div>
                         </div>
                     </div>
                     <br />

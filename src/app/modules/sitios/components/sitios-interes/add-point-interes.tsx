@@ -220,10 +220,7 @@ const AddPoint = () => {
 
               <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
                 onClick={(event) => {
-                  navigate('/sitios/edit', {
-                    state: sitios
-
-                  })
+                  discardChanges()
                 }}></i>
 
 
@@ -370,6 +367,10 @@ const AddPoint = () => {
                 <div>
                   <div className='card-body '>
                     <Row>
+                    <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      
                       <Col>
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
@@ -377,7 +378,10 @@ const AddPoint = () => {
                         ></Link>
                       </Col>
                       <Col>
-                        <Link className='bi bi-crop background-button text-info' to={''}></Link>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                       </Col>
                       <Col>
                         <Link className='bi bi-trash background-button text-danger' to={''}

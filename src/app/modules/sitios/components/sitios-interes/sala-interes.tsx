@@ -1,7 +1,7 @@
 import { type } from 'os';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Col, Card, Button, Row, Modal } from 'react-bootstrap';
-import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom, statePointInteres, changePointOfInterestFront } from '../../../../services/api'
+import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom, statePointInteres, changePointOfInterestFront, OrderPointOfInterest } from '../../../../services/api'
 import { Room } from "../../../../models/rooms";
 import swal from "sweetalert";
 import { PointInteres } from "../../../../models/sitio-interes";
@@ -73,7 +73,6 @@ const Interes: FC<id_sitio> = (props) => {
 
     const getSalas = async () => {
         const rooms: any = await postData(RoomsMethod, props)
-        console.log(rooms)
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
     }
@@ -176,7 +175,7 @@ const Interes: FC<id_sitio> = (props) => {
     //save reference for dragItem and dragOverItem
     const dragItem = React.useRef<any>(null)
     const dragOverItem = React.useRef<any>(null)
-    const handleSort = () => {
+    const handleSort = async () => {
         //duplicate items
         let _fruitItems = [...puntoInteres]
 
@@ -192,11 +191,14 @@ const Interes: FC<id_sitio> = (props) => {
 
         //update the actual array
         setPuntoInteres(_fruitItems)
-        console.log(_fruitItems)
+        // console.log(_fruitItems)
+       await postData(OrderPointOfInterest, {puntos:_fruitItems})
+     
     }
     //handle name change
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewFruitItem(e.target.value)
+        
     }
 
     //handle new item addition
@@ -530,7 +532,7 @@ const Interes: FC<id_sitio> = (props) => {
                                 <Row>
                                     <Col sm='4' md='12' className='pb-10' >
 
-                                        <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column', }}>
+                                        <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column',borderStyle:"dashed",borderWidth:'1px',borderColor:'#009EF7' }}>
                                             <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
 
 
@@ -599,3 +601,5 @@ const Interes: FC<id_sitio> = (props) => {
 }
 
 export default Interes;
+
+
