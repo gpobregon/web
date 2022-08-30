@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import {Button, Col, Form, Row} from 'react-bootstrap'
+import {Button, Col, Container, Form, Row} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 import ResultUserReport from './components/ResultUserReport'
 
@@ -81,7 +81,7 @@ const UserReport = () => {
     } 
 
     return (
-        <>
+        <Container fluid>
             <div
                 className=''
                 style={{
@@ -188,7 +188,7 @@ const UserReport = () => {
             <div>
                 <ResultUserReport show={showResult} /> 
             </div>
-        </>
+        </Container>
     )
 }
 

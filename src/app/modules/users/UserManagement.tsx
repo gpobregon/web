@@ -1,5 +1,5 @@
 import React, {FC, useState, useEffect} from 'react'
-import {Button, Col, Form, Row, Table} from 'react-bootstrap'
+import {Button, Col, Container, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
 import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
 import AddUser from './components/add-user'
@@ -141,7 +141,7 @@ const UserManagement: FC<any> = ({show}) => {
     }, [])
 
     return (
-        <>
+        <Container fluid>
             <div
                 className=''
                 style={{
@@ -314,7 +314,7 @@ const UserManagement: FC<any> = ({show}) => {
             ) : (
                 <></>
             )}
-        </>
+        </Container>
     )
 }
 

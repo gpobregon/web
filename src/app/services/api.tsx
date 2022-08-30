@@ -17,7 +17,7 @@ export const languagesMethod = 'language'
 export const addLanguageMethod = 'language/add'
 export const updateLanguageMethod = 'language/update'
 
-export const notificationMethod = 'notificaciones'
+export const notificationMethod = 'notifications'
 export const addNotificationMethod = 'notification/add'
 export const updateNotificationMethod = 'notification/update'
 export const deleteNotificationMethod = 'notification'
