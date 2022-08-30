@@ -523,7 +523,7 @@ const EditPoint = () => {
                                         className='form-control'
                                         disabled
                                         style={{ border: '0', fontSize: '14px', color: '#92929F' }}
-                                        value={'Sala ' + datospuntoInteres.id_guia}
+                                        value={'Sala ' + datospuntoInteres.nombre}
 
 
 
@@ -531,7 +531,7 @@ const EditPoint = () => {
                                     ></input>
 
                                     <br></br>
-                                    <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Nombre del pundo de iteres</label>
+                                    <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Nombre del punto de interés</label>
                                     <br />
                                     <br />
                                     <input
