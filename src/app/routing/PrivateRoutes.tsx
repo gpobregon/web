@@ -1,4 +1,4 @@
-import { FC, Suspense} from 'react'
+import {FC, Suspense} from 'react'
 import {Route, Routes, Navigate} from 'react-router-dom'
 import {MasterLayout} from '../../_metronic/layout/MasterLayout'
 import TopBarProgress from 'react-topbar-progress-indicator'
@@ -14,15 +14,14 @@ import ReportsPage from '../modules/reports/ReportsPage'
 import MostVistedReport from '../modules/reports/MostVistedReport'
 import SitesByRating from '../modules/reports/SitesByRating'
 import UserReport from '../modules/reports/UserReport'
-import Template  from "../modules/template/movil/index";
-import ConfSite  from "../modules/sitios/ConfSite";
-import EditSite  from "../modules/sitios/edit-site";
-import AddPoin  from "../modules/sitios/components/sitios-interes/add-point-interes";
-import EditPoin  from "../modules/sitios/components/sitios-interes/edit-point-interes";  
-import UserManagement  from '../modules/users/UserManagement'; 
-import RoleManagement from '../modules/users/RoleManagement' 
+import Template from '../modules/template/movil/index'
+import ConfSite from '../modules/sitios/ConfSite'
+import EditSite from '../modules/sitios/edit-site'
+import AddPoin from '../modules/sitios/components/sitios-interes/add-point-interes'
+import EditPoin from '../modules/sitios/components/sitios-interes/edit-point-interes'
+import UserManagement from '../modules/users/UserManagement'
+import RoleManagement from '../modules/users/RoleManagement'
 import PushNotificationsPage from '../modules/push-notifications/PushNotificationsPage'
-import AddRoute from '../modules/sitios/components/rutas-sitios-interes/add-route'
 
 
 const PrivateRoutes = () => {
@@ -62,7 +61,7 @@ const PrivateRoutes = () => {
 
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
         <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
-        <Route path='/sitios/add-route' element={<AddRoute />} />
+
                 {/* Lazy Modules */}
                 {/* <Route
                     path='crafted/pages/profile/*'
