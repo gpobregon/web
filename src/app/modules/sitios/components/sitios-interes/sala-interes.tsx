@@ -14,6 +14,7 @@ import AddRoom from './add-room';
 import UpdateRoom from './update-room';
 import domtoimage from 'dom-to-image';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import SalaRutas from '../rutas-sitios-interes/sala-rutas';
 
 type id_sitio = {
     id_sitio: number
@@ -39,11 +40,13 @@ const Interes: FC<id_sitio> = (props) => {
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
     const [qr, setQr] = useState<any>() //modal qr
+    const [name, setNombre] = useState<any>() //modal qr
     const [vista, setVistaPrevia] = useState(false) //mostrar vsta previa
     const [imagen, setImagenPrevia] = useState('') //mostrar vsta previa
-    const changeStatus = (idpunto: number, oculto: boolean) => {
-        postData(statePointInteres, { id_punto: idpunto, es_visible: oculto })
+    const changeStatus = async (idpunto: number, oculto: boolean) => {
+        await postData(statePointInteres, { id_punto: idpunto, es_visible: oculto })
         setPuntoInteres([])
+        setRooms([])
         getSalas()
         swal({
             text: "Se cambio visibilidad con éxito",
@@ -53,9 +56,10 @@ const Interes: FC<id_sitio> = (props) => {
         })
 
     }
-    const changeImagePrincipal = (idpunto: number, idsitio: number) => {
-        postData(changePointOfInterestFront, { id_punto: idpunto, id_sitio: idsitio })
+    const changeImagePrincipal = async (idpunto: number, idsitio: number) => {
+        await postData(changePointOfInterestFront, { id_punto: idpunto, id_sitio: idsitio })
         setPuntoInteres([])
+        setRooms([])
         swal({
             text: "Se cambio Imagen principal",
             icon: "success",
@@ -67,7 +71,6 @@ const Interes: FC<id_sitio> = (props) => {
 
     useEffect(() => {
         getSalas()
-        console.log("das")
     }, [puntoInteres])
 
 
@@ -75,6 +78,7 @@ const Interes: FC<id_sitio> = (props) => {
         const rooms: any = await postData(RoomsMethod, props)
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
+        console.log(rooms.salas)
     }
 
     const seteatPuntoInteres = (interes: any) => {
@@ -389,7 +393,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                             {`${punto.portada_path}`}
 
 
-                                                            style={{ width: '25%', height: '25%', borderRadius: '10px' }}
+                                                            style={{ width: '60px', height: '40px', borderRadius: '10px' }}
                                                             alt='...'
                                                             className='card-img-top img1'
                                                             onClick={() => {
@@ -410,6 +414,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 style={{ color: '#92929F', display: 'flex', marginRight: '30px', fontSize: '23px' }}
                                                                 onClick={() => {
                                                                     setQr(punto.qr_path)
+                                                                    setNombre(punto.nombre)
                                                                     handleShow()
                                                                 }}
 
@@ -421,7 +426,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 <Modal.Title>Escanee su Código QR</Modal.Title>
                                                             </Modal.Header>
                                                             <Modal.Body style={{ textAlign: 'center' }}>
-
+                                                            <Modal.Dialog>Punto de Interes: {name}</Modal.Dialog>
                                                                 <QRCodeCanvas
                                                                     id="qrCode"
                                                                     value={qr}
@@ -567,7 +572,7 @@ const Interes: FC<id_sitio> = (props) => {
                         </div>
                     </div>
 
-
+                
                     <div className='col-3' >
 
                         {vista === true ?
@@ -595,7 +600,8 @@ const Interes: FC<id_sitio> = (props) => {
                         room={upRoom}
                     />
                 </div>
-            </div>
+               
+            </div> 
         </>
     );
 }

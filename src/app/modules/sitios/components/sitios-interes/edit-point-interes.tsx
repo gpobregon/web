@@ -12,6 +12,7 @@ import logo from '../../upload-image_03.jpg';
 import { QRCodeCanvas } from 'qrcode.react';
 import UpImage from '../upload-image';
 import { CatalogLanguage } from '../../../../models/catalogLanguage';
+import SalaRutas from '../rutas-sitios-interes/sala-rutas';
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -158,6 +159,7 @@ const EditPoint = () => {
                     timer: 2000,
 
                 })
+                console.log(sitios)
                 navigate('/sitios/edit', {
                     state: sitios
                 })
@@ -192,32 +194,35 @@ const EditPoint = () => {
     }
 
     const updatePoint = async () => {
-        console.log(sitio)
         const updatePoint = await postData(updatePointInteres, sitio)
-        console.log(updatePoint)
     }
     //get sitio-------------------------------------------------------------------------------------
     const [sitios, setSitios] = useState()
-    useEffect(() => {
-        getSites()
-        getLanguages()
-    }, [])
 
     const getSites = async () => {
         const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
-
         setSitios(site.site)
 
     }
     //obtener lenguajes-------------------------------------------------------------------------------------
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
-    const languageEscogido = datospuntoInteres.lenguajes?.map((language) => ({
-        value: language.id_lenguaje,
-        label: language.descripcion,
-    }))
+    let lenaguajeDefault = ""
+    for (let i = 0; i < languages.length; i++) {
+        if (languages[i].id_lenguaje === datospuntoInteres.lenguajes[0].id_lenguaje) {
+            // setLenaguajeDefault(languages[i].descripcion)
+            lenaguajeDefault = languages[i].descripcion
+        }
+    }
+
+    const languageEscogido = datospuntoInteres.lenguajes?.map((language) =>
+    (
+        {
+            value: language.id_lenguaje,
+            label: lenaguajeDefault,
+        }))
 
 
-
+    console.log(languageEscogido)
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
@@ -247,7 +252,7 @@ const EditPoint = () => {
             es_visible: sitio.es_visible,
             publicado: true,
         })
-        console.log(datospuntoInteres.lenguajes)
+
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
     const [modalupimg, setModalupIMG] = useState(false)
@@ -287,11 +292,16 @@ const EditPoint = () => {
         downloadLink.click();
         document.body.removeChild(downloadLink);
     };
+    useEffect(() => {
+        getSites()
+        getLanguages()
+    }, [])
+
     return (
         <>
             <div className=' '>
                 <div className='row' style={{ backgroundColor: '#1A1A27', backgroundSize: 'auto 100%' }}>
-                    <div className='col-xs-12 col-md-5 col-lg-6 d-flex'>
+                    <div className='col-xs-12 col-md-5 col-lg-6 d-flex  py-5 px-9'>
                         <div id='center'>
 
                             <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
@@ -320,7 +330,7 @@ const EditPoint = () => {
                             {/* <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>  */}
                         </div>
                     </div>
-                    <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
+                    <div className='col-xs-12 col-md-6 col-lg-6 d-flex  py-5 px-9 justify-content-end'>
                         <div id='center2'>
                             <ul className='nav justify-content-end '>
                                 <li className='nav-item'>
@@ -353,6 +363,7 @@ const EditPoint = () => {
                                         <Modal.Title>Escanee su Código QR</Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body style={{ textAlign: 'center' }}>
+                                        <Modal.Dialog>Sitio: {sitio.nombre}</Modal.Dialog>
                                         <QRCodeCanvas
                                             id="qrCode"
                                             value={datospuntoInteres.qr_path}
@@ -560,7 +571,7 @@ const EditPoint = () => {
 
 
                                 <Select
-                                    defaultValue={languageEscogido}
+                                    value={languageEscogido}
                                     options={languagesOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
@@ -622,7 +633,7 @@ const EditPoint = () => {
                                         <br></br>
                                         <br />
                                         <div className='row'>
-                                            <p className=' text-movil col-md-12 text-center mt-5'>
+                                            <p className='  col-md-12 text-center mt-5'>
                                                 Maquetar los elementos del sitio para versión móvil.
                                             </p>
                                         </div>
@@ -654,7 +665,7 @@ const EditPoint = () => {
                                         <br></br>
                                         <br />
                                         <div className='row'>
-                                            <p className=' text-movil col-md-12 text-center mt-5'>
+                                            <p className='  col-md-12 text-center mt-5'>
                                                 Maquetar los elementos del sitio para versión web
                                             </p>
                                         </div>
@@ -681,9 +692,18 @@ const EditPoint = () => {
                                 </div>
                             </div>
                         </div>
+
                     </div>
+
                 </div>
             </div>
+            <br />
+            <br />
+            <h3>Creación de rutas entre puntos de interés</h3>
+            <SalaRutas
+                id_punto_a={sitio.id_punto}
+                id_sitio={sitio.id_sitio} 
+                puntosIteres={datospuntoInteres}/>
         </>
     )
 }
