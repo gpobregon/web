@@ -209,6 +209,7 @@ const AddUser: FC<any> = ({show, onClose}) => {
                         variant='primary'
                         onClick={() => {
                             signUp()
+                            onClose()
                         }}
                     >
                         {'Añadir '}

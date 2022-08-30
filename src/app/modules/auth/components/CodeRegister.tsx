@@ -15,7 +15,7 @@ const CodeRegister = () => {
         if (data.username != '' && data.code != '') {
             try {
                 await Auth.confirmSignUp(data.username, data.code)
-                navigate('/auth/new-password', {replace: true})
+                navigate('/auth', {replace: true})
             } catch (error) {
                 swal('Hubo un error al confimar tu correo', 'Inténtalo de nuevo', 'error')
                 console.log('error confirming sign up', error)
