@@ -86,6 +86,7 @@ const EditSite = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
+    console.log(state)
     getCategorys();
     mostrarCategorys();
     setearStatus();

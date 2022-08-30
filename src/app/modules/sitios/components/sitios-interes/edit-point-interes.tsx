@@ -159,6 +159,7 @@ const EditPoint = () => {
                     timer: 2000,
 
                 })
+                console.log(sitios)
                 navigate('/sitios/edit', {
                     state: sitios
                 })
@@ -200,7 +201,6 @@ const EditPoint = () => {
 
     const getSites = async () => {
         const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
-        console.log(site)
         setSitios(site.site)
 
     }
