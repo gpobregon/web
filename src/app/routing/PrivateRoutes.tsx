@@ -1,4 +1,4 @@
-import {lazy, FC, Suspense} from 'react'
+import {FC, Suspense} from 'react'
 import {Route, Routes, Navigate} from 'react-router-dom'
 import {MasterLayout} from '../../_metronic/layout/MasterLayout'
 import TopBarProgress from 'react-topbar-progress-indicator'
@@ -26,18 +26,18 @@ import OfflineManagement from '../modules/offline/OfflinePage';
 
 
 const PrivateRoutes = () => {
-    const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
-    const WizardsPage = lazy(() => import('../modules/wizards/WizardsPage'))
-    const AccountPage = lazy(() => import('../modules/accounts/AccountPage'))
-    const WidgetsPage = lazy(() => import('../modules/widgets/WidgetsPage'))
-    const ChatPage = lazy(() => import('../modules/apps/chat/ChatPage'))
+    // const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
+    // const WizardsPage = lazy(() => import('../modules/wizards/WizardsPage'))
+    // const AccountPage = lazy(() => import('../modules/accounts/AccountPage'))
+    // const WidgetsPage = lazy(() => import('../modules/widgets/WidgetsPage'))
+    // const ChatPage = lazy(() => import('../modules/apps/chat/ChatPage'))
     //const UsersPage = lazy(() => import('../modules/apps/user-management/UsersPage'))
 
     return (
         <Routes>
             <Route element={<MasterLayout />}>
                 {/* Redirect to Dashboard after success login/registartion */}
-                <Route path='auth/*' element={<Navigate to='/dashboard' />} />
+                <Route path='auth/*' element={<Navigate to='/sitios' />} />
 
         {/* Pages */}
         <Route path='dashboard' element={<DashboardWrapper />} />
@@ -57,11 +57,16 @@ const PrivateRoutes = () => {
         <Route path='template/:id' element={<Template />} />
         <Route path='notificaciones-push' element={<PushNotificationsPage />} /> 
         <Route path='offline' element={<OfflineManagement />} />
+        <Route path="/template">
+            <Route path="movil/:id" element={<Template />} />
+            <Route path="web/:id" element={<Template />} />
+        </Route>
+        <Route path='notificaciones-push' element={<PushNotificationsPage />} />
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
         <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
 
                 {/* Lazy Modules */}
-                <Route
+                {/* <Route
                     path='crafted/pages/profile/*'
                     element={
                         <SuspensedView>
@@ -108,7 +113,7 @@ const PrivateRoutes = () => {
                             <UsersPage />
                         </SuspensedView>
                     }
-                />
+                /> */}
                 {/* Page Not Found */}
                 <Route path='*' element={<Navigate to='/error/404' />} />
             </Route>
@@ -116,16 +121,16 @@ const PrivateRoutes = () => {
     )
 }
 
-const SuspensedView: FC<WithChildren> = ({children}) => {
-    const baseColor = getCSSVariableValue('--kt-primary')
-    TopBarProgress.config({
-        barColors: {
-            '0': baseColor,
-        },
-        barThickness: 1,
-        shadowBlur: 5,
-    })
-    return <Suspense fallback={<TopBarProgress />}>{children}</Suspense>
-}
+// const SuspensedView: FC<WithChildren> = ({children}) => {
+//     const baseColor = getCSSVariableValue('--kt-primary')
+//     TopBarProgress.config({
+//         barColors: {
+//             '0': baseColor,
+//         },
+//         barThickness: 1,
+//         shadowBlur: 5,
+//     })
+//     return <Suspense fallback={<TopBarProgress />}>{children}</Suspense>
+// }
 
 export {PrivateRoutes}
