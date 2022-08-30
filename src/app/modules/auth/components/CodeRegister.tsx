@@ -7,7 +7,9 @@ import {Auth} from 'aws-amplify'
 
 const CodeRegister = () => {
     const [data, setData] = useState({username: '', code: ''})
-    let navigate = useNavigate()
+    let navigate = useNavigate() 
+
+    
 
     const confirmSignUp = async () => {
         if (data.username != '' && data.code != '') {

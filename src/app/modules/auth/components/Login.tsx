@@ -5,7 +5,6 @@ import {Amplify, Auth} from 'aws-amplify'
 import {awsconfig} from '../../../../aws-exports'
 import {useAuth} from '../core/Auth'
 import swal from 'sweetalert'
-import {PasswordRequisite} from './PasswordRequisite'
 Amplify.configure(awsconfig)
 Amplify.configure(awsconfig)
 
@@ -32,7 +31,7 @@ const alertEmailNoIngresado = async () => {
 
 const alertPassword = async () => {
     swal({
-        text: '¡Contraseña incorrecta!',
+        text: '¡Contraseña no valida!',
         icon: 'warning',
     })
 }

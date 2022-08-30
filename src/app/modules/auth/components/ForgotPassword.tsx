@@ -3,24 +3,48 @@ import {Link, useNavigate} from 'react-router-dom'
 import {requestPassword} from '../core/_requests'
 import {Form, Button} from 'react-bootstrap'
 import swal from 'sweetalert'
-import {Auth} from 'aws-amplify'
+import {Auth} from 'aws-amplify' 
+
+const alertEmail = async () => {
+    swal({
+        text: '¡Email no valido!',
+        icon: 'warning',
+    })
+} 
+
+const alertEmailNoIngresado = async () => {
+    swal({
+        text: '¡Email no ingresado!',
+        icon: 'warning',
+    })
+}
 
 export function ForgotPassword() {
     const [email, setEmail] = useState('')
-    let navigate = useNavigate()
+    let navigate = useNavigate() 
 
     const verifyEmail = async () => {
-        if (email != '') {
-            try {
+    
+            try { 
                 await Auth.forgotPassword(email)
                 localStorage.setItem('email', JSON.stringify(email))
                 navigate('/auth/restore-password', {replace: true})
             } catch (error) {
-                swal('No se ha encontrado tu correo', 'Inténtalo de nuevo', 'error')
+                swal('No se ha encontrado tu correo', 'Verifica si haz ingresado un email registrado', 'error')
                 console.log('error confirming sign up', error)
             }
+        
+    } 
+
+    const emailValidation = () => {
+        const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9·-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g 
+
+        if (regEx.test(email)) { 
+            verifyEmail();
+        } else if (!regEx.test(email) && email !== '') {
+            alertEmail()
         } else {
-            swal('Correo vacío', 'Por favor ingresa correctamente tu correo', 'warning')
+            alertEmailNoIngresado()
         }
     }
 
@@ -51,7 +75,7 @@ export function ForgotPassword() {
                     id='kt_password_reset_submit'
                     className='btn btn-lg btn-primary'
                     style={{width: '100%'}}
-                    onClick={() => verifyEmail()}
+                    onClick={() => emailValidation()}
                 >
                     {'Siguiente '}
                 </button>

@@ -1,12 +1,14 @@
-import React, {FC, useState} from 'react'
-import {Button, Col, Form, Row, Table} from 'react-bootstrap'
+import React, { FC, useState, useEffect } from 'react'
+import { Button, Col, Form, Row, Table } from 'react-bootstrap'
 import Select from 'react-select'
-import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
+import { initialQueryState, KTSVG, useDebounce } from '../../../_metronic/helpers'
 import AddUser from './components/add-user'
 import DeleteUser from './components/delete-user'
 import makeAnimated from 'react-select/animated'
-import {Link} from 'react-router-dom'
-import {awsconfig} from '../../../aws-exports'
+import { Link } from 'react-router-dom'
+import { awsconfig } from '../../../aws-exports'
+import { DataStore } from 'aws-amplify';
+import Auth from '@aws-amplify/auth';
 import * as AWS from 'aws-sdk'
 
 const customStyles = {
@@ -56,42 +58,26 @@ const customStyles = {
 }
 
 const options = [
-    {value: 'Admnistrador', label: 'Administrador'},
-    {value: 'Editor', label: 'Editor'},
-    {value: 'Gestor', label: 'Gestor'},
+    { value: 'Admnistrador', label: 'Administrador' },
+    { value: 'Editor', label: 'Editor' },
+    { value: 'Gestor', label: 'Gestor' },
 ]
 
 const animatedComponents = makeAnimated()
 
-const getUsers = () => {
-    let params = {
-        UserPoolId: awsconfig.userPoolId,
-        AttributesToGet: ['email'],
-    }
+//esto me retorna el email del usuario con el que estoy logueado
+// const getEmail = ()=>{ 
+//     Auth.currentAuthenticatedUser().then((user) => {
+//         console.log('user email = ' + user.attributes.email + ' ' + user.attributes.name  );
+//       });
+// } 
 
-    return new Promise((resolve, reject) => {
-        AWS.config.update({
-            region: awsconfig.region,
-            accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-            secretAccessKey: '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',
-        })
-        let cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider()
-        cognitoidentityserviceprovider.listUsers(params, (err, data) => {
-            if (err) {
-                console.log(err)
-                reject(err)
-            } else {
-                console.log('data', data)
-                resolve(data)
-            }
-        })
-    })
-}
+// getEmail()
 
-getUsers()
-
-const UserManagement: FC<any> = ({show}) => {
+const UserManagement: FC<any> = ({ show }) => {
     let iterationRows = [1, 2, 3, 4, 5, 6]
+    let users = null
+    /* const [users, setUsers] = useState([]); */
     const [modalAddUser, setModalAddUser] = useState(false)
     const [modalDeleteUser, setModalDeleteUser] = useState(false)
     const [buttonAcept, setButtonAcept] = useState(false)
@@ -105,6 +91,39 @@ const UserManagement: FC<any> = ({show}) => {
     const showModalDeleteUser = () => {
         setModalDeleteUser(true)
     }
+
+    const getUsers = () => {
+        let params = {
+            UserPoolId: awsconfig.userPoolId,
+            AttributesToGet: ['name', 'email', 'custom:role'],
+        }
+
+        return new Promise((resolve, reject) => {
+            AWS.config.update({
+                region: awsconfig.region,
+                accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
+                secretAccessKey: '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',
+            })
+            let cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider()
+            cognitoidentityserviceprovider.listUsers(params, (err, data) => {
+                if (err) {
+                    console.log(err)
+                    reject(err)
+                } else {
+                    resolve(data)
+
+                    if (data.hasOwnProperty('Users') == true) {
+                        users = data.Users
+                        console.log(users)
+                    }
+                }
+            })
+        })
+    }
+
+    useEffect(() => {
+        getUsers()
+    }, [])
 
     return (
         <>
@@ -127,9 +146,9 @@ const UserManagement: FC<any> = ({show}) => {
                 </div>
             </div>
 
-            <div style={show == false ? {display: 'none'} : {display: 'block'}}>
+            <div style={show == false ? { display: 'none' } : { display: 'block' }}>
                 <Row className='mb-7'>
-                    <div className='text-left' style={{paddingTop: 20}}>
+                    <div className='text-left' style={{ paddingTop: 20 }}>
                         <h3 className='text-dark mt-0'>Gestión de Usuarios</h3>
                     </div>
                 </Row>
@@ -144,7 +163,7 @@ const UserManagement: FC<any> = ({show}) => {
                         {/* <div className='d-flex align-items-center position-relative my-1'>  */}
                         <div
                             className='d-flex align-items-center position-relative  '
-                            style={{width: '100%', justifyContent: 'space-between'}}
+                            style={{ width: '100%', justifyContent: 'space-between' }}
                         >
                             <KTSVG
                                 path='/media/icons/duotune/general/gen021.svg'
@@ -184,7 +203,7 @@ const UserManagement: FC<any> = ({show}) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {iterationRows.map((item) => (
+                                {users ? users.map((item) => (
                                     <tr key={item}>
                                         <td>
                                             <div
@@ -215,7 +234,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                 <div>
                                                     <Button
                                                         variant='btn btn-light btn-active-light-primary'
-                                                        style={{marginLeft: 10}}
+                                                        style={{ marginLeft: 10 }}
                                                     >
                                                         <i
                                                             className={`bi bi-check text-white fs-3`}
@@ -223,7 +242,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                     </Button>
                                                     <Button
                                                         variant='btn btn-light btn-active-light-primary'
-                                                        style={{marginLeft: 10}}
+                                                        style={{ marginLeft: 10 }}
                                                     >
                                                         <i
                                                             className={`bi bi-x text-white fs-3`}
@@ -244,7 +263,8 @@ const UserManagement: FC<any> = ({show}) => {
                                             </label>
                                         </td>
                                     </tr>
-                                ))}
+                                )) : ()
+                                }
                             </tbody>
                         </Table>
                     </div>
@@ -253,7 +273,7 @@ const UserManagement: FC<any> = ({show}) => {
                 <AddUser
                     show={modalAddUser}
                     onClose={() => setModalAddUser(false)}
-                    //addUser={addUser}
+                //addUser={addUser}
                 />
 
                 <DeleteUser show={modalDeleteUser} onClose={() => setModalDeleteUser(false)} />
