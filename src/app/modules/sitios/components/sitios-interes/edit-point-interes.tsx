@@ -85,6 +85,8 @@ const EditPoint = () => {
     const handleClose = () => setShow(false)  //modal close qr
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
+      //get sitio-------------------------------------------------------------------------------------
+      const [sitios, setSitios] = useState()
     const { state } = useLocation()
     const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
@@ -196,8 +198,7 @@ const EditPoint = () => {
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
     }
-    //get sitio-------------------------------------------------------------------------------------
-    const [sitios, setSitios] = useState()
+    
 
     const getSites = async () => {
         const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)

@@ -271,8 +271,7 @@ const EditSite = () => {
       publicado: status.publicado,
       oculto: status.oculto,
     })
-
-    // console.log(site);
+console.log(site)
 
   };
   // UPLOAD IMAGE-------------------------------------------------------------------------
