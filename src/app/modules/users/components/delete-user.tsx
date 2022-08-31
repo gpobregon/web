@@ -1,11 +1,20 @@
 import React, {useState, FC, useEffect} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import {Button, Modal, Form, Row, Col} from 'react-bootstrap'
+import {Button, Modal, Form, Row, Col} from 'react-bootstrap' 
+ 
+import {awsconfig} from '../../../../aws-exports' 
+import * as AWS from 'aws-sdk' 
+
+import {
+    ListUsersResponse,
+    UsersListType,
+    UserType,
+} from 'aws-sdk/clients/cognitoidentityserviceprovider'
 
 
 
-const customStyles = {
+const customStyles = { 
     control: (base: any, state: any) => ({
         ...base,
         background: 'transparent',
@@ -46,11 +55,36 @@ const customStyles = {
         padding: 0,
         borderRadius: 6.175,
     }),
-}
+} 
 
 
     
-const DeleteUser: FC<any> = ({show, onClose, addTag}) => { 
+const DeleteUser: FC<any> = ({show, onClose, addTag}) => {   
+    const [users, setUsers] = useState<UserType[]>([])
+    const [existUsers, setExistUsers] = useState(false)
+
+    const getUsers = async () => { 
+
+        let params = {
+            UserPoolId: awsconfig.userPoolId,
+            AttributesToGet: ['name', 'email', 'custom:role'],
+        }
+    
+        return new Promise((resolve, reject) => {
+            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+            cognito.listUsers(params, (err, data) => {
+                if (err) {
+                    console.log(err)
+                    reject(err)
+                } else {
+                    resolve(data)
+    
+                    setUsers(data.Users as UserType[])
+                    setExistUsers(true)
+                }
+            })
+        })
+    }
 
     return (
         <>
@@ -58,7 +92,7 @@ const DeleteUser: FC<any> = ({show, onClose, addTag}) => {
                 <Modal.Header closeButton>
                     <Modal.Title>{'¿Seguro que deseas eliminar este usuario?'}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>  
+                <Modal.Body>   
                     <Row>
                         <Col lg={4} md={4} sm={3} > 
                             <div

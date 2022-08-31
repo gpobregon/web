@@ -102,7 +102,7 @@ const ReportsPage = () => {
                     </Col>
 
                     <Col sm='4' md='3' style={{cursor: 'pointer'}}>  
-                    <Link to='/reportes/user-management'>
+                    <Link to=''>
                         <Card
                             className='d-flex justify-content-center align-items-center p-5'
                             style={{
