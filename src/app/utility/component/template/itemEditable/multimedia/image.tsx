@@ -1,18 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
-import ContentEditable from "react-contenteditable";
 import { Menu, Item, useContextMenu } from "react-contexify";
+import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
 
 type Model = {
-    data: any
-    referencia: any
-    handlerId: any
-    isDragging : any
-    setEditItem: (data : any) => void
-    updateElement: (data : any) => void
-    removeItem: (data : any) => void
+  data: any
+  referencia: any
+  handlerId: any
+  isDragging : any
+  setEditItem: (data: any) => void
+  updateElement: (data: any) => void
+  removeItem: (data : any) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
+const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
   
   const { show } = useContextMenu({ id: "menu-id" });  
   
@@ -39,14 +39,9 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
             <div className="p-1 py-1 d-flex align-items-center">
               <i className="bi bi-grip-vertical fa-2x"/>
             </div>
-            <ContentEditable
-                id={data.id}
-                className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
-                html={ `${data.text}` } // innerHTML of the editable div
-                disabled={isDragging} // use true to disable edition
-                onChange={changeText} // handle innerHTML change
-                onClick={() => setEditItem(data)}
-            />
+            <div id={data.id} className={`editable ${data.textAling} w-100`}>
+              <img src={toAbsoluteUrl("/media/png/picture.png")} alt="" className="w-75"/>
+            </div>
             <Menu id={"menu-id"} theme="dark" data-test={data}>
               <Item onClick={(e : any) => destroyItem(e)}>
                 <div>
@@ -58,4 +53,4 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     )
 }
 
-export default Text
+export default Picture

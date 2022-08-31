@@ -56,6 +56,7 @@ const Multimedia = [
     id: 6,
     type: "image",
     text: 'Imagen',
+    textAling: "text-center",
   },
   {
     id: 7,

@@ -6,7 +6,7 @@ import { ContentContext } from '../context'
 const Index = () => {
     const { changeTypeEdit, language, changeLangegeSelect, changeLaguage } = useContext(ContentContext)
 
-    console.log()
+    // console.log(changeLaguage)
     return (
         <div className="mt-8 d-flex justify-content-between">
             <div>
