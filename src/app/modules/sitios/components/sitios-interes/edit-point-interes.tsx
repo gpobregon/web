@@ -161,7 +161,7 @@ const EditPoint = () => {
                     timer: 2000,
 
                 })
-                console.log(sitios)
+                // console.log(sitios)
                 navigate('/sitios/edit', {
                     state: sitios
                 })
@@ -192,7 +192,7 @@ const EditPoint = () => {
     //petitions----------------------------------------------------------------------------
     const addNewPoint = async () => {
         await postData(addNewPointInteres, sitio)
-        console.log(sitio)
+        // console.log(sitio)
     }
 
     const updatePoint = async () => {
@@ -223,11 +223,11 @@ const EditPoint = () => {
         }))
 
 
-    console.log(languageEscogido)
+    // console.log(languageEscogido)
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        console.log(language)
+        // console.log(language)
     }
 
     const languagesOptions = languages?.map((language) => ({

@@ -88,7 +88,7 @@ const EditSite = () => {
   useEffect(() => {
     console.log(state)
     getCategorys();
-    mostrarCategorys();
+    
     setearStatus();
     var txt = "";
     for (var i = 0; i < site.categorias.length; i++) {
@@ -122,15 +122,20 @@ const EditSite = () => {
     })
   }
 
-  const mostrarCategorys = () => {
-    site.categorias.map((cat: any) => {
-      editcategorys.push({ value: Number.parseInt(cat.id_categoria), label: cat.nombre })
-    }
-    )
-    setEditCategory(editcategorys)
-    // console.log(editcategorys)
-  }
+  // const mostrarCategorys = () => {
+  //   site.categorias.map((cat: any) => {
+  //     editcategorys.push({ value: Number.parseInt(cat.id_categoria), label: cat.nombre })
+  //   }
+  //   )
+    
+  // }
 
+  const mostrarCategorys =  site.categorias.map((cat) =>
+  (
+      {
+          value: cat.id_categoria,
+          label: cat.nombre,
+      }))
 
 
   const alertNotNullInputs = async () => {
@@ -146,10 +151,9 @@ const EditSite = () => {
   //methods to post data to api------------------------------------------------------
 
   async function postSite(sitee: any) {
-    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != '') {
-
+    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != '' && site.categorias.length > 0) {
       const sit: any = await postData(updateSiteMethod, sitee)
-      //  console.log(sitee)
+      saveChanges();
     } else {
       alertNotNullInputs()
     }
@@ -447,7 +451,7 @@ console.log(site)
                   onClick={() => {
                     // console.log('site')
                     postSite(site)
-                    saveChanges();
+                    
                     // console.log(site)
                     // navigate('/site')
                   }}
@@ -684,7 +688,7 @@ console.log(site)
                     closeMenuOnSelect={false}
                     styles={customStyles}
                     components={animatedComponents}
-                    defaultValue={editcategorys}
+                    defaultValue={mostrarCategorys}
                     isMulti
                     options={categorys}
                     // placeholder={categorysHolder}

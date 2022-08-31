@@ -36,6 +36,8 @@ type datosPuntoInteres = {
     id_punto_a: number,
     id_punto_b: number,
     interes:datosPuntoInteres2
+    nombre_punto_a: string,
+    nombre_punto_b: string,
 }
 const AddRoute = () => {
     const { state } = useLocation()
@@ -69,7 +71,7 @@ const AddRoute = () => {
         setruta(route)
         setGetimg(route.imagenes as Imagen[])
         setagregrarPaso(route.pasos)
-        console.log(route)
+        // console.log(route)
     }
     const [imgtempomodal, setImgtempomodal] = useState({
         imagen1: '',
@@ -87,9 +89,9 @@ const AddRoute = () => {
         await postData(addImages, imganes)
         // const g = await postData(addImages, imganes)
         // const a = await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
-        console.log(imganes)
-        console.log(imgprincipal)
-        console.log(agregrarPaso)
+        // console.log(imganes)
+        // console.log(imgprincipal)
+        // console.log(agregrarPaso)
         // console.log(a)
         // var newArray = arrayimagenes.filter((item) => item.id_image !== 1);
         // console.log(newArray);
@@ -124,8 +126,6 @@ const AddRoute = () => {
     const navigate = useNavigate()
 
     const imagenesReferencias = async (url: string) => {
-        console.log(id)
-        console.log(url)
 
         if (id === -1) {
             //agregar iamgen de referencia por primera vez 
@@ -213,7 +213,6 @@ const AddRoute = () => {
 
             obtenerRuta()
         }
-        console.log(agregrarPaso)
     }, [contador])
 
     const telefonosHandler = async (e: any, idx: any) => {
@@ -232,14 +231,6 @@ const AddRoute = () => {
         await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: editEstadopaso })
         var newArray = agregrarPaso.filter((item: any) => item.id_paso !== idx);
         setagregrarPaso(newArray);
-        // const tempPasos = newArray;
-        // for (let i = 0; i < tempPasos.length; i++) {
-        //     tempPasos[i].id_paso = i + 1;
-        //     tempPasos[i].posicion_en_lista = i + 1;
-        //     tempPasos[i].estado = 1;
-        //     tempPasos[i].descripcion = agregrarPaso[i].descripcion;
-        // }
-        console.log(newArray)
        setContador(contador - 1)
        setagregrarPaso([])
         await obtenerRuta()
@@ -253,7 +244,7 @@ const AddRoute = () => {
     //alert methods-----------------------------------------------------------------------
     const alerta = async () => {
         swal({
-            title: "Solo 5 pasos maximo",
+            title: "Solo 5 pasos máximo",
             icon: "error",
 
         })
@@ -314,23 +305,7 @@ const AddRoute = () => {
 
                             <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px', color: '#FFFFFF' }} 
                             onClick={() => {
-                                navigate('/sitios/edit-point-interes', {
-                                    state: {
-                                        id_punto: puntos.interes.id_punto,
-                                        lenguajes: puntos.interes.lenguajes,
-                                        id_sitio:  puntos.interes.id_sitio,
-                                        id_guia:  puntos.interes.id_guia,
-                                        nombre:  puntos.interes.nombre,
-                                        descripcion:  puntos.interes.descripcion,
-                                        geoX:  puntos.interes.geoX,
-                                        geoY:  puntos.interes.geoY,
-                                        portada_path:  puntos.interes.portada_path,
-                                        qr_path:  puntos.interes.qr_path,
-                                        es_portada_de_sitio:  puntos.interes.es_portada_de_sitio,
-                                        estado:  puntos.interes.estado,
-                                        es_visible:  puntos.interes.es_visible,
-                                    },
-                                })
+                                discardChanges()
                             }} ></i>
 
 
@@ -344,7 +319,7 @@ const AddRoute = () => {
                             </span>
                         </div>
                         <div id='center'>
-                            <p style={{ marginTop: '13px', color: '#565674' }} > De Punto de interes 01 a Punto de Interes 02 </p>
+                            <p style={{ marginTop: '13px', color: '#565674' }} > De Punto de interes {puntos.id_punto_a} a Punto de Interes {puntos.id_punto_b} </p>
                         </div>
                     </div>
                     <div className='col-xs-12 col-md-6 col-lg-6 d-flex py-5 px-9 justify-content-end'>
@@ -393,9 +368,9 @@ const AddRoute = () => {
                         <br />
                         <div className='card-header row'>
                             <div className='col-xs-12 col-md-5 col-lg-5'>
-                                <label style={{ fontSize: '18px', color: '#92929F', background: "#28283D" }}> Punto de Interes {puntos.id_punto_a}</label>
+                                <label style={{ fontSize: '18px', color: '#92929F', background: "#28283D" }}> Punto de Interes {puntos.nombre_punto_a}</label>
                                 <i className="bi bi-arrow-right-short" style={{ fontSize: '18px', color: '#FFFFFF' }}></i>
-                                <label style={{ fontSize: '18px', color: '#92929F', background: "#28283D" }}> Punto de Interes {puntos.id_punto_b}</label>
+                                <label style={{ fontSize: '18px', color: '#92929F', background: "#28283D" }}> Punto de Interes {puntos.nombre_punto_b}</label>
                                 <br></br>
                                 <br></br>
                                 <label style={{ fontSize: '18px', color: '#FFFFFF' }}>Indicaciones para llegar</label>
@@ -516,7 +491,6 @@ const AddRoute = () => {
 
                                                     <Col>
                                                         <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => {
-                                                            console.log('borrar')
                                                             setruta({
                                                                 id_punto_a: ruta!.id_punto_a,
                                                                 id_punto_b: ruta!.id_punto_b,

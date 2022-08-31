@@ -456,6 +456,7 @@ const ConfSite = () => {
                   <br />
                   <input
                     type='text'
+                    pattern="[A-Za-z0-9]{1,15}"
                     className='form-control'
                     value={site.nombre == '' ? '' : site.nombre}
                     style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
