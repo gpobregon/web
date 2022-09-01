@@ -3,6 +3,7 @@ import { createContext, FC, useState, useCallback, useEffect } from 'react'
 import { WithChildren } from '../../../utility/models/childrenContext'
 import { updateData, validElement, generateRandomString } from '../../../utility/global/index'
 import { getData, postData } from '../../../services/api'
+import { useParams } from 'react-router-dom'
 import update from 'immutability-helper'
 import { useDrop } from "react-dnd"
 import swal from 'sweetalert'
@@ -13,11 +14,13 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     const [board, setBoard] = useState<any>([])
     const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
+    const [oneDataSite, setOneDataSite] = useState<any>([])
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<number>(1)
     let [count, setCount] = useState(0)
     const [editItem, setEditItem] = useState<any>([])
-
+    const { id } = useParams()
+  console.log(id)
     const addElement = (data : any) => {
         const response = validElement(data.type)
         const result = response.filter((item : any) => data.id === item.id);
@@ -69,14 +72,14 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
   // get all data
   const getLenguate = async () => {
     const response: any = await getData('language/select')
-    setLanguage(response ? response.data : [])
-    setChangeLaguage(response ? response.data : [])
-    oneData(response ? response.data : [])
+    setLanguage(response.data.length > 0 ? response.data : [])
+    setChangeLaguage(response.data.length  > 0 ? response.data[0] : [])
+    oneData(response.data.length  > 0 ? response.data[0] : [])
   }
   // obtenermos el template 
   const oneData = async ( item : any) => {
     const data = {
-            "id_punto": 1,
+            "id_punto": id,
             "id_lenguaje": item.value
           }
     const response: any = await postData('site/mobile/getone', data)
@@ -91,7 +94,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
   // guardamos el template
   const storeTemplate = async () => {
     const dataTemplate = {
-        "id_punto": 1,
+        "id_punto": id,
         "id_lenguaje": changeLaguage.value,
         "nombre":"Nombre editado3 sitio movil 1",
         "descripcion":"descripcion2 editado sitio movil 1",
@@ -119,18 +122,18 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     setBoard(oldBoard)
   }
   
+  const oneSite = async () => {
+    const response: any = await getData(`site/${id}`)
+    setOneDataSite(response.site ? response.site : [])
+}
+
   useEffect(() => {
     getLenguate()
+    oneSite()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-//   useEffect(() => {
-//     if (count === 1) {
-//         setEditItem(board[board.length-1])
-//         setCount(0)
-//     }
-//   // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [count, board])
+
 
     const value = {
         drop,
@@ -141,6 +144,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         moveCard,
         removeItem,
         setEditItem,
+        oneDataSite,
         discardChange,
         updateElement,
         storeTemplate,

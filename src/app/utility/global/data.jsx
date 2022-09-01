@@ -48,6 +48,8 @@ const Information = [
     id: 5,
     type: "event",
     text: 'Evento',
+    startDate: '0000-00-00',
+    finalDate: '0000-00-00'
   },
 ]
 
@@ -56,6 +58,7 @@ const Multimedia = [
     id: 6,
     type: "image",
     text: 'Imagen',
+    textAling: "text-center",
   },
   {
     id: 7,
@@ -114,4 +117,7 @@ const testRecursos = [
     type: 'video'
   }
 ]
-  export { Texts, Information, Multimedia, Others, testRecursos }
+
+const meses=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sept","Oct","Nov","Dic"];
+
+  export { Texts, Information, Multimedia, Others, testRecursos, meses }
