@@ -104,11 +104,11 @@ const Interes: FC<id_sitio> = (props) => {
         setModalUpdateRoom(true)
     }
 
-    const deleteRoom = (id: number, longitud: number) => {
+    const deleteRoom = (id: string, longitud: number) => {
         if (longitud > 0) {
             swal({
                 icon: "error",
-                title: "¡Error al Eliminar Sala" + id + "!",
+                title: "¡Error al Eliminar Sala: \n" + id + "!",
                 text: "No se puede eliminar una sala con puntos de interés",
             });
         } else {
@@ -267,7 +267,7 @@ const Interes: FC<id_sitio> = (props) => {
                                             </i>
                                         </Button>
                                         <Button variant="outline-dark" size="sm"
-                                            onClick={() => { deleteRoom(sala.id_sala, sala.points_of_interest.length) }}
+                                            onClick={() => { deleteRoom(sala.nombre, sala.points_of_interest.length) }}
                                             style={{ width: '5px', height: '40px' }} >
                                             <i className='fa-solid fa-xmark '
                                                 style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
