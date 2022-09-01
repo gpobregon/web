@@ -15,7 +15,7 @@ const SitiosPage = () => {
     const [filterSites, setFilterSites] = useState<Site[]>([])
     const [estado, setEstado] = useState(true)
     const [up, setUp] = useState(true)
-
+    const [cantidadSite, setCantidadSite] = useState(0)
     const search = (search: string) => {
         if (!search) {
             setFilterSites(sites)
@@ -39,6 +39,7 @@ const SitiosPage = () => {
     const getSites = async () => {
         const site: any = await postData(sitesMethod, { page: pageNumber, quantity: '8' })
         console.log(site)
+        setCantidadSite( site.count)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
     }
@@ -123,7 +124,7 @@ const SitiosPage = () => {
                             <h3 className=''>
                                 Gestor de Sitios
                             </h3>
-                            <h5 className='' style={{ color: '#565674', fontSize: '10px' }}    >| 272 en total</h5>
+                            <h5 className='' style={{ color: '#565674', fontSize: '10px' }}    >| {cantidadSite} en total</h5>
                         </div>
 
                         <div className='col-md-5 col-xs-12 searchDash  py-4 px-10'>

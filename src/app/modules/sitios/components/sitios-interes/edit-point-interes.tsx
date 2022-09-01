@@ -478,6 +478,7 @@ const EditPoint = () => {
                                                 <Link
                                                     className='bi bi-arrow-left-right background-button text-info'
                                                     to={''}
+                                                    onClick={() => { setModalupIMG(true)}}
                                                 ></Link>
                                             </Col>
                                             <Col>

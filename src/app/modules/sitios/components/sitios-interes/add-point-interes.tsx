@@ -384,6 +384,7 @@ const AddPoint = () => {
                       <Col>
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
+                          onClick={() => { setModalupIMG(true)}}
                           to={''}
                         ></Link>
                       </Col>

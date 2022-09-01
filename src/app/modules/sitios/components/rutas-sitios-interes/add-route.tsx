@@ -85,16 +85,10 @@ const AddRoute = () => {
             await postData(addImagePrincipal, imgprincipal)
            
         }
-        await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
+       
+        // if(arrayimagenes.length === 3){
         await postData(addImages, imganes)
-        // const g = await postData(addImages, imganes)
-        // const a = await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
-        // console.log(imganes)
-        // console.log(imgprincipal)
-        // console.log(agregrarPaso)
-        // console.log(a)
-        // var newArray = arrayimagenes.filter((item) => item.id_image !== 1);
-        // console.log(newArray);
+        await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
         swal({
             text: "Se Guardo paso ",
             icon: "success",
@@ -118,6 +112,19 @@ const AddRoute = () => {
                 es_visible:  puntos.interes.es_visible,
             },
         })
+        // }else{
+        //     swal("Error", "Debe seleccionar 3 imagenes de refencia", "error")
+        // }
+        // const g = await postData(addImages, imganes)
+        // const a = await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
+        // console.log(imganes)
+        // console.log(imgprincipal)
+        // console.log(agregrarPaso)
+        // console.log(a)
+        // var newArray = arrayimagenes.filter((item) => item.id_image !== 1);
+        // console.log(newArray);
+     
+       
     }
 
     const [id, setId] = useState<number>(0)
@@ -143,7 +150,7 @@ const AddRoute = () => {
                 imagenes: arrayimagenes
             })
         } else if(id === 0) {
-          //  agregar imagen addImagePrincipal;
+          //  agregar imagenPrincipal;
             setImgprincipal({
                 id_punto_a: puntos.id_punto_a,
                 id_punto_b: puntos.id_punto_b,
@@ -153,14 +160,14 @@ const AddRoute = () => {
                 id_punto_a: ruta!.id_punto_a,
                 id_punto_b: ruta!.id_punto_b,
                 estado: ruta!.estado,
-                img_principal: URLAWS + url,
+                img_principal: URLAWS + url, //mostrar la imagen principal en el modal
                 imagenes: ruta!.imagenes,
                 pasos: ruta!.pasos,
 
             })
         }else{
             //editar imagen de referencia
-            getimg[numeroImg].img_path = URLAWS + url
+            getimg[numeroImg].img_path = URLAWS + url //mostrar la imagen en el modal
             arrayimagenes.push({
                 id_image: id,
                 descripcion: '',
@@ -476,14 +483,15 @@ const AddRoute = () => {
                                                 style={{ height: '450px', borderRadius: '10px' }} />
                                             <div className="card-body">
                                                 <Row>
-                                                    <p style={{ color: '#565674' }}>Imagen:</p>
-                                                    <p >mapa_005.jpg</p>
+                                                    {/* <p style={{ color: '#565674' }}>Imagen:</p>
+                                                    <p >mapa_005.jpg</p> */}
                                                 </Row>
                                                 <Row>
                                                     <Col>
                                                         <Link
                                                             className='bi bi-arrow-left-right background-button text-info'
-                                                            to={''}
+                                                            to={''} 
+                                                            onClick={() => { setModalupIMG(true)}}
                                                         ></Link>
 
                                                     </Col>
@@ -556,6 +564,7 @@ const AddRoute = () => {
                                                                             <Link
                                                                                 className='bi bi-arrow-left-right background-button text-info'
                                                                                 to={''}
+                                                                                onClick={() => { setModalupIMG(true)}}
                                                                             ></Link>
                                                                         </Col>
                                                                         <Col>
@@ -602,6 +611,7 @@ const AddRoute = () => {
                                                                             <Link
                                                                                 className='bi bi-arrow-left-right background-button text-info'
                                                                                 to={''}
+                                                                                onClick={() => { setModalupIMG(true)}}
                                                                             ></Link>
                                                                         </Col>
                                                                         <Col>
@@ -648,6 +658,7 @@ const AddRoute = () => {
                                                                             <Link
                                                                                 className='bi bi-arrow-left-right background-button text-info'
                                                                                 to={''}
+                                                                                onClick={() => { setModalupIMG(true)}}
                                                                             ></Link>
                                                                         </Col>
                                                                         <Col>
@@ -695,6 +706,9 @@ const AddRoute = () => {
                                                                                 <Link
                                                                                     className='bi bi-arrow-left-right background-button text-info'
                                                                                     to={''}
+                                                                                    onClick={() => {     setModalupIMG(true)
+                                                                                        setId(img.id_image)
+                                                                                        setnumeroImg(index)}}
                                                                                 ></Link>
                                                                             </Col>
                                                                             <Col>
