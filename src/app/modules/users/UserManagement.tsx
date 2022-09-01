@@ -85,7 +85,7 @@ const UserManagement: FC<any> = ({show}) => {
     const [users, setUsers] = useState<UserType[]>([])
     const [existUsers, setExistUsers] = useState(false)
     const [modalAddUser, setModalAddUser] = useState(false)
-    const [modalDeleteUser, setModalDeleteUser] = useState(false)
+    const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
     //const banderID: any = 0
@@ -94,8 +94,8 @@ const UserManagement: FC<any> = ({show}) => {
         setModalAddUser(true)
     }
 
-    const showModalDeleteUser = () => {
-        setModalDeleteUser(true)
+    const showModalDeleteUser = (user: any) => {
+        setModalDeleteUser({show: true, user})
     }
 
     const getUsers = async () => {
@@ -118,9 +118,7 @@ const UserManagement: FC<any> = ({show}) => {
                 }
             })
         })
-    } 
-
-    
+    }
 
     const getPropertiesSelect = (item: any) => {
         if (existUsers == true) {
@@ -138,7 +136,7 @@ const UserManagement: FC<any> = ({show}) => {
 
     useEffect(() => {
         getUsers()
-    }, [])
+    }, []) 
 
     return (
         <Container fluid>
@@ -212,7 +210,7 @@ const UserManagement: FC<any> = ({show}) => {
                                     <tr>
                                         <th>Foto</th>
                                         <th>Usuario</th>
-                                        <th>Teléfono</th>
+
                                         <th>Rol</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -220,7 +218,7 @@ const UserManagement: FC<any> = ({show}) => {
                                 <tbody>
                                     {existUsers == true ? (
                                         users?.map((item: any) => (
-                                            <tr key={item}>
+                                            <tr key={item.Username}>
                                                 <td>
                                                     <div
                                                         style={{
@@ -237,20 +235,18 @@ const UserManagement: FC<any> = ({show}) => {
                                                         {item.Attributes[2].Value}
                                                     </div>
                                                 </td>
-                                                <td className='text-muted'>+502 5555 5555</td>
+
                                                 <td className='d-flex'>
                                                     {existUsers ? (
                                                         <Select
                                                             options={options}
                                                             styles={customStyles}
                                                             components={animatedComponents}
-                                                                                                               onChange={() => {
+                                                            onChange={() => {
                                                                 setButtonAcept(true)
                                                                 setBanderID(item)
                                                             }}
 
-                                                            
-                                                            
                                                             // defaultValue={{
                                                             //     label:
                                                             //         item?.Atributes[1]?.Value ?? '',
@@ -285,7 +281,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                 <td>
                                                     <label
                                                         className='btn btn-light btn-active-light-danger btn-sm'
-                                                        onClick={() => showModalDeleteUser()}
+                                                        onClick={() => showModalDeleteUser(item)}
                                                     >
                                                         {'Eliminar '}
                                                         <span className='menu-icon me-0'>
@@ -309,7 +305,11 @@ const UserManagement: FC<any> = ({show}) => {
                         //addUser={addUser}
                     />
 
-                    <DeleteUser show={modalDeleteUser} onClose={() => setModalDeleteUser(false)} />
+                    <DeleteUser
+                        show={modalDeleteUser.show}
+                        onClose={() => setModalDeleteUser({show: false, user: {}})} 
+                        user = {modalDeleteUser.user}
+                    />
                 </div>
             ) : (
                 <></>

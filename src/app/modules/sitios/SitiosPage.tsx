@@ -27,7 +27,7 @@ const SitiosPage = () => {
                 )
 
             )
-            console.log(filterSites)
+            
         }
     }
 
