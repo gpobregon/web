@@ -1,24 +1,49 @@
-import React, {FC, useState} from "react";  
-import {Link} from 'react-router-dom' 
+import React, {FC, useEffect, useState} from "react";  
+import {Link, useLocation} from 'react-router-dom' 
 import { Button, Col, Form, Row, Table, Card } from 'react-bootstrap' 
 import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
+import { getData } from "../../services/api";
 
 const OfflineManagement: FC<any> = ({show}) =>{ 
+    const { state } = useLocation()
+
+    const [url_get] = useState('')
+
+
+    useEffect(() => {
+        getOfflineParts()
+        console.log(state)
+        var txt = "";
+        // for (var i = 0; i < site.categorias.length; i++) {
+        //   txt += site.categorias[i].nombre + ", "
+        // }
+        // txt = txt.substring(0, txt.length - 2);
+        // setCategorysHolder(txt)
+    
+    }, []);
+    async function getOfflineParts() {
+        // const category: any = await postData(categorysMethod)
+
+        // category.map((cat: any) => {
+        //     categorys.push({ value: cat.id_categoria, label: cat.nombre })
+        // })
+    }
+
     return(  
         <> 
             <div
-                        className=''
-                        style={{
-                            backgroundColor: '#1E1E2D',
-                            borderRadius: '5px', 
-                        }}
-                    >
-                        <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
-                            <div className='d-flex align-items-center'>
-                                
-                                <h1 className='m-0'>Gestor Offline</h1>
-                            </div>
-                        </div>
+                className=''
+                style={{
+                    backgroundColor: '#1E1E2D',
+                    borderRadius: '5px', 
+                }}
+            >
+                <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
+                    <div className='d-flex align-items-center'>
+                        
+                        <h1 className='m-0'>Gestor Offline</h1>
+                    </div>
+                </div>
             </div> 
 
             <Row className='mt-12 mb-9'>
