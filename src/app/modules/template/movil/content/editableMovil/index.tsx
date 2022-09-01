@@ -36,8 +36,8 @@ const EditableMovil = () => {
             </Col>
             <Col lg={6}>
                 <Card.Body className="rounded height-section-editable d-flex justify-content-center">
-                    <div className="d-flex align-items-center">
-                    { editItem.length !== 0 && <AttrItems editItem={editItem} updateElement={updateElement}/>}
+                    <div className="d-flex align-items-center w-100">
+                        { editItem.length !== 0 && <AttrItems editItem={editItem} updateElement={updateElement}/>}
                     </div>
                 </Card.Body>
             </Col>
