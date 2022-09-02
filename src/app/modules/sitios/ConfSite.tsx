@@ -416,6 +416,7 @@ const ConfSite = () => {
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
                           to={''}
+                          onClick={() => { setModalupIMG(true)}}
                         ></Link>
                       </Col>
                       <Col>
@@ -456,6 +457,7 @@ const ConfSite = () => {
                   <br />
                   <input
                     type='text'
+                    pattern="[A-Za-z0-9]{1,15}"
                     className='form-control'
                     value={site.nombre == '' ? '' : site.nombre}
                     style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
