@@ -120,4 +120,63 @@ const testRecursos = [
 
 const meses=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sept","Oct","Nov","Dic"];
 
-  export { Texts, Information, Multimedia, Others, testRecursos, meses }
+const Element = [
+  {
+    ElementosWeb: [
+      {
+        title: 'hero',
+        items: [
+          {
+            text: 'Hero 1',
+            type: "url"
+          },
+          {
+            text: 'Hero 2',
+            type: "url"
+          }
+        ]
+      },
+      {
+        title: 'Contenido',
+        items: [
+          {
+            text: 'Contenido 1',
+            type: "url"
+          },
+          {
+            text: 'Contenido 2',
+            type: "url"
+          }
+        ]
+      },
+      {
+        title: 'Galería',
+        items: [
+          {
+            text: 'Contenido 1',
+            type: "url"
+          },
+          {
+            text: 'Contenido 2',
+            type: "url"
+          }
+        ]
+      },
+      {
+        title: 'Pie de Página',
+        items: [
+          {
+            text: 'Footer 1',
+            type: "url"
+          },
+          {
+            text: 'Footer 2',
+            type: "url"
+          }
+        ]
+      }
+    ]
+  }
+]
+
+  export { Texts, Information, Multimedia, Others, testRecursos, meses, Element }

@@ -1,11 +1,14 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, useContext } from 'react'
 import { Row, Col, InputGroup, Form } from 'react-bootstrap'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {useDropzone} from 'react-dropzone';
 import AudioResource from '../../../../utility/component/resource/audio';
 import Image from '../../../../utility/component/template/item/recursos/image'
 import { testRecursos } from '../../../../utility/global/data'
+import { ContentContext } from '../context'
+
 const Recursos = () => {
+    const { uploadResource } = useContext(ContentContext)
 
     const [files, setFiles] = useState<any>([])
     const {getRootProps, getInputProps} = useDropzone({
@@ -16,6 +19,8 @@ const Recursos = () => {
         const item: any = acceptedFiles.map((file : any ) => Object.assign(file, {
             preview: URL.createObjectURL(file)
           }))
+        //   console.log(item)
+        // uploadResource()
         setFiles([...files, item ]);
       }
     });
