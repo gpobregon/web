@@ -78,7 +78,6 @@ const animatedComponents = makeAnimated()
 // }
 
 // getEmail()
-
 const UserManagement: FC<any> = ({show}) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
@@ -101,7 +100,7 @@ const UserManagement: FC<any> = ({show}) => {
     const getUsers = async () => {
         let params = {
             UserPoolId: awsconfig.userPoolId,
-            AttributesToGet: ['name', 'email', 'custom:role'],
+            AttributesToGet: ['name', 'email', 'custom:role', 'custom:phoneNumber'],
         }
 
         return new Promise((resolve, reject) => {
@@ -118,7 +117,9 @@ const UserManagement: FC<any> = ({show}) => {
                 }
             })
         })
-    }
+    }  
+
+
 
     const getPropertiesSelect = (item: any) => {
         if (existUsers == true) {
@@ -134,9 +135,15 @@ const UserManagement: FC<any> = ({show}) => {
         }
     }
 
+    
+
+
+
     useEffect(() => {
-        getUsers()
-    }, []) 
+        getUsers() 
+    }, [])  
+
+    
 
     return (
         <Container fluid>
@@ -210,7 +217,7 @@ const UserManagement: FC<any> = ({show}) => {
                                     <tr>
                                         <th>Foto</th>
                                         <th>Usuario</th>
-
+                                        <th>Teléfono</th>
                                         <th>Rol</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -230,14 +237,15 @@ const UserManagement: FC<any> = ({show}) => {
                                                     ></div>
                                                 </td>
                                                 <td>
-                                                    <div>{item.Attributes[0].Value}</div>
+                                                    <div>{item.Attributes[1].Value}</div>
                                                     <div className='text-muted'>
-                                                        {item.Attributes[2].Value}
+                                                        {item.Attributes[3].Value}
                                                     </div>
                                                 </td>
-
+                                                <td className='text-muted'>{item.Attributes[0].Value}</td>
                                                 <td className='d-flex'>
                                                     {existUsers ? (
+                                                        <>
                                                         <Select
                                                             options={options}
                                                             styles={customStyles}
@@ -245,15 +253,17 @@ const UserManagement: FC<any> = ({show}) => {
                                                             onChange={() => {
                                                                 setButtonAcept(true)
                                                                 setBanderID(item)
-                                                            }}
+                                                            }} 
+                                                            // value={item?.Attributes[2]?.Value ? item.Attributes[2].Value : '' }
 
-                                                            // defaultValue={{
-                                                            //     label:
-                                                            //         item?.Atributes[1]?.Value ?? '',
-                                                            //     value:
-                                                            //         item?.Atributes[1]?.Value ?? '',
-                                                            // }}
-                                                        />
+                                                            defaultValue={{
+                                                                label: 
+                                                                    item?.Attributes[2]?.Value ?? '',
+                                                                value:
+                                                                    item?.Attributes[2]?.Value ?? '',
+                                                            }}
+                                                        /> 
+                                                        </> 
                                                     ) : (
                                                         <></>
                                                     )}

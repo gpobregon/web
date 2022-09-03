@@ -7,7 +7,14 @@ import {Amplify, Auth} from 'aws-amplify'
 import {awsconfig} from '../../../../aws-exports'
 import {useAuth} from '../../auth/core/Auth' 
 import swal from 'sweetalert'
-Amplify.configure(awsconfig)
+Amplify.configure(awsconfig) 
+
+const alertUserDone = async () => {
+    swal({
+        text: 'Usuario creado',
+        icon: 'success',
+    })
+}
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -28,8 +35,10 @@ const customStyles = {
     }),
     input: (base: any, state: any) => ({
         ...base,
-        color: '#92929f',
-    }),
+        color: '#92929f', 
+        
+    }), 
+    
     option: (base: any, state: any) => ({
         ...base,
         background: state.isFocused ? '#7239ea' : '#323248',
@@ -94,11 +103,14 @@ const AddUser: FC<any> = ({show, onClose}) => {
         name: '',
         lastname: '',
         role: '', 
-        passwordConfirm: ''
-    }) 
+        passwordConfirm: '',  
+        phoneNumber: ''
+    })  
+
+
 
     const signUp = async () => {           
-        if (user.lastname !='' && user.name !='' && user.password !='' && user.passwordConfirm !='' && user.role !=''  && user.username !='' ){ 
+        if (user.lastname !='' && user.name !='' && user.password !='' && user.passwordConfirm !='' && user.role !=''  && user.username !=''  && user.phoneNumber !='' ){ 
             if (user.password == user.passwordConfirm) { 
                
                 const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9·-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g
@@ -110,13 +122,15 @@ const AddUser: FC<any> = ({show, onClose}) => {
                         attributes: {
                             name: user.name,
                             'custom:lastname': user.lastname,
-                            'custom:role': user.role,
+                            'custom:role': user.role, 
+                            'custom:phoneNumber': user.phoneNumber
                         },
                         autoSignIn: {
                             // optional - enables auto sign in after user is confirmed
                             enabled: false,
                         }, 
-                    })
+                    }) 
+                    alertUserDone()
                     onClose()
                     } catch (error) { 
                         
@@ -144,7 +158,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
             name: user.name,
             lastname: user.lastname,
             role: event.value, 
-            passwordConfirm: user.passwordConfirm,
+            passwordConfirm: user.passwordConfirm, 
+            phoneNumber: user.phoneNumber
         })
     }
 
@@ -170,7 +185,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             name: e.target.value,
                                             lastname: user.lastname,
                                             role: user.role, 
-                                            passwordConfirm: user.passwordConfirm
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: user.phoneNumber
                                         })
                                     }}
                                 ></Form.Control>
@@ -191,7 +207,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             name: user.name,
                                             lastname: e.target.value,
                                             role: user.role, 
-                                            passwordConfirm: user.passwordConfirm
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: user.phoneNumber
                                         })
                                     }}
                                 ></Form.Control>
@@ -212,7 +229,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             name: user.name,
                                             lastname: user.lastname,
                                             role: user.role, 
-                                            passwordConfirm: user.passwordConfirm
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: user.phoneNumber
                                         })
                                     }}
                                 ></Form.Control>
@@ -230,7 +248,29 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                     onChange={handleChangeRole}
                                 />
                             </Form.Group>
-                        </Col>
+                        </Col> 
+
+                        <Col lg={12} md={12} sm={12}>
+                            <Form.Group>
+                                <Form.Label>{'Teléfono'}</Form.Label>
+                                <Form.Control
+                                    type='number'
+                                    name='Telefono'
+                                    className={'mb-4'}
+                                    onChange={(e) => {
+                                        setUser({
+                                            username: user.username,
+                                            password: user.password,
+                                            name: user.name,
+                                            lastname: user.lastname,
+                                            role: user.role, 
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: e.target.value
+                                        })
+                                    }}
+                                ></Form.Control>
+                            </Form.Group>
+                        </Col> 
 
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
@@ -246,7 +286,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             name: user.name,
                                             lastname: user.lastname,
                                             role: user.role, 
-                                            passwordConfirm: user.passwordConfirm
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: user.phoneNumber
+
                                         })
                                     }}
                                 ></Form.Control>
@@ -267,7 +309,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             name: user.name,
                                             lastname: user.lastname,
                                             role: user.role, 
-                                            passwordConfirm: e.target.value
+                                            passwordConfirm: e.target.value, 
+                                            phoneNumber: user.phoneNumber
                                         })
                                     }}
                                 ></Form.Control>

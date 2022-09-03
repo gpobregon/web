@@ -1,7 +1,9 @@
 import React, {useState, FC, useEffect} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import {Button, Modal, Form, Row, Col} from 'react-bootstrap'
+import {Button, Modal, Form, Row, Col} from 'react-bootstrap' 
+import Auth from '@aws-amplify/auth' 
+import { CognitoUser } from "amazon-cognito-identity-js";
 
 import {awsconfig} from '../../../../aws-exports'
 import * as AWS from 'aws-sdk'
@@ -9,8 +11,61 @@ import * as AWS from 'aws-sdk'
 import {
     ListUsersResponse,
     UsersListType,
-    UserType,
-} from 'aws-sdk/clients/cognitoidentityserviceprovider'
+    UserType,  
+} from 'aws-sdk/clients/cognitoidentityserviceprovider' 
+
+async function deleteUser() {
+    try {
+      const result = await Auth.deleteUser();
+      console.log(result);
+    } catch (error) {
+      console.log('Error deleting user', error);
+    }
+  } 
+
+
+//   async function onRemoveAccount() {
+//     Auth
+//         .currentAuthenticatedUser()
+//         .then((user: CognitoUser) => new Promise((resolve, reject) => { 
+            
+//             user.deleteUser(error => {
+//                 if (error) {
+//                     return reject(error);
+//                 }
+//                 if (this.props.onSessionChange) {               
+//                     this.props.onSessionChange();
+//                 }
+//                 document.location.href = "/login";
+                
+//                 resolve();
+//             });
+//         }))
+//         .catch(this.onError);
+// } 
+
+//me elimina tambien el usuario con el que estoy logueado
+const handleDeleteCognitoUser = async () => {
+    const user = await Auth.currentAuthenticatedUser();
+    user.deleteUser((error: any, data: any) => {
+      if (error) {
+        throw error;
+      }
+    // do stuff after deletion 
+        
+    });
+  }; 
+
+
+
+//   var params = {
+//     UserPoolId: 'STRING_VALUE', /* required */
+//     Username: 'STRING_VALUE' /* required */
+//   };
+//   cognitoidentityserviceprovider.adminDeleteUser(params, function(err, data) {
+//     if (err) console.log(err, err.stack); // an error occurred
+//     else     console.log(data);           // successful response
+//   });
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -58,7 +113,7 @@ const customStyles = {
 const DeleteUser: FC<any> = ({show, onClose, user}) => {
     const [users, setUsers] = useState<UserType[]>([])
     const [existUsers, setExistUsers] = useState(false)
-    const [params, setParams] = useState({name: ''})
+    const [params, setParams] = useState({name: ''}) 
 
     const getUsers = async () => {
         let params = {
@@ -78,6 +133,26 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                     setUsers(data.Users as UserType[])
                     setExistUsers(true)
                 }
+            })
+        })
+    } 
+
+    const deleteUsuarios = async ()=>{ 
+        var params = {
+            UserPoolId: awsconfig.userPoolId, /* required */
+            Username: user.Attributes[2].Value  /* required */
+          } 
+
+        return new Promise((resolve, reject) => { 
+            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region}) 
+            cognito.adminDeleteUser(params, (err, data) => { 
+                if (err) {
+                    console.log(err)
+                    reject(err)
+                } else {
+                    resolve(data)  
+                }
+                
             })
         })
     }
@@ -132,9 +207,10 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                     </Button>
                     <Button
                         variant='btn btn-light-danger btn-active-danger'
-                        // onClick={() => {
-                        //     addTag(tag)
-                        // }}
+                        onClick={() => { 
+                            deleteUsuarios() 
+                            document.location.href = "/usuarios/user-management";
+                        }}
                     >
                         {'Eliminar '}
                         <i className={`bi bi-trash-fill text-white fs-3`}></i>
