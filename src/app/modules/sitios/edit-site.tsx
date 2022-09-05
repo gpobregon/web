@@ -86,7 +86,7 @@ const EditSite = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log(state)
+    // console.log(state)
     getCategorys();
     
     setearStatus();
@@ -329,12 +329,12 @@ console.log(site)
           <div className='col-xs-12 col-md-5 col-lg-6 d-flex py-5 px-9' >
             <div id='center'>
               
-                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px',color: '#FFFFFF' }}   onClick={() => {
+                <Button className='btn-secondary fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px',color: '#FFFFFF' }}   onClick={() => {
            
                     
                     discardChanges();
                
-                  }} ></i>
+                  }} ></Button>
            
 
 
@@ -358,11 +358,11 @@ console.log(site)
             <div id='center2'>
               <ul className='nav justify-content-end '>
                 <li className='nav-item'>
-                  <i
+                  <Button
                     className={
                       status.favorito == false
-                        ? 'text-white  fa-regular fa-star background-button'
-                        : 'text-primary fas fa-star background-button'
+                        ? 'btn-secondary text-white  fa-regular fa-star background-button'
+                        : 'btn-secondary text-primary fas fa-star background-button'
                     }
                     id='center2'
                     onClick={() => {
@@ -372,11 +372,11 @@ console.log(site)
                       changeStatus(status.favorito, status.publicado, status.oculto)
                       // : changeStatus(false, status.publicado, status.oculto)
                     }}
-                    style={{ display: 'flex', marginRight: '4px' }} ></i>
+                    style={{ display: 'flex', marginRight: '4px' }} ></Button>
                 </li>
                 <li className='nav-item'>
-                  <i
-                    className='fa-solid fa-qrcode background-button '
+                  <Button
+                    className='btn-secondary fa-solid fa-qrcode background-button '
                     id='center2'
                     onClick={() => {
                       setQr('sitios/view/' + site.id_sitio)
@@ -384,7 +384,7 @@ console.log(site)
 
                     }}
                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                  ></i>
+                  ></Button>
                 </li>
 
                 <Modal show={show} onHide={handleClose}>
@@ -415,11 +415,11 @@ console.log(site)
                   </Modal.Footer>
                 </Modal>
 
-                <i
+                <Button
                   className={
                     status.oculto == false
-                      ? 'fa-solid fa-eye-slash background-button'
-                      : 'fa-solid fa-eye background-button'
+                      ? 'btn-secondary fa-solid fa-eye-slash background-button'
+                      : 'btn-secondary fa-solid fa-eye background-button'
                   }
                   id='center2'
                   onClick={() => {
@@ -430,9 +430,9 @@ console.log(site)
                     changeStatus(status.favorito, status.publicado, status.oculto)
                   }}
                   style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                ></i>
-                <i
-                  className='fa-solid fa-xmark background-button'
+                ></Button>
+                <Button
+                  className='btn-secondary fa-solid fa-xmark background-button'
                   id='center2'
                   onClick={() => {
                     // var n = window.confirm('Esta seguro que descartar cambios?')
@@ -444,9 +444,9 @@ console.log(site)
                     discardChanges()
                   }}
                   style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                ></i>
-                <i
-                  className='fa-solid fa-floppy-disk background-button'
+                ></Button>
+                <Button
+                  className='btn-secondary fa-solid fa-floppy-disk background-button'
                   id='center2'
                   onClick={() => {
                     // console.log('site')
@@ -456,9 +456,9 @@ console.log(site)
                     // navigate('/site')
                   }}
                   style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                ></i>
+                ></Button>
 
-                <i
+                <Button
                   onClick={() => {
                     // status.publicado == false
                     //   ? changeStatus(status.favorito, true, status.oculto)
@@ -468,13 +468,13 @@ console.log(site)
                   }}
                   className={
                     status.publicado == false
-                      ? 'fa-solid fa-download background-button'
-                      : 'fa-solid fa-upload background-button'
+                      ? 'btn-secondary fa-solid fa-download background-button'
+                      : 'btn-secondary fa-solid fa-upload background-button'
                   }
                   id='center2'
                   style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                ></i>
-                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></i>
+                ></Button>
+                <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button>
               </ul>
             </div>
           </div>

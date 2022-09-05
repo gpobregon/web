@@ -13,6 +13,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import UpImage from '../upload-image';
 import { CatalogLanguage } from '../../../../models/catalogLanguage';
 import SalaRutas from '../rutas-sitios-interes/sala-rutas';
+import { CostExplorer } from 'aws-sdk';
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -94,7 +95,7 @@ const EditPoint = () => {
         id_sitio: datospuntoInteres.id_sitio,
         id_guia: datospuntoInteres.id_guia,
         descripcion: datospuntoInteres.descripcion,
-        id_lenguaje: 0,
+        id_lenguaje: datospuntoInteres.lenguajes[0].id_lenguaje,
         nombre: datospuntoInteres.nombre,
         geoX: datospuntoInteres.geoX,
         geoY: datospuntoInteres.geoY,
@@ -174,8 +175,9 @@ const EditPoint = () => {
             icon: "warning",
             buttons: ["Sí", "No"],
 
-        }).then(res => {
+        }).then(async res => {
             if (res) {
+              await  updatePoint()
                 swal({
                     text: "Descartado Correctamente",
                     icon: "success",
@@ -207,23 +209,24 @@ const EditPoint = () => {
     }
     //obtener lenguajes-------------------------------------------------------------------------------------
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
+    
     let lenaguajeDefault = ""
     for (let i = 0; i < languages.length; i++) {
         if (languages[i].id_lenguaje === datospuntoInteres.lenguajes[0].id_lenguaje) {
             // setLenaguajeDefault(languages[i].descripcion)
-            lenaguajeDefault = languages[i].descripcion
+           
+            lenaguajeDefault = languages[i].nombre
         }
     }
-
+    
     const languageEscogido = datospuntoInteres.lenguajes?.map((language) =>
     (
+      
         {
             value: language.id_lenguaje,
             label: lenaguajeDefault,
         }))
 
-
-    // console.log(languageEscogido)
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
@@ -232,7 +235,7 @@ const EditPoint = () => {
 
     const languagesOptions = languages?.map((language) => ({
         value: language.id_lenguaje,
-        label: language.descripcion,
+        label: language.nombre,
     }))
 
 
@@ -293,11 +296,13 @@ const EditPoint = () => {
         downloadLink.click();
         document.body.removeChild(downloadLink);
     };
+   
     useEffect(() => {
         getSites()
         getLanguages()
+        
     }, [])
-
+    
     return (
         <>
             <div className=' '>
@@ -305,13 +310,13 @@ const EditPoint = () => {
                     <div className='col-xs-12 col-md-5 col-lg-6 d-flex  py-5 px-9'>
                         <div id='center'>
 
-                            <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
+                            <Button className='btn-secondary fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
 
                                 onClick={(event) => {
                                     discardChanges()
 
                                 }}
-                            ></i>
+                            ></Button>
 
 
 
@@ -351,12 +356,12 @@ const EditPoint = () => {
                                         style={{ display: 'flex', marginRight: '4px' }} ></i> */}
                                 </li>
                                 <li className='nav-item'>
-                                    <i
-                                        className='fa-solid fa-qrcode background-button '
+                                    <Button
+                                        className='btn-secondary fa-solid fa-qrcode background-button '
                                         id='center2'
                                         onClick={handleShow}
                                         style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                                    ></i>
+                                    ></Button>
                                 </li>
 
                                 <Modal show={show} onHide={handleClose}>
@@ -385,11 +390,11 @@ const EditPoint = () => {
                                     </Modal.Footer>
                                 </Modal>
 
-                                <i
+                                <Button
                                     className={
                                         sitio.es_visible == false
-                                            ? 'fa-solid fa-eye-slash background-button'
-                                            : 'fa-solid fa-eye background-button'
+                                            ? 'btn-secondary fa-solid fa-eye-slash background-button'
+                                            : 'btn-secondary fa-solid fa-eye background-button'
                                     }
                                     id='center2'
                                     onClick={() => {
@@ -400,40 +405,40 @@ const EditPoint = () => {
                                         changeOculto(sitio.es_visible)
                                     }}
                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                                ></i>
-                                <i
-                                    className='fa-solid fa-xmark background-button'
+                                ></Button>
+                                <Button
+                                    className='btn-secondary fa-solid fa-xmark background-button'
                                     id='center2'
                                     onClick={() => {
 
                                         discardChanges()
                                     }}
                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                                ></i>
-                                <i
-                                    className='fa-solid fa-floppy-disk background-button'
+                                ></Button>
+                                <Button
+                                    className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
                                     onClick={() => {
-                                        updatePoint()
+                                       
                                         saveChanges();
                                     }}
                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                                ></i>
+                                ></Button>
 
-                                <i
+                                <Button
                                     onClick={() => {
                                         sitio.publicado = !sitio.publicado
                                         changePublicado(sitio.publicado)
                                     }}
                                     className={
                                         sitio.publicado == false
-                                            ? 'fa-solid fa-download background-button'
-                                            : 'fa-solid fa-upload background-button'
+                                            ? 'btn-secondary fa-solid fa-download background-button'
+                                            : 'btn-secondary fa-solid fa-upload background-button'
                                     }
                                     id='center2'
                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                                ></i>
-                                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></i>
+                                ></Button>
+                                <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button>
                             </ul>
                         </div>
                     </div>
@@ -525,7 +530,7 @@ const EditPoint = () => {
                                         className='form-control'
                                         disabled
                                         style={{ border: '0', fontSize: '14px', color: '#92929F' }}
-                                        value={'Sala ' + datospuntoInteres.nombre}
+                                        value={datospuntoInteres.nombre}
 
 
 
@@ -565,7 +570,7 @@ const EditPoint = () => {
                                     ></input>
 
 
-                                </div>
+                               
                                 <br />
                                 <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Lenguajes</label>
                                 <br />
@@ -573,17 +578,20 @@ const EditPoint = () => {
 
 
                                 <Select
-                                    defaultValue={languageEscogido}
+                                      defaultValue={ {value:datospuntoInteres.lenguajes[0].id_lenguaje, label:datospuntoInteres.lenguajes[0].descripcion} }
                                     options={languagesOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
                                     onChange={handleChangeLanguage}
                                 />
-                                {/* <Form.Control
+                                <br />
+                              
+                                <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Descripcion</label>
+                                <Form.Control
                                     as="textarea"
                                     placeholder="Escribe una descripcion aqui"
                                     style={{ height: '100px' }}
-                                    value={sitio.descripcion == '' ? '' : sitio.descripcion}
+                                    defaultValue={sitio.descripcion == '' ? '' : sitio.descripcion}
                                     onChange={(e) => {
                                         setSitio({
                                             id_punto: datospuntoInteres.id_punto,
@@ -591,7 +599,7 @@ const EditPoint = () => {
                                             id_guia: datospuntoInteres.id_guia,
                                             descripcion: e.target.value,
                                             id_lenguaje: sitio.id_lenguaje,
-                                            nombre: sitio.nombre,
+                                            nombre: datospuntoInteres.nombre,
                                             geoX: sitio.geoX,
                                             geoY: sitio.geoY,
                                             portada_path: sitio.portada_path,
@@ -599,9 +607,10 @@ const EditPoint = () => {
                                             es_portada_de_sitio: sitio.es_portada_de_sitio,
                                             estado: sitio.estado,
                                             es_visible: sitio.es_visible,
+                                            publicado: true,
                                         })
                                     }}
-                                /> */}
+                                />
 
 
                                 <br></br>
@@ -618,7 +627,8 @@ const EditPoint = () => {
                     placeholder={categorysHolder}
                     onChange={handleChange}
                   ></Select> */}
-                                {/* </div> */}
+                             
+                                </div>
                             </div>
                             <div className='col-xs-12 col-md-12 col-xl-5 mb-5'>
                                 <div className='row mt-6 gx-10 m-auto'>
