@@ -5,7 +5,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import EditableDesktop from './editableDesktop/index'
 import EditableMovil from './editableMovil/index'
 import { ContentContext } from '../context'
-import Elementos from './elementos'
+import ElementosMovil from './elementosMovil'
 import ElementosWeb from './elementosWeb'
 import Recursos from './recursos'
 
@@ -28,7 +28,7 @@ const Index = () => {
                             </ButtonGroup>
                             
                                 {
-                                    btnActive === 1 ?<PerfectScrollbar className="h-75"> { changeTypeEdit === 1 ? <Elementos/> : <ElementosWeb/> } </PerfectScrollbar>: <Recursos/>
+                                    btnActive === 1 ?<PerfectScrollbar className="h-75"> { changeTypeEdit === 1 ? <ElementosMovil/> : <ElementosWeb/> } </PerfectScrollbar>: <Recursos/>
                                 }
                         </Card.Body>
                     </Col>

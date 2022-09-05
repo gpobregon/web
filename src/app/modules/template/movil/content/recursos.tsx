@@ -3,14 +3,14 @@ import { Row, Col, InputGroup, Form } from 'react-bootstrap'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {useDropzone} from 'react-dropzone';
 import AudioResource from '../../../../utility/component/resource/audio';
-import Image from '../../../../utility/component/template/item/recursos/image'
-import { testRecursos } from '../../../../utility/global/data'
+import Image from '../../../../utility/component/resource/image'
+// import { testRecursos } from '../../../../utility/global/data'
 import { ContentContext } from '../context'
 
 const Recursos = () => {
-    const { uploadResource } = useContext(ContentContext)
+    const { uploadResource, allResources } = useContext(ContentContext)
 
-    const [files, setFiles] = useState<any>([])
+    // const [files, setFiles] = useState<any>([])
     const {getRootProps, getInputProps} = useDropzone({
       accept: {
         'image/*': []
@@ -20,11 +20,11 @@ const Recursos = () => {
             preview: URL.createObjectURL(file)
           }))
         //   console.log(item)
-        // uploadResource()
-        setFiles([...files, item ]);
+        uploadResource(item)
+        // setFiles([...files, item ]);
       }
     });
-    const thumbs = files.map((file : any, index : number) => (
+    const thumbs = allResources.map((file : any, index : number) => (
         <Col key={index} lg={6}>
             {
                 file[0] ? <Image data={file[0]} /> : <AudioResource item={file} />
@@ -35,14 +35,14 @@ const Recursos = () => {
 
     useEffect(() => {
         // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-        return () => files.forEach((file : any)=> URL.revokeObjectURL(file.preview));
+        return () => allResources.forEach((file : any)=> URL.revokeObjectURL(file.preview));
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
     
-    useEffect(() => {
-        setFiles(testRecursos)
-    },[])
-    console.log(testRecursos)
+    // useEffect(() => {
+    //     setFiles(testRecursos)
+    // },[])
+    // console.log(testRecursos)
     return (
         <Fragment>
             <Row>
