@@ -8,7 +8,7 @@ import makeAnimated from 'react-select/animated'
 import {Link} from 'react-router-dom'
 import {awsconfig} from '../../../aws-exports'
 import {DataStore} from 'aws-amplify'
-import Auth from '@aws-amplify/auth'
+import {Amplify, Auth} from 'aws-amplify'
 import * as AWS from 'aws-sdk'
 import {
     ListUsersResponse,
@@ -78,30 +78,30 @@ const animatedComponents = makeAnimated()
 // }
 
 // getEmail()
-
 const UserManagement: FC<any> = ({show}) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
     const [users, setUsers] = useState<UserType[]>([])
     const [existUsers, setExistUsers] = useState(false)
     const [modalAddUser, setModalAddUser] = useState(false)
-    const [modalDeleteUser, setModalDeleteUser] = useState(false)
+    const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
+    const [dataSelect, setDataSelect] = useState({user: '', role: ''})
     //const banderID: any = 0
 
     const showModalAddUser = () => {
         setModalAddUser(true)
     }
 
-    const showModalDeleteUser = () => {
-        setModalDeleteUser(true)
+    const showModalDeleteUser = (user: any) => {
+        setModalDeleteUser({show: true, user})
     }
 
     const getUsers = async () => {
         let params = {
             UserPoolId: awsconfig.userPoolId,
-            AttributesToGet: ['name', 'email', 'custom:role'],
+            AttributesToGet: ['name', 'email', 'custom:role', 'custom:phoneNumber'],
         }
 
         return new Promise((resolve, reject) => {
@@ -118,27 +118,35 @@ const UserManagement: FC<any> = ({show}) => {
                 }
             })
         })
-    } 
+    }
 
-    
-
-    const getPropertiesSelect = (item: any) => {
-        if (existUsers == true) {
-            return {
-                label: item?.Atributes[1]?.Value ?? '',
-                value: item?.Atributes[1]?.Value ?? '',
+    const updateUsuarios = async () => {
+        let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+        cognito.adminUpdateUserAttributes(
+            {
+                UserAttributes: [
+                    {
+                        Name: 'custom:role',
+                        Value: String(dataSelect.role),
+                    },
+                ],
+                UserPoolId: awsconfig.userPoolId,
+                Username: dataSelect.user,
+            },
+            function (err, data) {
+                if (err) console.log(err, err.stack) // an error occurred
+                else console.log(data)
             }
-        } else {
-            return {
-                label: '',
-                value: '',
-            }
-        }
+        )
+        getUsers()
     }
 
     useEffect(() => {
         getUsers()
     }, [])
+
+    console.log(users)
+    console.log(dataSelect)
 
     return (
         <Container fluid>
@@ -220,7 +228,7 @@ const UserManagement: FC<any> = ({show}) => {
                                 <tbody>
                                     {existUsers == true ? (
                                         users?.map((item: any) => (
-                                            <tr key={item}>
+                                            <tr key={item.Username}>
                                                 <td>
                                                     <div
                                                         style={{
@@ -232,48 +240,61 @@ const UserManagement: FC<any> = ({show}) => {
                                                     ></div>
                                                 </td>
                                                 <td>
-                                                    <div>{item.Attributes[0].Value}</div>
+                                                    <div>{item.Attributes[1].Value}</div>
                                                     <div className='text-muted'>
-                                                        {item.Attributes[2].Value}
+                                                        {item.Attributes[3].Value}
                                                     </div>
                                                 </td>
-                                                <td className='text-muted'>+502 5555 5555</td>
+                                                <td className='text-muted'>
+                                                    {item.Attributes[0].Value}
+                                                </td>
                                                 <td className='d-flex'>
                                                     {existUsers ? (
-                                                        <Select
-                                                            options={options}
-                                                            styles={customStyles}
-                                                            components={animatedComponents}
-                                                                                                               onChange={() => {
-                                                                setButtonAcept(true)
-                                                                setBanderID(item)
-                                                            }}
+                                                        <>
+                                                            <Select
+                                                                options={options}
+                                                                styles={customStyles} 
+                                                                components={animatedComponents}
+                                                                onChange={(event: any) => {
+                                                                    setButtonAcept(true)
+                                                                    setBanderID(item)
+                                                                    setDataSelect({
+                                                                        user: item.Attributes[3]
+                                                                            .Value,
+                                                                        role: event.value,
+                                                                    })
+                                                                }}
+                                                                // value={item?.Attributes[2]?.Value ? item.Attributes[2].Value : '' }
 
-                                                            
-                                                            
-                                                            // defaultValue={{
-                                                            //     label:
-                                                            //         item?.Atributes[1]?.Value ?? '',
-                                                            //     value:
-                                                            //         item?.Atributes[1]?.Value ?? '',
-                                                            // }}
-                                                        />
+                                                                defaultValue={{
+                                                                    label:
+                                                                        item?.Attributes[2]
+                                                                            ?.Value ?? '',
+                                                                    value:
+                                                                        item?.Attributes[2]
+                                                                            ?.Value ?? '',
+                                                                }}
+                                                            />
+                                                        </>
                                                     ) : (
                                                         <></>
                                                     )}
                                                     {buttonAcept === true && item === banderID ? (
                                                         <div>
+                                                            {/* cheque */}
                                                             <Button
                                                                 variant='btn btn-light btn-active-light-primary'
-                                                                style={{marginLeft: 10}}
+                                                                style={{marginLeft: 10, marginTop: 10}}
+                                                                onClick={() => updateUsuarios()}
                                                             >
                                                                 <i
                                                                     className={`bi bi-check text-white fs-3`}
                                                                 ></i>
                                                             </Button>
+                                                            {/* la X */}
                                                             <Button
                                                                 variant='btn btn-light btn-active-light-primary'
-                                                                style={{marginLeft: 10}}
+                                                                style={{marginLeft: 10, marginTop: 10}} 
                                                             >
                                                                 <i
                                                                     className={`bi bi-x text-white fs-3`}
@@ -285,7 +306,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                 <td>
                                                     <label
                                                         className='btn btn-light btn-active-light-danger btn-sm'
-                                                        onClick={() => showModalDeleteUser()}
+                                                        onClick={() => showModalDeleteUser(item)}
                                                     >
                                                         {'Eliminar '}
                                                         <span className='menu-icon me-0'>
@@ -309,7 +330,11 @@ const UserManagement: FC<any> = ({show}) => {
                         //addUser={addUser}
                     />
 
-                    <DeleteUser show={modalDeleteUser} onClose={() => setModalDeleteUser(false)} />
+                    <DeleteUser
+                        show={modalDeleteUser.show}
+                        onClose={() => setModalDeleteUser({show: false, user: {}})}
+                        user={modalDeleteUser.user}
+                    />
                 </div>
             ) : (
                 <></>

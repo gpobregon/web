@@ -1,10 +1,12 @@
 import React, {useState, FC, useEffect} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import {Button, Modal, Form, Row, Col} from 'react-bootstrap' 
- 
-import {awsconfig} from '../../../../aws-exports' 
-import * as AWS from 'aws-sdk' 
+import {Button, Modal, Form, Row, Col} from 'react-bootstrap'
+import Auth from '@aws-amplify/auth'
+import {CognitoUser} from 'amazon-cognito-identity-js'
+
+import {awsconfig} from '../../../../aws-exports'
+import * as AWS from 'aws-sdk'
 
 import {
     ListUsersResponse,
@@ -12,9 +14,56 @@ import {
     UserType,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider'
 
+async function deleteUser() {
+    try {
+        const result = await Auth.deleteUser()
+        console.log(result)
+    } catch (error) {
+        console.log('Error deleting user', error)
+    }
+}
 
+//   async function onRemoveAccount() {
+//     Auth
+//         .currentAuthenticatedUser()
+//         .then((user: CognitoUser) => new Promise((resolve, reject) => {
 
-const customStyles = { 
+//             user.deleteUser(error => {
+//                 if (error) {
+//                     return reject(error);
+//                 }
+//                 if (this.props.onSessionChange) {
+//                     this.props.onSessionChange();
+//                 }
+//                 document.location.href = "/login";
+
+//                 resolve();
+//             });
+//         }))
+//         .catch(this.onError);
+// }
+
+//me elimina tambien el usuario con el que estoy logueado
+const handleDeleteCognitoUser = async () => {
+    const user = await Auth.currentAuthenticatedUser()
+    user.deleteUser((error: any, data: any) => {
+        if (error) {
+            throw error
+        }
+        // do stuff after deletion
+    })
+}
+
+//   var params = {
+//     UserPoolId: 'STRING_VALUE', /* required */
+//     Username: 'STRING_VALUE' /* required */
+//   };
+//   cognitoidentityserviceprovider.adminDeleteUser(params, function(err, data) {
+//     if (err) console.log(err, err.stack); // an error occurred
+//     else     console.log(data);           // successful response
+//   });
+
+const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
         background: 'transparent',
@@ -55,21 +104,19 @@ const customStyles = {
         padding: 0,
         borderRadius: 6.175,
     }),
-} 
+}
 
-
-    
-const DeleteUser: FC<any> = ({show, onClose, addTag}) => {   
+const DeleteUser: FC<any> = ({show, onClose, user}) => {
     const [users, setUsers] = useState<UserType[]>([])
     const [existUsers, setExistUsers] = useState(false)
+    const [params, setParams] = useState({name: ''})
 
-    const getUsers = async () => { 
-
+    const getUsers = async () => {
         let params = {
             UserPoolId: awsconfig.userPoolId,
             AttributesToGet: ['name', 'email', 'custom:role'],
         }
-    
+
         return new Promise((resolve, reject) => {
             let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.listUsers(params, (err, data) => {
@@ -78,7 +125,7 @@ const DeleteUser: FC<any> = ({show, onClose, addTag}) => {
                     reject(err)
                 } else {
                     resolve(data)
-    
+
                     setUsers(data.Users as UserType[])
                     setExistUsers(true)
                 }
@@ -86,46 +133,67 @@ const DeleteUser: FC<any> = ({show, onClose, addTag}) => {
         })
     }
 
+    const deleteUsuarios = async () => {
+        var params = {
+            UserPoolId: awsconfig.userPoolId /* required */,
+            Username: user.Attributes[3].Value /* required */,
+        }
+
+        return new Promise((resolve, reject) => {
+            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+            cognito.adminDeleteUser(params, (err, data) => {
+                if (err) {
+                    console.log(err)
+                    reject(err)
+                } else {
+                    resolve(data)
+                }
+            })
+        })
+    }
+
     return (
         <>
-            <Modal show={show} onHide={onClose} >
+            <Modal show={show} onHide={onClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>{'¿Seguro que deseas eliminar este usuario?'}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>   
+                <Modal.Body>
+                    {Object.keys(user).length !== 0 ? (
+                        <Row>
+                            <Col lg={4} md={4} sm={3}>
+                                <div
+                                    style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        backgroundColor: '#a9a9a9',
+                                        borderRadius: '50%',
+                                    }}
+                                ></div>
+                            </Col>
+
+                            <Col lg={4} md={4} sm={3}>
+                                <div>{`${user.Attributes[1].Value}`}</div>
+                                <div className='text-muted'>{`${user.Attributes[3].Value}`}</div>
+                            </Col>
+
+                            <Col lg={4} md={4} sm={3}>
+                                <div>Rol</div>
+                                <div className='text-muted'>{`${user.Attributes[2].Value}`}</div>
+                            </Col>
+                        </Row>
+                    ) : (
+                        <></>
+                    )}
+
                     <Row>
-                        <Col lg={4} md={4} sm={3} > 
-                            <div
-                                style={{
-                                    width: '40px',
-                                    height: '40px',
-                                    backgroundColor: '#a9a9a9',
-                                    borderRadius: '50%',                    
-                                }}                   
-                            ></div>   
-                        </Col>  
-
-                        <Col lg={4} md={4} sm={3} >
-                            <div>Mark</div>
-                            <div className='text-muted' >example@gmail.com</div>                    
-                        </Col>    
-
-                        <Col lg={4} md={4} sm={3} >
-                            <div>Role</div>
-                            <div className='text-muted' >editor</div>                  
-                        </Col>                     
-                        
-                    </Row> 
-                        
-                    <Row>  
-                        <div style={{paddingTop: 50, textAlign: 'center' }}  >
-                                    <span className='menu-icon me-0'>
-                                        <i className={`bi bi-exclamation-triangle fs-1 `}></i>
-                                    </span>
-                                    {' Esta acción no se puede deshacer '} 
+                        <div style={{paddingTop: 50, textAlign: 'center'}}>
+                            <span className='menu-icon me-0'>
+                                <i className={`bi bi-exclamation-triangle fs-1 `}></i>
+                            </span>
+                            {' Esta acción no se puede deshacer '}
                         </div>
                     </Row>
-
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant='secondary' onClick={onClose}>
@@ -133,10 +201,11 @@ const DeleteUser: FC<any> = ({show, onClose, addTag}) => {
                         <i className={`bi-x text-white fs-3`}></i>
                     </Button>
                     <Button
-                        variant='btn btn-light-danger btn-active-danger' 
-                        // onClick={() => {
-                        //     addTag(tag)
-                        // }}
+                        variant='btn btn-light-danger btn-active-danger'
+                        onClick={() => {
+                            deleteUsuarios()
+                            document.location.href = '/usuarios/user-management'
+                        }}
                     >
                         {'Eliminar '}
                         <i className={`bi bi-trash-fill text-white fs-3`}></i>
@@ -147,4 +216,4 @@ const DeleteUser: FC<any> = ({show, onClose, addTag}) => {
     )
 }
 
-export default DeleteUser;
+export default DeleteUser
