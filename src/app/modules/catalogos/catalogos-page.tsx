@@ -23,8 +23,6 @@ import {
 } from '../../services/api'
 import swal from 'sweetalert'
 
-/* Hola */
-
 const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
     const [modalAddLanguage, setModalAddLanguage] = useState(false)
@@ -32,14 +30,23 @@ const CatalogosPage = () => {
     const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
     const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
 
-    const [optionSort, setOptionSort] = useState('Agregado recientemente')
-    const [searchInput, setSearchInput] = useState('')
     const [catalogos, setCatalogos] = useState<CatalogTag[]>([])
-    const [filteredResults, setFilteredResults] = useState(catalogos)
-    const [resultIcon, setResultIcon] = useState('bi-sort-up')
-
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
-    const [language, setLanguage] = useState({
+
+    const [searchInput, setSearchInput] = useState('')
+    const [optionSort, setOptionSort] = useState('Agregado recientemente')
+    const [resultIcon, setResultIcon] = useState('bi-sort-up')
+    const [filteredResults, setFilteredResults] = useState(catalogos)
+
+    const [tag, setTag] = useState({
+        id_categoria: 0,
+        nombre: '',
+        icono: '',
+        estado: 1,
+        id_lenguaje: 0,
+    })
+
+    const [idioma, setIdioma] = useState({
         id_lenguaje: 1,
         nombre: '',
         descripcion: '',
@@ -49,7 +56,6 @@ const CatalogosPage = () => {
     const getTags = async () => {
         const catalogos: any = await postData(categorysMethod, {page: pageNumber, quantity: '12'})
         setCatalogos(catalogos as CatalogTag[])
-
 
         const countNextResults: any = await postData(categorysMethod, {
             page: pageNumber + 1,
@@ -81,7 +87,6 @@ const CatalogosPage = () => {
         })
     }
 
-    // TODO: addTag
     const addTag = async (tag: any) => {
         if (tag.nombre != '' && tag.icono != '') {
             await postData(addCategoryMethod, tag)
@@ -92,7 +97,6 @@ const CatalogosPage = () => {
         }
     }
 
-    // TODO: addLanguage
     const addLanguage = async (language: any) => {
         if (language.nombre != '' && language.descripcion != '') {
             await postData(addLanguageMethod, language)
@@ -103,7 +107,6 @@ const CatalogosPage = () => {
         }
     }
 
-    // TODO: updateTag
     const updateTag = async (tag: any) => {
         if (tag.nombre != '' && tag.icono != '') {
             await postData(updateCategoryMethod, tag)
@@ -114,7 +117,6 @@ const CatalogosPage = () => {
         }
     }
 
-    // TODO: updateIdioma
     const updateIdioma = async (idioma: any) => {
         if (idioma.nombre != '' && idioma.descripcion != '') {
             await postData(updateLanguageMethod, idioma)
@@ -125,26 +127,48 @@ const CatalogosPage = () => {
         }
     }
 
-    // TODO: deleteTag
     const deleteTag = async (tag: any) => {
-        await deleteData(categorysMethod, tag)
-        setModalUpdateTag({show: false, catalogo: {}})
-        getTags()
-        swal({
-            title: 'Se ha eliminado la etiqueta',
-            icon: 'success',
+        await swal({
+            title: '¿Estás seguro de eliminar esta categoría?',
+            icon: 'warning',
+            buttons: ['Cancelar', 'Eliminar'],
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                deleteData(categorysMethod, tag)
+                setModalUpdateTag({show: false, catalogo: {}})
+                swal({
+                    title: 'Se ha eliminado la etiqueta',
+                    icon: 'success',
+                })
+            }
         })
+
+        getTags()
+        getTags()
+        getTags()
     }
 
-    //TODO: deleteLanguage
     const deleteIdioma = async (idioma: any) => {
-        await deleteData(languagesMethod, idioma)
-        setModalUpdateIdioma({show: false, language: {}})
-        getLanguages()
-        swal({
-            title: 'Se ha eliminado el idioma',
-            icon: 'success',
+        await swal({
+            title: '¿Estás seguro de eliminar este idioma?',
+            icon: 'warning',
+            buttons: ['Cancelar', 'Eliminar'],
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                deleteData(languagesMethod, idioma)
+                setModalUpdateIdioma({show: false, language: {}})
+                swal({
+                    title: 'Se ha eliminado el idioma',
+                    icon: 'success',
+                })
+            }
         })
+
+        getLanguages()
+        getLanguages()
+        getLanguages()
     }
 
     const searchItems = (searchValue: any) => {
@@ -184,10 +208,23 @@ const CatalogosPage = () => {
     }
 
     const showModalUpdateTag = (catalogo: any) => {
+        setTag({
+            id_categoria: catalogo.id_categoria,
+            nombre: catalogo.nombre,
+            icono: catalogo.icono,
+            estado: 1,
+            id_lenguaje: catalogo.idioma.id,
+        })
         setModalUpdateTag({show: true, catalogo})
     }
 
-    const showModalUpdateIdioma = (language: any) =>{ 
+    const showModalUpdateIdioma = (language: any) => {
+        setIdioma({
+            id_lenguaje: language.id_lenguaje,
+            nombre: language.nombre,
+            descripcion: language.descripcion,
+            estado: 1,
+        })
         setModalUpdateIdioma({show: true, language})
     }
 
@@ -333,6 +370,8 @@ const CatalogosPage = () => {
                     show={modalUpdateTag.show}
                     onClose={() => setModalUpdateTag({show: false, catalogo: {}})}
                     catalogo={modalUpdateTag.catalogo}
+                    tag={tag}
+                    setTag={setTag}
                     updateTag={updateTag}
                     deleteTag={deleteTag}
                 />
@@ -381,6 +420,8 @@ const CatalogosPage = () => {
                     show={modalUpdateIdioma.show}
                     onClose={() => setModalUpdateIdioma({show: false, language: {}})}
                     language={modalUpdateIdioma.language}
+                    idioma={idioma}
+                    setIdioma={setIdioma}
                     updateIdioma={updateIdioma}
                     deleteIdioma={deleteIdioma}
                 />
