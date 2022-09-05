@@ -23,6 +23,8 @@ import {
 } from '../../services/api'
 import swal from 'sweetalert'
 
+/* Hola */
+
 const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
     const [modalAddLanguage, setModalAddLanguage] = useState(false)
