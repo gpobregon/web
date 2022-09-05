@@ -146,9 +146,9 @@ const SitesByRating = ()=>{
                                 <Form.Label>Calificacion:</Form.Label> 
                                 <br/>
                                 <i className="bi bi-emoji-angry " style={{fontSize: 30, cursor: 'pointer', color: '#009EF7' }}></i>  
-                                <i className="bi bi-emoji-frown" style={{fontSize: 30, paddingLeft: 40, cursor: 'pointer'  }} ></i> 
-                                <i className="bi bi-emoji-smile" style={{fontSize: 30, paddingLeft: 40, cursor: 'pointer'  }} ></i> 
-                                <i className="bi bi-emoji-laughing" style={{fontSize: 30, paddingLeft: 40, cursor: 'pointer'  }} ></i>
+                                <i className="bi bi-emoji-frown" style={{fontSize: 30, paddingLeft: 20, cursor: 'pointer'  }} ></i> 
+                                <i className="bi bi-emoji-smile" style={{fontSize: 30, paddingLeft: 20, cursor: 'pointer'  }} ></i> 
+                                <i className="bi bi-emoji-laughing" style={{fontSize: 30, paddingLeft: 20, cursor: 'pointer'  }} ></i>
                             </Form.Group>
                         </Col>  
                         

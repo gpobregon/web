@@ -145,8 +145,8 @@ const UserManagement: FC<any> = ({show}) => {
         getUsers()
     }, [])
 
-    // console.log(users)
-    // console.log(dataSelect)
+    console.log(users)
+    console.log(dataSelect)
 
     return (
         <Container fluid>
@@ -253,7 +253,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                         <>
                                                             <Select
                                                                 options={options}
-                                                                styles={customStyles}
+                                                                styles={customStyles} 
                                                                 components={animatedComponents}
                                                                 onChange={(event: any) => {
                                                                     setButtonAcept(true)
@@ -284,7 +284,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                             {/* cheque */}
                                                             <Button
                                                                 variant='btn btn-light btn-active-light-primary'
-                                                                style={{marginLeft: 10}}
+                                                                style={{marginLeft: 10, marginTop: 10}}
                                                                 onClick={() => updateUsuarios()}
                                                             >
                                                                 <i
@@ -294,7 +294,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                             {/* la X */}
                                                             <Button
                                                                 variant='btn btn-light btn-active-light-primary'
-                                                                style={{marginLeft: 10}}
+                                                                style={{marginLeft: 10, marginTop: 10}} 
                                                             >
                                                                 <i
                                                                     className={`bi bi-x text-white fs-3`}

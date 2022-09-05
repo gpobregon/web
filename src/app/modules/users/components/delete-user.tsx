@@ -136,7 +136,7 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
     const deleteUsuarios = async () => {
         var params = {
             UserPoolId: awsconfig.userPoolId /* required */,
-            Username: user.Attributes[2].Value /* required */,
+            Username: user.Attributes[3].Value /* required */,
         }
 
         return new Promise((resolve, reject) => {
