@@ -405,7 +405,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                     </span>
                                                 </Card>
                                             </div>
-                                            <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-end'>
+                                            <div className='col-xs-12 col-md-12 col-lg-5 col-xl-6 d-flex justify-content-end'>
 
                                                 <div id='center2'>
                                                     <ul className='nav justify-content-end'>
