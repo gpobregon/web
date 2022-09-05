@@ -31,6 +31,7 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
 
     return ( 
           <div
+            onClick={() => setEditItem(data)} 
             onContextMenu={show}
             ref={referencia}
             data-handler-id={handlerId}
@@ -40,7 +41,7 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
               <i className="bi bi-grip-vertical fa-2x"/>
             </div>
             <div id={data.id} className={`editable ${data.textAling} w-100`}>
-              <img src={toAbsoluteUrl("/media/png/picture.png")} alt="" className="w-75"/>
+              <img src={toAbsoluteUrl("/media/png/picture.png")} alt="" className="w-50"/>
             </div>
             <Menu id={"menu-id"} theme="dark" data-test={data}>
               <Item onClick={(e : any) => destroyItem(e)}>
