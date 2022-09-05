@@ -16,6 +16,7 @@ import Interes from "./components/sitios-interes/sala-interes";
 import { QRCodeCanvas } from "qrcode.react";
 import logo from './upload-image_03.jpg';
 import UpImage from './components/upload-image';
+import { ModelOperation } from '@aws-amplify/datastore';
 
 const customStyles = {
   control: (base: any, state: any) => ({
@@ -82,11 +83,12 @@ const EditSite = () => {
   let [categorys, setCategorys] = useState<Tag[]>([])
   const [editcategorys, setEditCategory] = useState<Tag[]>([])
   const [categorysHolder, setCategorysHolder] = useState("")
-
+  const navigate = useNavigate()
 
   useEffect(() => {
+    console.log(state)
     getCategorys();
-    mostrarCategorys();
+    
     setearStatus();
     var txt = "";
     for (var i = 0; i < site.categorias.length; i++) {
@@ -120,15 +122,20 @@ const EditSite = () => {
     })
   }
 
-  const mostrarCategorys = () => {
-    site.categorias.map((cat: any) => {
-      editcategorys.push({ value: Number.parseInt(cat.id_categoria), label: cat.nombre })
-    }
-    )
-    setEditCategory(editcategorys)
-    // console.log(editcategorys)
-  }
+  // const mostrarCategorys = () => {
+  //   site.categorias.map((cat: any) => {
+  //     editcategorys.push({ value: Number.parseInt(cat.id_categoria), label: cat.nombre })
+  //   }
+  //   )
+    
+  // }
 
+  const mostrarCategorys =  site.categorias.map((cat) =>
+  (
+      {
+          value: cat.id_categoria,
+          label: cat.nombre,
+      }))
 
 
   const alertNotNullInputs = async () => {
@@ -144,10 +151,9 @@ const EditSite = () => {
   //methods to post data to api------------------------------------------------------
 
   async function postSite(sitee: any) {
-    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != '') {
-
+    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != '' && site.categorias.length > 0) {
       const sit: any = await postData(updateSiteMethod, sitee)
-      //  console.log(sitee)
+      saveChanges();
     } else {
       alertNotNullInputs()
     }
@@ -207,7 +213,7 @@ const EditSite = () => {
           timer: 2000,
 
         })
-        window.location.href = "../sitios";
+        navigate('/sitios')
 
 
       }
@@ -227,7 +233,8 @@ const EditSite = () => {
           timer: 2000,
 
         })
-        window.location.href = "../sitios";
+        navigate('/sitios')
+          // window.location.href = "../sitios";
       }
     });
   }
@@ -240,8 +247,7 @@ const EditSite = () => {
     }]
   )
   const handleChange = (event: any) => {
-
-
+  
     var arrtempo: [{
       id_categoria: number
       nombre: string
@@ -269,8 +275,7 @@ const EditSite = () => {
       publicado: status.publicado,
       oculto: status.oculto,
     })
-
-    // console.log(site);
+console.log(site)
 
   };
   // UPLOAD IMAGE-------------------------------------------------------------------------
@@ -319,12 +324,18 @@ const EditSite = () => {
         <div className='row' style={{
           backgroundColor: '#1A1A27',
           backgroundSize: 'auto 100%',
+          borderRadius: '5px',
         }}>
-          <div className='col-xs-12 col-md-5 col-lg-6 d-flex' >
+          <div className='col-xs-12 col-md-5 col-lg-6 d-flex py-5 px-9' >
             <div id='center'>
-              <Link to={'/sitios'}>
-                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }} ></i>
-              </Link>
+              
+                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px',color: '#FFFFFF' }}   onClick={() => {
+           
+                    
+                    discardChanges();
+               
+                  }} ></i>
+           
 
 
             </div>
@@ -343,7 +354,7 @@ const EditSite = () => {
               <p style={{ marginTop: '16px' }} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>
             </div>
           </div>
-          <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
+          <div className='col-xs-12 col-md-6 col-lg-6 d-flex py-5 px-9 justify-content-end'>
             <div id='center2'>
               <ul className='nav justify-content-end '>
                 <li className='nav-item'>
@@ -351,7 +362,7 @@ const EditSite = () => {
                     className={
                       status.favorito == false
                         ? 'text-white  fa-regular fa-star background-button'
-                        : 'text-white fas fa-star background-button'
+                        : 'text-primary fas fa-star background-button'
                     }
                     id='center2'
                     onClick={() => {
@@ -379,9 +390,11 @@ const EditSite = () => {
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
                     <Modal.Title>Escanee su Código QR</Modal.Title>
+                   
+                   
                   </Modal.Header>
                   <Modal.Body style={{ textAlign: 'center' }}>
-
+                  <Modal.Dialog>Sitio: {site.nombre}</Modal.Dialog>
                     <QRCodeCanvas
                       id="qrCode"
                       value={qr}
@@ -438,7 +451,7 @@ const EditSite = () => {
                   onClick={() => {
                     // console.log('site')
                     postSite(site)
-                    saveChanges();
+                    
                     // console.log(site)
                     // navigate('/site')
                   }}
@@ -499,14 +512,22 @@ const EditSite = () => {
                 <div>
                   <div className='card-body '>
                     <Row>
+                    <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      
                       <Col>
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
-                          to={''}
+                          to={''} 
+                          onClick={() => { setModalupIMG(true)}}
                         ></Link>
                       </Col>
                       <Col>
-                        <Link className='bi bi-crop background-button text-info' to={''}></Link>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                      </Col>
+                      <Col>
+                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                       </Col>
                       <Col>
                         <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => setSite({
@@ -668,10 +689,10 @@ const EditSite = () => {
                     closeMenuOnSelect={false}
                     styles={customStyles}
                     components={animatedComponents}
-                    // value={editcategorys}
+                    defaultValue={mostrarCategorys}
                     isMulti
                     options={categorys}
-                    placeholder={categorysHolder}
+                    // placeholder={categorysHolder}
                     onChange={handleChange}
                   ></Select>
                 </div>
@@ -692,13 +713,13 @@ const EditSite = () => {
                     <br></br>
                     <br />
                     <div className='row'>
-                      <p className=' text-movil col-md-12 text-center mt-5'>
+                      <p className='  col-md-12 text-center mt-5'>
                         Maquetar los elementos del sitio para versión móvil.
                       </p>
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={`/template/${site.id_sitio}`}>
+                    <Link to={`/template/movil/${site.id_sitio}`}>
                       <Button
                         className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                       >
@@ -719,23 +740,24 @@ const EditSite = () => {
                     <br></br>
                     <br />
                     <div className='row'>
-                      <p className=' text-movil col-md-12 text-center mt-5'>
+                      <p className='col-md-12 text-center mt-5'>
                         Maquetar los elementos del sitio para versión web
                       </p>
                     </div>
                     <br></br>
                     <div className='row'>
+                    <Link to={`/template/web/${site.id_sitio}`}>
                       <Button
                         className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                         onClick={() => {
-                          //   navigate('/site')
-                          //   postSite(site)
-                          window.location.href = "/template";
+                        
                           console.log('creado con el boton de sitio web')
                         }}
                       >
+                        
                         <i className='fa-solid fa-pencil '></i> Crear
                       </Button>
+                      </Link>
                     </div>
                   </div>
                 </div>

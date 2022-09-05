@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import {Button, Col, Form, Row} from 'react-bootstrap'
+import {Button, Col, Container, Form, Row} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 import ResultMostVisited from './components/ResultMostVisited'
 
@@ -87,7 +87,7 @@ const MostVistedReport = () => {
     }
 
     return (
-        <>
+        <Container fluid>
             <div
                 style={{
                     backgroundColor: '#1E1E2D',
@@ -195,7 +195,7 @@ const MostVistedReport = () => {
             </div>
 
             <ResultMostVisited show={showResult} />
-        </>
+        </Container>
     )
 }
 

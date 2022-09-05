@@ -1,13 +1,16 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, useContext } from 'react'
 import { Row, Col, InputGroup, Form } from 'react-bootstrap'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {useDropzone} from 'react-dropzone';
-import Image from '../../../../utility/component/template/item/recursos/image'
-// import { Image } from 'react-bootstrap';
-  
-const Recursos = () => {
+import AudioResource from '../../../../utility/component/resource/audio';
+import Image from '../../../../utility/component/resource/image'
+// import { testRecursos } from '../../../../utility/global/data'
+import { ContentContext } from '../context'
 
-    const [files, setFiles] = useState<any>([])
+const Recursos = () => {
+    const { uploadResource, allResources } = useContext(ContentContext)
+
+    // const [files, setFiles] = useState<any>([])
     const {getRootProps, getInputProps} = useDropzone({
       accept: {
         'image/*': []
@@ -16,22 +19,30 @@ const Recursos = () => {
         const item: any = acceptedFiles.map((file : any ) => Object.assign(file, {
             preview: URL.createObjectURL(file)
           }))
-        setFiles([...files, item ]);
+        //   console.log(item)
+        uploadResource(item)
+        // setFiles([...files, item ]);
       }
     });
-    console.log(files)
-    const thumbs = files.map((file : any) => (
-        <Col key={file[0].name} lg={6}>
-            <Image data={file[0]} />
+    const thumbs = allResources.map((file : any, index : number) => (
+        <Col key={index} lg={6}>
+            {
+                file[0] ? <Image data={file[0]} /> : <AudioResource item={file} />
+            }
+            
         </Col>
     ));
 
     useEffect(() => {
         // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-        return () => files.forEach((file : any)=> URL.revokeObjectURL(file.preview));
+        return () => allResources.forEach((file : any)=> URL.revokeObjectURL(file.preview));
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
-
+    
+    // useEffect(() => {
+    //     setFiles(testRecursos)
+    // },[])
+    // console.log(testRecursos)
     return (
         <Fragment>
             <Row>

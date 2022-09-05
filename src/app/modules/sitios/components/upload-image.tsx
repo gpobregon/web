@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 import { uuid } from 'uuidv4';
-
+import swal from "sweetalert";
 
 const S3_BUCKET = 'mcd-backoffice-upload';
 const REGION = 'us-east-2';
@@ -30,14 +30,14 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG }) => {
     const [img, setImg] = useState('')
     const [progress, setProgress] = useState(0);
     const [selectedFile, setSelectedFile] = useState(null);
-
+    const [porcentajeCargado,setPorcetajeCargado] = useState(0);
     const handleFileInput = (e: any) => {
         setSelectedFile(e.target.files[0]);
-      
+        setImg(e.target.files[0].name)
     }
 
     const uploadFile = (file: any) => {
-        setImg(file.name)
+        
         const params = {
             ACL: 'public-read',
             Body: file,
@@ -46,13 +46,32 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG }) => {
         };
 
         myBucket.putObject(params)
-            .on('httpUploadProgress', (evt) => {
-                setProgress(Math.round((evt.loaded / evt.total) * 100))
+            .on('httpUploadProgress', async (evt) => {
+                if(evt.loaded/evt.total === 1){
+                await delay(3000);
+                setProgress(0)
+                 cargarIMG(img)  // return the name of the file to the parent component
+               
+                }else{
+                    setPorcetajeCargado (Math.round( (evt.loaded / evt.total)*100));
+                    setProgress(1)
+                    // swal("Cargando Imagen..." ,"Espere Un Momento", "info");
+                }
             })
             .send((err) => {
                 if (err) console.log(err)
             })
     }
+    function delay(ms: number) {
+        return new Promise( resolve => setTimeout(resolve, ms) );
+    }
+    const handleSubmit =async () => {
+    
+        if(progress === 0){
+        uploadFile(selectedFile) //upload file to s3
+        }
+    }
+
     return (
         <>
             <Modal show={show} onHide={onClose}>
@@ -61,23 +80,33 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG }) => {
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Control type="file" onChange={handleFileInput} accept="image/*"/>
+                
                 </Modal.Body>
                 <Modal.Footer>
+               
                     <Button variant='secondary' onClick={onClose}>
                         {'Cancelar '}
                         <i className={`bi-x text-white fs-3`}></i>
                     </Button>
+                    { selectedFile != null ? 
                     <Button
                         variant='primary'
                         onClick={() => {
-                            uploadFile(selectedFile)
-                            cargarIMG(img)
-
+                            
+                            handleSubmit()
+                            
                         }}
                     >
-                        {'Aplicar '}
+                     
+                        
+                        {progress === 1 ? 'Cargando Imagen... '+porcentajeCargado+'%'  :  'Listo'}
+                     
                         <i className={`bi-check2 text-white fs-3`}></i>
                     </Button>
+                   
+                    
+                    : null }
+                   
                 </Modal.Footer>
             </Modal>
         </>

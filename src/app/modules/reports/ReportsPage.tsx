@@ -101,7 +101,8 @@ const ReportsPage = () => {
                         </Link>
                     </Col>
 
-                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>
+                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>  
+                    <Link to=''>
                         <Card
                             className='d-flex justify-content-center align-items-center p-5'
                             style={{
@@ -124,7 +125,8 @@ const ReportsPage = () => {
                                 </span>
                             </Card.Title>
                             <Card.Subtitle className='mb-4 fs-3'>Otro reporte</Card.Subtitle>
-                        </Card>
+                        </Card> 
+                        </Link>
                     </Col>
                 </Row>
             </Container>

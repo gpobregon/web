@@ -20,19 +20,48 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
         <div className="w-100">
             <Row>
                 <Col lg={12}>
-                    { editItem.type === 'schedule' &&
+                    { (editItem.type === 'schedule' || editItem.type === 'event') &&
                         <Fragment>
-                            <Row className="py-1">
-                                <Col  className="mx-1 px-0">
-                                    <Form.Control defaultValue={editItem.text} placeholder="escribe un título" size="sm" type="text" onChange={(e : any) => changeSizeTitle({ text: e.target.value })}/>
+                            <Row className="py-1 w-80">
+                                <Col className="mx-1 px-0">
+                                    <Form.Label><small>{editItem.type === 'schedule' ? 'Título' : 'Descripción' }</small></Form.Label>
+                                    {editItem.type === 'schedule' ?
+                                    <Form.Control 
+                                        defaultValue={editItem.text} 
+                                        placeholder="escribe un título" 
+                                        size="sm"
+                                        onChange={(e : any) => changeSizeTitle({ text: e.target.value })}
+                                    />
+                                    :
+                                    <Form.Control 
+                                        defaultValue={editItem.text} 
+                                        placeholder="escribe un título" 
+                                        size="sm"
+                                        rows={3}
+                                        as="textarea"
+                                        onChange={(e : any) => changeSizeTitle({ text: e.target.value })}
+                                    />
+                                    }
                                 </Col>
                             </Row>
                             <Row className="py-1 pb-3">
                                 <Col className="mx-1 px-0">
-                                    <Form.Control size="sm" defaultValue={editItem.startHour} type="time" onChange={(e : any) => changeSizeTitle({ startHour: e.target.value })}/>
+                                    <Form.Label><small>{editItem.type === 'schedule' ? 'Hora' : 'Fecha' } inicial</small></Form.Label>
+                                    <Form.Control 
+                                        size="sm" 
+                                        defaultValue={editItem.startHour} 
+                                        type={editItem.type === 'schedule' ? 'time' : 'date' } 
+                                        onChange={(e : any) => changeSizeTitle(editItem.type === 'schedule' ? { startHour: e.target.value } : { startDate: e.target.value })}
+                                    />
                                 </Col>
                                 <Col className="mx-1 px-0">
-                                    <Form.Control size="sm" defaultValue={editItem.finalHour} type="time" onChange={(e : any) => changeSizeTitle({ finalHour: e.target.value })}/>
+                                    <Form.Label><small>{editItem.type === 'schedule' ? 'Hora' : 'Fecha' } Final</small></Form.Label>
+                                    <Form.Control 
+                                        size="sm" 
+                                        defaultValue={editItem.finalHour} 
+                                        type={editItem.type === 'schedule' ? 'time' : 'date' } 
+                                        onChange={(e : any) => changeSizeTitle(editItem.type === 'schedule' ? { finalHour: e.target.value } : { finalDate: e.target.value })}
+                                    />
                                 </Col>
                             </Row>
                         </Fragment>

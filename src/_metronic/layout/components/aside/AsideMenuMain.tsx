@@ -28,6 +28,13 @@ export function AsideMenuMain() {
         bsTitle='Alertas'
         fontIcon='bi bi-bell'
         className='py-3'
+      /> 
+      <AsideMenuItem
+        to='/offline'
+        title='Offline'
+        bsTitle='Offline'
+        fontIcon='bi bi-wifi-off'
+        className='py-3'
       />
       <AsideMenuItem
         to='/reportes'
@@ -35,7 +42,14 @@ export function AsideMenuMain() {
         bsTitle='Reportes'
         fontIcon='bi bi-file-earmark-text'
         className='py-3'
-      />
+      /> 
+      <AsideMenuItem
+        to='/usuarios'
+        title='Usuarios'
+        bsTitle='Usuarios'
+        fontIcon='bi bi-people'
+        className='py-3'
+      /> 
     </>
   )
 }

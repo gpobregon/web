@@ -3,7 +3,7 @@ import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import { getData, sitesMethod, deleteData, postData } from '../../services/api'
 import Sitio from './components/sitio';
 import { Site } from "../../models/site";
-import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import moment from 'moment';
 import logo from './upload-image_03.jpg';
 import QRCode from 'qrcode.react';
@@ -15,92 +15,125 @@ const SitiosPage = () => {
     const [filterSites, setFilterSites] = useState<Site[]>([])
     const [estado, setEstado] = useState(true)
     const [up, setUp] = useState(true)
-    useEffect(() => {
-        getSites();
-
-    }, [])
+    const [cantidadSite, setCantidadSite] = useState(0)
     const search = (search: string) => {
         if (!search) {
-          setFilterSites(sites)
+            setFilterSites(sites)
         } else {
-          setFilterSites(
-            sites.filter((elemento: Site) =>
-              elemento.nombre.toLowerCase().includes(search.toLocaleLowerCase())
-               
-            )
-           
-          )
-          console.log(filterSites)
-        }
-      }
+            setFilterSites(
+                sites.filter((elemento: Site) =>
+                    elemento.nombre.toLowerCase().includes(search.toLocaleLowerCase())
 
-    const handlerChange = (e: {target: {value: string}}) => {
+                )
+
+            )
+            console.log(filterSites)
+        }
+    }
+
+    const handlerChange = (e: { target: { value: string } }) => {
         setBusqueda(e.target.value)
         search(e.target.value)
-      }
+    }
 
     const getSites = async () => {
-        const site: any = await postData(sitesMethod,{page:"1",quantity:"100"})
+        const site: any = await postData(sitesMethod, { page: pageNumber, quantity: '8' })
         console.log(site)
+        setCantidadSite( site.count)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
     }
 
     const ordernarAsc = () => {
-        const numAscending = [...sites].sort((a, b) =>  moment(a.creado).diff(b.creado))
+        const numAscending = [...sites].sort((a, b) => moment(a.creado).diff(b.creado))
         setSites(numAscending)
         setFilterSites(numAscending)
         console.log(numAscending)
         setEstado(false)
         setUp(false)
-      }
-    
-      const ordenarDesc = () => {
+    }
+
+    const ordenarDesc = () => {
         const numDescending = [...sites].sort((a, b) => moment(b.creado).diff(a.creado))
         setSites(numDescending)
         setFilterSites(numDescending)
         console.log(numDescending)
         setEstado(true)
         setUp(true)
-      }
+    }
 
-      const downloadQR = () => {
+    const downloadQR = () => {
         const canvas = document.getElementById("123456") as HTMLCanvasElement;
         const pngUrl = canvas!
-          .toDataURL("image/png")
-          .replace("image/png", "image/octet-stream");
+            .toDataURL("image/png")
+            .replace("image/png", "image/octet-stream");
         let downloadLink = document.createElement("a");
         downloadLink.href = pngUrl;
         downloadLink.download = "qr.png";
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-      };
+    };
+
+    //paginacion de sitios por pagina --------------------------------------------------------------
+
+    let [pageNumber, setPageNumber] = useState(1)
+    const [toggleButtonsPagination, setToggleButtonsPagination] = useState({
+        previous: true,
+        next: false,
+    })
+
+    const handlePrevPage = () => {
+        if (pageNumber == 1) {
+            setToggleButtonsPagination({
+                previous: true,
+                next: toggleButtonsPagination.next,
+            })
+        } else {
+            setPageNumber(pageNumber - 1)
+        }
+    }
+
+    const handleNextPage = () => {
+        setPageNumber(pageNumber + 1)
+        setToggleButtonsPagination({
+            previous: false,
+            next: false,
+        })
+    }
+
+
+    //UseEffect para obtener los sitios --------------------------------------------------------------
+    useEffect(() => {
+        getSites();
+
+    }, [pageNumber])
     return (
 
         <Container fluid>
-            <div className='col-xs-12'>
+            <div className='col-xs-12 '>
                 <div
                     className=' card rounded-0 bgi-no-repeat bgi-position-x-end bgi-size-cover '
                     style={{
                         backgroundColor: '#1A1A27',
-                        backgroundSize: 'auto 100%',
+                        borderRadius: '5px',
                     }}
                 >
                     <div className='col-xs-12 col-md-12 col-lg-12 row align-items-start'>
-                        <div className='col-md-4 '>
-                            <h3 className='letterTitle'>
-                                Gestor de Sitios <span className='lettersmall'>| 272 en total</span>
+                        <div className='col-md-4 col-xs-12 searchDash  py-5 px-9'>
+                            <h3 className=''>
+                                Gestor de Sitios
                             </h3>
+                            <h5 className='' style={{ color: '#565674', fontSize: '10px' }}    >| {cantidadSite} en total</h5>
                         </div>
 
-                        <div className='col-md-5 col-xs-12 searchDash'>
-                            <div className='d-flex align-items-center position-relative me-2'>
+                        <div className='col-md-5 col-xs-12 searchDash  py-4 px-10'>
+                            <div className='d-flex align-items-center position-relative '>
 
                                 <input
                                     type='text'
                                     id='kt_filter_search'
-                                    className='form-control form-control-white form-control-sm w-155px ps-9 inputBuscar'
+                                    className='form-control form-control-white form-control-sm  inputBuscar'
                                     placeholder='Search'
                                     value={busqueda}
                                     onChange={handlerChange}
@@ -109,28 +142,45 @@ const SitiosPage = () => {
                             </div>
                         </div>
 
-                        <div className='col-md-3 col-xs-2'>
-                            <ul className='pagination'>
-                                <li className='page-item previous disabled'>
-                                    <a href='#' className='page-link'>
-                                        <i className='previous'></i>
-                                    </a>
-                                </li>
-                                <li className='page-item'>
-                                    <a href='#' className='page-link'>
-                                        1
-                                    </a>
-                                </li>
-                                <span className='letra'>de</span>
-                                <li className='page-item letra1'>
-                                    <a href='#' className='page-link'>
-                                        22
-                                    </a>
-                                </li>
-                            </ul>
+                        <div className='col-md-3 col-xs-2  py-6 px-10 '>
+                            <div className='d-flex align-items-center position-relative '>
+                                <div className='d-flex'>
+                                    <Button
+                                        variant='outline-secondary'
+                                        className='text-center'
+                                        title='Página anterior'
+                                        disabled={toggleButtonsPagination.previous}
+                                        onClick={() => handlePrevPage()}
+                                    >
+                                        <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
+                                    </Button>
+
+                                    <div
+                                        className='d-flex align-items-center justify-content-center'
+                                        style={{
+                                            width: '46px',
+                                            height: '46px',
+                                            backgroundColor: '#2B2B40',
+                                            borderRadius: '5px',
+                                        }}
+                                    >
+                                        {`${pageNumber}`}
+                                    </div>
+
+                                    <Button
+                                        variant='outline-secondary'
+                                        className='text-center'
+                                        title='Página siguiente'
+                                        disabled={toggleButtonsPagination.next}
+                                        onClick={() => handleNextPage()}
+                                    >
+                                        <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <br />
+
                 </div>
             </div>
 
@@ -138,38 +188,38 @@ const SitiosPage = () => {
             <br></br>
             <Row className='pb-10'>
                 <Col md={4} className='pb-10'>
-                
-              <span
-                className={up == false ? 'bi bi-sort-down' : 'bi bi-sort-up'}
-                onClick={estado == true ? ordernarAsc : ordenarDesc}
-              >
-                Agregados recientemente
-              </span>
-            
+
+                    <span
+                        className={up == false ? 'bi bi-sort-down' : 'bi bi-sort-up'}
+                        onClick={estado == true ? ordernarAsc : ordenarDesc}
+                    >
+                        Agregados recientemente
+                    </span>
+
                 </Col>
                 <Col md={{ span: 2, offset: 6 }} >
-                <Link to={'create'}>
-                    <Button className="btn btn-primary" >
-                    
-                    <i className="bi bi-file-earmark-plus"></i>
-                    {'Nuevo sitio'}
-                    
-                        
-                    </Button>
+                    <Link to={'create'}>
+                        <Button className="btn btn-primary" >
+
+                            <i className="bi bi-file-earmark-plus"></i>
+                            {'Nuevo sitio'}
+
+
+                        </Button>
                     </Link>
                 </Col>
             </Row>
             <div className='row g-4'>
-          
+
                 {
-                    filterSites?.map(sitio => <Sitio {...sitio} key={sitio.id_sitio.toString() }  />)
-                    
+                    filterSites?.map(sitio => <Sitio {...sitio} key={sitio.id_sitio.toString()} />)
+
                 }
-                
-                  <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                    <Card  style={{ backgroundColor: '#1e1e2d',margin:'20px', padding: 20, width: '95%', height: '420px', display: 'table' }}>
-                    <Link to={'create'} style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
-                     
+
+                <div className="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <Card style={{ backgroundColor: '#1e1e2d', margin: '20px', padding: 20, width: '95%', height: '100%', display: 'table' }}>
+                        <Link to={'create'} style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
+
                             <svg
 
                                 xmlns="http://www.w3.org/2000/svg" width="
@@ -180,13 +230,13 @@ const SitiosPage = () => {
                             </svg>
                             <Card.Text style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden' }} >Nuevo Sitio</Card.Text>
 
-                  
+
                         </Link>
                     </Card>
-                    </div>
-                    </div>
-                   
-             
+                </div>
+            </div>
+
+
         </Container>
     );
 }

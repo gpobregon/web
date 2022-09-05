@@ -6,7 +6,7 @@ import ItemEditable from '../../../../../utility/component/template/itemEditable
 import { ContentContext } from '../../context'
 
 const EditableMovil = () => {
-    const { drop, board, editItem, updateElement, moveCard, setEditItem } = useContext(ContentContext)
+    const { drop, board, editItem, updateElement, moveCard, setEditItem, removeItem } = useContext(ContentContext)
     return (
         <Fragment>
             <Col lg={6}>
@@ -19,9 +19,10 @@ const EditableMovil = () => {
                                     <div key={index}>
                                         <ItemEditable 
                                             key={index} 
-                                            data={item} 
+                                            data={item}
+                                            id={item.id}
                                             index={index}
-                                            id={item.id} 
+                                            removeItem={removeItem}
                                             moveCard={moveCard}
                                             setEditItem={setEditItem}
                                             updateElement={updateElement}
@@ -35,8 +36,8 @@ const EditableMovil = () => {
             </Col>
             <Col lg={6}>
                 <Card.Body className="rounded height-section-editable d-flex justify-content-center">
-                    <div className="d-flex align-items-center">
-                    { editItem.length !== 0 && <AttrItems editItem={editItem} updateElement={updateElement}/>}
+                    <div className="d-flex align-items-center w-100">
+                        { editItem.length !== 0 && <AttrItems editItem={editItem} updateElement={updateElement}/>}
                     </div>
                 </Card.Body>
             </Col>

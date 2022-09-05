@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import Select from 'react-select'
 import { Col, Card, Button, Row, Modal, Form } from 'react-bootstrap';
-import { postData, addNewPointInteres, updatePointInteres, sitesMethod, getValue, URLAWS, statePointInteres } from '../../../../services/api'
+import { postData, addNewPointInteres, updatePointInteres, sitesMethod, getValue, URLAWS, statePointInteres, getData, languagesMethod, statePointInteresPublished } from '../../../../services/api'
 import swal from "sweetalert";
 import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
@@ -11,6 +11,8 @@ import { Site } from '../../../../models/site';
 import logo from '../../upload-image_03.jpg';
 import { QRCodeCanvas } from 'qrcode.react';
 import UpImage from '../upload-image';
+import { CatalogLanguage } from '../../../../models/catalogLanguage';
+import SalaRutas from '../rutas-sitios-interes/sala-rutas';
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -75,6 +77,7 @@ type datosPuntoInteres = {
     es_portada_de_sitio: boolean
     estado: boolean
     es_visible: boolean
+    publicado: boolean
 }
 const animatedComponents = makeAnimated()
 const EditPoint = () => {
@@ -82,6 +85,8 @@ const EditPoint = () => {
     const handleClose = () => setShow(false)  //modal close qr
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
+      //get sitio-------------------------------------------------------------------------------------
+      const [sitios, setSitios] = useState()
     const { state } = useLocation()
     const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
@@ -98,25 +103,13 @@ const EditPoint = () => {
         es_portada_de_sitio: datospuntoInteres.es_portada_de_sitio,
         estado: datospuntoInteres.estado,
         es_visible: datospuntoInteres.es_visible,
+        publicado: true,
     });
 
- //este state se borra mas adelante
-    const [status, setStatus] = useState<status>({
-        id_sitio: 0,
-        favorito: true,
-        publicado: true,
-        oculto: false,
-    })
 
-    const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
+
+    const changeOculto = (oculto: boolean) => {
         postData(statePointInteres, { id_punto: datospuntoInteres.id_punto, es_visible: oculto })
-        //este state se borra mas adelante
-        setStatus({
-          id_sitio: 0,
-          favorito: favorito,
-          publicado: publicado,
-          oculto: oculto,
-        })
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
@@ -131,6 +124,26 @@ const EditPoint = () => {
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
             es_visible: oculto,
+            publicado: sitio.publicado,
+        })
+    }
+    const changePublicado = (publicado: boolean) => {
+        postData(statePointInteresPublished, { id_punto: datospuntoInteres.id_punto, publicado: publicado })
+        setSitio({
+            id_punto: sitio.id_punto,
+            id_sitio: sitio.id_sitio,
+            id_guia: sitio.id_guia,
+            descripcion: sitio.descripcion,
+            id_lenguaje: sitio.id_lenguaje,
+            nombre: sitio.nombre,
+            geoX: sitio.geoX,
+            geoY: sitio.geoY,
+            portada_path: sitio.portada_path,
+            qr_path: sitio.qr_path,
+            es_portada_de_sitio: sitio.es_portada_de_sitio,
+            estado: sitio.estado,
+            es_visible: sitio.es_visible,
+            publicado: publicado,
         })
     }
     //alert methods-----------------------------------------------------------------------
@@ -148,6 +161,7 @@ const EditPoint = () => {
                     timer: 2000,
 
                 })
+                // console.log(sitios)
                 navigate('/sitios/edit', {
                     state: sitios
                 })
@@ -178,28 +192,45 @@ const EditPoint = () => {
     //petitions----------------------------------------------------------------------------
     const addNewPoint = async () => {
         await postData(addNewPointInteres, sitio)
-        console.log(sitio)
+        // console.log(sitio)
     }
 
     const updatePoint = async () => {
-        console.log(sitio)
         const updatePoint = await postData(updatePointInteres, sitio)
-        console.log(updatePoint)
     }
-    //get sitio-------------------------------------------------------------------------------------
-    const [sitios, setSitios] = useState()
-    useEffect(() => {
-        getSites()
-    }, [])
+    
 
     const getSites = async () => {
         const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
-
         setSitios(site.site)
 
     }
     //obtener lenguajes-------------------------------------------------------------------------------------
-    const languagesOptions = datospuntoInteres.lenguajes?.map((language) => ({
+    const [languages, setLanguages] = useState<CatalogLanguage[]>([])
+    let lenaguajeDefault = ""
+    for (let i = 0; i < languages.length; i++) {
+        if (languages[i].id_lenguaje === datospuntoInteres.lenguajes[0].id_lenguaje) {
+            // setLenaguajeDefault(languages[i].descripcion)
+            lenaguajeDefault = languages[i].descripcion
+        }
+    }
+
+    const languageEscogido = datospuntoInteres.lenguajes?.map((language) =>
+    (
+        {
+            value: language.id_lenguaje,
+            label: lenaguajeDefault,
+        }))
+
+
+    // console.log(languageEscogido)
+    const getLanguages = async () => {
+        const language: any = await getData(languagesMethod)
+        setLanguages(language.data as CatalogLanguage[])
+        // console.log(language)
+    }
+
+    const languagesOptions = languages?.map((language) => ({
         value: language.id_lenguaje,
         label: language.descripcion,
     }))
@@ -220,8 +251,9 @@ const EditPoint = () => {
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
             es_visible: sitio.es_visible,
+            publicado: true,
         })
-        console.log(datospuntoInteres.lenguajes)
+
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
     const [modalupimg, setModalupIMG] = useState(false)
@@ -240,6 +272,7 @@ const EditPoint = () => {
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
             es_visible: sitio.es_visible,
+            publicado: true,
         })
 
         if (imagen != '') {
@@ -248,31 +281,35 @@ const EditPoint = () => {
     };
 
     //DONWLOAD QR-------------------------------------------------------------------------
-      const downloadQRCode = () => {
+    const downloadQRCode = () => {
         const canvas = document.getElementById("qrCode") as HTMLCanvasElement;
         const pngUrl = canvas!
-          .toDataURL("image/png")
-          .replace("image/png", "image/octet-stream");
+            .toDataURL("image/png")
+            .replace("image/png", "image/octet-stream");
         let downloadLink = document.createElement("a");
         downloadLink.href = pngUrl;
         downloadLink.download = "qr.png";
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-      };
+    };
+    useEffect(() => {
+        getSites()
+        getLanguages()
+    }, [])
+
     return (
         <>
             <div className=' '>
                 <div className='row' style={{ backgroundColor: '#1A1A27', backgroundSize: 'auto 100%' }}>
-                    <div className='col-xs-12 col-md-5 col-lg-6 d-flex'>
+                    <div className='col-xs-12 col-md-5 col-lg-6 d-flex  py-5 px-9'>
                         <div id='center'>
 
                             <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px' }}
 
                                 onClick={(event) => {
-                                    navigate('/sitios/edit', {
-                                        state: sitios
-                                    })
+                                    discardChanges()
+
                                 }}
                             ></i>
 
@@ -294,7 +331,7 @@ const EditPoint = () => {
                             {/* <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>  */}
                         </div>
                     </div>
-                    <div className='col-xs-12 col-md-6 col-lg-6 d-flex justify-content-end'>
+                    <div className='col-xs-12 col-md-6 col-lg-6 d-flex  py-5 px-9 justify-content-end'>
                         <div id='center2'>
                             <ul className='nav justify-content-end '>
                                 <li className='nav-item'>
@@ -327,14 +364,15 @@ const EditPoint = () => {
                                         <Modal.Title>Escanee su Código QR</Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body style={{ textAlign: 'center' }}>
+                                        <Modal.Dialog>Sitio: {sitio.nombre}</Modal.Dialog>
                                         <QRCodeCanvas
-                                             id="qrCode"
+                                            id="qrCode"
                                             value={datospuntoInteres.qr_path}
                                             size={300}
 
                                             level={"H"}
                                         />
-                                           
+
 
                                     </Modal.Body>
                                     <Modal.Footer>
@@ -342,8 +380,8 @@ const EditPoint = () => {
                                             Close
                                         </Button>
                                         <Button variant='primary' onClick={downloadQRCode}>
-                                                                Descargar
-                                                            </Button>
+                                            Descargar
+                                        </Button>
                                     </Modal.Footer>
                                 </Modal>
 
@@ -358,8 +396,8 @@ const EditPoint = () => {
                                         // status.oculto == false
                                         //   ? changeStatus(status.favorito, status.publicado, true)
                                         //   : changeStatus(status.favorito, status.publicado, false)
-                                        sitio.es_visible = ! sitio.es_visible
-                                        changeStatus(status.favorito, status.publicado,  sitio.es_visible)
+                                        sitio.es_visible = !sitio.es_visible
+                                        changeOculto(sitio.es_visible)
                                     }}
                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                 ></i>
@@ -367,11 +405,6 @@ const EditPoint = () => {
                                     className='fa-solid fa-xmark background-button'
                                     id='center2'
                                     onClick={() => {
-                                        // var n = window.confirm('Esta seguro que descartar cambios?')
-                                        // if (n == true) {
-                                        //     window.location.href = "../sitios";
-                                        // } else {
-                                        // }
 
                                         discardChanges()
                                     }}
@@ -383,23 +416,17 @@ const EditPoint = () => {
                                     onClick={() => {
                                         updatePoint()
                                         saveChanges();
-
-
-
                                     }}
                                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                 ></i>
 
                                 <i
                                     onClick={() => {
-                                         status.publicado == false
-                                          ? changeStatus(status.favorito, true, status.oculto)
-                                          : changeStatus(status.favorito, false, status.oculto)
-                                        status.publicado = !status.publicado
-                                         changeStatus(status.favorito, status.publicado, status.oculto)
+                                        sitio.publicado = !sitio.publicado
+                                        changePublicado(sitio.publicado)
                                     }}
                                     className={
-                                        status.publicado == false
+                                        sitio.publicado == false
                                             ? 'fa-solid fa-download background-button'
                                             : 'fa-solid fa-upload background-button'
                                     }
@@ -444,13 +471,21 @@ const EditPoint = () => {
                                     <div className='card-body '>
                                         <Row>
                                             <Col>
+                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                            </Col>
+
+                                            <Col>
                                                 <Link
                                                     className='bi bi-arrow-left-right background-button text-info'
                                                     to={''}
+                                                    onClick={() => { setModalupIMG(true)}}
                                                 ></Link>
                                             </Col>
                                             <Col>
-                                                <Link className='bi bi-crop background-button text-info' to={''}></Link>
+                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                            </Col>
+                                            <Col>
+                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                                             </Col>
                                             <Col>
                                                 <Link className='bi bi-trash background-button text-danger' to={''}
@@ -468,6 +503,7 @@ const EditPoint = () => {
                                                         es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                         estado: sitio.estado,
                                                         es_visible: sitio.es_visible,
+                                                        publicado: true,
                                                     })}
                                                 >
                                                 </Link>
@@ -489,7 +525,7 @@ const EditPoint = () => {
                                         className='form-control'
                                         disabled
                                         style={{ border: '0', fontSize: '14px', color: '#92929F' }}
-                                        value={'Sala ' + datospuntoInteres.id_guia}
+                                        value={'Sala ' + datospuntoInteres.nombre}
 
 
 
@@ -497,7 +533,7 @@ const EditPoint = () => {
                                     ></input>
 
                                     <br></br>
-                                    <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Nombre del pundo de iteres</label>
+                                    <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Nombre del punto de interés</label>
                                     <br />
                                     <br />
                                     <input
@@ -520,7 +556,8 @@ const EditPoint = () => {
                                                 qr_path: sitio.qr_path,
                                                 es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                 estado: sitio.estado,
-                                                es_visible: sitio.es_visible
+                                                es_visible: sitio.es_visible,
+                                                publicado: true,
                                             })
                                         }}
 
@@ -536,6 +573,7 @@ const EditPoint = () => {
 
 
                                 <Select
+                                    value={languageEscogido}
                                     options={languagesOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
@@ -597,7 +635,7 @@ const EditPoint = () => {
                                         <br></br>
                                         <br />
                                         <div className='row'>
-                                            <p className=' text-movil col-md-12 text-center mt-5'>
+                                            <p className='  col-md-12 text-center mt-5'>
                                                 Maquetar los elementos del sitio para versión móvil.
                                             </p>
                                         </div>
@@ -629,7 +667,7 @@ const EditPoint = () => {
                                         <br></br>
                                         <br />
                                         <div className='row'>
-                                            <p className=' text-movil col-md-12 text-center mt-5'>
+                                            <p className='  col-md-12 text-center mt-5'>
                                                 Maquetar los elementos del sitio para versión web
                                             </p>
                                         </div>
@@ -656,9 +694,18 @@ const EditPoint = () => {
                                 </div>
                             </div>
                         </div>
+
                     </div>
+
                 </div>
             </div>
+            <br />
+            <br />
+            <h3>Creación de rutas entre puntos de interés</h3>
+            <SalaRutas
+                id_punto_a={sitio.id_punto}
+                id_sitio={sitio.id_sitio} 
+                puntosIteres={datospuntoInteres}/>
         </>
     )
 }
