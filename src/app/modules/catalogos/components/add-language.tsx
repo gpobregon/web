@@ -49,7 +49,18 @@ const AddLanguaje: FC<any> = ({show, onClose, addLanguage}) => {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>
+                    <Button
+                        variant='secondary'
+                        onClick={() => {
+                            setLanguage({
+                                id_lenguaje: 1,
+                                nombre: '',
+                                descripcion: '',
+                                estado: 1,
+                            })
+                            onClose()
+                        }}
+                    >
                         {'Cancelar '}
                         <i className={`bi-x text-white fs-3`}></i>
                     </Button>
@@ -57,6 +68,12 @@ const AddLanguaje: FC<any> = ({show, onClose, addLanguage}) => {
                         variant='primary'
                         onClick={() => {
                             addLanguage(language)
+                            setLanguage({
+                                id_lenguaje: 1,
+                                nombre: '',
+                                descripcion: '',
+                                estado: 1,
+                            })
                         }}
                     >
                         {'Aplicar '}
