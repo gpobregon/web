@@ -474,7 +474,7 @@ console.log(site)
                   id='center2'
                   style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                 ></Button>
-                <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button>
+                {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
               </ul>
             </div>
           </div>

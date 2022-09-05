@@ -342,7 +342,7 @@ const AddPoint = () => {
                   id='center2'
                   style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                 ></Button>
-                  <Button disabled className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#4F4B4B', display: 'flex' }}></Button>
+                  {/* <Button disabled className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#4F4B4B', display: 'flex' }}></Button> */}
               </ul>
             </div>
           </div>
