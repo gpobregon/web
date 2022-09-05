@@ -8,7 +8,7 @@ import makeAnimated from 'react-select/animated'
 import {Link} from 'react-router-dom'
 import {awsconfig} from '../../../aws-exports'
 import {DataStore} from 'aws-amplify'
-import Auth from '@aws-amplify/auth'
+import {Amplify, Auth} from 'aws-amplify'
 import * as AWS from 'aws-sdk'
 import {
     ListUsersResponse,
@@ -87,6 +87,7 @@ const UserManagement: FC<any> = ({show}) => {
     const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
+    const [dataSelect, setDataSelect] = useState({user: '', role: ''})
     //const banderID: any = 0
 
     const showModalAddUser = () => {
@@ -117,33 +118,35 @@ const UserManagement: FC<any> = ({show}) => {
                 }
             })
         })
-    }  
-
-
-
-    const getPropertiesSelect = (item: any) => {
-        if (existUsers == true) {
-            return {
-                label: item?.Atributes[1]?.Value ?? '',
-                value: item?.Atributes[1]?.Value ?? '',
-            }
-        } else {
-            return {
-                label: '',
-                value: '',
-            }
-        }
     }
 
-    
-
-
+    const updateUsuarios = async () => {
+        let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+        cognito.adminUpdateUserAttributes(
+            {
+                UserAttributes: [
+                    {
+                        Name: 'custom:role',
+                        Value: String(dataSelect.role),
+                    },
+                ],
+                UserPoolId: awsconfig.userPoolId,
+                Username: dataSelect.user,
+            },
+            function (err, data) {
+                if (err) console.log(err, err.stack) // an error occurred
+                else console.log(data)
+            }
+        )
+        getUsers()
+    }
 
     useEffect(() => {
-        getUsers() 
-    }, [])  
+        getUsers()
+    }, [])
 
-    
+    // console.log(users)
+    // console.log(dataSelect)
 
     return (
         <Container fluid>
@@ -242,41 +245,53 @@ const UserManagement: FC<any> = ({show}) => {
                                                         {item.Attributes[3].Value}
                                                     </div>
                                                 </td>
-                                                <td className='text-muted'>{item.Attributes[0].Value}</td>
+                                                <td className='text-muted'>
+                                                    {item.Attributes[0].Value}
+                                                </td>
                                                 <td className='d-flex'>
                                                     {existUsers ? (
                                                         <>
-                                                        <Select
-                                                            options={options}
-                                                            styles={customStyles}
-                                                            components={animatedComponents}
-                                                            onChange={() => {
-                                                                setButtonAcept(true)
-                                                                setBanderID(item)
-                                                            }} 
-                                                            // value={item?.Attributes[2]?.Value ? item.Attributes[2].Value : '' }
+                                                            <Select
+                                                                options={options}
+                                                                styles={customStyles}
+                                                                components={animatedComponents}
+                                                                onChange={(event: any) => {
+                                                                    setButtonAcept(true)
+                                                                    setBanderID(item)
+                                                                    setDataSelect({
+                                                                        user: item.Attributes[3]
+                                                                            .Value,
+                                                                        role: event.value,
+                                                                    })
+                                                                }}
+                                                                // value={item?.Attributes[2]?.Value ? item.Attributes[2].Value : '' }
 
-                                                            defaultValue={{
-                                                                label: 
-                                                                    item?.Attributes[2]?.Value ?? '',
-                                                                value:
-                                                                    item?.Attributes[2]?.Value ?? '',
-                                                            }}
-                                                        /> 
-                                                        </> 
+                                                                defaultValue={{
+                                                                    label:
+                                                                        item?.Attributes[2]
+                                                                            ?.Value ?? '',
+                                                                    value:
+                                                                        item?.Attributes[2]
+                                                                            ?.Value ?? '',
+                                                                }}
+                                                            />
+                                                        </>
                                                     ) : (
                                                         <></>
                                                     )}
                                                     {buttonAcept === true && item === banderID ? (
                                                         <div>
+                                                            {/* cheque */}
                                                             <Button
                                                                 variant='btn btn-light btn-active-light-primary'
                                                                 style={{marginLeft: 10}}
+                                                                onClick={() => updateUsuarios()}
                                                             >
                                                                 <i
                                                                     className={`bi bi-check text-white fs-3`}
                                                                 ></i>
                                                             </Button>
+                                                            {/* la X */}
                                                             <Button
                                                                 variant='btn btn-light btn-active-light-primary'
                                                                 style={{marginLeft: 10}}
@@ -317,8 +332,8 @@ const UserManagement: FC<any> = ({show}) => {
 
                     <DeleteUser
                         show={modalDeleteUser.show}
-                        onClose={() => setModalDeleteUser({show: false, user: {}})} 
-                        user = {modalDeleteUser.user}
+                        onClose={() => setModalDeleteUser({show: false, user: {}})}
+                        user={modalDeleteUser.user}
                     />
                 </div>
             ) : (

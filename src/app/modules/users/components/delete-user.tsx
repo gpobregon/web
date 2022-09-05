@@ -1,9 +1,9 @@
 import React, {useState, FC, useEffect} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import {Button, Modal, Form, Row, Col} from 'react-bootstrap' 
-import Auth from '@aws-amplify/auth' 
-import { CognitoUser } from "amazon-cognito-identity-js";
+import {Button, Modal, Form, Row, Col} from 'react-bootstrap'
+import Auth from '@aws-amplify/auth'
+import {CognitoUser} from 'amazon-cognito-identity-js'
 
 import {awsconfig} from '../../../../aws-exports'
 import * as AWS from 'aws-sdk'
@@ -11,52 +11,48 @@ import * as AWS from 'aws-sdk'
 import {
     ListUsersResponse,
     UsersListType,
-    UserType,  
-} from 'aws-sdk/clients/cognitoidentityserviceprovider' 
+    UserType,
+} from 'aws-sdk/clients/cognitoidentityserviceprovider'
 
 async function deleteUser() {
     try {
-      const result = await Auth.deleteUser();
-      console.log(result);
+        const result = await Auth.deleteUser()
+        console.log(result)
     } catch (error) {
-      console.log('Error deleting user', error);
+        console.log('Error deleting user', error)
     }
-  } 
-
+}
 
 //   async function onRemoveAccount() {
 //     Auth
 //         .currentAuthenticatedUser()
-//         .then((user: CognitoUser) => new Promise((resolve, reject) => { 
-            
+//         .then((user: CognitoUser) => new Promise((resolve, reject) => {
+
 //             user.deleteUser(error => {
 //                 if (error) {
 //                     return reject(error);
 //                 }
-//                 if (this.props.onSessionChange) {               
+//                 if (this.props.onSessionChange) {
 //                     this.props.onSessionChange();
 //                 }
 //                 document.location.href = "/login";
-                
+
 //                 resolve();
 //             });
 //         }))
 //         .catch(this.onError);
-// } 
+// }
 
 //me elimina tambien el usuario con el que estoy logueado
 const handleDeleteCognitoUser = async () => {
-    const user = await Auth.currentAuthenticatedUser();
+    const user = await Auth.currentAuthenticatedUser()
     user.deleteUser((error: any, data: any) => {
-      if (error) {
-        throw error;
-      }
-    // do stuff after deletion 
-        
-    });
-  }; 
-
-
+        if (error) {
+            throw error
+        }
+        // do stuff after deletion
+    })
+}
 
 //   var params = {
 //     UserPoolId: 'STRING_VALUE', /* required */
@@ -113,7 +109,7 @@ const customStyles = {
 const DeleteUser: FC<any> = ({show, onClose, user}) => {
     const [users, setUsers] = useState<UserType[]>([])
     const [existUsers, setExistUsers] = useState(false)
-    const [params, setParams] = useState({name: ''}) 
+    const [params, setParams] = useState({name: ''})
 
     const getUsers = async () => {
         let params = {
@@ -135,24 +131,23 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                 }
             })
         })
-    } 
+    }
 
-    const deleteUsuarios = async ()=>{ 
+    const deleteUsuarios = async () => {
         var params = {
-            UserPoolId: awsconfig.userPoolId, /* required */
-            Username: user.Attributes[2].Value  /* required */
-          } 
+            UserPoolId: awsconfig.userPoolId /* required */,
+            Username: user.Attributes[2].Value /* required */,
+        }
 
-        return new Promise((resolve, reject) => { 
-            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region}) 
-            cognito.adminDeleteUser(params, (err, data) => { 
+        return new Promise((resolve, reject) => {
+            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+            cognito.adminDeleteUser(params, (err, data) => {
                 if (err) {
                     console.log(err)
                     reject(err)
                 } else {
-                    resolve(data)  
+                    resolve(data)
                 }
-                
             })
         })
     }
@@ -178,13 +173,13 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                             </Col>
 
                             <Col lg={4} md={4} sm={3}>
-                                <div>{`${user.Attributes[0].Value}`}</div>
-                                <div className='text-muted'>{`${user.Attributes[2].Value}`}</div>
+                                <div>{`${user.Attributes[1].Value}`}</div>
+                                <div className='text-muted'>{`${user.Attributes[3].Value}`}</div>
                             </Col>
 
                             <Col lg={4} md={4} sm={3}>
                                 <div>Rol</div>
-                                <div className='text-muted'>{`${user.Attributes[1].Value}`}</div>
+                                <div className='text-muted'>{`${user.Attributes[2].Value}`}</div>
                             </Col>
                         </Row>
                     ) : (
@@ -207,9 +202,9 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                     </Button>
                     <Button
                         variant='btn btn-light-danger btn-active-danger'
-                        onClick={() => { 
-                            deleteUsuarios() 
-                            document.location.href = "/usuarios/user-management";
+                        onClick={() => {
+                            deleteUsuarios()
+                            document.location.href = '/usuarios/user-management'
                         }}
                     >
                         {'Eliminar '}
