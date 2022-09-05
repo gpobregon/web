@@ -51,6 +51,7 @@
     "react-dom": "18.0.0",
     "react-dropzone": "^14.2.2",
     "react-hook-form": "^7.34.0",
+    "react-image-crop": "^10.0.6",
     "react-inlinesvg": "3.0.0",
     "react-intl": "5.25.0",
     "react-multi-select-component": "^4.3.2",
@@ -100,8 +101,8 @@
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "rtl": "webpack --config webpack-rtl.config.js",
-    "aws-configure":"aws configure --profile mcd-demo",
-    "deploy":"aws s3 sync build/ s3://mcd-demo-cg --profile mcd-demo"
+    "aws-configure": "aws configure --profile mcd-demo",
+    "deploy": "aws s3 sync build/ s3://mcd-demo-cg --profile mcd-demo"
   },
   "eslintConfig": {
     "extends": [

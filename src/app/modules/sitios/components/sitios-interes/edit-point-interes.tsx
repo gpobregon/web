@@ -85,6 +85,8 @@ const EditPoint = () => {
     const handleClose = () => setShow(false)  //modal close qr
     const handleShow = () => setShow(true)  //modal open qr
     const [show, setShow] = useState(false) //modal show qr
+      //get sitio-------------------------------------------------------------------------------------
+      const [sitios, setSitios] = useState()
     const { state } = useLocation()
     const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
@@ -159,7 +161,7 @@ const EditPoint = () => {
                     timer: 2000,
 
                 })
-                console.log(sitios)
+                // console.log(sitios)
                 navigate('/sitios/edit', {
                     state: sitios
                 })
@@ -190,14 +192,13 @@ const EditPoint = () => {
     //petitions----------------------------------------------------------------------------
     const addNewPoint = async () => {
         await postData(addNewPointInteres, sitio)
-        console.log(sitio)
+        // console.log(sitio)
     }
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
     }
-    //get sitio-------------------------------------------------------------------------------------
-    const [sitios, setSitios] = useState()
+    
 
     const getSites = async () => {
         const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
@@ -222,11 +223,11 @@ const EditPoint = () => {
         }))
 
 
-    console.log(languageEscogido)
+    // console.log(languageEscogido)
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        console.log(language)
+        // console.log(language)
     }
 
     const languagesOptions = languages?.map((language) => ({
@@ -477,6 +478,7 @@ const EditPoint = () => {
                                                 <Link
                                                     className='bi bi-arrow-left-right background-button text-info'
                                                     to={''}
+                                                    onClick={() => { setModalupIMG(true)}}
                                                 ></Link>
                                             </Col>
                                             <Col>
@@ -523,7 +525,7 @@ const EditPoint = () => {
                                         className='form-control'
                                         disabled
                                         style={{ border: '0', fontSize: '14px', color: '#92929F' }}
-                                        value={'Sala ' + datospuntoInteres.id_guia}
+                                        value={'Sala ' + datospuntoInteres.nombre}
 
 
 
@@ -531,7 +533,7 @@ const EditPoint = () => {
                                     ></input>
 
                                     <br></br>
-                                    <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Nombre del pundo de iteres</label>
+                                    <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Nombre del punto de interés</label>
                                     <br />
                                     <br />
                                     <input

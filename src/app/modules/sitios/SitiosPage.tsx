@@ -15,7 +15,7 @@ const SitiosPage = () => {
     const [filterSites, setFilterSites] = useState<Site[]>([])
     const [estado, setEstado] = useState(true)
     const [up, setUp] = useState(true)
-
+    const [cantidadSite, setCantidadSite] = useState(0)
     const search = (search: string) => {
         if (!search) {
             setFilterSites(sites)
@@ -39,6 +39,7 @@ const SitiosPage = () => {
     const getSites = async () => {
         const site: any = await postData(sitesMethod, { page: pageNumber, quantity: '8' })
         console.log(site)
+        setCantidadSite( site.count)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
     }
@@ -81,6 +82,7 @@ const SitiosPage = () => {
         previous: true,
         next: false,
     })
+
     const handlePrevPage = () => {
         if (pageNumber == 1) {
             setToggleButtonsPagination({
@@ -99,6 +101,7 @@ const SitiosPage = () => {
             next: false,
         })
     }
+
 
     //UseEffect para obtener los sitios --------------------------------------------------------------
     useEffect(() => {
@@ -121,7 +124,7 @@ const SitiosPage = () => {
                             <h3 className=''>
                                 Gestor de Sitios
                             </h3>
-                            <h5 className='' style={{ color: '#565674', fontSize: '10px' }}    >| 272 en total</h5>
+                            <h5 className='' style={{ color: '#565674', fontSize: '10px' }}    >| {cantidadSite} en total</h5>
                         </div>
 
                         <div className='col-md-5 col-xs-12 searchDash  py-4 px-10'>
@@ -141,37 +144,39 @@ const SitiosPage = () => {
 
                         <div className='col-md-3 col-xs-2  py-6 px-10 '>
                             <div className='d-flex align-items-center position-relative '>
-                                <Button
-                                    variant='outline-secondary'
-                                    className='text-center'
-                                    title='Página anterior'
-                                    disabled={toggleButtonsPagination.previous}
-                                    onClick={() => handlePrevPage()}
-                                >
-                                    <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
-                                </Button>
+                                <div className='d-flex'>
+                                    <Button
+                                        variant='outline-secondary'
+                                        className='text-center'
+                                        title='Página anterior'
+                                        disabled={toggleButtonsPagination.previous}
+                                        onClick={() => handlePrevPage()}
+                                    >
+                                        <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
+                                    </Button>
 
-                                <div
-                                    className='d-flex align-items-center  py-5 px-9 justify-content-center'
-                                    style={{
-                                        width: '46px',
-                                        height: '46px',
-                                        backgroundColor: '#2B2B40',
-                                        borderRadius: '5px',
-                                    }}
-                                >
-                                    {`${pageNumber}`}
+                                    <div
+                                        className='d-flex align-items-center justify-content-center'
+                                        style={{
+                                            width: '46px',
+                                            height: '46px',
+                                            backgroundColor: '#2B2B40',
+                                            borderRadius: '5px',
+                                        }}
+                                    >
+                                        {`${pageNumber}`}
+                                    </div>
+
+                                    <Button
+                                        variant='outline-secondary'
+                                        className='text-center'
+                                        title='Página siguiente'
+                                        disabled={toggleButtonsPagination.next}
+                                        onClick={() => handleNextPage()}
+                                    >
+                                        <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
+                                    </Button>
                                 </div>
-
-                                <Button
-                                    variant='outline-secondary'
-                                    className='text-center'
-                                    title='Página siguiente'
-                                    disabled={toggleButtonsPagination.next}
-                                    onClick={() => handleNextPage()}
-                                >
-                                    <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
-                                </Button>
                             </div>
                         </div>
                     </div>
@@ -211,8 +216,8 @@ const SitiosPage = () => {
 
                 }
 
-                <div className="col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                    <Card style={{ backgroundColor: '#1e1e2d', margin: '20px', padding: 20, width: '95%', height: '420px', display: 'table' }}>
+                <div className="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                    <Card style={{ backgroundColor: '#1e1e2d', margin: '20px', padding: 20, width: '95%', height: '100%', display: 'table' }}>
                         <Link to={'create'} style={{ whiteSpace: 'nowrap', textOverflow: ' ellipsis', overflow: 'hidden', display: 'table-cell', verticalAlign: 'middle', textAlign: 'center' }}>
 
                             <svg

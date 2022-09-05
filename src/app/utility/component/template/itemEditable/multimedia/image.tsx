@@ -4,15 +4,15 @@ import { Menu, Item, useContextMenu } from "react-contexify";
 import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
 
 type Model = {
-    data: any
-    referencia: any
-    handlerId: any
-    isDragging : any
-    setEditItem: (data : any) => void
-    updateElement: (data : any) => void
-    removeItem: (data : any) => void
+  data: any
+  referencia: any
+  handlerId: any
+  isDragging : any
+  setEditItem: (data: any) => void
+  updateElement: (data: any) => void
+  removeItem: (data : any) => void
 }
-const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
+const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
   
   const { show } = useContextMenu({ id: "menu-id" });  
   
@@ -41,11 +41,7 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
               <i className="bi bi-grip-vertical fa-2x"/>
             </div>
             <div id={data.id} className={`editable ${data.textAling} w-100`}>
-                <audio controls autoPlay id={data.id}>
-                    <source src={toAbsoluteUrl(data.url)} type="audio/ogg" />
-                    <source src="horse.mp3" type="audio/mpeg" />
-                        Su navegador no es compatible con el elemento de audio.
-                </audio>
+              <img src={toAbsoluteUrl("/media/png/picture.png")} alt="" className="w-50"/>
             </div>
             <Menu id={"menu-id"} theme="dark" data-test={data}>
               <Item onClick={(e : any) => destroyItem(e)}>
@@ -58,4 +54,4 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
     )
 }
 
-export default Audio
+export default Picture

@@ -3,24 +3,49 @@ import { createContext, FC, useState, useCallback, useEffect } from 'react'
 import { WithChildren } from '../../../utility/models/childrenContext'
 import { updateData, validElement, generateRandomString } from '../../../utility/global/index'
 import { getData, postData } from '../../../services/api'
+import { useParams } from 'react-router-dom'
 import update from 'immutability-helper'
 import { useDrop } from "react-dnd"
 import swal from 'sweetalert'
+import * as AWS from 'aws-sdk'
+import { Element } from '../../../utility/global/data'
+
+export const URLAWS='https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/recursos/'
 
 export const ContentContext = createContext<any | null>(null)
+
+const S3_BUCKET = 'mcd-backoffice-upload/recursos';
+const REGION = 'us-east-2';
+
+AWS.config.update({
+    accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
+    secretAccessKey: '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'
+})
+
+const myBucket = new AWS.S3({
+    params: { Bucket: S3_BUCKET },
+    region: REGION,
+})
 
 export const ContentProvider: FC<WithChildren> = ({children}) => {
     const [board, setBoard] = useState<any>([])
     const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
+    const [allResources, setAllResource] = useState<any>([])
+    const [oneDataSite, setOneDataSite] = useState<any>([])
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<number>(1)
     let [count, setCount] = useState(0)
+    const [progress, setProgress] = useState(0)
     const [editItem, setEditItem] = useState<any>([])
+    const { id } = useParams()
+  
+    // console.log(Element, Element[0].ElementosWeb)
+    console.log(Element[0].ElementosWeb[0].items)
 
     const addElement = (data : any) => {
         const response = validElement(data.type)
-        const result = response.filter((item : any) => data.id === item.id);
+        const result = response.filter((item : any) => data.type === item.type);
         setCount(count+=1)
         const item = result[0]
         setBoard((board: [] ) => 
@@ -69,14 +94,14 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
   // get all data
   const getLenguate = async () => {
     const response: any = await getData('language/select')
-    setLanguage(response ? response.data : [])
-    setChangeLaguage(response ? response.data : [])
-    oneData(response ? response.data : [])
+    setLanguage(response.data.length > 0 ? response.data : [])
+    setChangeLaguage(response.data.length  > 0 ? response.data[0] : [])
+    oneData(response.data.length  > 0 ? response.data[0] : [])
   }
   // obtenermos el template 
   const oneData = async ( item : any) => {
     const data = {
-            "id_punto": 1,
+            "id_punto": id,
             "id_lenguaje": item.value
           }
     const response: any = await postData('site/mobile/getone', data)
@@ -91,7 +116,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
   // guardamos el template
   const storeTemplate = async () => {
     const dataTemplate = {
-        "id_punto": 1,
+        "id_punto": id,
         "id_lenguaje": changeLaguage.value,
         "nombre":"Nombre editado3 sitio movil 1",
         "descripcion":"descripcion2 editado sitio movil 1",
@@ -119,18 +144,60 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     setBoard(oldBoard)
   }
   
+  const oneSite = async () => {
+    const response: any = await getData(`site/${id}`)
+    setOneDataSite(response.site ? response.site : [])
+}
+
+// Recursos
+
+const uploadResource = async (file: any) => {
+  const fileResource = 
+    {
+      "id_punto": id,
+      "nombre": file[0].name,
+      "url": `${URLAWS}resource-movil-${id}-${file[0].name}`,
+      "tipo": file[0].type,
+      "estado":1
+  }
+  
+  const params = {
+    ACL: 'public-read',
+    Body: file[0],
+    Bucket: S3_BUCKET,
+    Key: `resource-${id}-${file[0].name}`
+};
+// // URLAWS
+myBucket.putObject(params)
+    .on('httpUploadProgress', (evt) => {
+        setProgress(Math.round((evt.loaded / evt.total) * 100))
+    })
+    .send((err) => {
+        if (err) console.log(err)
+    })
+    console.log(params, progress) 
+  const response: any = await postData('site/mobile/resource/add', fileResource)
+  response &&
+    swal(
+      {
+        text: 'Recurso almacenado con exito',
+        icon: 'success',
+      }
+    )
+
+}
+  const getAllResources = async () => {
+      const response: any = await postData('site/mobile/getone', { "id_punto": id })
+      if (response.data.length > 0 ) { 
+        setAllResource(response.data)
+      }
+  }
   useEffect(() => {
+    getAllResources()
     getLenguate()
+    oneSite()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-//   useEffect(() => {
-//     if (count === 1) {
-//         setEditItem(board[board.length-1])
-//         setCount(0)
-//     }
-//   // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [count, board])
 
     const value = {
         drop,
@@ -141,11 +208,14 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         moveCard,
         removeItem,
         setEditItem,
+        oneDataSite,
+        allResources, 
         discardChange,
         updateElement,
         storeTemplate,
         changeLaguage,
         changeTypeEdit,
+        uploadResource,
         setChangeLaguage,
         setChangeTypeEdit,
         changeLangegeSelect

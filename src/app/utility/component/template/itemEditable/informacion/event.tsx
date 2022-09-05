@@ -1,140 +1,76 @@
-/* eslint-disable no-restricted-globals */
-import React from 'react'
-import FullCalendar, { EventApi, DateSelectArg, EventClickArg, EventContentArg, formatDate } from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
-import { INITIAL_EVENTS, createEventId } from './event-utils'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { FC, Fragment } from "react";
+import { Row, Col } from 'react-bootstrap'
+import { Menu, Item, useContextMenu } from "react-contexify";
+import { meses } from '../../../../../utility/global/data'
 
-interface DemoAppState {
-  weekendsVisible: boolean
-  currentEvents: EventApi[]
+type Model = {
+    data: any
+    referencia: any
+    handlerId: any
+    isDragging : any
+    setEditItem: (data : any) => void
+    updateElement: (data : any) => void
+    removeItem: (data : any) => void
 }
-
-export default class DemoApp extends React.Component<{}, DemoAppState> {
-
-  state: DemoAppState = {
-    weekendsVisible: true,
-    currentEvents: []
-  }
-
-  render() {
-    return (
-      <div className='demo-app'>
-        {this.renderSidebar()}
-        <div className='demo-app-main'>
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            headerToolbar={{
-              left: 'prev,next today',
-              center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            }}
-            initialView='dayGridMonth'
-            editable={true}
-            selectable={true}
-            selectMirror={true}
-            dayMaxEvents={true}
-            locale="es"
-            weekends={this.state.weekendsVisible}
-            initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
-            select={this.handleDateSelect}
-            eventContent={renderEventContent} // custom render function
-            eventClick={this.handleEventClick}
-            eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
-            /* you can update a remote database when these fire:
-            eventAdd={function(){}}
-            eventChange={function(){}}
-            eventRemove={function(){}}
-            */
-          />
-        </div>
-      </div>
-    )
-  }
-
-  renderSidebar() {
-    return (
-      <div className='demo-app-sidebar'>
-        <div className='demo-app-sidebar-section'>
-          <h2>Instructions</h2>
-          <ul>
-            <li>Select dates and you will be prompted to create a new event</li>
-            <li>Drag, drop, and resize events</li>
-            <li>Click an event to delete it</li>
-          </ul>
-        </div>
-        <div className='demo-app-sidebar-section'>
-          <label>
-            <input
-              type='checkbox'
-              checked={this.state.weekendsVisible}
-              onChange={this.handleWeekendsToggle}
-            ></input>
-            toggle weekends
-          </label>
-        </div>
-        <div className='demo-app-sidebar-section'>
-          <h2>All Events ({this.state.currentEvents.length})</h2>
-          <ul>
-            {this.state.currentEvents.map(renderSidebarEvent)}
-          </ul>
-        </div>
-      </div>
-    )
-  }
-
-  handleWeekendsToggle = () => {
-    this.setState({
-      weekendsVisible: !this.state.weekendsVisible
-    })
-  }
-
-  handleDateSelect = (selectInfo: DateSelectArg) => {
-    let title = prompt('Please enter a new title for your event')
-    let calendarApi = selectInfo.view.calendar
-
-    calendarApi.unselect() // clear date selection
-
-    if (title) {
-      calendarApi.addEvent({
-        id: createEventId(),
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay
-      })
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
+  
+  const { show } = useContextMenu({ id: "menu-id" });  
+  
+    const destroyItem = ( e : any) => {
+      removeItem(e.triggerEvent.target.id);
+      setEditItem([])
     }
-  }
 
-  handleEventClick = (clickInfo: EventClickArg) => {
-    if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-      clickInfo.event.remove()
+    const getSplitDate = (date : any, type: number) => {
+      
+      let response;
+      if( type === 1) {
+        response = date.split('-')[2];
+      } else if (type === 2) {
+        response = meses[Number(date.split('-')[1]-1)];
+      } else if( type === 3) {
+        response = date.split('-')[0];
+      }
+      return response;
     }
-  }
-
-  handleEvents = (events: EventApi[]) => {
-    this.setState({
-      currentEvents: events
-    })
-  }
-
+    console.log(data.finalDate)
+    return ( 
+          <div
+            onContextMenu={show}
+            ref={referencia}
+            data-handler-id={handlerId}
+            onClick={() => setEditItem(data)}
+            className="d-flex cursor-grabbing"
+          >
+            <div className="p-1 py-1 d-flex align-items-center">
+              <i className="bi bi-grip-vertical fa-2x"/>
+            </div>
+            <Row className={`py-2 flex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
+              <Col lg={3} sm={4} xs={5}>
+                <div className="d-flex flex-column text-center border rounded">
+                  <div className="p-2 border-bottom">{getSplitDate(data.startDate, 2) || 'Mes'}</div>
+                  <div className="p-2">
+                    { 
+                      (data.finalDate === data.startDate || data.finalDate === '0000-00-00' || data.finalDate === '') ? getSplitDate(data.startDate, 1) : <Fragment>{getSplitDate(data.startDate, 1)} - {getSplitDate(data.finalDate, 1)}</Fragment>
+                    }
+                  </div>
+                  {/* <small>{getSplitDate(data.startDate, 3)}</small> */}
+                </div>
+              </Col>
+              <Col lg={9} sm={8} xs={8}>
+                {data.text}
+              </Col>
+            </Row>
+            <Menu id={"menu-id"} theme="dark" data-test={data}>
+              <Item onClick={(e : any) => destroyItem(e)}>
+                <div>
+                    <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
+                </div>
+              </Item>
+            </Menu>
+          </div>
+    )
 }
 
-function renderEventContent(eventContent: EventContentArg) {
-  return (
-    <>
-      <b>{eventContent.timeText}</b>
-      <i>{eventContent.event.title}</i>
-    </>
-  )
-}
-
-function renderSidebarEvent(event: EventApi) {
-  return (
-    <li key={event.id}>
-      <b>{formatDate(event.start!, {year: 'numeric', month: 'short', day: 'numeric'})}</b>
-      <i>{event.title}</i>
-    </li>
-  )
-}
+export default Text
