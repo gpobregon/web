@@ -1,7 +1,7 @@
 import { type } from 'os';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Col, Card, Button, Row, Modal } from 'react-bootstrap';
-import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom, statePointInteres, changePointOfInterestFront, OrderPointOfInterest } from '../../../../services/api'
+import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom, statePointInteres, changePointOfInterestFront, OrderPointOfInterest, getData, languagesMethod } from '../../../../services/api'
 import { Room } from "../../../../models/rooms";
 import swal from "sweetalert";
 import { PointInteres } from "../../../../models/sitio-interes";
@@ -15,6 +15,7 @@ import UpdateRoom from './update-room';
 import domtoimage from 'dom-to-image';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import SalaRutas from '../rutas-sitios-interes/sala-rutas';
+import { CatalogLanguage } from '../../../../models/catalogLanguage';
 
 type id_sitio = {
     id_sitio: number
@@ -44,6 +45,7 @@ const Interes: FC<id_sitio> = (props) => {
     const [name, setNombre] = useState<any>() //modal qr
     const [vista, setVistaPrevia] = useState(false) //mostrar vsta previa
     const [imagen, setImagenPrevia] = useState('') //mostrar vsta previa
+    const [languages, setLanguages] = useState<CatalogLanguage[]>([])//catalogo de idiomas
     const changeStatus = async (idpunto: number, oculto: boolean) => {
         await postData(statePointInteres, { id_punto: idpunto, es_visible: oculto })
         setPuntoInteres([])
@@ -69,9 +71,15 @@ const Interes: FC<id_sitio> = (props) => {
         })
         getSalas()
     }
+    const getLanguages = async () => {
+        const language: any = await getData(languagesMethod)
+        setLanguages(language.data as CatalogLanguage[])
+        // console.log(language)
+    }
 
     useEffect(() => {
         getSalas()
+        getLanguages()
     }, [puntoInteres])
 
 
@@ -213,7 +221,7 @@ const Interes: FC<id_sitio> = (props) => {
     // 	setPuntoInteres(_fruitItems)
     // }
 
-
+    
     return (
         <>
             <div className=' '>
@@ -484,10 +492,28 @@ const Interes: FC<id_sitio> = (props) => {
                                                         <Button className="btn-secondary fa-solid  fa-pencil background-button"
                                                             style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                                             onClick={(event) => {
+                                                                let lenaguajeDefault = ""
+                                                                for (let i = 0; i < languages.length; i++) {
+                                                                    for (let j = 0; j < punto.lenguajes.length; j++) {
+                                                                    if (languages[i].id_lenguaje === punto.lenguajes[j].id_lenguaje) {
+                                                                        // setLenaguajeDefault(languages[i].descripcion)
+                                                                       
+                                                                        lenaguajeDefault = languages[i].nombre
+                                                                    }
+                                                                }
+                                                                }
+                                                                const languageEscogido = punto.lenguajes.map((language) =>
+                                                                (
+                                                                  
+                                                                    {
+                                                                        value: language.id_lenguaje,
+                                                                        label: lenaguajeDefault,
+                                                                    }))
+                                                            console.log(languageEscogido)
                                                                 navigate('/sitios/edit-point-interes', {
                                                                     state: {
                                                                         id_punto: punto.id_punto,
-                                                                        lenguajes: punto.lenguajes,
+                                                                        lenguajes: languageEscogido,
                                                                         id_sitio: punto.id_sitio,
                                                                         id_guia: idsala,
                                                                         nombre: punto.nombre,

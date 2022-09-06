@@ -62,7 +62,9 @@ type datosPuntoInteres = {
     id_punto: number
     lenguajes: [
         {
-            id_punto: number
+           value: number
+            label: string
+             id_punto: number
             id_lenguaje: number
             descripcion: string
         }
@@ -95,7 +97,7 @@ const EditPoint = () => {
         id_sitio: datospuntoInteres.id_sitio,
         id_guia: datospuntoInteres.id_guia,
         descripcion: datospuntoInteres.descripcion,
-        id_lenguaje: datospuntoInteres.lenguajes[0].id_lenguaje,
+        id_lenguaje: datospuntoInteres.lenguajes[0].value,
         nombre: datospuntoInteres.nombre,
         geoX: datospuntoInteres.geoX,
         geoY: datospuntoInteres.geoY,
@@ -178,6 +180,7 @@ const EditPoint = () => {
         }).then(async res => {
             if (res) {
               await  updatePoint()
+              console.log(sitio)
                 swal({
                     text: "Descartado Correctamente",
                     icon: "success",
@@ -186,7 +189,7 @@ const EditPoint = () => {
                 })
                 navigate('/sitios/edit', {
                     state: sitios
-
+                   
                 })
             }
         });
@@ -212,7 +215,7 @@ const EditPoint = () => {
     
     let lenaguajeDefault = ""
     for (let i = 0; i < languages.length; i++) {
-        if (languages[i].id_lenguaje === datospuntoInteres.lenguajes[0].id_lenguaje) {
+        if (languages[i].id_lenguaje === datospuntoInteres.lenguajes[0].value) {
             // setLenaguajeDefault(languages[i].descripcion)
            
             lenaguajeDefault = languages[i].nombre
@@ -223,7 +226,7 @@ const EditPoint = () => {
     (
       
         {
-            value: language.id_lenguaje,
+            value: language.value,
             label: lenaguajeDefault,
         }))
 
@@ -578,7 +581,7 @@ const EditPoint = () => {
 
 
                                 <Select
-                                      defaultValue={ {value:datospuntoInteres.lenguajes[0].id_lenguaje, label:datospuntoInteres.lenguajes[0].descripcion} }
+                                      defaultValue={ {value:datospuntoInteres.lenguajes[0].value, label:datospuntoInteres.lenguajes[0].label} }
                                     options={languagesOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
@@ -646,7 +649,7 @@ const EditPoint = () => {
                                         <br />
                                         <div className='row'>
                                             <p className='  col-md-12 text-center mt-5'>
-                                                Maquetar los elementos del sitio para versión móvil.
+                                                Maquetar los elementos del punto de Interes para versión móvil.
                                             </p>
                                         </div>
                                         <br></br>
@@ -678,7 +681,7 @@ const EditPoint = () => {
                                         <br />
                                         <div className='row'>
                                             <p className='  col-md-12 text-center mt-5'>
-                                                Maquetar los elementos del sitio para versión web
+                                            Maquetar los elementos del punto de Interes para versión Web.
                                             </p>
                                         </div>
                                         <br></br>
