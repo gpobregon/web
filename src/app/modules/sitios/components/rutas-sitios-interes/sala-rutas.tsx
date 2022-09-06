@@ -94,16 +94,16 @@ const SalaRutas: FC<id_punto_a> = (props) => {
         setPuntoInteres(interes)
         getRutas()
     }
-    const deleteRoom = (id: string, longitud: number) => {
+    const deleteRoom = (nombre:string,id: number, longitud: number) => {
         if (longitud > 0) {
             swal({
                 icon: "error",
-                title: "¡Error al Eliminar Sala: \n" + id + "!",
+                title: "¡Error al Eliminar Sala: \n" + nombre + "!",
                 text: "No se puede eliminar una sala con puntos de interés",
             });
         } else {
             swal({
-                title: "¿Estas seguro de Eliminar Sala " + id + "?",
+                title: "¿Estas seguro de Eliminar Sala " + nombre + "?",
                 icon: "warning",
                 buttons: ["No", "Sí"],
 
@@ -254,7 +254,7 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                             </i>
                                         </Button>
                                         <Button variant="outline-dark" size="sm"
-                                            onClick={() => { deleteRoom(sala.nombre, sala.points_of_interest.length) }}
+                                            onClick={() => { deleteRoom(sala.nombre,sala.id_sala, sala.points_of_interest.length) }}
                                             style={{ width: '5px', height: '40px' }} >
                                             <i className='fa-solid fa-xmark '
                                                 style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
