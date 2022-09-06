@@ -1,6 +1,16 @@
 import React, {useEffect, useState} from 'react'
 import moment from 'moment'
-import {Button, Card, Col, Container, Form, Row, Table} from 'react-bootstrap'
+import {
+    Button,
+    ButtonGroup,
+    Card,
+    Col,
+    Container,
+    Form,
+    Row,
+    Table,
+    ToggleButton,
+} from 'react-bootstrap'
 import ReactSelect from 'react-select'
 import makeAnimated from 'react-select/animated'
 import NewNotification from './components/NewNotification'
@@ -273,6 +283,8 @@ const PushNotificationsPage = () => {
         chooseGetNotifications()
     }, [pageNumber])
 
+    const [radioValue, setRadioValue] = useState('1')
+
     return (
         <Container fluid>
             <div
@@ -299,20 +311,37 @@ const PushNotificationsPage = () => {
                 >
                     <div className='d-flex justify-content-between'>
                         <div>
-                            <Button
-                                variant='outline-primary'
-                                className='me-2'
-                                onClick={() => getNotificationsProgrammed()}
-                            >
-                                Programadas
-                            </Button>
-                            <Button
-                                variant='outline-primary'
-                                className='ms-2'
-                                onClick={() => getNotificationsHistory()}
-                            >
-                                Historial
-                            </Button>
+                            <ButtonGroup>
+                                <ToggleButton
+                                    key={1}
+                                    id={`radio-1`}
+                                    type='radio'
+                                    variant='outline-primary'
+                                    name='radio'
+                                    value={'1'}
+                                    checked={radioValue === '1'}
+                                    onChange={(e) => setRadioValue(e.currentTarget.value)}
+                                    className='me-2 rounded'
+                                    onClick={() => getNotificationsProgrammed()}
+                                >
+                                    Programadas
+                                </ToggleButton>
+
+                                <ToggleButton
+                                    key={2}
+                                    id={`radio-2`}
+                                    type='radio'
+                                    variant='outline-primary'
+                                    name='radio'
+                                    value={'2'}
+                                    checked={radioValue === '2'}
+                                    onChange={(e) => setRadioValue(e.currentTarget.value)}
+                                    className='ms-2 rounded'
+                                    onClick={() => getNotificationsHistory()}
+                                >
+                                    Historial
+                                </ToggleButton>
+                            </ButtonGroup>
                         </div>
                         <Button variant='primary' onClick={() => toggleCardAddNotification(true)}>
                             <span className='menu-icon me-0'>
