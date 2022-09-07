@@ -289,7 +289,7 @@ const EditSite = () => {
       ubicacion: site.ubicacion,
       geoX: site.geoX,
       geoY: site.geoY,
-      portada_path: URLAWS + imagen,
+      portada_path: URLAWS+"sitePages/" + imagen,
       estado: site.estado,
       creado: site.creado,
       editado: site.editado,
