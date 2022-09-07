@@ -7,6 +7,7 @@ export interface PointInteres {
         id_punto: number
         id_lenguaje: number
         descripcion: string
+        nombre: string
       }
     ]
     estado: string

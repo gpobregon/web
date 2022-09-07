@@ -167,7 +167,7 @@ export function Login() {
                         <Form.Group className=''>
                             <Form.Check type='checkbox' label='Recuerdame' />
                         </Form.Group>
-                        <Link to='/auth/forgot-password'>{'Olvidé mi contraseña'}</Link>
+                        <Link to='/auth/forgot-password' style={{paddingLeft: 10}} >{'Olvidé mi contraseña'}</Link>
                     </div>
 
                     <Button variant='primary' onClick={emailValidation} style={{width: '100%'}}>

@@ -37,7 +37,7 @@ const UpdateNotification: FC<any> = ({
             id_notificacion: notification.id_notificacion,
             nombre: notification.nombre,
             descripcion: notification.descripcion,
-            imagen_path: URLAWS + image,
+            imagen_path: `${URLAWS}notificaciones/${image}`,
             fecha_hora_programada: notification.fecha_hora_programada,
             tipo: notification.tipo,
             estado: 1,

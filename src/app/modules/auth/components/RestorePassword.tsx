@@ -8,7 +8,12 @@ export function RestorePassword() {
     const [data, setData] = useState({password: '', passwordConfirm: '', code: ''})
     let navigate = useNavigate()
 
-    let email = localStorage.getItem('email')
+    let email = localStorage.getItem('email') 
+
+    if (email){ 
+        email = JSON.parse(email)
+    } 
+    console.log(email)
 
     const forgotPasswordSubmit = async () => {
         if (data.password != '' && data.passwordConfirm != '' && data.code != '') {

@@ -368,7 +368,7 @@ const ConfSite = () => {
                   id='center2'
                   style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                 ></i>
-                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}></i>
+                {/* <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}></i> */}
               </ul>
             </div>
           </div>
@@ -449,7 +449,7 @@ const ConfSite = () => {
                 </div>
               </div>
 
-              <div className='col-xs-12 col-md-4 col-lg-4'>
+              <div className='col-xs-12 col-md-6 col-xl-4'>
                 <br></br>
 
                 <div id='is-relative'>
@@ -593,7 +593,7 @@ const ConfSite = () => {
                   ></Select>
                 </div>
               </div>
-              <div className='col-xs-12 col-md-5 col-lg-5 mb-5'>
+              <div className='col-xs-12 col-md-12 col-xl-5 mb-5'>
                 <div className='row mt-6 gx-10 m-auto'>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
                     <div className='row'>

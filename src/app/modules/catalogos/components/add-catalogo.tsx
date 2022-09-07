@@ -135,6 +135,7 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                         <Form.Control
                             type='text'
                             name='nombre'
+                            maxLength={20}
                             className={'mb-4'}
                             onChange={(e) => {
                                 setTag({
@@ -171,7 +172,19 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>
+                    <Button
+                        variant='secondary'
+                        onClick={() => {
+                            setTag({
+                                id_categoria: 0,
+                                nombre: '',
+                                icono: '',
+                                estado: 1,
+                                id_lenguaje: 1,
+                            })
+                            onClose()
+                        }}
+                    >
                         {'Cancelar '}
                         <i className={`bi-x text-white fs-3`}></i>
                     </Button>

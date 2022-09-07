@@ -31,6 +31,7 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
 
     return ( 
           <div
+            onClick={() => setEditItem(data)} 
             onContextMenu={show}
             ref={referencia}
             data-handler-id={handlerId}

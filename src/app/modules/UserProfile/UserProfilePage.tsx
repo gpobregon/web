@@ -1,8 +1,59 @@
-import React, {useState} from 'react'
+import React, {ChangeEvent, useState} from 'react'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
+import { getToBase64 } from './base64';
+
+interface Profile {
+    fileImage: any;
+    nombre: string;
+    apellido: string;
+    telefono: string;
+    email: string;
+}
+
+
 
 const UserProfilePage = () => {
     const [showUpdateButton, setShowUpdateButton] = useState(true)
+    const [form, setForm] = useState<Profile>({
+        fileImage: undefined,
+        nombre: '',
+        apellido: '',
+        telefono: '',
+        email: '',
+    });
+
+    const onChange = ( e: ChangeEvent<HTMLInputElement> ) => {
+        const inputName = e.target.name
+        
+        if ( inputName === 'fileImage' ) {
+            setForm({
+                ...form,
+                [inputName]: e.target.files ? e.target.files[0]: undefined
+            });
+            return;
+        }
+
+        setForm({
+            ...form,
+            [inputName]: e.target.value
+        })
+
+      
+
+    }
+
+    const onClickUpdate = async () => {
+        setShowUpdateButton(false);
+        console.log(form);
+
+        const fileBase64 = await getToBase64(form.fileImage)
+        console.log('--------------------------------------------')
+        console.log({
+            ...form,
+            fileImage: fileBase64
+        });
+
+    }
 
     return (
         <Container fluid>
@@ -89,13 +140,24 @@ const UserProfilePage = () => {
                             ></img>
 
                             <div className='d-flex justify-content-center flex-grow-1'>
-                                <div className='d-flex flex-wrap'>
-                                    <Button
-                                        variant='outline-primary p-7 m-2'
-                                        className='text-center'
+                                <div className='d-flex flex-wrap'> 
+                                    {/* Subir imagen */}
+                                    <label
+                                        // variant='outline-primary p-7 m-2'
+                                        className='outline-primary p-7 m-2 text-center'
                                     >
                                         <i className='fs-1 bi-upload px-0 fw-bolder'></i>
-                                    </Button>
+                                        <input 
+                                            hidden
+                                            accept="image/*"
+                                            multiple
+                                            type="file"
+                                            name="fileImage"
+                                            onChange={onChange}
+                                            className="form-control"
+                                        />
+                                    </label> 
+
                                     <Button
                                         variant='outline-danger p-7 m-2'
                                         className='text-center'
@@ -122,11 +184,13 @@ const UserProfilePage = () => {
                             <Col lg={6} md={6} sm={6}>
                                 <Form.Group className=''>
                                     <Form.Label>Nombres</Form.Label>
-                                    <Form.Control
-                                        type='text'
+                                    <input
+                                        type='input'
                                         name='nombre'
                                         disabled={showUpdateButton}
-                                    ></Form.Control>
+                                        value={form.nombre}
+                                        onChange={onChange}
+                                    />
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={6} sm={6}>
@@ -136,6 +200,8 @@ const UserProfilePage = () => {
                                         type='text'
                                         name='apellido'
                                         disabled={showUpdateButton}
+                                        value={form.apellido}
+                                        onChange={onChange}
                                     ></Form.Control>
                                 </Form.Group>
                             </Col>
@@ -173,7 +239,7 @@ const UserProfilePage = () => {
                             <Col lg={12} md={12} sm={12}>
                                 <Button
                                     variant='primary w-100'
-                                    onClick={() => setShowUpdateButton(false)}
+                                    onClick={onClickUpdate}
                                 >
                                     {'Actualizar '}
                                     <i className='bi-pencil text-white fs-3'></i>

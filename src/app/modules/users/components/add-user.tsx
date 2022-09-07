@@ -5,8 +5,16 @@ import {Button, Modal, Form, Row, Col} from 'react-bootstrap'
 
 import {Amplify, Auth} from 'aws-amplify'
 import {awsconfig} from '../../../../aws-exports'
-import {useAuth} from '../../auth/core/Auth'
-Amplify.configure(awsconfig)
+import {useAuth} from '../../auth/core/Auth' 
+import swal from 'sweetalert'
+Amplify.configure(awsconfig) 
+
+const alertUserDone = async () => {
+    swal({
+        text: 'Usuario creado',
+        icon: 'success',
+    })
+}
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -27,8 +35,10 @@ const customStyles = {
     }),
     input: (base: any, state: any) => ({
         ...base,
-        color: '#92929f',
-    }),
+        color: '#92929f', 
+        
+    }), 
+    
     option: (base: any, state: any) => ({
         ...base,
         background: state.isFocused ? '#7239ea' : '#323248',
@@ -57,7 +67,34 @@ const options = [
     {value: 'Admnistrador', label: 'Administrador'},
     {value: 'Editor', label: 'Editor'},
     {value: 'Gestor', label: 'Gestor'},
-]
+] 
+
+const alertLlenar = async () => {
+    swal({
+        text: '¡campos incompletos!',
+        icon: 'warning',
+    })
+}  
+
+const alertEmail = async () => {
+    swal({
+        text: '¡Email invalido!',
+        icon: 'warning',
+    })
+}  
+const alertEmailNoIngresado = async ()=>{ 
+    swal({
+        text: '¡Email no ingresado!',
+        icon: 'warning',
+    })
+}
+
+const campos = async () => {
+    swal({
+        text: 'ha ocurrido un error, verifica si ingresaste un email no registrado',
+        icon: 'warning',
+    })
+}
 
 const AddUser: FC<any> = ({show, onClose}) => {
     const [user, setUser] = useState({
@@ -65,26 +102,52 @@ const AddUser: FC<any> = ({show, onClose}) => {
         password: '',
         name: '',
         lastname: '',
-        role: '',
-    })
+        role: '', 
+        passwordConfirm: '',  
+        phoneNumber: ''
+    })  
 
-    const signUp = async () => {
-        try {
-            const userData = await Auth.signUp({
-                username: user.username,
-                password: user.password,
-                attributes: {
-                    name: user.name,
-                    'custom:lastname': user.lastname,
-                    'custom:role': user.role,
-                },
-                autoSignIn: {
-                    // optional - enables auto sign in after user is confirmed
-                    enabled: false,
-                },
-            })
-        } catch (error) {
-            console.log('error signing up:', error)
+
+
+    const signUp = async () => {           
+        if (user.lastname !='' && user.name !='' && user.password !='' && user.passwordConfirm !='' && user.role !=''  && user.username !=''  && user.phoneNumber !='' ){ 
+            if (user.password == user.passwordConfirm) { 
+               
+                const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9·-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g
+                if (regEx.test(user.username)) { 
+                     try {
+                    const userData = await Auth.signUp({
+                        username: user.username,
+                        password: user.password,
+                        attributes: {
+                            name: user.name,
+                            'custom:lastname': user.lastname,
+                            'custom:role': user.role, 
+                            'custom:phoneNumber': user.phoneNumber
+                        },
+                        autoSignIn: {
+                            // optional - enables auto sign in after user is confirmed
+                            enabled: false,
+                        }, 
+                    }) 
+                    alertUserDone()
+                    onClose()
+                    } catch (error) { 
+                        
+                        console.log('error signing up:', error)  
+                        swal('Contraseña o email invalidos', 'Escribe una nueva contraseña o verifica el email', 'warning')
+                        return false;
+                    }
+                } else if (!regEx.test(user.username) && user.username !== '') {
+                    alertEmail()
+                } 
+
+               
+            } else {
+                swal('Las contraseñas no son iguales', 'Intentalo de nuevo', 'warning')
+            }
+        }else {
+            swal('Campos inválidos', 'Por favor ingresa correctamente los campos', 'warning')
         }
     }
 
@@ -94,7 +157,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
             password: user.password,
             name: user.name,
             lastname: user.lastname,
-            role: event.value,
+            role: event.value, 
+            passwordConfirm: user.passwordConfirm, 
+            phoneNumber: user.phoneNumber
         })
     }
 
@@ -119,7 +184,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             password: user.password,
                                             name: e.target.value,
                                             lastname: user.lastname,
-                                            role: user.role,
+                                            role: user.role, 
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: user.phoneNumber
                                         })
                                     }}
                                 ></Form.Control>
@@ -139,7 +206,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             password: user.password,
                                             name: user.name,
                                             lastname: e.target.value,
-                                            role: user.role,
+                                            role: user.role, 
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: user.phoneNumber
                                         })
                                     }}
                                 ></Form.Control>
@@ -159,7 +228,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             password: user.password,
                                             name: user.name,
                                             lastname: user.lastname,
-                                            role: user.role,
+                                            role: user.role, 
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: user.phoneNumber
                                         })
                                     }}
                                 ></Form.Control>
@@ -177,7 +248,29 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                     onChange={handleChangeRole}
                                 />
                             </Form.Group>
-                        </Col>
+                        </Col> 
+
+                        <Col lg={12} md={12} sm={12}>
+                            <Form.Group>
+                                <Form.Label>{'Teléfono'}</Form.Label>
+                                <Form.Control
+                                    type='number'
+                                    name='Telefono'
+                                    className={'mb-4'}
+                                    onChange={(e) => {
+                                        setUser({
+                                            username: user.username,
+                                            password: user.password,
+                                            name: user.name,
+                                            lastname: user.lastname,
+                                            role: user.role, 
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: e.target.value
+                                        })
+                                    }}
+                                ></Form.Control>
+                            </Form.Group>
+                        </Col> 
 
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
@@ -192,7 +285,32 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             password: e.target.value,
                                             name: user.name,
                                             lastname: user.lastname,
-                                            role: user.role,
+                                            role: user.role, 
+                                            passwordConfirm: user.passwordConfirm, 
+                                            phoneNumber: user.phoneNumber
+
+                                        })
+                                    }}
+                                ></Form.Control>
+                            </Form.Group>
+                        </Col> 
+
+                        <Col lg={12} md={12} sm={12}>
+                            <Form.Group>
+                                <Form.Label>{'Confirma la contraseña'}</Form.Label>
+                                <Form.Control
+                                    type='password'
+                                    name='password'
+                                    className={'mb-4'} 
+                                    onChange={(e) => {
+                                        setUser({
+                                            username: user.username,
+                                            password: user.password,
+                                            name: user.name,
+                                            lastname: user.lastname,
+                                            role: user.role, 
+                                            passwordConfirm: e.target.value, 
+                                            phoneNumber: user.phoneNumber
                                         })
                                     }}
                                 ></Form.Control>
@@ -208,8 +326,10 @@ const AddUser: FC<any> = ({show, onClose}) => {
                     <Button
                         variant='primary'
                         onClick={() => {
-                            signUp()
-                            onClose()
+                            signUp() 
+                            //nameValidation()
+                            //onClose() 
+                            
                         }}
                     >
                         {'Añadir '}
