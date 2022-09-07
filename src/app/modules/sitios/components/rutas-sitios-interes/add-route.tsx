@@ -30,12 +30,13 @@ type datosPuntoInteres2 = {
     estado: boolean
     es_visible: boolean
     publicado: boolean
+    nombreSala: string
 }
 
 type datosPuntoInteres = {
     id_punto_a: number,
     id_punto_b: number,
-    interes:datosPuntoInteres2
+    interes: datosPuntoInteres2
     nombre_punto_a: string,
     nombre_punto_b: string,
 }
@@ -81,12 +82,12 @@ const AddRoute = () => {
     const savechnage = async () => {
         // addImagePrincipal
         // addImages
-        if (imgprincipal.img_principal != '' ) {
+        if (imgprincipal.img_principal != '') {
             await postData(addImagePrincipal, imgprincipal)
-           
+
         }
-       
-        // if(arrayimagenes.length === 3){
+
+        if(imgtempomodal.imagen1 != '' && imgtempomodal.imagen2 != '' && imgtempomodal.imagen3 != '' || getimg[0]?.img_path != '' && getimg[1]?.img_path != '' && getimg[2]?.img_path != ''){
         await postData(addImages, imganes)
         await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
         swal({
@@ -99,22 +100,23 @@ const AddRoute = () => {
             state: {
                 id_punto: puntos.interes.id_punto,
                 lenguajes: puntos.interes.lenguajes,
-                id_sitio:  puntos.interes.id_sitio,
-                id_guia:  puntos.interes.id_guia,
-                nombre:  puntos.interes.nombre,
-                descripcion:  puntos.interes.descripcion,
-                geoX:  puntos.interes.geoX,
-                geoY:  puntos.interes.geoY,
-                portada_path:  puntos.interes.portada_path,
-                qr_path:  puntos.interes.qr_path,
-                es_portada_de_sitio:  puntos.interes.es_portada_de_sitio,
-                estado:  puntos.interes.estado,
-                es_visible:  puntos.interes.es_visible,
+                id_sitio: puntos.interes.id_sitio,
+                id_guia: puntos.interes.id_guia,
+                nombre: puntos.interes.nombre,
+                descripcion: puntos.interes.descripcion,
+                geoX: puntos.interes.geoX,
+                geoY: puntos.interes.geoY,
+                portada_path: puntos.interes.portada_path,
+                qr_path: puntos.interes.qr_path,
+                es_portada_de_sitio: puntos.interes.es_portada_de_sitio,
+                estado: puntos.interes.estado,
+                es_visible: puntos.interes.es_visible,
+                nombreSala: puntos.interes.nombreSala,
             },
         })
-        // }else{
-        //     swal("Error", "Debe seleccionar 3 imagenes de refencia", "error")
-        // }
+        }else{
+            swal("Error", "Debe seleccionar 3 imagenes de refencia", "error")
+        }
         // const g = await postData(addImages, imganes)
         // const a = await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
         // console.log(imganes)
@@ -123,8 +125,8 @@ const AddRoute = () => {
         // console.log(a)
         // var newArray = arrayimagenes.filter((item) => item.id_image !== 1);
         // console.log(newArray);
-     
-       
+
+
     }
 
     const [id, setId] = useState<number>(0)
@@ -136,7 +138,7 @@ const AddRoute = () => {
 
         if (id === -1) {
             //agregar iamgen de referencia por primera vez 
-            
+
             arrayimagenes.push({
                 id_image: -1,
                 descripcion: '',
@@ -147,10 +149,30 @@ const AddRoute = () => {
             setImagenes({
                 id_punto_a: puntos.id_punto_a,
                 id_punto_b: puntos.id_punto_b,
-                imagenes: arrayimagenes
+                imagenes: [{
+                    id_image: -1,
+                    descripcion: '',
+                    posicion_en_lista: 1,
+                    img_path: imgtempomodal.imagen1,
+                    estado: 1
+                },
+                {
+                    id_image: -1,
+                    descripcion: '',
+                    posicion_en_lista: 2,
+                    img_path: imgtempomodal.imagen2,
+                    estado: 1
+                },
+                {
+                    id_image: -1,
+                    descripcion: '',
+                    posicion_en_lista: 3,
+                    img_path: imgtempomodal.imagen3,
+                    estado: 1
+                }]
             })
-        } else if(id === 0) {
-          //  agregar imagenPrincipal;
+        } else if (id === 0) {
+            //  agregar imagenPrincipal;
             setImgprincipal({
                 id_punto_a: puntos.id_punto_a,
                 id_punto_b: puntos.id_punto_b,
@@ -165,20 +187,20 @@ const AddRoute = () => {
                 pasos: ruta!.pasos,
 
             })
-        }else{
+        } else {
             //editar imagen de referencia
             getimg[numeroImg].img_path = URLAWS + url //mostrar la imagen en el modal
-            arrayimagenes.push({
-                id_image: id,
-                descripcion: '',
-                posicion_en_lista: numeroImg,
-                img_path: URLAWS + url,
-                estado: 1
-            })
+            // arrayimagenes.push({
+            //     id_image: id,
+            //     descripcion: '',
+            //     posicion_en_lista: numeroImg,
+            //     img_path: URLAWS + url,
+            //     estado: 1
+            // })
             setImagenes({
                 id_punto_a: puntos.id_punto_a,
                 id_punto_b: puntos.id_punto_b,
-                imagenes: arrayimagenes
+                imagenes: getimg
             })
         }
     }
@@ -233,15 +255,15 @@ const AddRoute = () => {
 
     const deletePaso = async (idx: any) => {
         var editEstadopaso = agregrarPaso;
-        editEstadopaso[idx-1].estado = 0;
-      
+        editEstadopaso[idx - 1].estado = 0;
+
         await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: editEstadopaso })
         var newArray = agregrarPaso.filter((item: any) => item.id_paso !== idx);
         setagregrarPaso(newArray);
-       setContador(contador - 1)
-       setagregrarPaso([])
+        setContador(contador - 1)
+        setagregrarPaso([])
         await obtenerRuta()
-       
+
     }
     const addNewPaso = async () => {
         await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
@@ -263,8 +285,8 @@ const AddRoute = () => {
 
         })
     }
-       //alert methods-----------------------------------------------------------------------
-       const discardChanges = async () => {
+    //alert methods-----------------------------------------------------------------------
+    const discardChanges = async () => {
         swal({
             title: "¿Estas seguro de Descartar Los Cambios ?",
             icon: "warning",
@@ -282,17 +304,18 @@ const AddRoute = () => {
                     state: {
                         id_punto: puntos.interes.id_punto,
                         lenguajes: puntos.interes.lenguajes,
-                        id_sitio:  puntos.interes.id_sitio,
-                        id_guia:  puntos.interes.id_guia,
-                        nombre:  puntos.interes.nombre,
-                        descripcion:  puntos.interes.descripcion,
-                        geoX:  puntos.interes.geoX,
-                        geoY:  puntos.interes.geoY,
-                        portada_path:  puntos.interes.portada_path,
-                        qr_path:  puntos.interes.qr_path,
-                        es_portada_de_sitio:  puntos.interes.es_portada_de_sitio,
-                        estado:  puntos.interes.estado,
-                        es_visible:  puntos.interes.es_visible,
+                        id_sitio: puntos.interes.id_sitio,
+                        id_guia: puntos.interes.id_guia,
+                        nombre: puntos.interes.nombre,
+                        descripcion: puntos.interes.descripcion,
+                        geoX: puntos.interes.geoX,
+                        geoY: puntos.interes.geoY,
+                        portada_path: puntos.interes.portada_path,
+                        qr_path: puntos.interes.qr_path,
+                        es_portada_de_sitio: puntos.interes.es_portada_de_sitio,
+                        estado: puntos.interes.estado,
+                        es_visible: puntos.interes.es_visible,
+                        nombreSala: puntos.interes.nombreSala,
                     },
                 })
             }
@@ -310,10 +333,10 @@ const AddRoute = () => {
                     <div className='col-xs-12 col-md-5 col-lg-6 d-flex py-5 px-9' >
                         <div id='center'>
 
-                            <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px', color: '#FFFFFF' }} 
-                            onClick={() => {
-                                discardChanges()
-                            }} ></i>
+                            <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px', color: '#FFFFFF' }}
+                                onClick={() => {
+                                    discardChanges()
+                                }} ></i>
 
 
 
@@ -375,9 +398,9 @@ const AddRoute = () => {
                         <br />
                         <div className='card-header row'>
                             <div className='col-xs-12 col-md-5 col-lg-5'>
-                                <label style={{ fontSize: '18px', color: '#92929F', background: "#28283D" }}> Punto de Interes {puntos.nombre_punto_a}</label>
+                                <label style={{ fontSize: '18px', color: '#92929F', background: "#28283D" }}> Punto de Interes: {puntos.nombre_punto_a}</label>
                                 <i className="bi bi-arrow-right-short" style={{ fontSize: '18px', color: '#FFFFFF' }}></i>
-                                <label style={{ fontSize: '18px', color: '#92929F', background: "#28283D" }}> Punto de Interes {puntos.nombre_punto_b}</label>
+                                <label style={{ fontSize: '18px', color: '#92929F', background: "#28283D" }}> Punto de Interes:   {puntos.nombre_punto_b}</label>
                                 <br></br>
                                 <br></br>
                                 <label style={{ fontSize: '18px', color: '#FFFFFF' }}>Indicaciones para llegar</label>
@@ -428,7 +451,7 @@ const AddRoute = () => {
 
                                     <Card style={{ display: 'flex', padding: 30, borderStyle: "dashed", borderWidth: '1px', borderColor: '#009EF7' }} onClick={(event) => {
                                         if (agregrarPaso.length < 5) {
-                                            agregrarPaso.push({id_punto_a:puntos.id_punto_a,id_punto_b:puntos.id_punto_b, id_paso: -1, descripcion: '', posicion_en_lista: agregrarPaso.length + 1, estado: 1 })
+                                            agregrarPaso.push({ id_punto_a: puntos.id_punto_a, id_punto_b: puntos.id_punto_b, id_paso: -1, descripcion: '', posicion_en_lista: agregrarPaso.length + 1, estado: 1 })
                                             setContador(contador + 1)
                                             addNewPaso()
                                         } else {
@@ -490,8 +513,8 @@ const AddRoute = () => {
                                                     <Col>
                                                         <Link
                                                             className='bi bi-arrow-left-right background-button text-info'
-                                                            to={''} 
-                                                            onClick={() => { setModalupIMG(true)}}
+                                                            to={''}
+                                                            onClick={() => { setModalupIMG(true) }}
                                                         ></Link>
 
                                                     </Col>
@@ -539,7 +562,7 @@ const AddRoute = () => {
                                                                     src={
                                                                         imgtempomodal.imagen1 == ''
                                                                             ? logo
-                                                                            :  imgtempomodal.imagen1
+                                                                            : imgtempomodal.imagen1
                                                                     }
                                                                     alt="Card image cap"
                                                                     style={{ height: '248px', borderRadius: '10px' }}
@@ -564,7 +587,7 @@ const AddRoute = () => {
                                                                             <Link
                                                                                 className='bi bi-arrow-left-right background-button text-info'
                                                                                 to={''}
-                                                                                onClick={() => { setModalupIMG(true)}}
+                                                                                onClick={() => { setModalupIMG(true) }}
                                                                             ></Link>
                                                                         </Col>
                                                                         <Col>
@@ -574,7 +597,7 @@ const AddRoute = () => {
                                                                             {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                                                                         </Col>
                                                                         <Col>
-                                                                            <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => { }}></Link>
+                                                                            <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => { imgtempomodal.imagen1 = "" }}></Link>
                                                                         </Col>
                                                                     </Row>
                                                                 </div>
@@ -586,7 +609,7 @@ const AddRoute = () => {
                                                                     src={
                                                                         imgtempomodal.imagen2 == ''
                                                                             ? logo
-                                                                            :  imgtempomodal.imagen2
+                                                                            : imgtempomodal.imagen2
                                                                     }
                                                                     alt="Card image cap"
                                                                     style={{ height: '248px', borderRadius: '10px' }}
@@ -611,7 +634,7 @@ const AddRoute = () => {
                                                                             <Link
                                                                                 className='bi bi-arrow-left-right background-button text-info'
                                                                                 to={''}
-                                                                                onClick={() => { setModalupIMG(true)}}
+                                                                                onClick={() => { setModalupIMG(true) }}
                                                                             ></Link>
                                                                         </Col>
                                                                         <Col>
@@ -633,7 +656,7 @@ const AddRoute = () => {
                                                                     src={
                                                                         imgtempomodal.imagen3 == ''
                                                                             ? logo
-                                                                            :  imgtempomodal.imagen3
+                                                                            : imgtempomodal.imagen3
                                                                     }
                                                                     alt="Card image cap"
                                                                     style={{ height: '248px', borderRadius: '10px' }}
@@ -658,7 +681,7 @@ const AddRoute = () => {
                                                                             <Link
                                                                                 className='bi bi-arrow-left-right background-button text-info'
                                                                                 to={''}
-                                                                                onClick={() => { setModalupIMG(true)}}
+                                                                                onClick={() => { setModalupIMG(true) }}
                                                                             ></Link>
                                                                         </Col>
                                                                         <Col>
@@ -706,9 +729,11 @@ const AddRoute = () => {
                                                                                 <Link
                                                                                     className='bi bi-arrow-left-right background-button text-info'
                                                                                     to={''}
-                                                                                    onClick={() => {     setModalupIMG(true)
+                                                                                    onClick={() => {
+                                                                                        setModalupIMG(true)
                                                                                         setId(img.id_image)
-                                                                                        setnumeroImg(index)}}
+                                                                                        setnumeroImg(index)
+                                                                                    }}
                                                                                 ></Link>
                                                                             </Col>
                                                                             <Col>

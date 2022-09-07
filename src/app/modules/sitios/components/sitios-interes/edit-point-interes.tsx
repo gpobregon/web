@@ -81,6 +81,7 @@ type datosPuntoInteres = {
     estado: boolean
     es_visible: boolean
     publicado: boolean
+    nombreSala: string
 }
 const animatedComponents = makeAnimated()
 const EditPoint = () => {
@@ -533,7 +534,7 @@ const EditPoint = () => {
                                         className='form-control'
                                         disabled
                                         style={{ border: '0', fontSize: '14px', color: '#92929F' }}
-                                        value={datospuntoInteres.nombre}
+                                        value={datospuntoInteres.nombreSala}
 
 
 

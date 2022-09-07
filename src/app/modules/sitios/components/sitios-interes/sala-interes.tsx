@@ -113,7 +113,7 @@ const Interes: FC<id_sitio> = (props) => {
         setModalUpdateRoom(true)
     }
 
-    const deleteRoom = (nombre:string,id: number, longitud: number) => {
+    const deleteRoom = (nombre: string, id: number, longitud: number) => {
         if (longitud > 0) {
             swal({
                 icon: "error",
@@ -221,7 +221,7 @@ const Interes: FC<id_sitio> = (props) => {
     // 	setPuntoInteres(_fruitItems)
     // }
 
-    
+
     return (
         <>
             <div className=' '>
@@ -277,7 +277,7 @@ const Interes: FC<id_sitio> = (props) => {
                                             </i>
                                         </Button>
                                         <Button variant="outline-dark" size="sm"
-                                            onClick={() => { deleteRoom(sala.nombre,sala.id_sala, sala.points_of_interest.length) }}
+                                            onClick={() => { deleteRoom(sala.nombre, sala.id_sala, sala.points_of_interest.length) }}
                                             style={{ width: '5px', height: '40px' }} >
                                             <i className='fa-solid fa-xmark '
                                                 style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -386,7 +386,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         onDragOver={(e) => e.preventDefault()}>
 
                                         <div className='row'>
-                                            <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-start'>
+                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-start'>
 
                                                 <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column', }}>
                                                     <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
@@ -415,7 +415,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                     </span>
                                                 </Card>
                                             </div>
-                                            <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-end'>
+                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-end'>
 
                                                 <div id='center2'>
                                                     <ul className='nav justify-content-end'>
@@ -495,21 +495,21 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 let lenaguajeDefault = ""
                                                                 for (let i = 0; i < languages.length; i++) {
                                                                     for (let j = 0; j < punto.lenguajes.length; j++) {
-                                                                    if (languages[i].id_lenguaje === punto.lenguajes[j].id_lenguaje) {
-                                                                        // setLenaguajeDefault(languages[i].descripcion)
-                                                                       
-                                                                        lenaguajeDefault = languages[i].nombre
+                                                                        if (languages[i].id_lenguaje === punto.lenguajes[j].id_lenguaje) {
+                                                                            // setLenaguajeDefault(languages[i].descripcion)
+
+                                                                            lenaguajeDefault = languages[i].nombre
+                                                                        }
                                                                     }
-                                                                }
                                                                 }
                                                                 const languageEscogido = punto.lenguajes.map((language) =>
                                                                 (
-                                                                  
+
                                                                     {
                                                                         value: language.id_lenguaje,
                                                                         label: lenaguajeDefault,
                                                                     }))
-                                                            console.log(languageEscogido)
+                                                                console.log(languageEscogido)
                                                                 navigate('/sitios/edit-point-interes', {
                                                                     state: {
                                                                         id_punto: punto.id_punto,
@@ -525,6 +525,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                         es_portada_de_sitio: punto.es_portada_de_sitio,
                                                                         estado: punto.estado,
                                                                         es_visible: punto.es_visible,
+                                                                        nombreSala: nombresala,
                                                                     },
                                                                 })
                                                             }}
