@@ -29,6 +29,7 @@ type datosPuntoInteres = {
     estado: boolean
     es_visible: boolean
     publicado: boolean
+    nombreSala: string
 }
 type id_punto_a = {
     id_punto_a: number
@@ -236,45 +237,13 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                             {sala.nombre}
 
                                         </Button>
-                                        <Button variant="outline-dark" size="sm"
-                                            onClick={() => {
-                                                setupdateRoom({
-                                                    id_sala: sala.id_sala,
-                                                    id_sitio: upRoom.id_sitio,
-                                                    nombre: sala.nombre,
-                                                    descripcion: sala.descripcion,
-                                                    tipo: true,
-                                                    estado: 1
-                                                })
-                                                setModalUpdateRoom(true)
-                                            }}
-                                            style={{ width: '5px', height: '40px' }} >
-                                            <i className='fa-solid fa-pencil '
-                                                style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            </i>
-                                        </Button>
-                                        <Button variant="outline-dark" size="sm"
-                                            onClick={() => { deleteRoom(sala.nombre,sala.id_sala, sala.points_of_interest.length) }}
-                                            style={{ width: '5px', height: '40px' }} >
-                                            <i className='fa-solid fa-xmark '
-                                                style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            </i>
-                                        </Button>
+                                        
                                     </>
 
 
                                 ))
                                 }
-                                <Button variant="outline-dark" size="sm" onClick={() => setModalAddRoom(true)}>
-                                    Nueva Sala
-                                    <i
-                                        className='fa-solid bi-plus '
-                                        id='center2'
-                                        onClick={() => {
-                                        }}
-                                        style={{ color: '#92929F', fontSize: '20px', marginTop: '-5px' }}
-                                    ></i>
-                                </Button>
+                               
                             </div>
                             <hr style={{ position: 'relative' }}></hr>
                             <br></br>

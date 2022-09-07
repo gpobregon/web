@@ -439,7 +439,7 @@ const AddPoint = () => {
                   ></input>
 
                   <br></br>
-                  <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Nombre del pundo de iteres</label>
+                  <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Nombre del punto de interés</label>
                   <br />
                   <br />
                   <input
