@@ -85,13 +85,16 @@ const AddRoute = () => {
         if (imgprincipal.img_principal != '') {
             await postData(addImagePrincipal, imgprincipal)
 
+        }else{
+            swal("Error", "Falta alguna Imagen", "error")
+            return
         }
 
         if(imgtempomodal.imagen1 != '' && imgtempomodal.imagen2 != '' && imgtempomodal.imagen3 != '' || getimg[0]?.img_path != '' && getimg[1]?.img_path != '' && getimg[2]?.img_path != ''){
         await postData(addImages, imganes)
         await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
         swal({
-            text: "Se Guardo paso ",
+            text: "Se Guardó guía correctamente ",
             icon: "success",
             timer: 2000,
 
@@ -115,7 +118,7 @@ const AddRoute = () => {
             },
         })
         }else{
-            swal("Error", "Debe seleccionar 3 imagenes de refencia", "error")
+            swal("Error", "Falta alguna Imagen", "error")
         }
         // const g = await postData(addImages, imganes)
         // const a = await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
@@ -143,7 +146,7 @@ const AddRoute = () => {
                 id_image: -1,
                 descripcion: '',
                 posicion_en_lista: 1,
-                img_path: URLAWS + url,
+                img_path: URLAWS +"sitePages/"+ url,
                 estado: 1
             })
             setImagenes({
@@ -176,20 +179,20 @@ const AddRoute = () => {
             setImgprincipal({
                 id_punto_a: puntos.id_punto_a,
                 id_punto_b: puntos.id_punto_b,
-                img_principal: URLAWS + url
+                img_principal: URLAWS +"sitePages/"+ url
             })
             setruta({
                 id_punto_a: ruta!.id_punto_a,
                 id_punto_b: ruta!.id_punto_b,
                 estado: ruta!.estado,
-                img_principal: URLAWS + url, //mostrar la imagen principal en el modal
+                img_principal: URLAWS+"sitePages/" + url, //mostrar la imagen principal en el modal
                 imagenes: ruta!.imagenes,
                 pasos: ruta!.pasos,
 
             })
         } else {
             //editar imagen de referencia
-            getimg[numeroImg].img_path = URLAWS + url //mostrar la imagen en el modal
+            getimg[numeroImg].img_path = URLAWS+"sitePages/" + url //mostrar la imagen en el modal
             // arrayimagenes.push({
             //     id_image: id,
             //     descripcion: '',
@@ -210,21 +213,21 @@ const AddRoute = () => {
         if (imagen != '') {
             if (numeroImg === 1) {
                 setImgtempomodal({
-                    imagen1: URLAWS + imagen,
+                    imagen1: URLAWS+"sitePages/" + imagen,
                     imagen2: imgtempomodal.imagen2,
                     imagen3: imgtempomodal.imagen3
                 })
             } else if (numeroImg === 2) {
                 setImgtempomodal({
                     imagen1: imgtempomodal.imagen1,
-                    imagen2: URLAWS + imagen,
+                    imagen2: URLAWS+"sitePages/" + imagen,
                     imagen3: imgtempomodal.imagen3
                 })
             } else if (numeroImg === 3) {
                 setImgtempomodal({
                     imagen1: imgtempomodal.imagen1,
                     imagen2: imgtempomodal.imagen2,
-                    imagen3: URLAWS + imagen
+                    imagen3: URLAWS+"sitePages/" + imagen
                 })
             }
             setModalupIMG(false)

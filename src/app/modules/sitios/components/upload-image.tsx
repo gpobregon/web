@@ -7,7 +7,7 @@ import * as dotenv from 'dotenv';
 import { uuid } from 'uuidv4';
 import swal from "sweetalert";
 
-const S3_BUCKET = 'mcd-backoffice-upload';
+const S3_BUCKET = 'mcd-backoffice-upload/sitePages';
 const REGION = 'us-east-2';
 
 
