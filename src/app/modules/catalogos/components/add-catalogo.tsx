@@ -78,7 +78,7 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
+const AddCatalogo: FC<any> = ({show, onClose, tag, setTag, addTag}) => {
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
     const getLanguages = async () => {
@@ -94,14 +94,6 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
         value: language.id_lenguaje,
         label: language.nombre,
     }))
-
-    const [tag, setTag] = useState({
-        id_categoria: 0,
-        nombre: '',
-        icono: '',
-        estado: 1,
-        id_lenguaje: 1,
-    })
 
     const handleChangeIcon = (event: any) => {
         setTag({
@@ -180,7 +172,7 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                                 nombre: '',
                                 icono: '',
                                 estado: 1,
-                                id_lenguaje: 1,
+                                id_lenguaje: 0,
                             })
                             onClose()
                         }}
@@ -191,13 +183,6 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                     <Button
                         variant='primary'
                         onClick={() => {
-                            setTag({
-                                id_categoria: 0,
-                                nombre: '',
-                                icono: '',
-                                estado: 1,
-                                id_lenguaje: 1,
-                            })
                             addTag(tag)
                         }}
                     >

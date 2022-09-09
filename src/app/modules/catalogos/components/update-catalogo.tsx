@@ -222,14 +222,6 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, tag, setTag, updateTa
                             })
 
                             updateTag(tag)
-
-                            setTag({
-                                id_categoria: 0,
-                                nombre: '',
-                                icono: '',
-                                estado: 1,
-                                id_lenguaje: 0,
-                            })
                         }}
                     >
                         {'Aplicar '}
