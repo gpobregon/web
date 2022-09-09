@@ -141,7 +141,7 @@ const CatalogosPage = () => {
             alertNotNullInputsObj({
                 nombre: tag.nombre,
                 icono: tag.icono,
-                lenguaje: tag.id_lenguaje
+                lenguaje: tag.id_lenguaje,
             })
         }
     }
@@ -181,7 +181,7 @@ const CatalogosPage = () => {
             alertNotNullInputsObj({
                 nombre: tag.nombre,
                 icono: tag.icono,
-                lenguaje: tag.id_lenguaje
+                lenguaje: tag.id_lenguaje,
             })
         }
     }
@@ -206,6 +206,8 @@ const CatalogosPage = () => {
     }
 
     const deleteTag = async (tag: any) => {
+        let flag = false
+
         await swal({
             title: '¿Estás seguro de eliminar esta categoría?',
             icon: 'warning',
@@ -213,19 +215,40 @@ const CatalogosPage = () => {
             dangerMode: true,
         }).then((willDelete) => {
             if (willDelete) {
-                deleteData(categorysMethod, tag)
-                setModalUpdateTag({show: false, catalogo: {}})
-                swal({
-                    title: 'Se ha eliminado la etiqueta',
-                    icon: 'success',
-                })
+                flag = true
             }
         })
 
-        getTags()
-        getTags()
-        getTags()
+        if (flag) {
+            const deleteInfo: any = await deleteData(categorysMethod, tag)
+
+            if (deleteInfo.category.en_uso === undefined) {
+                setModalUpdateTag({show: false, catalogo: {}})
+                swal({
+                    title: `Categoría eliminada`,
+                    icon: 'success',
+                })
+            } else {
+                setModalUpdateTag({show: false, catalogo: {}})
+                swal({
+                    title: 'Error al eliminar la categoría',
+                    text: `Esta categoría esta siendo usada en/los sitios: ${deleteInfo.category.en_uso}`,
+                    icon: 'warning',
+                })
+            }
+
+        }
+
+        setTimeout(getTags, 500)
     }
+
+    // const deleteTag = async (tag: any) => {
+    //     const lenguaje: any = await deleteData(categorysMethod, tag)
+    //     console.log(lenguaje)
+    //     getTags()
+    //     getTags()
+    //     getTags()
+    // }
 
     const deleteIdioma = async (idioma: any) => {
         await swal({
