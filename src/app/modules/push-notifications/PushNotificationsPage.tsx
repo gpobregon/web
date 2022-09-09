@@ -34,8 +34,19 @@ const PushNotificationsPage = () => {
         id_notificacion: 0,
         nombre: '',
         descripcion: '',
-        imagen_path: 'https://picsum.photos/200/200',
+        imagen_path: '',
         fecha_hora_programada: '',
+        tipo: 0,
+        estado: 1,
+    })
+
+    let dateNow = moment().toJSON()
+
+    const [newNotification, setNewNotification] = useState({
+        nombre: '',
+        descripcion: '',
+        imagen_path: '',
+        fecha_hora_programada: dateNow,
         tipo: 0,
         estado: 1,
     })
@@ -61,14 +72,14 @@ const PushNotificationsPage = () => {
     const getNotificationsHistory = async () => {
         const notificationsData: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber,
-            quantity: '2',
+            quantity: '12',
         })
         setNotifications(notificationsData.data as Notification[])
         setOptionGetNotifications('historial')
 
         const countNextResults: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber + 1,
-            quantity: '2',
+            quantity: '12',
         })
 
         if (countNextResults.data.length == 0) {
@@ -113,6 +124,28 @@ const PushNotificationsPage = () => {
         })
     }
 
+    const alertNotNullInputsNewNotification = async (notification: any) => {
+        let keys = Object.keys(notification),
+            msg = ''
+
+        for (let key of keys) {
+            if (
+                notification[key] !== null &&
+                notification[key] !== undefined &&
+                notification[key] !== ''
+            )
+                continue
+            msg += `El campo ${key} es obligatorio\n`
+        }
+
+        msg.trim()
+
+        swal({
+            text: msg,
+            icon: 'warning',
+        })
+    }
+
     const alertNotNullInputs = async () => {
         swal({
             text: '¡Faltan campos por completar!',
@@ -130,11 +163,26 @@ const PushNotificationsPage = () => {
                 notification.fecha_hora_programada
             ).toISOString()
 
-            await postData(addNotificationMethod, notification)
+            let save = await postData(addNotificationMethod, notification)
             setShowCardAddNotification(false)
             chooseGetNotifications()
+
+            setNewNotification({
+                nombre: '',
+                descripcion: '',
+                imagen_path: '',
+                fecha_hora_programada: dateNow,
+                tipo: 0,
+                estado: 1,
+            })
         } else {
-            alertNotNullInputs()
+            let notificationObj = {
+                nombre: notification.nombre,
+                descripcion: notification.descripcion,
+                imagen: notification.imagen_path,
+            }
+
+            alertNotNullInputsNewNotification(notificationObj)
         }
     }
 
@@ -177,9 +225,10 @@ const PushNotificationsPage = () => {
             }
         })
 
-        chooseGetNotifications()
-        chooseGetNotifications()
-        chooseGetNotifications()
+        setTimeout(chooseGetNotifications, 500)
+        setTimeout(chooseGetNotifications, 1000)
+        setTimeout(chooseGetNotifications, 2000)
+        setTimeout(chooseGetNotifications, 3000)
     }
 
     const toggleOptionSort = () => {
@@ -242,13 +291,10 @@ const PushNotificationsPage = () => {
                 }
             })
 
-            chooseGetNotifications()
-            chooseGetNotifications()
-            chooseGetNotifications()
-            chooseGetNotifications()
-            chooseGetNotifications()
-            chooseGetNotifications()
-            chooseGetNotifications()
+            setTimeout(chooseGetNotifications, 500)
+            setTimeout(chooseGetNotifications, 1000)
+            setTimeout(chooseGetNotifications, 2000)
+            setTimeout(chooseGetNotifications, 3000)
 
             arrayDeleteNotifications.length = 0
         }
@@ -492,6 +538,8 @@ const PushNotificationsPage = () => {
                 <NewNotification
                     showCardAddNotification={showCardAddNotification}
                     toggleCardAddNotification={toggleCardAddNotification}
+                    notification={newNotification}
+                    setNotification={setNewNotification}
                     addNotification={addNotification}
                 />
 
