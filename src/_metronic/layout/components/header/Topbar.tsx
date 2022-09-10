@@ -2,7 +2,6 @@ import {FC} from 'react'
 import clsx from 'clsx'
 import {KTSVG, toAbsoluteUrl} from '../../../helpers'
 import {
-  HeaderNotificationsMenu,
   HeaderUserMenu,
   QuickLinks,
   Search,
@@ -21,19 +20,12 @@ const Topbar: FC = () => {
   return (
     <div className='d-flex align-items-stretch justify-self-end flex-shrink-0'>
       {/* NOTIFICATIONS */}
-      <div className={clsx('d-flex align-items-center', itemClass)}>
+      
         {/* begin::Menu- wrapper */}
-        <div
-          className={clsx('btn btn-icon btn-active-light-primary position-relative ', btnClass)}
-          data-kt-menu-trigger='click'
-          data-kt-menu-attach='parent'
-          data-kt-menu-placement='bottom-end'
-        >
-          <KTSVG path='/media/icons/duotune/general/gen022.svg' className={btnIconClass} />
-        </div>
-        <HeaderNotificationsMenu />
+        
+        
         {/* end::Menu wrapper */}
-      </div>
+   
 
       {/* CHAT */}
       {/* <div className={clsx('d-flex align-items-center', itemClass)}> */}

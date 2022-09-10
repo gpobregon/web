@@ -49,7 +49,7 @@ const AsideDefault: FC = () => {
       >
         {/* begin::Menu */}
         <div className='mb-7'>
-          <button
+          {/* <button
             type='button'
             className='btn btm-sm btn-icon btn-color-white btn-active-color-primary btn-active-light'
             data-kt-menu-trigger='click'
@@ -64,7 +64,7 @@ const AsideDefault: FC = () => {
               path='/media/icons/duotune/general/gen008.svg'
               className='svg-icon-2 svg-icon-lg-1'
             />
-          </button>
+          </button> */}
           <Dropdown2 />
         </div>
         {/* end::Menu */}

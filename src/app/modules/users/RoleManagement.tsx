@@ -1,9 +1,46 @@
-import React, {FC, useState} from "react";  
+import React, {FC, useState, useEffect} from "react";  
 import {Link} from 'react-router-dom' 
 import { Button, Col, Form, Row, Table, Card, Container } from 'react-bootstrap' 
 import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
+import { addRolesMethod, getData, getRolesMethod, postData } from "../../services/api"; 
+import {roleManager} from '../../models/roleManager'
 
-const RoleManagement: FC<any> = ({show}) =>{ 
+const RoleManagement: FC<any> = ({show}) =>{    
+    const [roles, setRoles] = useState<roleManager[]>([])
+
+    //TODO: get roles 
+    const getRoles = async ()=>{ 
+        const role: any = await getData(getRolesMethod) 
+        setRoles(role.data as roleManager[])
+    }
+
+
+    //TODO: add role 
+    const addRole = async (role: any)=>{  
+        if ( 
+            role.nombre != '' 
+            && role.descripcion != '' 
+            && role.gestor_sitios != '' 
+            && role.gestor_notificaciones != '' 
+            && role.gestor_puntos_de_intereses != '' 
+            && role.gestor_reportes != '' 
+            && role.gestor_usuarios != '' 
+            && role.gestor_offline != '' 
+            && role.gestor_roles != ''
+            && role.gestor_categorias_idiomas != '' 
+            && role.estado != ''
+        ) {
+            await postData(addRolesMethod, role) 
+            
+        } else {
+            
+        }
+    } 
+
+    // useEffect(() => { 
+    //     getRoles()
+    // })
+
     return(  
         <Container fluid> 
             <div
