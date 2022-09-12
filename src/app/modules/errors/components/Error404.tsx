@@ -12,6 +12,11 @@ const Error404: FC = () => {
                 <p className='m-0' style={{fontSize: '2.25vw', fontWeight: 500}}>
                     Página no encontrada
                 </p>
+                <div className='d-flex justify-content-center'>
+                    <Link to='/' className='btn btn-outline-primary btn-lg mx-auto mt-5'>
+                        Regresar
+                    </Link>
+                </div>
             </div>
             <div style={{maxHeight: '99vh'}}>
                 <img
