@@ -1,31 +1,27 @@
 import {FC} from 'react'
 import {Link} from 'react-router-dom'
-import {toAbsoluteUrl} from '../../../../_metronic/helpers'
+import img404 from './Error-404.png'
 
 const Error404: FC = () => {
-  return (
-    <div className='d-flex flex-column flex-root'>
-      <div className='d-flex flex-column flex-center flex-column-fluid p-10'>
-        {/* begin::Illustration */}
-        <img
-          src={toAbsoluteUrl('/media/illustrations/sketchy-1/18.png')}
-          alt=''
-          className='mw-100 mb-10 h-lg-450px'
-        />
-        {/* end::Illustration */}
-        {/* begin::Message */}
-        <h1 className='fw-bold mb-10' style={{color: '#A3A3C7'}}>
-          Seems there is nothing here
-        </h1>
-        {/* end::Message */}
-        {/* begin::Link */}
-        <Link to='/' className='btn btn-primary'>
-          Return Home
-        </Link>
-        {/* end::Link */}
-      </div>
-    </div>
-  )
+    return (
+        <div className='d-md-flex justify-content-end h-100'>
+            <div className='align-self-center ms-20'>
+                <p className='m-0' style={{fontSize: '3.75vw', fontWeight: 700}}>
+                    ¡Oops!
+                </p>
+                <p className='m-0' style={{fontSize: '2.25vw', fontWeight: 500}}>
+                    Página no encontrada
+                </p>
+            </div>
+            <div style={{maxHeight: '99vh'}}>
+                <img
+                    src={img404}
+                    alt='error404'
+                    style={{maxHeight: '100%', maxWidth: '100%', objectFit: 'cover'}}
+                />
+            </div>
+        </div>
+    )
 }
 
 export {Error404}
