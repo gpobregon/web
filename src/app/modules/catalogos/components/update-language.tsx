@@ -27,7 +27,7 @@ const UpdateLanguage: FC<any> = ({
                         <Form.Control
                             defaultValue={language.nombre}
                             type='text'
-                            name='nombre'
+                            maxLength={20}
                             className={'mb-4'}
                             onChange={(e) => {
                                 setIdioma({
@@ -43,6 +43,7 @@ const UpdateLanguage: FC<any> = ({
                         <Form.Label>{'Descripción'}</Form.Label>
                         <Form.Control
                             defaultValue={language.descripcion}
+                            maxLength={20}
                             type='text'
                             name='descripcion'
                             onChange={(e) => {
@@ -90,13 +91,6 @@ const UpdateLanguage: FC<any> = ({
                         variant='primary'
                         onClick={() => {
                             updateIdioma(idioma)
-                            
-                            setIdioma({
-                                id_lenguaje: 1,
-                                nombre: '',
-                                descripcion: '',
-                                estado: 1,
-                            })
                         }}
                     >
                         {'Aplicar '}
