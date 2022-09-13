@@ -1,6 +1,7 @@
-import {FC} from 'react'
+import {FC, useState, useEffect} from 'react'
 import clsx from 'clsx'
-import {KTSVG, toAbsoluteUrl} from '../../../helpers'
+import {KTSVG, toAbsoluteUrl} from '../../../helpers' 
+import {Amplify, Auth} from 'aws-amplify'
 import {
   HeaderUserMenu,
   QuickLinks,
@@ -15,7 +16,33 @@ const itemClass = 'ms-1 ms-lg-3',
   btnIconClass = 'svg-icon-1'
 
 const Topbar: FC = () => {
-  const {config} = useLayout()
+  const {config} = useLayout() 
+  const [dataUser, setDataUser] = useState({
+    email: '',
+    name: '',
+    phoneNumber: '',
+    lastname: '',
+    imageProfile: '',
+})
+
+const getEmail = () => {
+    Auth.currentAuthenticatedUser().then((user) => {
+        setDataUser({
+            email: user.attributes.email,
+            name: user.attributes.name,
+            phoneNumber: user.attributes['custom:phoneNumber'],
+            lastname: user.attributes['custom:lastname'],
+            imageProfile: user.attributes['custom:imageProfile'],
+        })
+        //console.log(user.attributes['custom:phoneNumber']);
+        //console.log(JSON.stringify(user.attributes))
+        //console.log(user)
+    })
+} 
+
+useEffect(() => {
+  getEmail()
+}, [])
 
   return (
     <div className='d-flex align-items-stretch justify-self-end flex-shrink-0'>
@@ -68,7 +95,7 @@ const Topbar: FC = () => {
           data-kt-menu-attach='parent'
           data-kt-menu-placement='bottom-end'
         >
-          <img src={toAbsoluteUrl('/media/avatars/300-1.jpg')} alt='metronic' />
+          <img src={dataUser.imageProfile} alt='metronic' />
         </div>
         <HeaderUserMenu />
         {/* end::Toggle */}

@@ -242,12 +242,12 @@ const UserProfilePage = () => {
                                         </Button>
                                     </div>
                                     <div>
-                                        <Button
+                                        {/* <Button
                                             variant='outline-danger p-7'
                                             className='text-center mx-1'
                                         >
                                             <i className='fs-2 bi-trash px-0 fw-bolder'></i>
-                                        </Button>
+                                        </Button> */}
                                     </div>
                                 </div>
                             </div>

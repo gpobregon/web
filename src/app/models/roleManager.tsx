@@ -1,4 +1,5 @@
-export interface roleManager{ 
+export interface roleManager{  
+    id_rol: number,
     nombre: string,
     descripcion: string,
     gestor_sitios: boolean,
