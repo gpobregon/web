@@ -42,6 +42,15 @@ export const addImagePrincipal = ObtenerRuta + '/principalimage'
 export const addImages = ObtenerRuta + '/images'
 export const deleteRuta = ObtenerRuta + '/delete'
 
+export const getRolesMethod = 'user/rol' 
+export const addRolesMethod = 'user/rol/add' 
+export const editRoleMethod = 'user/rol/edit' 
+export const deleteRoleMethod = 'user/rol'
+
+export const getUsers = 'user'
+export const addUser = 'user/add' 
+
+
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}/`, {method: 'GET', mode: 'cors'})
