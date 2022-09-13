@@ -1,6 +1,6 @@
 import React, { useState, FC } from 'react'
 import { Button, Modal, Form } from 'react-bootstrap'
-
+import swal from "sweetalert";
 const AddRoom: FC<any> = ({ show, onClose, addRoom, id_sitio }) => {
     const [createRoom, setCreateRoom] = useState({
         id_sitio: id_sitio,
@@ -56,8 +56,17 @@ const AddRoom: FC<any> = ({ show, onClose, addRoom, id_sitio }) => {
                     <Button
                         variant='primary'
                         onClick={() => {
-                            console.log(createRoom)
-                            addRoom(createRoom)
+                            if (createRoom.nombre != '' && createRoom.descripcion != '') {
+                                addRoom(createRoom)
+                            
+                            }else{
+                                swal({
+                                    text: "¡Faltan campos por completar!",
+                                    icon: "warning",
+                              
+                                  })
+                            }
+                           
                         }}
                     >
                         {'Aplicar '}
