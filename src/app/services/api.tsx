@@ -10,6 +10,7 @@ export const statesMethod = 'site/state'
 export const updateSiteMethod = 'site/update'
 
 export const categorysMethod = 'site/categories'
+export const lengthTagsMethod = 'site/categories/count'
 export const addCategoryMethod = 'site/categories/add'
 export const updateCategoryMethod = 'site/categories/update'
 

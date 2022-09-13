@@ -34,7 +34,7 @@ const customStyles = {
   }),
   option: (base: any, state: any) => ({
     ...base,
-    background: state.isFocused ? '#7239ea' : '#323248',
+    background: state.isFocused ? '#009EF7' : '#323248',
     color: state.isFocused ? '#fff' : '#92929F',
     padding: 10,
   }),
@@ -249,7 +249,7 @@ const AddPoint = () => {
               )} */}
             </div>
             <div id='center'>
-              {/* <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>  */}
+              {/* <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY hh:mm') + ' '} por{' '}</p>  */}
             </div>
           </div>
           <div className='col-xs-12 col-md-6 col-lg-6 d-flex  py-5 px-9 justify-content-end'>

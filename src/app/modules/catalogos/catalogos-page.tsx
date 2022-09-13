@@ -17,6 +17,7 @@ import {
     deleteData,
     getData,
     languagesMethod,
+    lengthTagsMethod,
     postData,
     updateCategoryMethod,
     updateLanguageMethod,
@@ -31,6 +32,9 @@ const CatalogosPage = () => {
     const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
 
     const [catalogos, setCatalogos] = useState<CatalogTag[]>([])
+    const [totalTags, setTotalTags] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
+
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
     const [searchInput, setSearchInput] = useState('')
@@ -88,6 +92,12 @@ const CatalogosPage = () => {
                 next: false,
             })
         }
+
+        const tagsLength: any = await getData(lengthTagsMethod)
+        setTotalTags(tagsLength.count)
+
+        let pagesLength = Math.ceil(tagsLength.count / 12)
+        setTotalPages(pagesLength)
     }
 
     const getLanguages = async () => {
@@ -232,25 +242,18 @@ const CatalogosPage = () => {
                 setModalUpdateTag({show: false, catalogo: {}})
                 swal({
                     title: 'Error al eliminar la categoría',
-                    text: `Esta categoría esta siendo usada en/los sitios: ${deleteInfo.category.en_uso}`,
+                    text: `Esta categoría esta siendo usada en/los sitios: \n ${deleteInfo.category.en_uso}`,
                     icon: 'warning',
                 })
             }
-
         }
 
         setTimeout(getTags, 500)
     }
 
-    // const deleteTag = async (tag: any) => {
-    //     const lenguaje: any = await deleteData(categorysMethod, tag)
-    //     console.log(lenguaje)
-    //     getTags()
-    //     getTags()
-    //     getTags()
-    // }
-
     const deleteIdioma = async (idioma: any) => {
+        let flag = false
+
         await swal({
             title: '¿Estás seguro de eliminar este idioma?',
             icon: 'warning',
@@ -258,18 +261,33 @@ const CatalogosPage = () => {
             dangerMode: true,
         }).then((willDelete) => {
             if (willDelete) {
-                deleteData(languagesMethod, idioma)
+                flag = true
+            }
+        })
+
+        if (flag) {
+            const deleteInfo: any = await deleteData(languagesMethod, idioma)
+
+            if (deleteInfo.en_uso === undefined) {
                 setModalUpdateIdioma({show: false, language: {}})
                 swal({
                     title: 'Se ha eliminado el idioma',
                     icon: 'success',
                 })
+            } else {
+                setModalUpdateIdioma({show: false, language: {}})
+                swal({
+                    title: 'Error al eliminar la categoría',
+                    text: `Esta categoría esta siendo usada en: \n 
+                        la/las categorías: ${deleteInfo.en_uso.enUso.categorias.toString()} \n 
+                        el/los sitios: ${deleteInfo.en_uso.enUso.sitios.toString()} \n
+                        el/los puntos: ${deleteInfo.en_uso.enUso.puntos.toString()}`,
+                    icon: 'warning',
+                })
             }
-        })
+        }
 
-        getLanguages()
-        getLanguages()
-        getLanguages()
+        setTimeout(getLanguages, 500)
     }
 
     const searchItems = (searchValue: any) => {
@@ -364,7 +382,12 @@ const CatalogosPage = () => {
             <Container fluid>
                 <Row>
                     <div className='text-left mb-10'>
-                        <h1 className='text-dark mt-0'>Categorías</h1>
+                        <h1 className='text-dark mt-0'>
+                            Categorías{' '}
+                            <span className='text-muted'>
+                                | <span className='fs-5'>{`${totalTags}`} en total</span>
+                            </span>
+                        </h1>
                         <h2 className='text-muted mb-0'>Lista de categorías</h2>
                     </div>
                 </Row>
@@ -396,15 +419,14 @@ const CatalogosPage = () => {
                             </Button>
 
                             <div
-                                className='d-flex align-items-center justify-content-center'
+                                className='d-flex align-items-center justify-content-center px-5'
                                 style={{
-                                    width: '46px',
                                     height: '46px',
                                     backgroundColor: '#2B2B40',
                                     borderRadius: '5px',
                                 }}
                             >
-                                {`${pageNumber}`}
+                                {`Página ${pageNumber} de ${totalPages}`}
                             </div>
 
                             <Button
