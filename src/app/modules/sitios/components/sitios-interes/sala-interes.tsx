@@ -96,9 +96,14 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const addNewRoom = async (createRoom: any) => {
-        await postData(addRoom, createRoom)
-        setModalAddRoom(false)
-        getSalas()
+        try{
+            await postData(addRoom, createRoom)
+            setModalAddRoom(false)
+            getSalas()
+        }catch(error){
+           alert(error)
+        }
+      
     }
 
     const updateRooom = async (Room: any) => {
@@ -502,6 +507,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                                         }
                                                                     }
                                                                 }
+                                                                console.log(punto.lenguajes) 
+                                                                console.log(lenaguajeDefault)
                                                                 const languageEscogido = punto.lenguajes.map((language) =>
                                                                 (
 
@@ -513,7 +520,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 navigate('/sitios/edit-point-interes', {
                                                                     state: {
                                                                         id_punto: punto.id_punto,
-                                                                        lenguajes: languageEscogido,
+                                                                        lenguajes: punto.lenguajes,
                                                                         id_sitio: punto.id_sitio,
                                                                         id_guia: idsala,
                                                                         nombre: punto.nombre,
@@ -579,8 +586,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                 } else {
                                                     swal({
                                                         icon: "error",
-                                                        title: "¡Error al agregar nuevo punto de interes !",
-                                                        text: "Para agregar punto de interes, primero debes selecionar una una sala",
+                                                        title: `¡Error al agregar nuevo punto de interes !`,
+                                                        text: `Nota: Para agregar punto de interes, \n primero debes selecionar una una sala`,
                                                     });
                                                 }
 

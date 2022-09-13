@@ -56,11 +56,14 @@ const SalaRutas: FC<id_punto_a> = (props) => {
         estado: 1,
     })
     const getRutas = async () => {
+        try{
         const data: any = await postData(getRoutefInterest, { id_punto_a: props.id_punto_a });
         setRutas(data as any[])
-
         if (data.length === 0) {
             setRutas([{ id_punto: 0 }])
+        }
+        }catch(e:any){
+            console.log(e.message)
         }
         // console.log(data);
         // for (let i = 0; i < puntoInteres.length; i++) {
