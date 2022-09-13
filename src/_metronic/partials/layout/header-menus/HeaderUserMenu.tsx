@@ -52,7 +52,7 @@ const HeaderUserMenu: FC = () => {
 
             <div className='menu-item px-5'>
                 <Link to={'perfil'} className='menu-link px-5'>
-                    My Profile
+                    Mi Perfil
                 </Link>
             </div>
 
@@ -62,7 +62,7 @@ const HeaderUserMenu: FC = () => {
 
             <div className='menu-item px-5'>
                 <a onClick={logout} className='menu-link px-5'>
-                    Sign Out
+                    Cerrar sesión
                 </a>
             </div>
         </div>

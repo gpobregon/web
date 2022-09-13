@@ -1,7 +1,7 @@
 import { type } from 'os';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Col, Card, Button, Row, Modal } from 'react-bootstrap';
-import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom, statePointInteres, changePointOfInterestFront, OrderPointOfInterest } from '../../../../services/api'
+import { RoomsMethod, postData, updateSiteMethod, addRoom, deleteData, delPointInteres, editRoom, statePointInteres, changePointOfInterestFront, OrderPointOfInterest, getData, languagesMethod } from '../../../../services/api'
 import { Room } from "../../../../models/rooms";
 import swal from "sweetalert";
 import { PointInteres } from "../../../../models/sitio-interes";
@@ -15,6 +15,7 @@ import UpdateRoom from './update-room';
 import domtoimage from 'dom-to-image';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import SalaRutas from '../rutas-sitios-interes/sala-rutas';
+import { CatalogLanguage } from '../../../../models/catalogLanguage';
 
 type id_sitio = {
     id_sitio: number
@@ -25,6 +26,7 @@ const Interes: FC<id_sitio> = (props) => {
     const [room, setRooms] = useState<Room[]>([])
     const [puntoInteres, setPuntoInteres] = useState<PointInteres[]>([])
     const [idsala, setIdSala] = useState<number>()
+    const [nombresala, setNombreSala] = useState<String>()
     const [upRoom, setupdateRoom] = useState({
         id_sitio: props.id_sitio,
         id_sala: 0,
@@ -43,6 +45,7 @@ const Interes: FC<id_sitio> = (props) => {
     const [name, setNombre] = useState<any>() //modal qr
     const [vista, setVistaPrevia] = useState(false) //mostrar vsta previa
     const [imagen, setImagenPrevia] = useState('') //mostrar vsta previa
+    const [languages, setLanguages] = useState<CatalogLanguage[]>([])//catalogo de idiomas
     const changeStatus = async (idpunto: number, oculto: boolean) => {
         await postData(statePointInteres, { id_punto: idpunto, es_visible: oculto })
         setPuntoInteres([])
@@ -68,9 +71,15 @@ const Interes: FC<id_sitio> = (props) => {
         })
         getSalas()
     }
+    const getLanguages = async () => {
+        const language: any = await getData(languagesMethod)
+        setLanguages(language.data as CatalogLanguage[])
+        // console.log(language)
+    }
 
     useEffect(() => {
         getSalas()
+        getLanguages()
     }, [puntoInteres])
 
 
@@ -104,16 +113,16 @@ const Interes: FC<id_sitio> = (props) => {
         setModalUpdateRoom(true)
     }
 
-    const deleteRoom = (id: string, longitud: number) => {
+    const deleteRoom = (nombre: string, id: number, longitud: number) => {
         if (longitud > 0) {
             swal({
                 icon: "error",
-                title: "¡Error al Eliminar Sala: \n" + id + "!",
+                title: "¡Error al Eliminar Sala: \n" + nombre + "!",
                 text: "No se puede eliminar una sala con puntos de interés",
             });
         } else {
             swal({
-                title: "¿Estas seguro de Eliminar Sala " + id + "?",
+                title: "¿Estas seguro de Eliminar Sala " + nombre + "?",
                 icon: "warning",
                 buttons: ["No", "Sí"],
 
@@ -141,8 +150,8 @@ const Interes: FC<id_sitio> = (props) => {
 
         }).then(async res => {
             if (res) {
-           await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
-      console.log({ id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
+                await deleteData(delPointInteres, { id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
+                console.log({ id_punto: id_punto, id_lenguaje: 1, id_sitio: id_sitio, id_guia: idsala, estado: 0 })
                 setPuntoInteres([])
                 swal({
                     text: "Se elimino con éxito",
@@ -196,13 +205,13 @@ const Interes: FC<id_sitio> = (props) => {
         //update the actual array
         setPuntoInteres(_fruitItems)
         // console.log(_fruitItems)
-      const a= await postData(OrderPointOfInterest, {puntos:_fruitItems})
-     console.log(a)
+        const a = await postData(OrderPointOfInterest, { puntos: _fruitItems })
+        console.log(a)
     }
     //handle name change
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewFruitItem(e.target.value)
-        
+
     }
 
     //handle new item addition
@@ -243,6 +252,7 @@ const Interes: FC<id_sitio> = (props) => {
                                     <><Button variant="outline-dark" size="sm" onClick={() => {
                                         seteatPuntoInteres(sala.points_of_interest as PointInteres[]);
                                         setIdSala(sala.id_sala);
+                                        setNombreSala(sala.nombre)
                                         setVistaPrevia(false)
                                     }}
                                     >
@@ -267,7 +277,7 @@ const Interes: FC<id_sitio> = (props) => {
                                             </i>
                                         </Button>
                                         <Button variant="outline-dark" size="sm"
-                                            onClick={() => { deleteRoom(sala.nombre, sala.points_of_interest.length) }}
+                                            onClick={() => { deleteRoom(sala.nombre, sala.id_sala, sala.points_of_interest.length) }}
                                             style={{ width: '5px', height: '40px' }} >
                                             <i className='fa-solid fa-xmark '
                                                 style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -376,7 +386,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         onDragOver={(e) => e.preventDefault()}>
 
                                         <div className='row'>
-                                            <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-start'>
+                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-start'>
 
                                                 <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column', }}>
                                                     <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
@@ -405,12 +415,12 @@ const Interes: FC<id_sitio> = (props) => {
                                                     </span>
                                                 </Card>
                                             </div>
-                                            <div className='col-xs-12 col-md-12 col-lg-5 col-xl-6 d-flex justify-content-end'>
+                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-end'>
 
                                                 <div id='center2'>
                                                     <ul className='nav justify-content-end'>
                                                         <li className='nav-item '>
-                                                            <i className="fa-solid fa-qrcode background-button "
+                                                            <Button className="btn-secondary fa-solid fa-qrcode background-button "
                                                                 style={{ color: '#92929F', display: 'flex', marginRight: '30px', fontSize: '23px' }}
                                                                 onClick={() => {
                                                                     setQr(punto.qr_path)
@@ -418,7 +428,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                     handleShow()
                                                                 }}
 
-                                                            ></i>
+                                                            ></Button>
 
                                                         </li>
                                                         <Modal show={show} onHide={handleClose}>
@@ -426,7 +436,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 <Modal.Title>Escanee su Código QR</Modal.Title>
                                                             </Modal.Header>
                                                             <Modal.Body style={{ textAlign: 'center' }}>
-                                                            <Modal.Dialog>Punto de Interes: {name}</Modal.Dialog>
+                                                                <Modal.Dialog>Punto de Interes: {name}</Modal.Dialog>
                                                                 <QRCodeCanvas
                                                                     id="qrCode"
                                                                     value={qr}
@@ -465,11 +475,11 @@ const Interes: FC<id_sitio> = (props) => {
 
                                                         <li className='nav-item'>
 
-                                                            <i
+                                                            <Button
                                                                 className={
                                                                     punto.es_visible == false
-                                                                        ? 'fa-solid fa-eye-slash background-button'
-                                                                        : 'fa-solid fa-eye background-button'
+                                                                        ? 'btn-secondary fa-solid fa-eye-slash background-button'
+                                                                        : 'btn-secondary fa-solid fa-eye background-button'
                                                                 }
                                                                 id='center2'
                                                                 onClick={() => {
@@ -477,15 +487,33 @@ const Interes: FC<id_sitio> = (props) => {
                                                                     changeStatus(punto.id_punto, punto.es_visible)
                                                                 }}
                                                                 style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                                                            ></i>
+                                                            ></Button>
                                                         </li>
-                                                        <i className="fa-solid  fa-pencil background-button"
+                                                        <Button className="btn-secondary fa-solid  fa-pencil background-button"
                                                             style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
                                                             onClick={(event) => {
+                                                                let lenaguajeDefault = ""
+                                                                for (let i = 0; i < languages.length; i++) {
+                                                                    for (let j = 0; j < punto.lenguajes.length; j++) {
+                                                                        if (languages[i].id_lenguaje === punto.lenguajes[j].id_lenguaje) {
+                                                                            // setLenaguajeDefault(languages[i].descripcion)
+
+                                                                            lenaguajeDefault = languages[i].nombre
+                                                                        }
+                                                                    }
+                                                                }
+                                                                const languageEscogido = punto.lenguajes.map((language) =>
+                                                                (
+
+                                                                    {
+                                                                        value: language.id_lenguaje,
+                                                                        label: lenaguajeDefault,
+                                                                    }))
+                                                                console.log(languageEscogido)
                                                                 navigate('/sitios/edit-point-interes', {
                                                                     state: {
                                                                         id_punto: punto.id_punto,
-                                                                        lenguajes: punto.lenguajes,
+                                                                        lenguajes: languageEscogido,
                                                                         id_sitio: punto.id_sitio,
                                                                         id_guia: idsala,
                                                                         nombre: punto.nombre,
@@ -497,11 +525,12 @@ const Interes: FC<id_sitio> = (props) => {
                                                                         es_portada_de_sitio: punto.es_portada_de_sitio,
                                                                         estado: punto.estado,
                                                                         es_visible: punto.es_visible,
+                                                                        nombreSala: nombresala,
                                                                     },
                                                                 })
                                                             }}
-                                                        ></i>
-                                                        <i className="bi-solid bi-trash3 background-button"
+                                                        ></Button>
+                                                        <Button className="btn-secondary  bi-trash3 background-button"
                                                             id='center2'
                                                             style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
                                                             onClick={() => {
@@ -509,7 +538,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 deletePointInteres(punto.id_punto, punto.id_sitio);
                                                                 getSalas()
                                                             }}
-                                                        ></i>
+                                                        ></Button>
 
                                                         {/* <i
                                                         className='fa-solid fa-gear background-button'
@@ -535,32 +564,29 @@ const Interes: FC<id_sitio> = (props) => {
 
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <Row>
-                                    <Col sm='4' md='12' className='pb-10' >
+                                    <Col sm='12' md='12' className='pb-10' >
 
-                                        <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column',borderStyle:"dashed",borderWidth:'1px',borderColor:'#009EF7' }}>
+                                        <Card style={{ display: 'flex', paddingTop: 40, paddingBottom: 20, height: 15, justifyContent: 'center', flexDirection: 'column', borderStyle: "dashed", borderWidth: '1px', borderColor: '#009EF7' }}
+                                            onClick={(event) => {
+                                                if (idsala != undefined) {
+                                                    navigate('/sitios/create-point-interes', {
+                                                        state: {
+                                                            id_sitio: props.id_sitio,
+                                                            id_guia: idsala,
+                                                            nombreSala: nombresala
+                                                        },
+                                                    })
+                                                } else {
+                                                    swal({
+                                                        icon: "error",
+                                                        title: "¡Error al agregar nuevo punto de interes !",
+                                                        text: "Para agregar punto de interes, primero debes selecionar una una sala",
+                                                    });
+                                                }
+
+                                            }}>
                                             <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
-
-
-                                                <i onClick={(event) => {
-                                                    if (idsala != undefined) {
-                                                        navigate('/sitios/create-point-interes', {
-                                                            state: {
-                                                                id_sitio: props.id_sitio,
-                                                                id_guia: idsala
-                                                            },
-                                                        })
-                                                    } else {
-                                                        swal({
-                                                            icon: "error",
-                                                            title: "¡Error al agregar nuevo punto de interes !",
-                                                            text: "Para agregar punto de interes, primero debes selecionar una una sala",
-                                                        });
-                                                    }
-
-                                                }}>
-
-
-
+                                                <i>
                                                     <Card.Subtitle className='text-muted mb-4'>   <i className={`bi bi-plus`}>Click para agregar un nuevo punto de interés.</i></Card.Subtitle>
                                                 </i>
                                             </Card.Title>
@@ -572,7 +598,7 @@ const Interes: FC<id_sitio> = (props) => {
                         </div>
                     </div>
 
-                
+
                     <div className='col-3' >
 
                         {vista === true ?
@@ -600,8 +626,8 @@ const Interes: FC<id_sitio> = (props) => {
                         room={upRoom}
                     />
                 </div>
-               
-            </div> 
+
+            </div>
         </>
     );
 }

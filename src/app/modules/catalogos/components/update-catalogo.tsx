@@ -71,7 +71,7 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}) => {
+const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, tag, setTag, updateTag, deleteTag}) => {
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
     const getLanguages = async () => {
@@ -79,22 +79,10 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
         setLanguages(languages.data as CatalogLanguage[])
     }
 
-    useEffect(() => {
-        getLanguages()
-    }, [])
-
     const languagesOptions = languages.map((language) => ({
         value: language.id_lenguaje,
         label: language.nombre,
     }))
-
-    const [tag, setTag] = useState({
-        id_categoria: 0,
-        nombre: '',
-        icono: '',
-        estado: 1,
-        id_lenguaje: 0,
-    })
 
     let modifiedTagDelete = {
         id_categoria: catalogo.id_categoria,
@@ -117,10 +105,21 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
             id_categoria: catalogo.id_categoria,
             nombre: tag.nombre,
             icono: tag.icono,
-            estado: tag.estado,
+            estado: 1,
             id_lenguaje: event.value,
         })
     }
+
+    useEffect(() => {
+        getLanguages()
+        setTag({
+            id_categoria: catalogo.id_categoria,
+            nombre: catalogo.nombre,
+            icono: catalogo.icono,
+            estado: 1,
+            id_lenguaje: catalogo.id_lenguaje,
+        })
+    }, [])
 
     return (
         <>
@@ -132,7 +131,8 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                     <Form.Group>
                         <Form.Label>{'Nombre de categoría'}</Form.Label>
                         <Form.Control
-                            placeholder={catalogo.nombre}
+                            defaultValue={catalogo.nombre}
+                            maxLength={20}
                             type='text'
                             name='nombre'
                             className={'mb-4'}
@@ -220,16 +220,8 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, updateTag, deleteTag}
                                 estado: 1,
                                 id_lenguaje: tag.id_lenguaje,
                             })
-                            
-                            updateTag(tag)
 
-                            setTag({
-                                id_categoria: 0,
-                                nombre: '',
-                                icono: '',
-                                estado: 1,
-                                id_lenguaje: 0,
-                            })
+                            updateTag(tag)
                         }}
                     >
                         {'Aplicar '}

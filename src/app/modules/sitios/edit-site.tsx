@@ -86,9 +86,9 @@ const EditSite = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log(state)
+    // console.log(state)
     getCategorys();
-    
+
     setearStatus();
     var txt = "";
     for (var i = 0; i < site.categorias.length; i++) {
@@ -127,15 +127,15 @@ const EditSite = () => {
   //     editcategorys.push({ value: Number.parseInt(cat.id_categoria), label: cat.nombre })
   //   }
   //   )
-    
+
   // }
 
-  const mostrarCategorys =  site.categorias.map((cat) =>
+  const mostrarCategorys = site.categorias.map((cat) =>
   (
-      {
-          value: cat.id_categoria,
-          label: cat.nombre,
-      }))
+    {
+      value: cat.id_categoria,
+      label: cat.nombre,
+    }))
 
 
   const alertNotNullInputs = async () => {
@@ -234,7 +234,7 @@ const EditSite = () => {
 
         })
         navigate('/sitios')
-          // window.location.href = "../sitios";
+        // window.location.href = "../sitios";
       }
     });
   }
@@ -247,7 +247,7 @@ const EditSite = () => {
     }]
   )
   const handleChange = (event: any) => {
-  
+
     var arrtempo: [{
       id_categoria: number
       nombre: string
@@ -275,7 +275,7 @@ const EditSite = () => {
       publicado: status.publicado,
       oculto: status.oculto,
     })
-console.log(site)
+    console.log(site)
 
   };
   // UPLOAD IMAGE-------------------------------------------------------------------------
@@ -289,7 +289,7 @@ console.log(site)
       ubicacion: site.ubicacion,
       geoX: site.geoX,
       geoY: site.geoY,
-      portada_path: URLAWS + imagen,
+      portada_path: URLAWS+"sitePages/" + imagen,
       estado: site.estado,
       creado: site.creado,
       editado: site.editado,
@@ -326,16 +326,16 @@ console.log(site)
           backgroundSize: 'auto 100%',
           borderRadius: '5px',
         }}>
-          <div className='col-xs-12 col-md-5 col-lg-6 d-flex py-5 px-9' >
+          <div className='col-xs-12 col-md-5 col-lg-7 d-flex py-5 px-9' >
             <div id='center'>
-              
-                <i className='fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px',color: '#FFFFFF' }}   onClick={() => {
-           
-                    
-                    discardChanges();
-               
-                  }} ></i>
-           
+
+              <Button className='btn-secondary fa-solid fa-less-than background-button ' id='center2' style={{ display: 'flex', marginRight: '6px', color: '#FFFFFF' }} onClick={() => {
+
+
+                discardChanges();
+
+              }} ></Button>
+
 
 
             </div>
@@ -351,18 +351,18 @@ console.log(site)
               )}
             </div>
             <div id='center'>
-              <p style={{ marginTop: '16px' }} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>
+              <p style={{ marginTop: '16px' }} >{'   '} Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>
             </div>
           </div>
-          <div className='col-xs-12 col-md-6 col-lg-6 d-flex py-5 px-9 justify-content-end'>
+          <div className='col-xs-12 col-md-6 col-lg-5 d-flex py-5 px-9 justify-content-end'>
             <div id='center2'>
               <ul className='nav justify-content-end '>
                 <li className='nav-item'>
-                  <i
+                  <Button
                     className={
                       status.favorito == false
-                        ? 'text-white  fa-regular fa-star background-button'
-                        : 'text-primary fas fa-star background-button'
+                        ? 'btn-secondary text-white  fa-regular fa-star background-button'
+                        : 'btn-secondary text-primary fas fa-star background-button'
                     }
                     id='center2'
                     onClick={() => {
@@ -372,11 +372,11 @@ console.log(site)
                       changeStatus(status.favorito, status.publicado, status.oculto)
                       // : changeStatus(false, status.publicado, status.oculto)
                     }}
-                    style={{ display: 'flex', marginRight: '4px' }} ></i>
+                    style={{ display: 'flex', marginRight: '4px' }} ></Button>
                 </li>
                 <li className='nav-item'>
-                  <i
-                    className='fa-solid fa-qrcode background-button '
+                  <Button
+                    className='btn-secondary fa-solid fa-qrcode background-button '
                     id='center2'
                     onClick={() => {
                       setQr('sitios/view/' + site.id_sitio)
@@ -384,17 +384,17 @@ console.log(site)
 
                     }}
                     style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                  ></i>
+                  ></Button>
                 </li>
 
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
                     <Modal.Title>Escanee su Código QR</Modal.Title>
-                   
-                   
+
+
                   </Modal.Header>
                   <Modal.Body style={{ textAlign: 'center' }}>
-                  <Modal.Dialog>Sitio: {site.nombre}</Modal.Dialog>
+                    <Modal.Dialog>Sitio: {site.nombre}</Modal.Dialog>
                     <QRCodeCanvas
                       id="qrCode"
                       value={qr}
@@ -415,11 +415,11 @@ console.log(site)
                   </Modal.Footer>
                 </Modal>
 
-                <i
+                <Button
                   className={
                     status.oculto == false
-                      ? 'fa-solid fa-eye-slash background-button'
-                      : 'fa-solid fa-eye background-button'
+                      ? 'btn-secondary fa-solid fa-eye-slash background-button'
+                      : 'btn-secondary fa-solid fa-eye background-button'
                   }
                   id='center2'
                   onClick={() => {
@@ -430,9 +430,9 @@ console.log(site)
                     changeStatus(status.favorito, status.publicado, status.oculto)
                   }}
                   style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                ></i>
-                <i
-                  className='fa-solid fa-xmark background-button'
+                ></Button>
+                <Button
+                  className='btn-secondary fa-solid fa-xmark background-button'
                   id='center2'
                   onClick={() => {
                     // var n = window.confirm('Esta seguro que descartar cambios?')
@@ -444,21 +444,21 @@ console.log(site)
                     discardChanges()
                   }}
                   style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                ></i>
-                <i
-                  className='fa-solid fa-floppy-disk background-button'
+                ></Button>
+                <Button
+                  className='btn-secondary fa-solid fa-floppy-disk background-button'
                   id='center2'
                   onClick={() => {
                     // console.log('site')
                     postSite(site)
-                    
+
                     // console.log(site)
                     // navigate('/site')
                   }}
                   style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                ></i>
+                ></Button>
 
-                <i
+                <Button
                   onClick={() => {
                     // status.publicado == false
                     //   ? changeStatus(status.favorito, true, status.oculto)
@@ -468,13 +468,13 @@ console.log(site)
                   }}
                   className={
                     status.publicado == false
-                      ? 'fa-solid fa-download background-button'
-                      : 'fa-solid fa-upload background-button'
+                      ? 'btn-secondary fa-solid fa-download background-button'
+                      : 'btn-secondary fa-solid fa-upload background-button'
                   }
                   id='center2'
                   style={{ color: '#92929F', display: 'flex', marginRight: '4px' }}
-                ></i>
-                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></i>
+                ></Button>
+                {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
               </ul>
             </div>
           </div>
@@ -512,15 +512,15 @@ console.log(site)
                 <div>
                   <div className='card-body '>
                     <Row>
-                    <Col>
+                      <Col>
                         {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                       </Col>
-                      
+
                       <Col>
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
-                          to={''} 
-                          onClick={() => { setModalupIMG(true)}}
+                          to={''}
+                          onClick={() => { setModalupIMG(true) }}
                         ></Link>
                       </Col>
                       <Col>
@@ -651,50 +651,51 @@ console.log(site)
                       <hr style={{ position: 'relative', top: '-20px' }}></hr>
                     </div>
                   </div>
-                </div>
-                <br />
-                <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
-                <br></br>
-                <input
-                  type='text'
-                  className='form-control'
-                  style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
-                  value={site.ubicacion != '' ? site.ubicacion : ''}
-                  onChange={(e) => {
-                    setSite({
-                      id_sitio: site.id_sitio,
-                      nombre: site.nombre,
-                      descripcion: site.descripcion,
-                      ubicacion: e.target.value,
-                      geoX: site.geoX,
-                      geoY: site.geoY,
-                      portada_path: site.portada_path,
-                      estado: site.estado,
-                      creado: site.creado,
-                      editado: site.editado,
-                      categorias: site.categorias,
-                      id_municipio: site.id_municipio,
-                      favorito: status.favorito,
-                      publicado: status.publicado,
-                      oculto: status.oculto,
-                    })
-                  }}
-                ></input>
-                <hr style={{ position: 'relative', top: '-20px' }}></hr>
-                <br></br>
-                <label>Etiquetas</label>
-                <br />
-                <div className='form-control'>
-                  <Select
-                    closeMenuOnSelect={false}
-                    styles={customStyles}
-                    components={animatedComponents}
-                    defaultValue={mostrarCategorys}
-                    isMulti
-                    options={categorys}
-                    // placeholder={categorysHolder}
-                    onChange={handleChange}
-                  ></Select>
+
+                  <br />
+                  <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
+                  <br></br>
+                  <input
+                    type='text'
+                    className='form-control'
+                    style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
+                    value={site.ubicacion != '' ? site.ubicacion : ''}
+                    onChange={(e) => {
+                      setSite({
+                        id_sitio: site.id_sitio,
+                        nombre: site.nombre,
+                        descripcion: site.descripcion,
+                        ubicacion: e.target.value,
+                        geoX: site.geoX,
+                        geoY: site.geoY,
+                        portada_path: site.portada_path,
+                        estado: site.estado,
+                        creado: site.creado,
+                        editado: site.editado,
+                        categorias: site.categorias,
+                        id_municipio: site.id_municipio,
+                        favorito: status.favorito,
+                        publicado: status.publicado,
+                        oculto: status.oculto,
+                      })
+                    }}
+                  ></input>
+                  <hr style={{ position: 'relative', top: '-20px' }}></hr>
+                  <br></br>
+                  <label>Etiquetas</label>
+                  <br />
+                  <div className='form-control'>
+                    <Select
+                      closeMenuOnSelect={false}
+                      styles={customStyles}
+                      components={animatedComponents}
+                      defaultValue={mostrarCategorys}
+                      isMulti
+                      options={categorys}
+                      // placeholder={categorysHolder}
+                      onChange={handleChange}
+                    ></Select>
+                  </div>
                 </div>
               </div>
               <div className='col-xs-12 col-md-12 col-xl-5 mb-5'>
@@ -719,13 +720,13 @@ console.log(site)
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={`/template/movil/${site.id_sitio}`}>
-                      <Button
-                        className='btn btn-info col-md-12 col-sm-12 col-lg-12'
-                      >
-                        {' '}
-                        <i className='fa-solid fa-pencil' ></i> Crear
-                      </Button>
+                      <Link to={`/template/movil/${site.id_sitio}`}>
+                        <Button
+                          className='btn btn-info col-md-12 col-sm-12 col-lg-12'
+                        >
+                          {' '}
+                          <i className='fa-solid fa-pencil' ></i> Crear
+                        </Button>
                       </Link>
                     </div>
                   </div>
@@ -746,17 +747,17 @@ console.log(site)
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={`/template/web/${site.id_sitio}`}>
-                      <Button
-                        className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
-                        onClick={() => {
-                        
-                          console.log('creado con el boton de sitio web')
-                        }}
-                      >
-                        
-                        <i className='fa-solid fa-pencil '></i> Crear
-                      </Button>
+                      <Link to={`/template/web/${site.id_sitio}`}>
+                        <Button
+                          className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
+                          onClick={() => {
+
+                            console.log('creado con el boton de sitio web')
+                          }}
+                        >
+
+                          <i className='fa-solid fa-pencil '></i> Crear
+                        </Button>
                       </Link>
                     </div>
                   </div>

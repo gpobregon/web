@@ -78,7 +78,7 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
+const AddCatalogo: FC<any> = ({show, onClose, tag, setTag, addTag}) => {
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
     const getLanguages = async () => {
@@ -94,14 +94,6 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
         value: language.id_lenguaje,
         label: language.nombre,
     }))
-
-    const [tag, setTag] = useState({
-        id_categoria: 0,
-        nombre: '',
-        icono: '',
-        estado: 1,
-        id_lenguaje: 1,
-    })
 
     const handleChangeIcon = (event: any) => {
         setTag({
@@ -135,6 +127,7 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                         <Form.Control
                             type='text'
                             name='nombre'
+                            maxLength={20}
                             className={'mb-4'}
                             onChange={(e) => {
                                 setTag({
@@ -171,20 +164,25 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>
-                        {'Cancelar '}
-                        <i className={`bi-x text-white fs-3`}></i>
-                    </Button>
                     <Button
-                        variant='primary'
+                        variant='secondary'
                         onClick={() => {
                             setTag({
                                 id_categoria: 0,
                                 nombre: '',
                                 icono: '',
                                 estado: 1,
-                                id_lenguaje: 1,
+                                id_lenguaje: 0,
                             })
+                            onClose()
+                        }}
+                    >
+                        {'Cancelar '}
+                        <i className={`bi-x text-white fs-3`}></i>
+                    </Button>
+                    <Button
+                        variant='primary'
+                        onClick={() => {
                             addTag(tag)
                         }}
                     >

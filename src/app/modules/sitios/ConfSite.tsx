@@ -248,7 +248,7 @@ const ConfSite = () => {
       ubicacion: site.ubicacion,
       geoX: site.geoX,
       geoY: site.geoY,
-      portada_path: URLAWS + imagen,
+      portada_path: URLAWS +"sitePages/"+ imagen,
       estado: site.estado,
       creado: site.creado,
       editado: site.editado,
@@ -368,7 +368,7 @@ const ConfSite = () => {
                   id='center2'
                   style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                 ></i>
-                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}></i>
+                {/* <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}></i> */}
               </ul>
             </div>
           </div>

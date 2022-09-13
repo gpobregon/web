@@ -30,15 +30,39 @@ const CatalogosPage = () => {
     const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
     const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
 
-    const [optionSort, setOptionSort] = useState('Agregado recientemente')
-    const [searchInput, setSearchInput] = useState('')
     const [catalogos, setCatalogos] = useState<CatalogTag[]>([])
-    const [filteredResults, setFilteredResults] = useState(catalogos)
-    const [resultIcon, setResultIcon] = useState('bi-sort-up')
-
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
-    const [language, setLanguage] = useState({
-        id_lenguaje: 1,
+
+    const [searchInput, setSearchInput] = useState('')
+    const [optionSort, setOptionSort] = useState('Agregado recientemente')
+    const [resultIcon, setResultIcon] = useState('bi-sort-up')
+    const [filteredResults, setFilteredResults] = useState(catalogos)
+
+    const [tag, setTag] = useState({
+        id_categoria: 0,
+        nombre: '',
+        icono: '',
+        estado: 1,
+        id_lenguaje: 0,
+    })
+
+    const [newTag, setNewTag] = useState({
+        id_categoria: 0,
+        nombre: '',
+        icono: '',
+        estado: 1,
+        id_lenguaje: 0,
+    })
+
+    const [idioma, setIdioma] = useState({
+        id_lenguaje: 0,
+        nombre: '',
+        descripcion: '',
+        estado: 1,
+    })
+
+    const [newIdioma, setNewIdioma] = useState({
+        id_lenguaje: 0,
         nombre: '',
         descripcion: '',
         estado: 1,
@@ -47,7 +71,6 @@ const CatalogosPage = () => {
     const getTags = async () => {
         const catalogos: any = await postData(categorysMethod, {page: pageNumber, quantity: '12'})
         setCatalogos(catalogos as CatalogTag[])
-
 
         const countNextResults: any = await postData(categorysMethod, {
             page: pageNumber + 1,
@@ -79,70 +102,151 @@ const CatalogosPage = () => {
         })
     }
 
-    // TODO: addTag
+    const alertNotNullInputsObj = async (data: any) => {
+        let keys = Object.keys(data),
+            msg = ''
+
+        for (let key of keys) {
+            if (
+                data[key] !== null &&
+                data[key] !== undefined &&
+                data[key] !== 0 &&
+                data[key] !== ''
+            )
+                continue
+            msg += `El campo ${key} es obligatorio\n`
+        }
+
+        msg.trim()
+
+        swal({
+            text: msg,
+            icon: 'warning',
+        })
+    }
+
     const addTag = async (tag: any) => {
-        if (tag.nombre != '' && tag.icono != '') {
+        if (tag.nombre != '' && tag.icono != '' && tag.id_lenguaje != 0) {
+            setNewTag({
+                id_categoria: 0,
+                nombre: '',
+                icono: '',
+                estado: 1,
+                id_lenguaje: 0,
+            })
             await postData(addCategoryMethod, tag)
             setModalAddTag(false)
             getTags()
         } else {
-            alertNotNullInputs()
+            alertNotNullInputsObj({
+                nombre: tag.nombre,
+                icono: tag.icono,
+                lenguaje: tag.id_lenguaje
+            })
         }
     }
 
-    // TODO: addLanguage
     const addLanguage = async (language: any) => {
         if (language.nombre != '' && language.descripcion != '') {
+            setNewIdioma({
+                id_lenguaje: 0,
+                nombre: '',
+                descripcion: '',
+                estado: 1,
+            })
             await postData(addLanguageMethod, language)
             setModalAddLanguage(false)
             getLanguages()
         } else {
-            alertNotNullInputs()
+            alertNotNullInputsObj({
+                nombre: language.nombre,
+                descripcion: language.descripcion,
+            })
         }
     }
 
-    // TODO: updateTag
     const updateTag = async (tag: any) => {
-        if (tag.nombre != '' && tag.icono != '') {
+        if (tag.nombre != '' && tag.icono != '' && tag.id_lenguaje != 0) {
+            setTag({
+                id_categoria: 0,
+                nombre: '',
+                icono: '',
+                estado: 1,
+                id_lenguaje: 0,
+            })
             await postData(updateCategoryMethod, tag)
             setModalUpdateTag({show: false, catalogo: {}})
             getTags()
         } else {
-            alertNotNullInputs()
+            alertNotNullInputsObj({
+                nombre: tag.nombre,
+                icono: tag.icono,
+                lenguaje: tag.id_lenguaje
+            })
         }
     }
 
-    // TODO: updateIdioma
     const updateIdioma = async (idioma: any) => {
         if (idioma.nombre != '' && idioma.descripcion != '') {
+            setIdioma({
+                id_lenguaje: 1,
+                nombre: '',
+                descripcion: '',
+                estado: 1,
+            })
             await postData(updateLanguageMethod, idioma)
             setModalUpdateIdioma({show: false, language: {}})
             getLanguages()
         } else {
-            alertNotNullInputs()
+            alertNotNullInputsObj({
+                nombre: idioma.nombre,
+                descripcion: idioma.descripcion,
+            })
         }
     }
 
-    // TODO: deleteTag
     const deleteTag = async (tag: any) => {
-        await deleteData(categorysMethod, tag)
-        setModalUpdateTag({show: false, catalogo: {}})
-        getTags()
-        swal({
-            title: 'Se ha eliminado la etiqueta',
-            icon: 'success',
+        await swal({
+            title: '¿Estás seguro de eliminar esta categoría?',
+            icon: 'warning',
+            buttons: ['Cancelar', 'Eliminar'],
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                deleteData(categorysMethod, tag)
+                setModalUpdateTag({show: false, catalogo: {}})
+                swal({
+                    title: 'Se ha eliminado la etiqueta',
+                    icon: 'success',
+                })
+            }
         })
+
+        getTags()
+        getTags()
+        getTags()
     }
 
-    //TODO: deleteLanguage
     const deleteIdioma = async (idioma: any) => {
-        await deleteData(languagesMethod, idioma)
-        setModalUpdateIdioma({show: false, language: {}})
-        getLanguages()
-        swal({
-            title: 'Se ha eliminado el idioma',
-            icon: 'success',
+        await swal({
+            title: '¿Estás seguro de eliminar este idioma?',
+            icon: 'warning',
+            buttons: ['Cancelar', 'Eliminar'],
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                deleteData(languagesMethod, idioma)
+                setModalUpdateIdioma({show: false, language: {}})
+                swal({
+                    title: 'Se ha eliminado el idioma',
+                    icon: 'success',
+                })
+            }
         })
+
+        getLanguages()
+        getLanguages()
+        getLanguages()
     }
 
     const searchItems = (searchValue: any) => {
@@ -182,10 +286,23 @@ const CatalogosPage = () => {
     }
 
     const showModalUpdateTag = (catalogo: any) => {
+        setTag({
+            id_categoria: catalogo.id_categoria,
+            nombre: catalogo.nombre,
+            icono: catalogo.icono,
+            estado: 1,
+            id_lenguaje: catalogo.idioma.id,
+        })
         setModalUpdateTag({show: true, catalogo})
     }
 
-    const showModalUpdateIdioma = (language: any) =>{ 
+    const showModalUpdateIdioma = (language: any) => {
+        setIdioma({
+            id_lenguaje: language.id_lenguaje,
+            nombre: language.nombre,
+            descripcion: language.descripcion,
+            estado: 1,
+        })
         setModalUpdateIdioma({show: true, language})
     }
 
@@ -324,6 +441,8 @@ const CatalogosPage = () => {
                 <AddCatalogo
                     show={modalAddTag}
                     onClose={() => setModalAddTag(false)}
+                    tag={newTag}
+                    setTag={setNewTag}
                     addTag={addTag}
                 />
 
@@ -331,6 +450,8 @@ const CatalogosPage = () => {
                     show={modalUpdateTag.show}
                     onClose={() => setModalUpdateTag({show: false, catalogo: {}})}
                     catalogo={modalUpdateTag.catalogo}
+                    tag={tag}
+                    setTag={setTag}
                     updateTag={updateTag}
                     deleteTag={deleteTag}
                 />
@@ -372,6 +493,8 @@ const CatalogosPage = () => {
                 <AddLanguaje
                     show={modalAddLanguage}
                     onClose={() => setModalAddLanguage(false)}
+                    language={newIdioma}
+                    setLanguage={setNewIdioma}
                     addLanguage={addLanguage}
                 />
 
@@ -379,6 +502,8 @@ const CatalogosPage = () => {
                     show={modalUpdateIdioma.show}
                     onClose={() => setModalUpdateIdioma({show: false, language: {}})}
                     language={modalUpdateIdioma.language}
+                    idioma={idioma}
+                    setIdioma={setIdioma}
                     updateIdioma={updateIdioma}
                     deleteIdioma={deleteIdioma}
                 />

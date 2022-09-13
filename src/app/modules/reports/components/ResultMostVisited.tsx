@@ -1,5 +1,5 @@
 import React, {FC} from 'react'
-import {Button, Col, Form, Row} from 'react-bootstrap'
+import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select/dist/declarations/src/Select'
 
 const ResultMostVisited: FC<any> = ({show}) => {
@@ -34,7 +34,7 @@ const ResultMostVisited: FC<any> = ({show}) => {
                         </div>
                     </div>
                     <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
-                    <Row className='mb-5'>
+                    {/* <Row className='mb-5'>
                         <Col
                             lg={3}
                             md={3}
@@ -69,7 +69,7 @@ const ResultMostVisited: FC<any> = ({show}) => {
                                 <h6 className='m-0'>Género</h6>
                             </div>
 
-                            <div className='d-flex justify-content-around align-items-center'>
+                            <div className='d-flex flex-wrap justify-content-around align-items-center'>
                                 <div>
                                     <div className='mb-5'>Hombre</div>
                                     <div>75</div>
@@ -98,7 +98,7 @@ const ResultMostVisited: FC<any> = ({show}) => {
                             >
                                 <h6 className='m-0'>Edad</h6>
                             </div>
-                            <div className='d-flex justify-content-around align-items-center'>
+                            <div className='d-flex flex-wrap justify-content-around align-items-center'>
                                 <div>
                                     <div className='mb-5'>Menores de edad</div>
                                     <div>26</div>
@@ -129,7 +129,7 @@ const ResultMostVisited: FC<any> = ({show}) => {
                             >
                                 <h6 className='m-0'>País</h6>
                             </div>
-                            <div className='d-flex justify-content-around align-items-center'>
+                            <div className='d-flex flex-wrap justify-content-around align-items-center'>
                                 <div>
                                     <div className='mb-5'>Nacionales</div>
                                     <div>111</div>
@@ -140,7 +140,48 @@ const ResultMostVisited: FC<any> = ({show}) => {
                                 </div>
                             </div>
                         </Col>
-                    </Row>
+                    </Row> */}
+
+                    <Table bordered responsive className='text-center' size="sm" striped>
+                        <thead>
+                            <tr>
+                                <th>Visitas</th>
+                                <th colSpan={3}>Género</th>
+                                <th colSpan={3}>Edad</th>
+                                <th colSpan={2}>País</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Total de visitas</td>
+
+                                <td>Hombre</td>
+                                <td>Mujer</td>
+                                <td>Indefinido</td>
+
+                                <td>Menores de edad</td>
+                                <td>Mayores de edad</td>
+                                <td>Tercera edad</td>
+                                
+                                <td>Nacionales</td>
+                                <td>Extranjeros</td>
+                            </tr>
+                            <tr>
+                                <td>159</td>
+
+                                <td>75</td>
+                                <td>63</td>
+                                <td>21</td>
+                                
+                                <td>26</td>
+                                <td>84</td>
+                                <td>49</td>
+                                
+                                <td>111</td>
+                                <td>48</td>
+                            </tr>
+                        </tbody>
+                    </Table>
                 </div>
             </div>
         </div>

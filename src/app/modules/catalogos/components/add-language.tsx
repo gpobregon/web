@@ -1,14 +1,7 @@
 import React, {useState, FC} from 'react'
 import {Button, Modal, Form} from 'react-bootstrap'
 
-const AddLanguaje: FC<any> = ({show, onClose, addLanguage}) => {
-    const [language, setLanguage] = useState({
-        id_lenguaje: 1,
-        nombre: '',
-        descripcion: '',
-        estado: 1,
-    })
-
+const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage}) => {
     return (
         <>
             <Modal show={show} onHide={onClose}>
@@ -20,7 +13,7 @@ const AddLanguaje: FC<any> = ({show, onClose, addLanguage}) => {
                         <Form.Label>{'Nombre del idioma'}</Form.Label>
                         <Form.Control
                             type='text'
-                            name='nombre'
+                            maxLength={20}
                             className={'mb-4'}
                             onChange={(e) => {
                                 setLanguage({
@@ -36,6 +29,7 @@ const AddLanguaje: FC<any> = ({show, onClose, addLanguage}) => {
                         <Form.Label>{'Descripción'}</Form.Label>
                         <Form.Control
                             type='text'
+                            maxLength={20}
                             name='descripcion'
                             onChange={(e) => {
                                 setLanguage({
@@ -49,7 +43,18 @@ const AddLanguaje: FC<any> = ({show, onClose, addLanguage}) => {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>
+                    <Button
+                        variant='secondary'
+                        onClick={() => {
+                            setLanguage({
+                                id_lenguaje: 0,
+                                nombre: '',
+                                descripcion: '',
+                                estado: 1,
+                            })
+                            onClose()
+                        }}
+                    >
                         {'Cancelar '}
                         <i className={`bi-x text-white fs-3`}></i>
                     </Button>
