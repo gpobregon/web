@@ -351,7 +351,7 @@ const EditSite = () => {
               )}
             </div>
             <div id='center'>
-              <p style={{ marginTop: '16px' }} >{'   '} Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY HH:MM') + ' '} por{' '}</p>
+              <p style={{ marginTop: '16px' }} >{'   '} Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY hh:mm') + ' '} por{' '}</p>
             </div>
           </div>
           <div className='col-xs-12 col-md-6 col-lg-5 d-flex py-5 px-9 justify-content-end'>
