@@ -14,7 +14,6 @@ const alertNotNullInputs = async () => {
         icon: 'warning',
     })
 }
-
 const alertEmail = async () => {
     swal({
         text: '¡Email no valido!',
@@ -138,7 +137,7 @@ export function Login() {
                         <h1 className='text-dark mb-3'>Iniciar sesión</h1>
                         <span>
                             {
-                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                                'Bienvenidos al sistema de administración del Ministerio de Cultura y Deporte, inicia sesión para comenzar a gestionar el contenido.'
                             }
                         </span>
                     </div>

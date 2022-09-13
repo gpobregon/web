@@ -88,9 +88,20 @@ const UserManagement: FC<any> = ({show}) => {
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
     const [dataSelect, setDataSelect] = useState({user: '', role: ''})
-    //const banderID: any = 0
+    //const banderID: any = 0 
 
-    const showModalAddUser = () => {
+    const [nombre, setNombre] = useState() 
+    const [descripcion, setdescripcion] = useState() 
+    const [gestor_sitios, setGestor_sitios] = useState() 
+    const [gestor_notificaciones, setGestor_notificaciones] = useState() 
+    const [gestor_puntos_de_interes, setGestor_puntos_de_interes] = useState() 
+    const [gestor_reportes, setGestor_reportes] = useState()  
+    const [gestor_usuarios, setGestor_usuarios] = useState()  
+    const [gestor_offline, setGestor_offline] = useState() 
+    const [gestor_roles, setGestor_roles] = useState() 
+    const [gestor_categorias_idiomas, setGestor_categorias_idiomas] = useState()
+
+ const showModalAddUser = () => {
         setModalAddUser(true)
     }
 
@@ -250,10 +261,10 @@ const UserManagement: FC<any> = ({show}) => {
                                                 </td>
                                                 <td className='d-flex'>
                                                     {existUsers ? (
-                                                        <>
+                                                        <div className='d-flex align-items-center'>
                                                             <Select
                                                                 options={options}
-                                                                styles={customStyles} 
+                                                                styles={customStyles}
                                                                 components={animatedComponents}
                                                                 onChange={(event: any) => {
                                                                     setButtonAcept(true)
@@ -275,16 +286,15 @@ const UserManagement: FC<any> = ({show}) => {
                                                                             ?.Value ?? '',
                                                                 }}
                                                             />
-                                                        </>
+                                                        </div>
                                                     ) : (
                                                         <></>
                                                     )}
                                                     {buttonAcept === true && item === banderID ? (
-                                                        <div>
+                                                        <div className='d-flex align-items-center'>
                                                             {/* cheque */}
                                                             <Button
-                                                                variant='btn btn-light btn-active-light-primary'
-                                                                style={{marginLeft: 10, marginTop: 10}}
+                                                                variant='btn btn-light btn-active-light-primary ms-5 me-1'
                                                                 onClick={() => updateUsuarios()}
                                                             >
                                                                 <i
@@ -292,10 +302,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                                 ></i>
                                                             </Button>
                                                             {/* la X */}
-                                                            <Button
-                                                                variant='btn btn-light btn-active-light-primary'
-                                                                style={{marginLeft: 10, marginTop: 10}} 
-                                                            >
+                                                            <Button variant='btn btn-light btn-active-light-primary ms-1'>
                                                                 <i
                                                                     className={`bi bi-x text-white fs-3`}
                                                                 ></i>

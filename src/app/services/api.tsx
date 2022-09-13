@@ -40,7 +40,16 @@ export const ObtenerRuta = RoomsMethod + '/points/route'
 export const addPasos = ObtenerRuta+'/steps'
 export const addImagePrincipal=ObtenerRuta+'/principalimage'
 export const addImages=ObtenerRuta+'/images'
-export const deleteRuta=ObtenerRuta+'/delete'
+export const deleteRuta=ObtenerRuta+'/delete' 
+
+
+export const getRolesMethod = 'user/rol' 
+export const addRolesMethod = 'user/rol/add' 
+export const editRoleMethod = 'user/rol/edit' 
+export const deleteRoleMethod = 'user/rol'
+
+export const getUsers = 'user'
+export const addUser = 'user/add' 
 
 
 export const getData = async (route: string) => {
