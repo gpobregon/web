@@ -10,21 +10,18 @@ import swal from 'sweetalert'
 import * as AWS from 'aws-sdk'
 import { Element } from '../../../utility/global/data'
 
-export const URLAWS='https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/recursos/'
+// export const URLAWS='https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/recursos/'
 
 export const ContentContext = createContext<any | null>(null)
 
-const S3_BUCKET = 'mcd-backoffice-upload/recursos';
-const REGION = 'us-east-2';
-
 AWS.config.update({
-    accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-    secretAccessKey: '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'
+    accessKeyId: process.env.REACT_APP_ACCESSKEYID,
+    secretAccessKey: process.env.REACT_APP_SECRETACCESSKEY
 })
 
 const myBucket = new AWS.S3({
-    params: { Bucket: S3_BUCKET },
-    region: REGION,
+    params: { Bucket: process.env.REACT_APP_S3_BUCKET },
+    region: process.env.REACT_APP_REGION,
 })
 
 export const ContentProvider: FC<WithChildren> = ({children}) => {
@@ -156,7 +153,7 @@ const uploadResource = async (file: any) => {
     {
       "id_punto": id,
       "nombre": file[0].name,
-      "url": `${URLAWS}resource-movil-${id}-${file[0].name}`,
+      "url": `${process.env.REACT_APP_URLAWS}resource-movil-${id}-${file[0].name}`,
       "tipo": file[0].type,
       "estado":1
   }
@@ -164,10 +161,10 @@ const uploadResource = async (file: any) => {
   const params = {
     ACL: 'public-read',
     Body: file[0],
-    Bucket: S3_BUCKET,
+    Bucket: `${process.env.REACT_APP_S3_BUCKET}`,
     Key: `resource-${id}-${file[0].name}`
 };
-// // URLAWS
+// URLAWS
 myBucket.putObject(params)
     .on('httpUploadProgress', (evt) => {
         setProgress(Math.round((evt.loaded / evt.total) * 100))
@@ -198,7 +195,7 @@ myBucket.putObject(params)
     oneSite()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
+  console.log(process.env)
     const value = {
         drop,
         board,

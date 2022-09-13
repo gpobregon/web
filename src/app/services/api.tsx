@@ -2,7 +2,8 @@ import axios from 'axios'
 import {Route} from 'react-router-dom'
 
 export const URLAWS='https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/'
-const URL = 'https://htty66h65h.execute-api.us-east-1.amazonaws.com/dev2'
+const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
+
 // const URL = 'https://d77c-190-104-119-60.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
@@ -39,7 +40,16 @@ export const ObtenerRuta = RoomsMethod + '/points/route'
 export const addPasos = ObtenerRuta+'/steps'
 export const addImagePrincipal=ObtenerRuta+'/principalimage'
 export const addImages=ObtenerRuta+'/images'
-export const deleteRuta=ObtenerRuta+'/delete'
+export const deleteRuta=ObtenerRuta+'/delete' 
+
+
+export const getRolesMethod = 'user/rol' 
+export const addRolesMethod = 'user/rol/add' 
+export const editRoleMethod = 'user/rol/edit' 
+export const deleteRoleMethod = 'user/rol'
+
+export const getUsers = 'user'
+export const addUser = 'user/add' 
 
 
 export const getData = async (route: string) => {

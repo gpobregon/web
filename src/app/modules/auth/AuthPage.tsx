@@ -7,7 +7,8 @@ import {RestorePassword} from './components/RestorePassword'
 import {NewPassword} from './components/NewPassoword'
 import {Login} from './components/Login'
 import {Container, Row, Col} from 'react-bootstrap'
-import CodeRegister from './components/CodeRegister'
+import CodeRegister from './components/CodeRegister' 
+import Image from '../../../_metronic/assets/img/Tikal.png'
 
 const AuthLayout = () => {
     useEffect(() => {
@@ -21,7 +22,7 @@ const AuthLayout = () => {
         <Container fluid className='root' style={{padding: 0}}>
             <Row style={{margin: 0}}>
                 <Col
-                    style={{background: "url('https://picsum.photos/1920/1080')", height: '100vh'}}
+                    style={{backgroundImage: `url(${Image})`, height: '100vh'}}
                 ></Col>
                 <Col
                     style={{
