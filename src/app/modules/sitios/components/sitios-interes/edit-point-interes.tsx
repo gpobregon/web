@@ -336,6 +336,7 @@ const EditPoint = () => {
    swal({
             text: 'Nota: Recuerda guardar los cambios \n  antes de editar otro idioma.',
             icon: 'warning',
+            timer: 2000,
         })
    }
     //DONWLOAD QR-------------------------------------------------------------------------
