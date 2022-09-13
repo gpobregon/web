@@ -41,7 +41,7 @@ const customStyles = {
     
     option: (base: any, state: any) => ({
         ...base,
-        background: state.isFocused ? '#7239ea' : '#323248',
+        background: state.isFocused ? '#009EF7' : '#323248',
         color: state.isFocused ? '#fff' : '#92929F',
         padding: 10,
     }),
@@ -104,7 +104,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
         lastname: '',
         role: '', 
         passwordConfirm: '',  
-        phoneNumber: ''
+        phoneNumber: '', 
+        imageProfile: 'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
     })  
 
 
@@ -123,7 +124,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                             name: user.name,
                             'custom:lastname': user.lastname,
                             'custom:role': user.role, 
-                            'custom:phoneNumber': user.phoneNumber
+                            'custom:phoneNumber': user.phoneNumber, 
+                            'custom:imageProfile': user.imageProfile
                         },
                         autoSignIn: {
                             // optional - enables auto sign in after user is confirmed
@@ -159,7 +161,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
             lastname: user.lastname,
             role: event.value, 
             passwordConfirm: user.passwordConfirm, 
-            phoneNumber: user.phoneNumber
+            phoneNumber: user.phoneNumber, 
+            imageProfile: user.imageProfile
         })
     }
 
@@ -186,7 +189,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             lastname: user.lastname,
                                             role: user.role, 
                                             passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: user.phoneNumber
+                                            phoneNumber: user.phoneNumber, 
+                                            imageProfile: user.imageProfile
+                            
                                         })
                                     }}
                                 ></Form.Control>
@@ -208,7 +213,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             lastname: e.target.value,
                                             role: user.role, 
                                             passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: user.phoneNumber
+                                            phoneNumber: user.phoneNumber, 
+                                            imageProfile: user.imageProfile
                                         })
                                     }}
                                 ></Form.Control>
@@ -230,7 +236,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             lastname: user.lastname,
                                             role: user.role, 
                                             passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: user.phoneNumber
+                                            phoneNumber: user.phoneNumber, 
+                                            imageProfile: user.imageProfile
                                         })
                                     }}
                                 ></Form.Control>
@@ -265,7 +272,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             lastname: user.lastname,
                                             role: user.role, 
                                             passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: e.target.value
+                                            phoneNumber: e.target.value, 
+                                            imageProfile: user.imageProfile
                                         })
                                     }}
                                 ></Form.Control>
@@ -287,7 +295,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             lastname: user.lastname,
                                             role: user.role, 
                                             passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: user.phoneNumber
+                                            phoneNumber: user.phoneNumber, 
+                                            imageProfile: user.imageProfile
 
                                         })
                                     }}
@@ -310,7 +319,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             lastname: user.lastname,
                                             role: user.role, 
                                             passwordConfirm: e.target.value, 
-                                            phoneNumber: user.phoneNumber
+                                            phoneNumber: user.phoneNumber, 
+                                            imageProfile: user.imageProfile
                                         })
                                     }}
                                 ></Form.Control>

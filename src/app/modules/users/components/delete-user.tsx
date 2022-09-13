@@ -86,7 +86,7 @@ const customStyles = {
     }),
     option: (base: any, state: any) => ({
         ...base,
-        background: state.isFocused ? '#7239ea' : '#323248',
+        background: state.isFocused ? '#009EF7' : '#323248',
         color: state.isFocused ? '#fff' : '#92929F',
         padding: 10,
     }),
