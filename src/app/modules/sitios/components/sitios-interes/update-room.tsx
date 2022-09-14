@@ -1,5 +1,6 @@
 import React, { useState, FC, useEffect } from 'react'
 import { Button, Modal, Form } from 'react-bootstrap'
+import swal from "sweetalert";
 
 const UpdateRoom: FC<any> = ({ show, onClose, updateRoom, room }) => {
     const [updateeRoom, setUpdateRoom] = useState({
@@ -76,7 +77,16 @@ useEffect(() => {
                     <Button
                         variant='primary'
                         onClick={() => {
-                            updateRoom(updateeRoom)
+                            if (updateeRoom.nombre != '' && updateeRoom.descripcion != '') {
+                                updateRoom(updateeRoom)
+                            
+                            }else{
+                                swal({
+                                    text: "¡Faltan campos por completar!",
+                                    icon: "warning",
+                              
+                                  })
+                            }
                         }}
                     >
                         {'Aplicar '}

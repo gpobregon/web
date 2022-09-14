@@ -35,7 +35,7 @@ const customStyles = {
     }),
     option: (base: any, state: any) => ({
         ...base,
-        background: state.isFocused ? '#7239ea' : '#323248',
+        background: state.isFocused ? '#009EF7' : '#323248',
         color: state.isFocused ? '#fff' : '#92929F',
         padding: 10,
     }),
@@ -56,17 +56,35 @@ const customStyles = {
 }
 
 const options = [
-    {value: 'car-front', label: 'car-front'},
-    {value: 'book', label: 'book'},
-    {value: 'apple', label: 'apple'},
+    {value: 'binoculars', label: 'binoculars'},
+    {value: 'building', label: 'building'},
+    {value: 'camera', label: 'camera'},
+    {value: 'car', label: 'car'},
+    {value: 'church', label: 'church'},
+    {value: 'cloud-sun', label: 'cloud-sun'},
+    {value: 'film', label: 'film'},
+    {value: 'graduation-cap', label: 'graduation-cap'},
+    {value: 'hospital', label: 'hospital'},
+    {value: 'landmark', label: 'landmark'},
+    {value: 'life-ring', label: 'life-ring'},
+    {value: 'map-marker-alt', label: 'map-marker-alt'},
+    {value: 'monument', label: 'monument'},
+    {value: 'mountain', label: 'mountain'},
+    {value: 'mug-hot', label: 'cup-hot'},
+    {value: 'plane', label: 'plane'},
+    {value: 'paint-brush', label: 'paint-brush'},
+    {value: 'palette', label: 'palette'},
+    {value: 'puzzle-piece', label: 'puzzle-piece'},
+    {value: 'seedling', label: 'seedling'},
+    {value: 'shopping-bag', label: 'shopping-bag'},
+    {value: 'store', label: 'store'},
     {value: 'tree', label: 'tree'},
-    {value: 'bank', label: 'bank'},
-    {value: 'airplane', label: 'airplane'},
+    {value: 'umbrella-beach', label: 'umbrella-beach'},
 ]
 
 const optionTemplate = (option: any) => (
     <span>
-        <i className={`bi-${option.value} text-white`} style={{fontSize: 16}}></i>
+        <i className={`fa-solid fa-${option.value} text-white fa-fw fa-xl`}></i>
         {`ㅤ${option.label}`}
     </span>
 )
