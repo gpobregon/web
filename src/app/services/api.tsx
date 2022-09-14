@@ -2,8 +2,8 @@ import axios from 'axios'
 import {Route} from 'react-router-dom'
 
 export const URLAWS = 'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/'
-// const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
-const URL = 'https://57de-190-148-50-142.ngrok.io/dev2'
+const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
+// const URL = 'https://57de-190-148-50-142.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
 export const statesMethod = 'site/state'
