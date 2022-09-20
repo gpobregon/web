@@ -1,29 +1,24 @@
 import { FC } from 'react'
 type Props = {
     item: any
+    destroyOneResource: (id : number) => void
 }
-const AudioResource: FC<Props> = ({ item }) => {
-    const Icon = ['music-note', ]
-
-    // const getIcon = (item : any) => {
-    //     let Icono 
-    //     switch(item.type) {
-    //         case 'audio':
-    //           // code block
-    //           break;
-    //         case 'video':
-              
-    //           break;
-    //         default:
-    //           // code block
-    //       }
-    // }
+const AudioResource: FC<Props> = ({ item, destroyOneResource }) => {
+        let Icono 
+        if (item.tipo.includes('audio')) {
+            Icono = 'music-note'
+        } else if (item.tipo.includes('video')) {
+            Icono = 'film'
+        }
     return (
         <div className="bkg-dark content-icon rounded my-2 text-center">
             <div className="icon-wrapper">
-                <i className={`bi bi-${item.type === 'audio' ? Icon[0] : '' } fs-1 text-white`}></i>
+                <i className={`bi bi-${Icono} fa-4x text-white`}></i>
             </div>
-            <p className="icon-name text-truncate mb-0 mt-1">{ item.name }</p>
+            <div className="d-flex">
+                <div className="p-2 w-100 icon-name text-truncate mb-0 mt-1 small">{ item.nombre }</div>
+                <div className="p-2 flex-shrink-1"><i className="fa fa-trash text-danger position-relative" onClick={() => destroyOneResource(item.id_recurso)} /></div>
+            </div>
         </div>
     )
 }

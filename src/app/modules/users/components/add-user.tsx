@@ -114,8 +114,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
         if (user.lastname !='' && user.name !='' && user.password !='' && user.passwordConfirm !='' && user.role !=''  && user.username !=''  && user.phoneNumber !='' ){ 
             if (user.password == user.passwordConfirm) { 
                
-                const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9·-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g
-                if (regEx.test(user.username)) { 
+                const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9·-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g 
+                const regExPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g
+                if (regEx.test(user.username)  ) { 
                      try {
                     const userData = await Auth.signUp({
                         username: user.username,
@@ -137,7 +138,7 @@ const AddUser: FC<any> = ({show, onClose}) => {
                     } catch (error) { 
                         
                         console.log('error signing up:', error)  
-                        swal('Contraseña o email invalidos', 'Escribe una nueva contraseña o verifica el email', 'warning')
+                        swal('Contraseña o email invalidos', 'Recuerda escribir una contraseña que incluya un signo especial, una letra minuscula, una letra mayuscula y un minimo de 6 caracteres en total', 'warning')
                         return false;
                     }
                 } else if (!regEx.test(user.username) && user.username !== '') {
