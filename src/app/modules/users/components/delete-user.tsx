@@ -136,7 +136,7 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
     const deleteUsuarios = async () => {
         var params = {
             UserPoolId: awsconfig.userPoolId /* required */,
-            Username: user.Attributes[3].Value /* required */,
+            Username: user.Attributes[4].Value /* required */,
         }
 
         return new Promise((resolve, reject) => {
@@ -173,13 +173,13 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                             </Col>
 
                             <Col lg={4} md={4} sm={3}>
-                                <div>{`${user.Attributes[1].Value}`}</div>
-                                <div className='text-muted'>{`${user.Attributes[3].Value}`}</div>
+                                <div>{`${user.Attributes[2].Value}`}</div>
+                                <div className='text-muted'>{`${user.Attributes[4].Value}`}</div>
                             </Col>
 
                             <Col lg={4} md={4} sm={3}>
                                 <div>Rol</div>
-                                <div className='text-muted'>{`${user.Attributes[2].Value}`}</div>
+                                <div className='text-muted'>{`${user.Attributes[3].Value}`}</div>
                             </Col>
                         </Row>
                     ) : (

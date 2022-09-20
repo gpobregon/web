@@ -31,7 +31,8 @@ const UserProfilePage = () => {
         name: '',
         phoneNumber: '',
         lastname: '',
-        imageProfile: '',
+        imageProfile: '', 
+        role: ''
     })
 
     const [form, setForm] = useState<Profile>({
@@ -50,7 +51,8 @@ const UserProfilePage = () => {
                 name: user.attributes.name,
                 phoneNumber: user.attributes['custom:phoneNumber'],
                 lastname: user.attributes['custom:lastname'],
-                imageProfile: user.attributes['custom:imageProfile'],
+                imageProfile: user.attributes['custom:imageProfile'], 
+                role: user.attributes['custom:role'],
             })
             //console.log(user.attributes['custom:phoneNumber']);
             //console.log(JSON.stringify(user.attributes))
@@ -98,7 +100,8 @@ const UserProfilePage = () => {
                 name: dataUser.name,
                 lastname: dataUser.lastname,
                 phoneNumber: dataUser.phoneNumber,
-                imageProfile: URLAWS + 'fotoPerfiles/' + imagen,
+                imageProfile: URLAWS + 'fotoPerfiles/' + imagen, 
+                role: dataUser.role
             })
             setModalupIMG(false)
             setShowUpdateButton(false)
@@ -171,7 +174,7 @@ const UserProfilePage = () => {
 
                                 <Col md={5} className='d-flex'>
                                     <div className='d-flex flex-column justify-content-center mx-xxl-9 mx-xl-9 mx-md-9'>
-                                        <h2 className='mb-5'>Editor</h2>
+                                        <h2 className='mb-5'>{dataUser.role}</h2>
                                         <p className='' style={{color: '#92929F'}}>
                                             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                                             Integer vulputate nibh sed mauris maximus elementum.
@@ -281,7 +284,8 @@ const UserProfilePage = () => {
                                                     name: e.target.value,
                                                     lastname: dataUser.lastname,
                                                     phoneNumber: dataUser.phoneNumber,
-                                                    imageProfile: dataUser.imageProfile,
+                                                    imageProfile: dataUser.imageProfile, 
+                                                    role: dataUser.role
                                                 })
                                             }}
                                             disabled={showUpdateButton}
@@ -302,7 +306,8 @@ const UserProfilePage = () => {
                                                     name: dataUser.name,
                                                     lastname: e.target.value,
                                                     phoneNumber: dataUser.phoneNumber,
-                                                    imageProfile: dataUser.imageProfile,
+                                                    imageProfile: dataUser.imageProfile, 
+                                                    role: dataUser.role
                                                 })
                                             }}
                                         ></Form.Control>
@@ -323,7 +328,8 @@ const UserProfilePage = () => {
                                                     name: dataUser.name,
                                                     lastname: dataUser.lastname,
                                                     phoneNumber: e.target.value,
-                                                    imageProfile: dataUser.imageProfile,
+                                                    imageProfile: dataUser.imageProfile, 
+                                                    role: dataUser.role
                                                 })
                                             }}
                                             disabled={showUpdateButton}

@@ -14,7 +14,12 @@ import {
     ListUsersResponse,
     UsersListType,
     UserType,
-} from 'aws-sdk/clients/cognitoidentityserviceprovider'
+} from 'aws-sdk/clients/cognitoidentityserviceprovider' 
+import { roleManager } from '../../models/roleManager'
+import {
+    getData,
+    getRolesMethod,
+} from '../../services/api'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -87,19 +92,50 @@ const UserManagement: FC<any> = ({show}) => {
     const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
-    const [dataSelect, setDataSelect] = useState({user: '', role: ''})
+    const [dataSelect, setDataSelect] = useState({user: '', role: ''}) 
+    const [searchInput, setSearchInput] = useState('') 
+    const [filteredResults, setFilteredResults] = useState(users)
     //const banderID: any = 0 
 
-    const [nombre, setNombre] = useState() 
-    const [descripcion, setdescripcion] = useState() 
-    const [gestor_sitios, setGestor_sitios] = useState() 
-    const [gestor_notificaciones, setGestor_notificaciones] = useState() 
-    const [gestor_puntos_de_interes, setGestor_puntos_de_interes] = useState() 
-    const [gestor_reportes, setGestor_reportes] = useState()  
-    const [gestor_usuarios, setGestor_usuarios] = useState()  
-    const [gestor_offline, setGestor_offline] = useState() 
-    const [gestor_roles, setGestor_roles] = useState() 
-    const [gestor_categorias_idiomas, setGestor_categorias_idiomas] = useState()
+
+    const [roles, setRoles] = useState<roleManager[]>([]) 
+
+
+    const searchItems = (searchValue: any) => {
+        setSearchInput(searchValue)
+        if (searchInput !== '') {
+            const filteredData = users.filter((item: any) => {
+                return Object.values(item.Attributes[1].value)
+                    .join('')
+                    .toLowerCase()
+                    .includes(searchInput.toLowerCase())
+            })
+            setFilteredResults(filteredData)
+        } else {
+            setFilteredResults(users)
+        }
+    }
+
+    //TODO: get roles
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+    } 
+    // console.log(getRoles())   
+
+    useEffect(() => {
+        getRoles()
+    }, [])  
+
+    const rolesOptions = roles.map((role)=>({ 
+        value: role.nombre, 
+        label: role.nombre
+    }))
+
+    // for (let rol of roles) {
+    //     console.log(rol)
+    // }
+    // console.log('----------------------------------------')
 
  const showModalAddUser = () => {
         setModalAddUser(true)
@@ -112,7 +148,7 @@ const UserManagement: FC<any> = ({show}) => {
     const getUsers = async () => {
         let params = {
             UserPoolId: awsconfig.userPoolId,
-            AttributesToGet: ['name', 'email', 'custom:role', 'custom:phoneNumber'],
+            AttributesToGet: ['name', 'email', 'custom:role', 'custom:phoneNumber', 'custom:imageProfile'],
         }
 
         return new Promise((resolve, reject) => {
@@ -208,7 +244,8 @@ const UserManagement: FC<any> = ({show}) => {
                                     type='text'
                                     data-kt-user-table-filter='search'
                                     className='form-control form-control-solid w-250px ps-14'
-                                    placeholder='Buscar'
+                                    placeholder='Buscar' 
+                                    onChange={(event) => searchItems(event.target.value)}
                                 />
                                 <div className='d-flex justify-content-end'>
                                     <Button
@@ -251,9 +288,9 @@ const UserManagement: FC<any> = ({show}) => {
                                                     ></div>
                                                 </td>
                                                 <td>
-                                                    <div>{item.Attributes[1].Value}</div>
+                                                    <div>{item.Attributes[2].Value}</div>
                                                     <div className='text-muted'>
-                                                        {item.Attributes[3].Value}
+                                                        {item.Attributes[4].Value}
                                                     </div>
                                                 </td>
                                                 <td className='text-muted'>
@@ -262,8 +299,9 @@ const UserManagement: FC<any> = ({show}) => {
                                                 <td className='d-flex'>
                                                     {existUsers ? (
                                                         <div className='d-flex align-items-center'>
-                                                            <Select
-                                                                options={options}
+                                                            <Select 
+                                                                onMenuOpen={() => getRoles()}
+                                                                options={rolesOptions}
                                                                 styles={customStyles}
                                                                 components={animatedComponents}
                                                                 onChange={(event: any) => {
@@ -279,10 +317,10 @@ const UserManagement: FC<any> = ({show}) => {
 
                                                                 defaultValue={{
                                                                     label:
-                                                                        item?.Attributes[2]
+                                                                        item?.Attributes[3]
                                                                             ?.Value ?? '',
                                                                     value:
-                                                                        item?.Attributes[2]
+                                                                        item?.Attributes[3]
                                                                             ?.Value ?? '',
                                                                 }}
                                                             />

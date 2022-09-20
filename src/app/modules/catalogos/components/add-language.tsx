@@ -1,5 +1,5 @@
 import React, {useState, FC} from 'react'
-import {Button, Modal, Form} from 'react-bootstrap'
+import {Button, Modal, Form} from 'react-bootstrap'  
 
 const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage}) => {
     return (
@@ -51,7 +51,7 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                                 nombre: '',
                                 descripcion: '',
                                 estado: 1,
-                            })
+                            }) 
                             onClose()
                         }}
                     >
