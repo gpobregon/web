@@ -1,20 +1,20 @@
-import React, {FC, useState, useEffect} from 'react'
-import {Button, Col, Container, Form, Row, Table} from 'react-bootstrap'
+import React, { FC, useState, useEffect } from 'react'
+import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap'
 import Select from 'react-select'
-import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
+import { initialQueryState, KTSVG, useDebounce } from '../../../_metronic/helpers'
 import AddUser from './components/add-user'
 import DeleteUser from './components/delete-user'
 import makeAnimated from 'react-select/animated'
-import {Link} from 'react-router-dom'
-import {awsconfig} from '../../../aws-exports'
-import {DataStore} from 'aws-amplify'
-import {Amplify, Auth} from 'aws-amplify'
+import { Link } from 'react-router-dom'
+import { awsconfig } from '../../../aws-exports'
+import { DataStore } from 'aws-amplify'
+import { Amplify, Auth } from 'aws-amplify'
 import * as AWS from 'aws-sdk'
 import {
     ListUsersResponse,
     UsersListType,
     UserType,
-} from 'aws-sdk/clients/cognitoidentityserviceprovider' 
+} from 'aws-sdk/clients/cognitoidentityserviceprovider'
 import { roleManager } from '../../models/roleManager'
 import {
     getData,
@@ -68,9 +68,9 @@ const customStyles = {
 }
 
 const options = [
-    {value: 'Admnistrador', label: 'Administrador'},
-    {value: 'Editor', label: 'Editor'},
-    {value: 'Gestor', label: 'Gestor'},
+    { value: 'Admnistrador', label: 'Administrador' },
+    { value: 'Editor', label: 'Editor' },
+    { value: 'Gestor', label: 'Gestor' },
 ]
 
 const animatedComponents = makeAnimated()
@@ -83,22 +83,24 @@ const animatedComponents = makeAnimated()
 // }
 
 // getEmail()
-const UserManagement: FC<any> = ({show}) => {
+const UserManagement: FC<any> = ({ show }) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
     const [users, setUsers] = useState<UserType[]>([])
+    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [modalAddUser, setModalAddUser] = useState(false)
-    const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
+    const [modalDeleteUser, setModalDeleteUser] = useState({ show: false, user: {} })
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
-    const [dataSelect, setDataSelect] = useState({user: '', role: ''}) 
-    const [searchInput, setSearchInput] = useState('') 
+    const [dataSelect, setDataSelect] = useState({ user: '', role: '' })
+    console.log("dataSelect: ", dataSelect);
+    const [searchInput, setSearchInput] = useState('')
     const [filteredResults, setFilteredResults] = useState(users)
     //const banderID: any = 0 
 
 
-    const [roles, setRoles] = useState<roleManager[]>([]) 
+    const [roles, setRoles] = useState<roleManager[]>([])
 
 
     const searchItems = (searchValue: any) => {
@@ -120,15 +122,15 @@ const UserManagement: FC<any> = ({show}) => {
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
-    } 
+    }
     // console.log(getRoles())   
 
     useEffect(() => {
         getRoles()
-    }, [])  
+    }, [])
 
-    const rolesOptions = roles.map((role)=>({ 
-        value: role.nombre, 
+    const rolesOptions = roles.map((role) => ({
+        value: role.nombre,
         label: role.nombre
     }))
 
@@ -137,12 +139,12 @@ const UserManagement: FC<any> = ({show}) => {
     // }
     // console.log('----------------------------------------')
 
- const showModalAddUser = () => {
+    const showModalAddUser = () => {
         setModalAddUser(true)
     }
 
     const showModalDeleteUser = (user: any) => {
-        setModalDeleteUser({show: true, user})
+        setModalDeleteUser({ show: true, user })
     }
 
     const getUsers = async () => {
@@ -152,7 +154,7 @@ const UserManagement: FC<any> = ({show}) => {
         }
 
         return new Promise((resolve, reject) => {
-            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+            let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
             cognito.listUsers(params, (err, data) => {
                 if (err) {
                     console.log(err)
@@ -167,33 +169,34 @@ const UserManagement: FC<any> = ({show}) => {
         })
     }
 
-    const updateUsuarios = async () => {
-        let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
-        cognito.adminUpdateUserAttributes(
-            {
-                UserAttributes: [
-                    {
-                        Name: 'custom:role',
-                        Value: String(dataSelect.role),
-                    },
-                ],
-                UserPoolId: awsconfig.userPoolId,
-                Username: dataSelect.user,
-            },
-            function (err, data) {
-                if (err) console.log(err, err.stack) // an error occurred
-                else console.log(data)
-            }
-        )
+    const updateUsuarios = () => {
+        let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
+        try {
+            cognito.adminUpdateUserAttributes(
+                {
+                    UserAttributes: [
+                        {
+                            Name: 'custom:role',
+                            Value: String(dataSelect.role),
+                        },
+                    ],
+                    UserPoolId: awsconfig.userPoolId,
+                    Username: dataSelect.user,
+                },
+                function (err, data) {
+                    if (err) console.log(err, err.stack) // an error occurred
+                    else console.log(data)
+                }
+            )
+        } catch (err) {
+            console.log("err: ", err);
+        }
         getUsers()
     }
 
     useEffect(() => {
         getUsers()
     }, [])
-
-    console.log(users)
-    console.log(dataSelect)
 
     return (
         <Container fluid>
@@ -217,9 +220,9 @@ const UserManagement: FC<any> = ({show}) => {
             </div>
 
             {existUsers == true ? (
-                <div style={show == false ? {display: 'none'} : {display: 'block'}}>
+                <div style={show == false ? { display: 'none' } : { display: 'block' }}>
                     <Row className='mb-7'>
-                        <div className='text-left' style={{paddingTop: 20}}>
+                        <div className='text-left' style={{ paddingTop: 20 }}>
                             <h3 className='text-dark mt-0'>Gestión de Usuarios</h3>
                         </div>
                     </Row>
@@ -234,7 +237,7 @@ const UserManagement: FC<any> = ({show}) => {
                             {/* <div className='d-flex align-items-center position-relative my-1'>  */}
                             <div
                                 className='d-flex align-items-center position-relative  '
-                                style={{width: '100%', justifyContent: 'space-between'}}
+                                style={{ width: '100%', justifyContent: 'space-between' }}
                             >
                                 <KTSVG
                                     path='/media/icons/duotune/general/gen021.svg'
@@ -244,7 +247,7 @@ const UserManagement: FC<any> = ({show}) => {
                                     type='text'
                                     data-kt-user-table-filter='search'
                                     className='form-control form-control-solid w-250px ps-14'
-                                    placeholder='Buscar' 
+                                    placeholder='Buscar'
                                     onChange={(event) => searchItems(event.target.value)}
                                 />
                                 <div className='d-flex justify-content-end'>
@@ -299,7 +302,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                 <td className='d-flex'>
                                                     {existUsers ? (
                                                         <div className='d-flex align-items-center'>
-                                                            <Select 
+                                                            <Select
                                                                 onMenuOpen={() => getRoles()}
                                                                 options={rolesOptions}
                                                                 styles={customStyles}
@@ -308,7 +311,7 @@ const UserManagement: FC<any> = ({show}) => {
                                                                     setButtonAcept(true)
                                                                     setBanderID(item)
                                                                     setDataSelect({
-                                                                        user: item.Attributes[3]
+                                                                        user: item.Attributes[4]
                                                                             .Value,
                                                                         role: event.value,
                                                                     })
@@ -372,12 +375,12 @@ const UserManagement: FC<any> = ({show}) => {
                     <AddUser
                         show={modalAddUser}
                         onClose={() => setModalAddUser(false)}
-                        //addUser={addUser}
+                    //addUser={addUser}
                     />
 
                     <DeleteUser
                         show={modalDeleteUser.show}
-                        onClose={() => setModalDeleteUser({show: false, user: {}})}
+                        onClose={() => setModalDeleteUser({ show: false, user: {} })}
                         user={modalDeleteUser.user}
                     />
                 </div>
