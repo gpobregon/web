@@ -1,16 +1,13 @@
 // context/todoContext.tsx
 import { createContext, FC, useState, useCallback, useEffect } from 'react'
 import { WithChildren } from '../../../utility/models/childrenContext'
-import { updateData, validElement, generateRandomString } from '../../../utility/global/index'
+import { updateData, appendData, validElement, generateRandomString } from '../../../utility/global/index'
 import { getData, postData } from '../../../services/api'
 import { useParams } from 'react-router-dom'
 import update from 'immutability-helper'
 import { useDrop } from "react-dnd"
 import swal from 'sweetalert'
 import * as AWS from 'aws-sdk'
-import { Element } from '../../../utility/global/data'
-
-// export const URLAWS='https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/recursos/'
 
 export const ContentContext = createContext<any | null>(null)
 
@@ -33,12 +30,8 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<number>(1)
     let [count, setCount] = useState(0)
-    const [progress, setProgress] = useState(0)
     const [editItem, setEditItem] = useState<any>([])
     const { id } = useParams()
-  
-    // console.log(Element, Element[0].ElementosWeb)
-    console.log(Element[0].ElementosWeb[0].items)
 
     const addElement = (data : any) => {
         const response = validElement(data.type)
@@ -98,7 +91,8 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
   // obtenermos el template 
   const oneData = async ( item : any) => {
     const data = {
-            "id_punto": id,
+            "id_punto": null,
+            "id_sitio": id,
             "id_lenguaje": item.value
           }
     const response: any = await postData('site/mobile/getone', data)
@@ -113,7 +107,8 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
   // guardamos el template
   const storeTemplate = async () => {
     const dataTemplate = {
-        "id_punto": id,
+        "id_punto": null,
+        "id_sitio": id,
         "id_lenguaje": changeLaguage.value,
         "nombre":"Nombre editado3 sitio movil 1",
         "descripcion":"descripcion2 editado sitio movil 1",
@@ -130,7 +125,6 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         }
       )
   }
-
   // elimina items dragados en el editor
   const removeItem = (data : any) => {
     const newBoard = board.filter((item : any) => String(item.id) !== String(data))
@@ -151,9 +145,10 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
 const uploadResource = async (file: any) => {
   const fileResource = 
     {
-      "id_punto": id,
+      "id_punto": null,
+      "id_sitio": id,
       "nombre": file[0].name,
-      "url": `${process.env.REACT_APP_URLAWS}resource-movil-${id}-${file[0].name}`,
+      "url": `${process.env.REACT_APP_URLAWS}resource-${changeTypeEdit === 1 ? 'mobile' : 'web' }-${id}-${file[0].name}`,
       "tipo": file[0].type,
       "estado":1
   }
@@ -162,18 +157,16 @@ const uploadResource = async (file: any) => {
     ACL: 'public-read',
     Body: file[0],
     Bucket: `${process.env.REACT_APP_S3_BUCKET}`,
-    Key: `resource-${id}-${file[0].name}`
+    Key: `resource-${changeTypeEdit === 1 ? 'mobile' : 'web' }-${id}-${file[0].name}`
 };
 // URLAWS
 myBucket.putObject(params)
-    .on('httpUploadProgress', (evt) => {
-        setProgress(Math.round((evt.loaded / evt.total) * 100))
-    })
     .send((err) => {
         if (err) console.log(err)
     })
-    console.log(params, progress) 
+
   const response: any = await postData('site/mobile/resource/add', fileResource)
+  setAllResource(appendData(allResources, response.data))
   response &&
     swal(
       {
@@ -181,21 +174,37 @@ myBucket.putObject(params)
         icon: 'success',
       }
     )
-
 }
   const getAllResources = async () => {
-      const response: any = await postData('site/mobile/getone', { "id_punto": id })
+  const jsonData = {
+      "id_punto": -1,
+      "id_sitio": id
+    }
+  const response: any = await postData('site/mobile/resource', jsonData)
       if (response.data.length > 0 ) { 
         setAllResource(response.data)
       }
   }
+
+  const destroyOneResource = async (id : number) => {
+    const response: any = await postData('site/mobile/resource/delete', { "id_recurso": id })
+    const items = allResources.filter((item : any) => String(item.id_recurso) !== String(id))
+    setAllResource(items)
+    response &&
+    swal(
+      {
+        text: 'Recurso eliminado con exito',
+        icon: 'success',
+      }
+    )
+  }
+  // ------------------------------------------------------------
   useEffect(() => {
     getAllResources()
     getLenguate()
     oneSite()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  console.log(process.env)
     const value = {
         drop,
         board,
@@ -215,6 +224,7 @@ myBucket.putObject(params)
         uploadResource,
         setChangeLaguage,
         setChangeTypeEdit,
+        destroyOneResource,
         changeLangegeSelect
     }
     return (

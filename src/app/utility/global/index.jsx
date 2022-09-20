@@ -7,15 +7,17 @@ export function updateData (allData, oneData) {
     return all
 }
 
+export function appendData(all, data) {
+    return [...all, data];
+}
+
 export const setDataList = (el) => {
     const L = el.firstChild.getElementsByTagName('li')
-    console.log('entra')
     let Array = []
     for (let i = 0; i < L.length; i++) {
         if (L[i].textContent !== 'Elemento 1' || L[i].textContent) {
             Array.push( { index: i, value : L[i].textContent } );
         }
-        
     }
     return Array
 }
@@ -51,7 +53,6 @@ export const validElement = (type) => {
     return Array
   }
 
-
 export const  generateRandomString = (num) => {
     const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result1= '';
@@ -70,6 +71,7 @@ export function stripHtml(dirtyString) {
 
 export default { 
     stripHtml,
+    appendData,
     updateData,
     setDataList,
     validElement,

@@ -4,13 +4,14 @@ import { Image } from 'react-bootstrap';
 import { useDrag } from "react-dnd"
 
 type Model = {
-    data: any
+    item: any
+    destroyOneResource: (id : number) => void
 }
 
-const ImageItem: FC<Model> = ({ data }) => { 
+const ImageItem: FC<Model> = ({ item, destroyOneResource }) => { 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "image",
-        item: { data },
+        item: { item },
         collect: (monitor) => {
           return({
             isDragging: !!monitor.isDragging(),
@@ -24,11 +25,13 @@ const ImageItem: FC<Model> = ({ data }) => {
                 <Image
                     alt="Logo"
                     className={`w-100 cursor-pointer pb-3`}
-                    src={data.preview}
-                    onLoad={() => { URL.revokeObjectURL(data.preview) }}
+                    src={item.url}
                 />
+                </div> 
+                <div className="d-flex">
+                    <div className="p-2 w-100 icon-name text-truncate mb-0 mt-1 small">{ item.nombre }</div>
+                    <div className="p-2 flex-shrink-1"><i className="fa fa-trash text-danger position-relative" onClick={() => destroyOneResource(item.id_recurso)} /></div>
                 </div>
-                <p className="icon-name text-truncate mb-0 mt-1 small">{ data.name }</p>
             </div>
         </Fragment>
     )
