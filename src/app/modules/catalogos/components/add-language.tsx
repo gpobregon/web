@@ -56,7 +56,7 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                                 nombre: '',
                                 descripcion: '',
                                 estado: 1,
-                            })
+                            }) 
                             onClose()
                         }}
                     >
