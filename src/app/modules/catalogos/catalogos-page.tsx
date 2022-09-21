@@ -171,7 +171,7 @@ const CatalogosPage = () => {
                 estado: 1,
             })
             await postData(addLanguageMethod, language)
-            setModalAddLanguage(false) 
+            setModalAddLanguage(false)
             alertLanguageDone()
             getLanguages()
         } else {
@@ -544,6 +544,7 @@ const CatalogosPage = () => {
 
                 <AddLanguaje
                     show={modalAddLanguage}
+                    setShow={setModalAddLanguage}
                     onClose={() => setModalAddLanguage(false)}
                     language={newIdioma}
                     setLanguage={setNewIdioma}
