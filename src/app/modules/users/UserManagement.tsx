@@ -18,7 +18,9 @@ import {
 import { roleManager } from '../../models/roleManager'
 import {
     getData,
+    postData,
     getRolesMethod,
+    updateUserMethod
 } from '../../services/api'
 
 const customStyles = {
@@ -97,7 +99,16 @@ const UserManagement: FC<any> = ({ show }) => {
     console.log("dataSelect: ", dataSelect);
     const [searchInput, setSearchInput] = useState('')
     const [filteredResults, setFilteredResults] = useState(users)
-    //const banderID: any = 0 
+    const [user, setUser] = useState({
+        username: '',
+        password: '',
+        name: '',
+        lastname: '',
+        role: '',
+        passwordConfirm: '',
+        phoneNumber: '',
+        imageProfile: 'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
+    })
 
 
     const [roles, setRoles] = useState<roleManager[]>([])
@@ -169,8 +180,9 @@ const UserManagement: FC<any> = ({ show }) => {
         })
     }
 
-    const updateUsuarios = () => {
+    const updateUsuarios = async () => {
         let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
+        console.log("cognito: ", cognito);
         try {
             cognito.adminUpdateUserAttributes(
                 {
@@ -188,6 +200,16 @@ const UserManagement: FC<any> = ({ show }) => {
                     else console.log(data)
                 }
             )
+
+            const filter = roles.filter((item) => { return dataSelect.role === item.nombre })
+            console.log("filter: ", filter);
+
+
+            let objeto = { id_usuario: users[0].Username , id_rol: filter[0].id_rol, foto: user.imageProfile }
+
+            await postData(updateUserMethod, objeto).then(data => { console.log(data) })
+
+
         } catch (err) {
             console.log("err: ", err);
         }
