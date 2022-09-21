@@ -4,6 +4,7 @@ import UploadImage from './UploadImage'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
 import {URLAWS} from '../../../services/api'
+import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 
 const NewNotification: FC<any> = ({
     showCardAddNotification,
@@ -129,14 +130,16 @@ const NewNotification: FC<any> = ({
                             name='titleNotification'
                             placeholder='Ej. Nueva Actualización'
                             onChange={(e) => {
-                                setNotification({
-                                    nombre: e.target.value,
-                                    descripcion: notification.descripcion,
-                                    imagen_path: notification.imagen_path,
-                                    fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setNotification({
+                                        nombre: e.target.value,
+                                        descripcion: notification.descripcion,
+                                        imagen_path: notification.imagen_path,
+                                        fecha_hora_programada: notification.fecha_hora_programada,
+                                        tipo: 0,
+                                        estado: 1,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -151,14 +154,16 @@ const NewNotification: FC<any> = ({
                             placeholder='Escribe una breve descripción'
                             style={{height: '100px'}}
                             onChange={(e) => {
-                                setNotification({
-                                    nombre: notification.nombre,
-                                    descripcion: e.target.value,
-                                    imagen_path: notification.imagen_path,
-                                    fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setNotification({
+                                        nombre: notification.nombre,
+                                        descripcion: e.target.value,
+                                        imagen_path: notification.imagen_path,
+                                        fecha_hora_programada: notification.fecha_hora_programada,
+                                        tipo: 0,
+                                        estado: 1,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>

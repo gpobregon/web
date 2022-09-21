@@ -1,5 +1,6 @@
 import React, {useState, FC} from 'react'
 import {Button, Modal, Form} from 'react-bootstrap'
+import { validateStringSinCaracteresEspeciales } from '../../validarCadena/validadorCadena'
 
 const UpdateLanguage: FC<any> = ({
     show,
@@ -30,12 +31,14 @@ const UpdateLanguage: FC<any> = ({
                             maxLength={20}
                             className={'mb-4'}
                             onChange={(e) => {
-                                setIdioma({
-                                    id_lenguaje: language.id_lenguaje,
-                                    nombre: e.target.value,
-                                    descripcion: idioma.descripcion,
-                                    estado: idioma.estado,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setIdioma({
+                                        id_lenguaje: language.id_lenguaje,
+                                        nombre: e.target.value,
+                                        descripcion: idioma.descripcion,
+                                        estado: idioma.estado,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -47,12 +50,14 @@ const UpdateLanguage: FC<any> = ({
                             type='text'
                             name='descripcion'
                             onChange={(e) => {
-                                setIdioma({
-                                    id_lenguaje: language.id_lenguaje,
-                                    nombre: idioma.nombre,
-                                    descripcion: e.target.value,
-                                    estado: idioma.estado,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setIdioma({
+                                        id_lenguaje: language.id_lenguaje,
+                                        nombre: idioma.nombre,
+                                        descripcion: e.target.value,
+                                        estado: idioma.estado,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
