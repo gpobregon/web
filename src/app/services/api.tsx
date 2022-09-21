@@ -47,8 +47,10 @@ export const addRolesMethod = 'user/rol/add'
 export const editRoleMethod = 'user/rol/edit' 
 export const deleteRoleMethod = 'user/rol'
 
-export const getUsers = 'user'
-export const addUser = 'user/add' 
+export const getUsersMethod = 'user'
+export const addUserMethod = 'user/add'  
+export const updateUserMethod = 'user/edit'  
+export const deleteUserMethod = 'user'
 
 
 export const getData = async (route: string) => {

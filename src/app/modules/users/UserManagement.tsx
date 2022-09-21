@@ -1,20 +1,27 @@
-import React, {FC, useState, useEffect} from 'react'
-import {Button, Col, Container, Form, Row, Table} from 'react-bootstrap'
+import React, { FC, useState, useEffect } from 'react'
+import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap'
 import Select from 'react-select'
-import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
+import { initialQueryState, KTSVG, useDebounce } from '../../../_metronic/helpers'
 import AddUser from './components/add-user'
 import DeleteUser from './components/delete-user'
 import makeAnimated from 'react-select/animated'
-import {Link} from 'react-router-dom'
-import {awsconfig} from '../../../aws-exports'
-import {DataStore} from 'aws-amplify'
-import {Amplify, Auth} from 'aws-amplify'
+import { Link } from 'react-router-dom'
+import { awsconfig } from '../../../aws-exports'
+import { DataStore } from 'aws-amplify'
+import { Amplify, Auth } from 'aws-amplify'
 import * as AWS from 'aws-sdk'
 import {
     ListUsersResponse,
     UsersListType,
     UserType,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider'
+import { roleManager } from '../../models/roleManager'
+import {
+    getData,
+    postData,
+    getRolesMethod,
+    updateUserMethod
+} from '../../services/api'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -63,9 +70,9 @@ const customStyles = {
 }
 
 const options = [
-    {value: 'Admnistrador', label: 'Administrador'},
-    {value: 'Editor', label: 'Editor'},
-    {value: 'Gestor', label: 'Gestor'},
+    { value: 'Admnistrador', label: 'Administrador' },
+    { value: 'Editor', label: 'Editor' },
+    { value: 'Gestor', label: 'Gestor' },
 ]
 
 const animatedComponents = makeAnimated()
@@ -78,45 +85,87 @@ const animatedComponents = makeAnimated()
 // }
 
 // getEmail()
-const UserManagement: FC<any> = ({show}) => {
+const UserManagement: FC<any> = ({ show }) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
     const [users, setUsers] = useState<UserType[]>([])
+    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [modalAddUser, setModalAddUser] = useState(false)
-    const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
+    const [modalDeleteUser, setModalDeleteUser] = useState({ show: false, user: {} })
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
-    const [dataSelect, setDataSelect] = useState({user: '', role: ''})
-    //const banderID: any = 0 
+    const [dataSelect, setDataSelect] = useState({ user: '', role: '' })
+    console.log("dataSelect: ", dataSelect);
+    const [searchInput, setSearchInput] = useState('')
+    const [filteredResults, setFilteredResults] = useState(users)
+    const [user, setUser] = useState({
+        username: '',
+        password: '',
+        name: '',
+        lastname: '',
+        role: '',
+        passwordConfirm: '',
+        phoneNumber: '',
+        imageProfile: 'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
+    })
 
-    const [nombre, setNombre] = useState() 
-    const [descripcion, setdescripcion] = useState() 
-    const [gestor_sitios, setGestor_sitios] = useState() 
-    const [gestor_notificaciones, setGestor_notificaciones] = useState() 
-    const [gestor_puntos_de_interes, setGestor_puntos_de_interes] = useState() 
-    const [gestor_reportes, setGestor_reportes] = useState()  
-    const [gestor_usuarios, setGestor_usuarios] = useState()  
-    const [gestor_offline, setGestor_offline] = useState() 
-    const [gestor_roles, setGestor_roles] = useState() 
-    const [gestor_categorias_idiomas, setGestor_categorias_idiomas] = useState()
 
- const showModalAddUser = () => {
+    const [roles, setRoles] = useState<roleManager[]>([])
+
+
+    const searchItems = (searchValue: any) => {
+        setSearchInput(searchValue)
+        if (searchInput !== '') {
+            const filteredData = users.filter((item: any) => {
+                return Object.values(item.Attributes[1].value)
+                    .join('')
+                    .toLowerCase()
+                    .includes(searchInput.toLowerCase())
+            })
+            setFilteredResults(filteredData)
+        } else {
+            setFilteredResults(users)
+        }
+    }
+
+    //TODO: get roles
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+    }
+    // console.log(getRoles())   
+
+    useEffect(() => {
+        getRoles()
+    }, [])
+
+    const rolesOptions = roles.map((role) => ({
+        value: role.nombre,
+        label: role.nombre
+    }))
+
+    // for (let rol of roles) {
+    //     console.log(rol)
+    // }
+    // console.log('----------------------------------------')
+
+    const showModalAddUser = () => {
         setModalAddUser(true)
     }
 
     const showModalDeleteUser = (user: any) => {
-        setModalDeleteUser({show: true, user})
+        setModalDeleteUser({ show: true, user })
     }
 
     const getUsers = async () => {
         let params = {
             UserPoolId: awsconfig.userPoolId,
-            AttributesToGet: ['name', 'email', 'custom:role', 'custom:phoneNumber'],
+            AttributesToGet: ['name', 'email', 'custom:role', 'custom:phoneNumber', 'custom:imageProfile'],
         }
 
         return new Promise((resolve, reject) => {
-            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+            let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
             cognito.listUsers(params, (err, data) => {
                 if (err) {
                     console.log(err)
@@ -132,32 +181,44 @@ const UserManagement: FC<any> = ({show}) => {
     }
 
     const updateUsuarios = async () => {
-        let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
-        cognito.adminUpdateUserAttributes(
-            {
-                UserAttributes: [
-                    {
-                        Name: 'custom:role',
-                        Value: String(dataSelect.role),
-                    },
-                ],
-                UserPoolId: awsconfig.userPoolId,
-                Username: dataSelect.user,
-            },
-            function (err, data) {
-                if (err) console.log(err, err.stack) // an error occurred
-                else console.log(data)
-            }
-        )
+        let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
+        console.log("cognito: ", cognito);
+        try {
+            cognito.adminUpdateUserAttributes(
+                {
+                    UserAttributes: [
+                        {
+                            Name: 'custom:role',
+                            Value: String(dataSelect.role),
+                        },
+                    ],
+                    UserPoolId: awsconfig.userPoolId,
+                    Username: dataSelect.user,
+                },
+                function (err, data) {
+                    if (err) console.log(err, err.stack) // an error occurred
+                    else console.log(data)
+                }
+            )
+
+            const filter = roles.filter((item) => { return dataSelect.role === item.nombre })
+            console.log("filter: ", filter);
+
+
+            let objeto = { id_usuario: users[0].Username, id_rol: filter[0].id_rol, foto: user.imageProfile }
+
+            await postData(updateUserMethod, objeto).then(data => { console.log(data) })
+
+
+        } catch (err) {
+            console.log("err: ", err);
+        }
         getUsers()
     }
 
     useEffect(() => {
         getUsers()
     }, [])
-
-    console.log(users)
-    console.log(dataSelect)
 
     return (
         <Container fluid>
@@ -181,9 +242,9 @@ const UserManagement: FC<any> = ({show}) => {
             </div>
 
             {existUsers == true ? (
-                <div style={show == false ? {display: 'none'} : {display: 'block'}}>
+                <div style={show == false ? { display: 'none' } : { display: 'block' }}>
                     <Row className='mb-7'>
-                        <div className='text-left' style={{paddingTop: 20}}>
+                        <div className='text-left' style={{ paddingTop: 20 }}>
                             <h3 className='text-dark mt-0'>Gestión de Usuarios</h3>
                         </div>
                     </Row>
@@ -198,7 +259,7 @@ const UserManagement: FC<any> = ({show}) => {
                             {/* <div className='d-flex align-items-center position-relative my-1'>  */}
                             <div
                                 className='d-flex align-items-center position-relative  '
-                                style={{width: '100%', justifyContent: 'space-between'}}
+                                style={{ width: '100%', justifyContent: 'space-between' }}
                             >
                                 <KTSVG
                                     path='/media/icons/duotune/general/gen021.svg'
@@ -209,6 +270,7 @@ const UserManagement: FC<any> = ({show}) => {
                                     data-kt-user-table-filter='search'
                                     className='form-control form-control-solid w-250px ps-14'
                                     placeholder='Buscar'
+                                    onChange={(event) => searchItems(event.target.value)}
                                 />
                                 <div className='d-flex justify-content-end'>
                                     <Button
@@ -248,12 +310,23 @@ const UserManagement: FC<any> = ({show}) => {
                                                             backgroundColor: '#a9a9a9',
                                                             borderRadius: '50%',
                                                         }}
-                                                    ></div>
+                                                    >
+                                                        <img
+                                                            src={item.Attributes[1].Value}
+                                                            style={{
+                                                                width: '40px',
+                                                                height: '40px',
+                                                                objectFit: 'cover',
+                                                                borderRadius: '50%',
+                                                            }}
+                                                        ></img>
+
+                                                    </div>
                                                 </td>
                                                 <td>
-                                                    <div>{item.Attributes[1].Value}</div>
+                                                    <div>{item.Attributes[2].Value}</div>
                                                     <div className='text-muted'>
-                                                        {item.Attributes[3].Value}
+                                                        {item.Attributes[4].Value}
                                                     </div>
                                                 </td>
                                                 <td className='text-muted'>
@@ -263,14 +336,15 @@ const UserManagement: FC<any> = ({show}) => {
                                                     {existUsers ? (
                                                         <div className='d-flex align-items-center'>
                                                             <Select
-                                                                options={options}
+                                                                onMenuOpen={() => getRoles()}
+                                                                options={rolesOptions}
                                                                 styles={customStyles}
                                                                 components={animatedComponents}
                                                                 onChange={(event: any) => {
                                                                     setButtonAcept(true)
                                                                     setBanderID(item)
                                                                     setDataSelect({
-                                                                        user: item.Attributes[3]
+                                                                        user: item.Attributes[4]
                                                                             .Value,
                                                                         role: event.value,
                                                                     })
@@ -279,10 +353,10 @@ const UserManagement: FC<any> = ({show}) => {
 
                                                                 defaultValue={{
                                                                     label:
-                                                                        item?.Attributes[2]
+                                                                        item?.Attributes[3]
                                                                             ?.Value ?? '',
                                                                     value:
-                                                                        item?.Attributes[2]
+                                                                        item?.Attributes[3]
                                                                             ?.Value ?? '',
                                                                 }}
                                                             />
@@ -334,12 +408,12 @@ const UserManagement: FC<any> = ({show}) => {
                     <AddUser
                         show={modalAddUser}
                         onClose={() => setModalAddUser(false)}
-                        //addUser={addUser}
+                    //addUser={addUser}
                     />
 
                     <DeleteUser
                         show={modalDeleteUser.show}
-                        onClose={() => setModalDeleteUser({show: false, user: {}})}
+                        onClose={() => setModalDeleteUser({ show: false, user: {} })}
                         user={modalDeleteUser.user}
                     />
                 </div>
