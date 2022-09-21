@@ -4,7 +4,8 @@ import {getToBase64} from './base64'
 import {awsconfig} from '../../../aws-exports'
 import imgUpload from './upload-image_03.jpg'
 import {Amplify, Auth} from 'aws-amplify'
-import {URLAWS} from '../../services/api'
+import {URLAWS, postData, updateUserMethod, getData, getRolesMethod} from '../../services/api' 
+import { roleManager } from '../../models/roleManager'
 import * as AWS from 'aws-sdk'
 import UpImage from './components/add-image'
 import {
@@ -24,7 +25,10 @@ interface Profile {
 
 const UserProfilePage = () => {
     const [showUpdateButton, setShowUpdateButton] = useState(true)
-    const [users, setUsers] = useState<UserType[]>([])
+    const [users, setUsers] = useState<UserType[]>([]) 
+    console.log("users: ", users);
+    const [roles, setRoles] = useState<roleManager[]>([]) 
+    console.log("roles: ", roles);
     const [existUsers, setExistUsers] = useState(false)
     const [dataUser, setDataUser] = useState({
         email: '',
@@ -41,7 +45,18 @@ const UserProfilePage = () => {
         apellido: '',
         telefono: '',
         email: '',
-    })
+    }) 
+
+    //TODO: get roles
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+    }
+    // console.log(getRoles())   
+
+    useEffect(() => {
+        getRoles()
+    }, [])
 
     //esto me retorna el email del usuario con el que estoy logueado
     const getEmail = () => {
@@ -110,16 +125,24 @@ const UserProfilePage = () => {
 
     const updateUsuarios = async () => {
         const user = await Auth.currentAuthenticatedUser()
+        console.log("user: ", user);
         const result = await Auth.updateUserAttributes(user, {
             name: dataUser.name,
             //email: dataUser.email,
             'custom:lastname': dataUser.lastname,
+            
             'custom:phoneNumber': dataUser.phoneNumber,
             'custom:imageProfile': dataUser.imageProfile,
-        })
+        })  
+        const filter = roles.filter((item) => { return dataUser.role === item.nombre })
+        
+        console.log("filter: ", filter);
+        let objeto = { id_usuario: user.username, id_rol: filter[0].id_rol, foto: dataUser.imageProfile }
+
+            await postData(updateUserMethod, objeto).then(data => { console.log(data) })
         setShowUpdateButton(true)
     }
-
+    console.log("dataUser: ", dataUser);
     const [modalupimg, setModalupIMG] = useState(false)
 
     return (

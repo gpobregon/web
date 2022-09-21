@@ -205,7 +205,7 @@ const UserManagement: FC<any> = ({ show }) => {
             console.log("filter: ", filter);
 
 
-            let objeto = { id_usuario: users[0].Username , id_rol: filter[0].id_rol, foto: user.imageProfile }
+            let objeto = { id_usuario: users[0].Username, id_rol: filter[0].id_rol, foto: user.imageProfile }
 
             await postData(updateUserMethod, objeto).then(data => { console.log(data) })
 
@@ -310,7 +310,18 @@ const UserManagement: FC<any> = ({ show }) => {
                                                             backgroundColor: '#a9a9a9',
                                                             borderRadius: '50%',
                                                         }}
-                                                    ></div>
+                                                    >
+                                                        <img
+                                                            src={item.Attributes[1].Value}
+                                                            style={{
+                                                                width: '40px',
+                                                                height: '40px',
+                                                                objectFit: 'cover',
+                                                                borderRadius: '50%',
+                                                            }}
+                                                        ></img>
+
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <div>{item.Attributes[2].Value}</div>
