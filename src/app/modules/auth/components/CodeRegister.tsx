@@ -4,12 +4,17 @@ import {Form, Button} from 'react-bootstrap'
 import {Link, Route, useNavigate} from 'react-router-dom'
 import {Login} from './Login'
 import {Auth} from 'aws-amplify'
+import {validateStringEmail, validateStringSoloNumeros, validateStringCode} from '../../validarCadena/validadorCadena'
 
 const CodeRegister = () => {
     const [data, setData] = useState({username: '', code: ''})
-    let navigate = useNavigate() 
+    const [validEmail, setValidEmail] = useState(false)
+    const [touchedEmailInput, setTouchedEmailInput] = useState(false)
 
-    
+    const [validCode, setValidCode] = useState(false)
+    const [touchedCodeInput, setTouchedCodeInput] = useState(false)
+
+    let navigate = useNavigate()
 
     const confirmSignUp = async () => {
         if (data.username != '' && data.code != '') {
@@ -43,12 +48,27 @@ const CodeRegister = () => {
                         type='text'
                         placeholder='Introduce tu correo'
                         onChange={(e) => {
-                            setData({
-                                username: e.target.value,
-                                code: data.code,
-                            })
+                            setTouchedEmailInput(true)
+
+                            if (validateStringEmail(e.target.value)) {
+                                setData({
+                                    username: e.target.value,
+                                    code: data.code,
+                                })
+                            }
+
+                            setValidEmail(validateStringEmail(e.target.value))
                         }}
                     />
+                    {validEmail && touchedEmailInput ? (
+                        <Form.Label className='mt-2 text-primary'>
+                            Correo electrónico válido
+                        </Form.Label>
+                    ) : !validEmail && touchedEmailInput ? (
+                        <Form.Label className='mt-2 text-danger'>
+                            Correo electrónico no válido
+                        </Form.Label>
+                    ) : null}
                 </Form.Group>
 
                 <Form.Group className='mb-3'>
@@ -58,15 +78,26 @@ const CodeRegister = () => {
                         placeholder='Introduce el código que se te envió'
                         maxLength={6}
                         onChange={(e) => {
-                            setData({
-                                username: data.username,
-                                code: e.target.value,
-                            })
+                            setTouchedCodeInput(true)
+
+                            if (validateStringCode(e.target.value)) {
+                                setData({
+                                    username: data.username,
+                                    code: e.target.value,
+                                })
+                            }
+
+                            setValidCode(validateStringCode(e.target.value))
                         }}
                     />
+                    {validCode && touchedCodeInput ? (
+                        <Form.Label className='mt-2 text-primary'>Código válido</Form.Label>
+                    ) : !validCode && touchedCodeInput ? (
+                        <Form.Label className='mt-2 text-danger'>Código no válido</Form.Label>
+                    ) : null}
                 </Form.Group>
 
-                <Button variant='primary w-100' onClick={() => confirmSignUp()}>
+                <Button variant='primary w-100' onClick={() => confirmSignUp()} disabled={!validCode || !validEmail}>
                     {'Continuar '}
                     <i className='bi bi-chevron-right'></i>
                 </Button>

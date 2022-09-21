@@ -6,7 +6,12 @@ import Auth from '@aws-amplify/auth'
 import {CognitoUser} from 'amazon-cognito-identity-js'
 
 import {awsconfig} from '../../../../aws-exports'
-import * as AWS from 'aws-sdk'
+import * as AWS from 'aws-sdk' 
+
+import { 
+    deleteData,
+    deleteUserMethod
+} from '../../../services/api'
 
 import {
     ListUsersResponse,
@@ -107,7 +112,9 @@ const customStyles = {
 }
 
 const DeleteUser: FC<any> = ({show, onClose, user}) => {
+    console.log("user hook: ", user);
     const [users, setUsers] = useState<UserType[]>([])
+    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [params, setParams] = useState({name: ''})
 
@@ -139,7 +146,7 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
             Username: user.Attributes[4].Value /* required */,
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.adminDeleteUser(params, (err, data) => {
                 if (err) {
@@ -148,8 +155,10 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                 } else {
                     resolve(data)
                 }
-            })
-        })
+            })   
+                let objeto = {id_usuario: user.Username}
+             await deleteData(deleteUserMethod, objeto)
+        }) 
     }
 
     return (

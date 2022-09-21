@@ -23,6 +23,7 @@ import {
 } from '../../services/api'
 import {roleManager} from '../../models/roleManager'
 import swal from 'sweetalert'
+import {validateStringSinCaracteresEspeciales} from '../validarCadena/validadorCadena'
 
 const RoleManagement: FC<any> = ({show}) => {
     const [roles, setRoles] = useState<roleManager[]>([])
@@ -41,7 +42,7 @@ const RoleManagement: FC<any> = ({show}) => {
         gestor_roles: false,
         gestor_categorias_idiomas: false,
         estado: 1,
-    }) 
+    })
 
     const [clicked, setClicked] = useState(false)
 
@@ -179,11 +180,17 @@ const RoleManagement: FC<any> = ({show}) => {
                                                         borderRadius: 0,
                                                     }}
                                                     onChange={(e) => {
-                                                        setStateRole((role) => ({
-                                                            ...role,
-                                                            id_rol: role.id_rol,
-                                                            nombre: e.target.value,
-                                                        }))
+                                                        if (
+                                                            validateStringSinCaracteresEspeciales(
+                                                                e.target.value
+                                                            )
+                                                        ) {
+                                                            setStateRole((role) => ({
+                                                                ...role,
+                                                                id_rol: role.id_rol,
+                                                                nombre: e.target.value,
+                                                            }))
+                                                        }
                                                     }}
                                                 />
                                                 <InputGroup.Text
@@ -211,14 +218,50 @@ const RoleManagement: FC<any> = ({show}) => {
                                                     borderColor: 'transparent',
                                                 }}
                                                 onChange={(e) => {
-                                                    setStateRole((role) => ({
-                                                        ...role,
-                                                        id_rol: role.id_rol,
-                                                        descripcion: e.target.value,
-                                                    }))
+                                                    if (
+                                                        validateStringSinCaracteresEspeciales(
+                                                            e.target.value
+                                                        )
+                                                    ) {
+                                                        setStateRole((role) => ({
+                                                            ...role,
+                                                            id_rol: role.id_rol,
+                                                            descripcion: e.target.value,
+                                                        }))
+                                                    }
                                                 }}
                                             />
                                         </div>
+                                        {buttonAcept === true && index === banderID ? (
+                                            <div className='d-flex align-items-center mt-5'>
+                                                {/* cheque */}
+                                                <Button
+                                                    variant='btn btn-outline-primary me-1'
+                                                    onClick={async () => {
+                                                        await postData(editRoleMethod, stateRole)
+                                                        setButtonAcept(false)
+                                                        setClicked(false)
+
+                                                        setTimeout(getRoles, 500)
+                                                        setTimeout(getRoles, 1000)
+                                                        setTimeout(getRoles, 1500)
+                                                        setTimeout(getRoles, 2000)
+                                                    }}
+                                                >
+                                                    <i className={`bi bi-check fs-3`}></i>
+                                                </Button>
+                                                {/* la X */}
+                                                <Button
+                                                    variant='btn btn-outline-danger ms-1'
+                                                    onClick={() => {
+                                                        setButtonAcept(false)
+                                                        setClicked(false)
+                                                    }}
+                                                >
+                                                    <i className={`bi bi-x fs-3`}></i>
+                                                </Button>
+                                            </div>
+                                        ) : null}
                                     </Col>
 
                                     <Col md={8} sm={8}>
@@ -393,32 +436,6 @@ const RoleManagement: FC<any> = ({show}) => {
                                                 />
                                             </Col>
                                         </Row>
-                                        {buttonAcept === true && index === banderID ? (
-                                            <div className='d-flex align-items-center mt-5'>
-                                                {/* cheque */}
-                                                <Button
-                                                    variant='btn btn-outline-primary me-1'
-                                                    onClick={async () => {
-                                                        await postData(editRoleMethod, stateRole)
-                                                        setButtonAcept(false)
-                                                        setClicked(false)
-                                                        getRoles()
-                                                    }}
-                                                >
-                                                    <i className={`bi bi-check fs-3`}></i>
-                                                </Button>
-                                                {/* la X */}
-                                                <Button
-                                                    variant='btn btn-outline-danger ms-1'
-                                                    onClick={() => {
-                                                        setButtonAcept(false) 
-                                                        setClicked(false)
-                                                    }}
-                                                >
-                                                    <i className={`bi bi-x fs-3`}></i>
-                                                </Button>
-                                            </div>
-                                        ) : null}
                                     </Col>
                                 </Row>
                             </div>

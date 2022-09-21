@@ -2,14 +2,21 @@ import React, { useState, FC, useEffect } from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
-
-
+import {
+    validateStringEmail,
+    validateStringEmailAlert,
+    validateStringPassword,
+    validateStringPasswordAlert,
+    validateStringPhoneNumber,
+    validateStringPhoneNumberAlert,
+    validateStringSinCaracteresEspeciales,
+} from '../../validarCadena/validadorCadena'
 import { roleManager } from '../../../models/roleManager'
 import {
     addUserMethod,
     getData,
     getRolesMethod,
-    postData
+    postData, 
 } from '../../../services/api'
 import { Amplify, Auth } from 'aws-amplify'
 import { awsconfig } from '../../../../aws-exports'
@@ -45,7 +52,6 @@ const customStyles = {
     input: (base: any, state: any) => ({
         ...base,
         color: '#92929f',
-
     }),
 
     option: (base: any, state: any) => ({
@@ -75,9 +81,9 @@ const animatedComponents = makeAnimated()
 
 
 const options = [
-    { value: 'Admnistrador', label: 'Administrador' },
-    { value: 'Editor', label: 'Editor' },
-    { value: 'Gestor', label: 'Gestor' },
+    {value: 'Admnistrador', label: 'Administrador'},
+    {value: 'Editor', label: 'Editor'},
+    {value: 'Gestor', label: 'Gestor'},
 ]
 
 const alertLlenar = async () => {
@@ -162,7 +168,7 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                                 'custom:lastname': user.lastname,
                                 'custom:role': user.role,
                                 'custom:phoneNumber': user.phoneNumber,
-                                'custom:imageProfile': user.imageProfile
+                                'custom:imageProfile': user.imageProfile,
                             },
                             autoSignIn: {
                                 // optional - enables auto sign in after user is confirmed
@@ -170,17 +176,13 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                             },
                         })
                         console.log("user: ", user);
-
-                        const filter = roles.filter((item) => { return user.role === item.nombre }
-                        )
-            
+                        const filter = roles.filter((item) => { return user.role === item.nombre })
                         let objeto = { id_usuario: userData.userSub, id_rol: filter[0].id_rol, foto: user.imageProfile }
-        
                         await postData(addUserMethod, objeto).then(data => { console.log(data) })
 
                         // alertUserDone()
                         onClose()
-                        // document.location.href = '/usuarios/user-management'
+                        document.location.href = '/usuarios/user-management'
                     } catch (error) {
 
                         console.log('error signing up:', error)
@@ -190,8 +192,6 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                 } else if (!regEx.test(user.username) && user.username !== '') {
                     alertEmail()
                 }
-
-
             } else {
                 swal('Las contraseñas no son iguales', 'Intentalo de nuevo', 'warning')
             }
@@ -215,7 +215,7 @@ const AddUser: FC<any> = ({ show, onClose }) => {
             role: event.value,
             passwordConfirm: user.passwordConfirm,
             phoneNumber: user.phoneNumber,
-            imageProfile: user.imageProfile
+            imageProfile: user.imageProfile,
         })
     }
 
@@ -234,20 +234,20 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                                 <Form.Label>Nombres</Form.Label>
                                 <Form.Control
                                     type='text'
-                                    name='nombre'
                                     className='mb-4'
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: user.password,
-                                            name: e.target.value,
-                                            lastname: user.lastname,
-                                            role: user.role,
-                                            passwordConfirm: user.passwordConfirm,
-                                            phoneNumber: user.phoneNumber,
-                                            imageProfile: user.imageProfile
-
-                                        })
+                                        if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: user.password,
+                                                name: e.target.value,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -258,19 +258,20 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                                 <Form.Label>Apellidos</Form.Label>
                                 <Form.Control
                                     type='text'
-                                    name='apellidos'
                                     className='mb-4'
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: user.password,
-                                            name: user.name,
-                                            lastname: e.target.value,
-                                            role: user.role,
-                                            passwordConfirm: user.passwordConfirm,
-                                            phoneNumber: user.phoneNumber,
-                                            imageProfile: user.imageProfile
-                                        })
+                                        if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: user.password,
+                                                name: user.name,
+                                                lastname: e.target.value,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -278,22 +279,26 @@ const AddUser: FC<any> = ({ show, onClose }) => {
 
                         <Col lg={6} md={6} sm={6}>
                             <Form.Group>
-                                <Form.Label>Email</Form.Label>
+                                <Form.Label>Correo electrónico</Form.Label>
                                 <Form.Control
                                     type='text'
-                                    name='email'
                                     className='mb-4'
                                     onChange={(e) => {
-                                        setUser({
-                                            username: e.target.value,
-                                            password: user.password,
-                                            name: user.name,
-                                            lastname: user.lastname,
-                                            role: user.role,
-                                            passwordConfirm: user.passwordConfirm,
-                                            phoneNumber: user.phoneNumber,
-                                            imageProfile: user.imageProfile
-                                        })
+                                        if (validateStringEmail(e.target.value)) {
+                                            setUser({
+                                                username: e.target.value,
+                                                password: user.password,
+                                                name: user.name,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        validateStringEmailAlert(e.target.value)
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -318,19 +323,25 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                                 <Form.Label>{'Teléfono'}</Form.Label>
                                 <Form.Control
                                     type='number'
-                                    name='Telefono'
-                                    className={'mb-4'}
+                                    autoComplete='off'
+                                    className='mb-4'
+                                    maxLength={8}
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: user.password,
-                                            name: user.name,
-                                            lastname: user.lastname,
-                                            role: user.role,
-                                            passwordConfirm: user.passwordConfirm,
-                                            phoneNumber: e.target.value,
-                                            imageProfile: user.imageProfile
-                                        })
+                                        if (validateStringPhoneNumber(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: user.password,
+                                                name: user.name,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: e.target.value,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        validateStringPhoneNumberAlert(e.target.value)
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -341,20 +352,23 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                                 <Form.Label>{'Contraseña'}</Form.Label>
                                 <Form.Control
                                     type='password'
-                                    name='password'
                                     className={'mb-4'}
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: e.target.value,
-                                            name: user.name,
-                                            lastname: user.lastname,
-                                            role: user.role,
-                                            passwordConfirm: user.passwordConfirm,
-                                            phoneNumber: user.phoneNumber,
-                                            imageProfile: user.imageProfile
-
-                                        })
+                                        if (validateStringPassword(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: e.target.value,
+                                                name: user.name,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        validateStringPasswordAlert(e.target.value)
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -365,19 +379,23 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                                 <Form.Label>{'Confirma la contraseña'}</Form.Label>
                                 <Form.Control
                                     type='password'
-                                    name='password'
                                     className={'mb-4'}
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: user.password,
-                                            name: user.name,
-                                            lastname: user.lastname,
-                                            role: user.role,
-                                            passwordConfirm: e.target.value,
-                                            phoneNumber: user.phoneNumber,
-                                            imageProfile: user.imageProfile
-                                        })
+                                        if (validateStringPassword(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: user.password,
+                                                name: user.name,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: e.target.value,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        validateStringPasswordAlert(e.target.value)
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -394,8 +412,7 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                         onClick={() => {
                             signUp()
                             //nameValidation()
-                            //onClose() 
-
+                            //onClose()
                         }}
                     >
                         {'Añadir '}
