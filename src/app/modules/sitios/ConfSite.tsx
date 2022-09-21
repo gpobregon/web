@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import Interes from "./components/sitios-interes/sala-interes";
 import logo from './upload-image_03.jpg';
 import UpImage from './components/upload-image';
+import {validateStringSinCaracteresEspeciales,validateStringSoloNumeros} from '../validarCadena/validadorCadena';
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
   item => ({ label: item, value: item })
 );
@@ -264,6 +265,8 @@ const ConfSite = () => {
   };
   const [modalupimg, setModalupIMG] = useState(false)
 
+  
+
   return (
     <>
       <div className=' '>
@@ -457,11 +460,13 @@ const ConfSite = () => {
                   <br />
                   <input
                     type='text'
-                    pattern="[A-Za-z0-9]{1,15}"
                     className='form-control'
                     value={site.nombre == '' ? '' : site.nombre}
                     style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                     onChange={(e) => {
+
+                     console.log( validateStringSinCaracteresEspeciales(e.target.value))
+                     if(validateStringSinCaracteresEspeciales(e.target.value)){
                       setSite({
                         id_sitio: site.id_sitio,
                         nombre: e.target.value,
@@ -479,6 +484,7 @@ const ConfSite = () => {
                         publicado: site.publicado,
                         oculto: site.oculto,
                       })
+                    }
                     }}
 
 
@@ -490,12 +496,13 @@ const ConfSite = () => {
                     <div className='col-6'>
                       <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoX</label>
                       <input
-                        type='number'
-                        pattern='[0-9]*'
+                       type='text'
                         className='form-control'
                         style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoX == '' ? '' : site.geoX}
                         onChange={(e) => {
+                          console.log(validateStringSoloNumeros(e.target.value))
+                          if(validateStringSoloNumeros(e.target.value)){
                           setSite({
                             id_sitio: site.id_sitio,
                             nombre: site.nombre,
@@ -513,6 +520,7 @@ const ConfSite = () => {
                             publicado: site.publicado,
                             oculto: site.oculto,
                           })
+                        }
                         }}
                       />
                       <hr style={{ position: 'relative', top: '-20px' }}></hr>
@@ -520,8 +528,7 @@ const ConfSite = () => {
                     <div className='col-6'>
                       <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoY</label>
                       <input
-                        type='number'
-                        pattern='[0-9]*'
+                        type='text'
                         className='form-control'
                         style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoY == '' ? '' : site.geoY}
@@ -548,7 +555,6 @@ const ConfSite = () => {
                       <hr style={{ position: 'relative', top: '-20px' }}></hr>
                     </div>
                   </div>
-                </div>
                 <br />
                 <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
                 <br></br>
@@ -576,7 +582,7 @@ const ConfSite = () => {
                       oculto: site.oculto,
                     })
                   }}
-                ></input>
+                  ></input>
                 <hr style={{ position: 'relative', top: '-20px' }}></hr>
                 <br></br>
                 <label>Etiquetas</label>
@@ -590,7 +596,8 @@ const ConfSite = () => {
                     isMulti
                     options={categorys}
                     onChange={handleChange}
-                  ></Select>
+                    ></Select>
+                    </div>
                 </div>
               </div>
               <div className='col-xs-12 col-md-12 col-xl-5 mb-5'>
