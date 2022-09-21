@@ -1,20 +1,24 @@
-import React, {useState, FC} from 'react'
-import {Button, Modal, Form} from 'react-bootstrap'  
+import {FC, useState} from 'react'
+import {Button, Modal, Form, Card} from 'react-bootstrap'
+import {KTSVG} from '../../../../_metronic/helpers'
+import UpImage from './UpJson'
 
 const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage}) => {
+    const [modalupimg, setModalupIMG] = useState(false)
+
     return (
         <>
             <Modal show={show} onHide={onClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{'Configuración de idioma'}</Modal.Title>
+                    <Modal.Title>Configuración de idioma</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group>
-                        <Form.Label>{'Nombre del idioma'}</Form.Label>
+                        <Form.Label>Nombre del idioma</Form.Label>
                         <Form.Control
                             type='text'
                             maxLength={20}
-                            className={'mb-4'}
+                            className='mb-4'
                             onChange={(e) => {
                                 setLanguage({
                                     id_lenguaje: language.id_lenguaje,
@@ -26,8 +30,9 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                         />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>{'Descripción'}</Form.Label>
+                        <Form.Label>Descripción</Form.Label>
                         <Form.Control
+                            className='mb-4'
                             type='text'
                             maxLength={20}
                             name='descripcion'
@@ -41,6 +46,99 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                             }}
                         />
                     </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Adjuntar Plantilla - Movil</Form.Label>
+                        <Card
+                            className='mb-4'
+                            style={{
+                                backgroundColor: '#151521',
+                                height: '50px',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
+                                    <div>Subir un archivo</div>
+                                </div>
+                                <div
+                                    onClick={() => {
+                                        setModalupIMG(true)
+                                    }}
+                                >
+                                    <KTSVG
+                                        path='/media/icons/duotune/general/gen035.svg'
+                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                    />
+                                </div>
+                            </div>
+                        </Card>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Adjuntar Plantilla - Website</Form.Label>
+                        <Card
+                            className='mb-4'
+                            style={{
+                                backgroundColor: '#151521',
+                                height: '50px',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
+
+                                    <div>Subir un archivo</div>
+                                </div>
+
+                                <div
+                                    onClick={() => {
+                                        setModalupIMG(true)
+                                    }}
+                                >
+                                    <KTSVG
+                                        path='/media/icons/duotune/general/gen035.svg'
+                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                    />
+                                </div>
+                            </div>
+                        </Card>
+                        <div style={{textAlign: 'center', color: 'gray'}}>
+                            Formato permitido: .json
+                        </div>
+                    </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -51,7 +149,7 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                                 nombre: '',
                                 descripcion: '',
                                 estado: 1,
-                            }) 
+                            })
                             onClose()
                         }}
                     >
@@ -69,6 +167,7 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <UpImage show={modalupimg} onClose={() => setModalupIMG(false)} />
         </>
     )
 }
