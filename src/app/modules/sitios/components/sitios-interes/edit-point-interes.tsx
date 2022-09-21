@@ -25,6 +25,7 @@ import UpImage from '../upload-image'
 import {CatalogLanguage} from '../../../../models/catalogLanguage'
 import SalaRutas from '../rutas-sitios-interes/sala-rutas'
 import {CostExplorer} from 'aws-sdk'
+import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -332,13 +333,13 @@ const EditPoint = () => {
             setModalupIMG(false)
         }
     }
-   const handleBlur = () => {
-   swal({
+    const handleBlur = () => {
+        swal({
             text: 'Nota: Recuerda guardar los cambios \n  antes de editar otro idioma.',
             icon: 'warning',
             timer: 2000,
         })
-   }
+    }
     //DONWLOAD QR-------------------------------------------------------------------------
     const downloadQRCode = () => {
         const canvas = document.getElementById('qrCode') as HTMLCanvasElement
@@ -609,23 +610,30 @@ const EditPoint = () => {
                                         }}
                                         value={sitio.nombre == '' ? '' : sitio.nombre}
                                         onChange={(e) => {
-                                            setSitio({
-                                                id_punto: datospuntoInteres.id_punto,
-                                                id_sitio: datospuntoInteres.id_sitio,
-                                                id_guia: datospuntoInteres.id_guia,
-                                                descripcion: sitio.descripcion,
-                                                id_lenguaje: sitio.id_lenguaje,
-                                                nombre: e.target.value,
-                                                geoX: sitio.geoX,
-                                                geoY: sitio.geoY,
-                                                portada_path: sitio.portada_path,
-                                                qr_path: sitio.qr_path,
-                                                es_portada_de_sitio: sitio.es_portada_de_sitio,
-                                                estado: sitio.estado,
-                                                es_visible: sitio.es_visible,
-                                                publicado: true,
-                                                id_lenguaje_anterior: sitio.id_lenguaje_anterior,
-                                            })
+                                            if (
+                                                validateStringSinCaracteresEspeciales(
+                                                    e.target.value
+                                                )
+                                            ) {
+                                                setSitio({
+                                                    id_punto: datospuntoInteres.id_punto,
+                                                    id_sitio: datospuntoInteres.id_sitio,
+                                                    id_guia: datospuntoInteres.id_guia,
+                                                    descripcion: sitio.descripcion,
+                                                    id_lenguaje: sitio.id_lenguaje,
+                                                    nombre: e.target.value,
+                                                    geoX: sitio.geoX,
+                                                    geoY: sitio.geoY,
+                                                    portada_path: sitio.portada_path,
+                                                    qr_path: sitio.qr_path,
+                                                    es_portada_de_sitio: sitio.es_portada_de_sitio,
+                                                    estado: sitio.estado,
+                                                    es_visible: sitio.es_visible,
+                                                    publicado: true,
+                                                    id_lenguaje_anterior:
+                                                        sitio.id_lenguaje_anterior,
+                                                })
+                                            }
                                         }}
                                     ></input>
 
@@ -656,24 +664,31 @@ const EditPoint = () => {
                                         value={descripcion}
                                         onBlur={handleBlur}
                                         onChange={(e) => {
-                                            setDescripcion(e.target.value)
-                                            setSitio({
-                                                id_punto: datospuntoInteres.id_punto,
-                                                id_sitio: datospuntoInteres.id_sitio,
-                                                id_guia: datospuntoInteres.id_guia,
-                                                descripcion: e.target.value,
-                                                id_lenguaje: sitio.id_lenguaje,
-                                                nombre: datospuntoInteres.nombre,
-                                                geoX: sitio.geoX,
-                                                geoY: sitio.geoY,
-                                                portada_path: sitio.portada_path,
-                                                qr_path: sitio.qr_path,
-                                                es_portada_de_sitio: sitio.es_portada_de_sitio,
-                                                estado: sitio.estado,
-                                                es_visible: sitio.es_visible,
-                                                publicado: true,
-                                                id_lenguaje_anterior: sitio.id_lenguaje_anterior,
-                                            })
+                                            if (
+                                                validateStringSinCaracteresEspeciales(
+                                                    e.target.value
+                                                )
+                                            ) {
+                                                setDescripcion(e.target.value)
+                                                setSitio({
+                                                    id_punto: datospuntoInteres.id_punto,
+                                                    id_sitio: datospuntoInteres.id_sitio,
+                                                    id_guia: datospuntoInteres.id_guia,
+                                                    descripcion: e.target.value,
+                                                    id_lenguaje: sitio.id_lenguaje,
+                                                    nombre: datospuntoInteres.nombre,
+                                                    geoX: sitio.geoX,
+                                                    geoY: sitio.geoY,
+                                                    portada_path: sitio.portada_path,
+                                                    qr_path: sitio.qr_path,
+                                                    es_portada_de_sitio: sitio.es_portada_de_sitio,
+                                                    estado: sitio.estado,
+                                                    es_visible: sitio.es_visible,
+                                                    publicado: true,
+                                                    id_lenguaje_anterior:
+                                                        sitio.id_lenguaje_anterior,
+                                                })
+                                            }
                                         }}
                                     />
 

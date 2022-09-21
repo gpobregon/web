@@ -4,6 +4,7 @@ import makeAnimated from 'react-select/animated'
 import {Button, Modal, Form} from 'react-bootstrap'
 import {CatalogLanguage} from '../../../models/catalogLanguage'
 import {getData, languagesMethod} from '../../../services/api'
+import { validateStringSinCaracteresEspeciales } from '../../validarCadena/validadorCadena'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -186,13 +187,15 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, tag, setTag, updateTa
                             name='nombre'
                             className={'mb-4'}
                             onChange={(e) => {
-                                setTag({
-                                    id_categoria: catalogo.id_categoria,
-                                    nombre: e.target.value,
-                                    icono: tag.icono,
-                                    estado: tag.estado,
-                                    id_lenguaje: tag.id_lenguaje,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setTag({
+                                        id_categoria: catalogo.id_categoria,
+                                        nombre: e.target.value,
+                                        icono: tag.icono,
+                                        estado: tag.estado,
+                                        id_lenguaje: tag.id_lenguaje,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>

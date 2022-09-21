@@ -4,6 +4,7 @@ import UploadImage from './UploadImage'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
 import {URLAWS} from '../../../services/api'
+import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 
 const UpdateNotification: FC<any> = ({
     cardUpdateNotification,
@@ -81,6 +82,7 @@ const UpdateNotification: FC<any> = ({
                             width: '192.5px',
                             height: '177px',
                             borderRadius: '5px',
+                            objectFit: 'cover',
                         }}
                     ></img>
 
@@ -142,15 +144,17 @@ const UpdateNotification: FC<any> = ({
                             type='text'
                             name='titleNotification'
                             onChange={(e) => {
-                                setNotification({
-                                    id_notificacion: notification.id_notificacion,
-                                    nombre: e.target.value,
-                                    descripcion: notification.descripcion,
-                                    imagen_path: notification.imagen_path,
-                                    fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: notification.tipo,
-                                    estado: 1,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setNotification({
+                                        id_notificacion: notification.id_notificacion,
+                                        nombre: e.target.value,
+                                        descripcion: notification.descripcion,
+                                        imagen_path: notification.imagen_path,
+                                        fecha_hora_programada: notification.fecha_hora_programada,
+                                        tipo: notification.tipo,
+                                        estado: 1,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -164,21 +168,24 @@ const UpdateNotification: FC<any> = ({
                             name='descriptionNotification'
                             style={{height: '100px'}}
                             onChange={(e) => {
-                                setNotification({
-                                    id_notificacion: notification.id_notificacion,
-                                    nombre: notification.nombre,
-                                    descripcion: e.target.value,
-                                    imagen_path: notification.imagen_path,
-                                    fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: notification.tipo,
-                                    estado: 1,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setNotification({
+                                        id_notificacion: notification.id_notificacion,
+                                        nombre: notification.nombre,
+                                        descripcion: e.target.value,
+                                        imagen_path: notification.imagen_path,
+                                        fecha_hora_programada: notification.fecha_hora_programada,
+                                        tipo: notification.tipo,
+                                        estado: 1,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
 
                     <div>
                         <Form.Check
+                            defaultChecked={notification.tipo}
                             type='switch'
                             id='custom-switch'
                             label='Notificación programada'
@@ -188,7 +195,13 @@ const UpdateNotification: FC<any> = ({
                     </div>
                 </div>
 
-                <div style={scheduleNotification == false ? {display: 'none'} : {display: 'block'}}>
+                <div
+                    style={
+                        !scheduleNotification && !notification.tipo
+                            ? {display: 'none'}
+                            : {display: 'block'}
+                    }
+                >
                     <Col>
                         <Form.Group className='mt-9'>
                             <Form.Label>Fecha</Form.Label>

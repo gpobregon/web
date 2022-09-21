@@ -2,6 +2,7 @@ import {FC, useState} from 'react'
 import {Button, Modal, Form, Card} from 'react-bootstrap'
 import {KTSVG} from '../../../../_metronic/helpers'
 import {URLAWS} from '../../../services/api'
+import { validateStringSinCaracteresEspeciales } from '../../validarCadena/validadorCadena'
 import UpJson from './UpJson'
 
 const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, addLanguage}) => {
@@ -30,12 +31,14 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                             maxLength={20}
                             className='mb-4'
                             onChange={(e) => {
-                                setLanguage({
-                                    id_lenguaje: language.id_lenguaje,
-                                    nombre: e.target.value,
-                                    descripcion: language.descripcion,
-                                    estado: language.estado,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setLanguage({
+                                        id_lenguaje: language.id_lenguaje,
+                                        nombre: e.target.value,
+                                        descripcion: language.descripcion,
+                                        estado: language.estado,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -48,12 +51,14 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                             maxLength={20}
                             name='descripcion'
                             onChange={(e) => {
-                                setLanguage({
-                                    id_lenguaje: language.id_lenguaje,
-                                    nombre: language.nombre,
-                                    descripcion: e.target.value,
-                                    estado: language.estado,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setLanguage({
+                                        id_lenguaje: language.id_lenguaje,
+                                        nombre: language.nombre,
+                                        descripcion: e.target.value,
+                                        estado: language.estado,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
