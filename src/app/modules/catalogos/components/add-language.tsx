@@ -1,10 +1,10 @@
 import {FC, useState} from 'react'
 import {Button, Modal, Form, Card} from 'react-bootstrap'
 import {KTSVG} from '../../../../_metronic/helpers'
-import UpImage from './UpJson'
+import UpJson from './UpJson'
 
-const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage}) => {
-    const [modalupimg, setModalupIMG] = useState(false)
+const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, addLanguage}) => {
+    const [showJson, setShowJson] = useState(false)
 
     return (
         <>
@@ -16,6 +16,7 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                     <Form.Group>
                         <Form.Label>Nombre del idioma</Form.Label>
                         <Form.Control
+                            value={language.nombre}
                             type='text'
                             maxLength={20}
                             className='mb-4'
@@ -32,6 +33,7 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                     <Form.Group>
                         <Form.Label>Descripción</Form.Label>
                         <Form.Control
+                            value={language.descripcion}
                             className='mb-4'
                             type='text'
                             maxLength={20}
@@ -79,7 +81,8 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                                 </div>
                                 <div
                                     onClick={() => {
-                                        setModalupIMG(true)
+                                        setShow(false)
+                                        setShowJson(true)
                                     }}
                                 >
                                     <KTSVG
@@ -125,7 +128,8 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
 
                                 <div
                                     onClick={() => {
-                                        setModalupIMG(true)
+                                        setShow(false)
+                                        setShowJson(true)
                                     }}
                                 >
                                     <KTSVG
@@ -167,7 +171,14 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <UpImage show={modalupimg} onClose={() => setModalupIMG(false)} />
+            <UpJson
+
+                show={showJson}
+                onClose={() => {
+                    setShowJson(false)
+                    setShow(true)
+                }}
+            />
         </>
     )
 }

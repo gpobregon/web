@@ -1,8 +1,7 @@
 import {useState, FC} from 'react'
 import {Button, Modal, Form} from 'react-bootstrap'
 
-const UpJson: FC<any> = ({show, onClose, cargarIMG}) => {
-    const [img, setImg] = useState('')
+const UpJson: FC<any> = ({show, onClose}) => {
     const [progress, setProgress] = useState(0)
     const [selectedFile, setSelectedFile] = useState(null)
     const [porcentajeCargado, setPorcetajeCargado] = useState(0)
