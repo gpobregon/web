@@ -9,7 +9,7 @@ import {
     addUserMethod,
     getData,
     getRolesMethod,
-    postData
+    postData, 
 } from '../../../services/api'
 import { Amplify, Auth } from 'aws-amplify'
 import { awsconfig } from '../../../../aws-exports'
@@ -171,8 +171,7 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                         })
                         console.log("user: ", user);
 
-                        const filter = roles.filter((item) => { return user.role === item.nombre }
-                        )
+                        const filter = roles.filter((item) => { return user.role === item.nombre })
             
                         let objeto = { id_usuario: userData.userSub, id_rol: filter[0].id_rol, foto: user.imageProfile }
         
@@ -180,7 +179,7 @@ const AddUser: FC<any> = ({ show, onClose }) => {
 
                         // alertUserDone()
                         onClose()
-                        // document.location.href = '/usuarios/user-management'
+                        document.location.href = '/usuarios/user-management'
                     } catch (error) {
 
                         console.log('error signing up:', error)
