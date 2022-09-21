@@ -1,11 +1,20 @@
 import {FC, useState} from 'react'
 import {Button, Modal, Form, Card} from 'react-bootstrap'
 import {KTSVG} from '../../../../_metronic/helpers'
+import {URLAWS} from '../../../services/api'
 import UpJson from './UpJson'
 
 const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, addLanguage}) => {
     const [showJson, setShowJson] = useState(false)
+    const [url, setUrl] = useState('')
+    const [file, setFile] = useState('')
 
+    const uploadJson = async (json: string) => {
+        setFile(URLAWS + url + '/' + json)
+        if (json != '') {
+            setShowJson(false)
+        }
+    }
     return (
         <>
             <Modal show={show} onHide={onClose}>
@@ -83,6 +92,7 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                     onClick={() => {
                                         setShow(false)
                                         setShowJson(true)
+                                        setUrl('idiomasMovil')
                                     }}
                                 >
                                     <KTSVG
@@ -130,6 +140,7 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                     onClick={() => {
                                         setShow(false)
                                         setShowJson(true)
+                                        setUrl('idiomasWeb')
                                     }}
                                 >
                                     <KTSVG
@@ -172,7 +183,8 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                 </Modal.Footer>
             </Modal>
             <UpJson
-
+                url={url}
+                uploadJson={uploadJson}
                 show={showJson}
                 onClose={() => {
                     setShowJson(false)
