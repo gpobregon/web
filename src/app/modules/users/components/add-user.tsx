@@ -5,9 +5,18 @@ import {Button, Modal, Form, Row, Col} from 'react-bootstrap'
 
 import {Amplify, Auth} from 'aws-amplify'
 import {awsconfig} from '../../../../aws-exports'
-import {useAuth} from '../../auth/core/Auth' 
+import {useAuth} from '../../auth/core/Auth'
 import swal from 'sweetalert'
-Amplify.configure(awsconfig) 
+import {
+    validateStringEmail,
+    validateStringEmailAlert,
+    validateStringPassword,
+    validateStringPasswordAlert,
+    validateStringPhoneNumber,
+    validateStringPhoneNumberAlert,
+    validateStringSinCaracteresEspeciales,
+} from '../../validarCadena/validadorCadena'
+Amplify.configure(awsconfig)
 
 const alertUserDone = async () => {
     swal({
@@ -35,10 +44,9 @@ const customStyles = {
     }),
     input: (base: any, state: any) => ({
         ...base,
-        color: '#92929f', 
-        
-    }), 
-    
+        color: '#92929f',
+    }),
+
     option: (base: any, state: any) => ({
         ...base,
         background: state.isFocused ? '#009EF7' : '#323248',
@@ -67,22 +75,22 @@ const options = [
     {value: 'Admnistrador', label: 'Administrador'},
     {value: 'Editor', label: 'Editor'},
     {value: 'Gestor', label: 'Gestor'},
-] 
+]
 
 const alertLlenar = async () => {
     swal({
         text: '¡campos incompletos!',
         icon: 'warning',
     })
-}  
+}
 
 const alertEmail = async () => {
     swal({
         text: '¡Email invalido!',
         icon: 'warning',
     })
-}  
-const alertEmailNoIngresado = async ()=>{ 
+}
+const alertEmailNoIngresado = async () => {
     swal({
         text: '¡Email no ingresado!',
         icon: 'warning',
@@ -102,54 +110,62 @@ const AddUser: FC<any> = ({show, onClose}) => {
         password: '',
         name: '',
         lastname: '',
-        role: '', 
-        passwordConfirm: '',  
-        phoneNumber: '', 
-        imageProfile: 'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
-    })  
+        role: '',
+        passwordConfirm: '',
+        phoneNumber: '',
+        imageProfile:
+            'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png',
+    })
 
-
-
-    const signUp = async () => {           
-        if (user.lastname !='' && user.name !='' && user.password !='' && user.passwordConfirm !='' && user.role !=''  && user.username !=''  && user.phoneNumber !='' ){ 
-            if (user.password == user.passwordConfirm) { 
-               
-                const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9·-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g 
-                const regExPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g
-                if (regEx.test(user.username)  ) { 
-                     try {
-                    const userData = await Auth.signUp({
-                        username: user.username,
-                        password: user.password,
-                        attributes: {
-                            name: user.name,
-                            'custom:lastname': user.lastname,
-                            'custom:role': user.role, 
-                            'custom:phoneNumber': user.phoneNumber, 
-                            'custom:imageProfile': user.imageProfile
-                        },
-                        autoSignIn: {
-                            // optional - enables auto sign in after user is confirmed
-                            enabled: false,
-                        }, 
-                    }) 
-                    alertUserDone()
-                    onClose()
-                    } catch (error) { 
-                        
-                        console.log('error signing up:', error)  
-                        swal('Contraseña o email invalidos', 'Recuerda escribir una contraseña que incluya un signo especial, una letra minuscula, una letra mayuscula y un minimo de 6 caracteres en total', 'warning')
-                        return false;
+    const signUp = async () => {
+        if (
+            user.lastname != '' &&
+            user.name != '' &&
+            user.password != '' &&
+            user.passwordConfirm != '' &&
+            user.role != '' &&
+            user.username != '' &&
+            user.phoneNumber != ''
+        ) {
+            if (user.password == user.passwordConfirm) {
+                const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9·-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g
+                const regExPassword =
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g
+                if (regEx.test(user.username)) {
+                    try {
+                        const userData = await Auth.signUp({
+                            username: user.username,
+                            password: user.password,
+                            attributes: {
+                                name: user.name,
+                                'custom:lastname': user.lastname,
+                                'custom:role': user.role,
+                                'custom:phoneNumber': user.phoneNumber,
+                                'custom:imageProfile': user.imageProfile,
+                            },
+                            autoSignIn: {
+                                // optional - enables auto sign in after user is confirmed
+                                enabled: false,
+                            },
+                        })
+                        alertUserDone()
+                        onClose()
+                    } catch (error) {
+                        console.log('error signing up:', error)
+                        swal(
+                            'Contraseña o email invalidos',
+                            'Recuerda escribir una contraseña que incluya un signo especial, una letra minúscula, una letra mayúscula y un mínimo de 6 caracteres en total',
+                            'warning'
+                        )
+                        return false
                     }
                 } else if (!regEx.test(user.username) && user.username !== '') {
                     alertEmail()
-                } 
-
-               
+                }
             } else {
                 swal('Las contraseñas no son iguales', 'Intentalo de nuevo', 'warning')
             }
-        }else {
+        } else {
             swal('Campos inválidos', 'Por favor ingresa correctamente los campos', 'warning')
         }
     }
@@ -160,10 +176,10 @@ const AddUser: FC<any> = ({show, onClose}) => {
             password: user.password,
             name: user.name,
             lastname: user.lastname,
-            role: event.value, 
-            passwordConfirm: user.passwordConfirm, 
-            phoneNumber: user.phoneNumber, 
-            imageProfile: user.imageProfile
+            role: event.value,
+            passwordConfirm: user.passwordConfirm,
+            phoneNumber: user.phoneNumber,
+            imageProfile: user.imageProfile,
         })
     }
 
@@ -180,20 +196,20 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                 <Form.Label>Nombres</Form.Label>
                                 <Form.Control
                                     type='text'
-                                    name='nombre'
                                     className='mb-4'
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: user.password,
-                                            name: e.target.value,
-                                            lastname: user.lastname,
-                                            role: user.role, 
-                                            passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: user.phoneNumber, 
-                                            imageProfile: user.imageProfile
-                            
-                                        })
+                                        if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: user.password,
+                                                name: e.target.value,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -204,19 +220,20 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                 <Form.Label>Apellidos</Form.Label>
                                 <Form.Control
                                     type='text'
-                                    name='apellidos'
                                     className='mb-4'
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: user.password,
-                                            name: user.name,
-                                            lastname: e.target.value,
-                                            role: user.role, 
-                                            passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: user.phoneNumber, 
-                                            imageProfile: user.imageProfile
-                                        })
+                                        if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: user.password,
+                                                name: user.name,
+                                                lastname: e.target.value,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -224,22 +241,26 @@ const AddUser: FC<any> = ({show, onClose}) => {
 
                         <Col lg={6} md={6} sm={6}>
                             <Form.Group>
-                                <Form.Label>Email</Form.Label>
+                                <Form.Label>Correo electrónico</Form.Label>
                                 <Form.Control
                                     type='text'
-                                    name='email'
                                     className='mb-4'
                                     onChange={(e) => {
-                                        setUser({
-                                            username: e.target.value,
-                                            password: user.password,
-                                            name: user.name,
-                                            lastname: user.lastname,
-                                            role: user.role, 
-                                            passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: user.phoneNumber, 
-                                            imageProfile: user.imageProfile
-                                        })
+                                        if (validateStringEmail(e.target.value)) {
+                                            setUser({
+                                                username: e.target.value,
+                                                password: user.password,
+                                                name: user.name,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        validateStringEmailAlert(e.target.value)
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -249,80 +270,92 @@ const AddUser: FC<any> = ({show, onClose}) => {
                             <Form.Group>
                                 <Form.Label>Rol</Form.Label>
                                 <Select
-                                    name='rol'
                                     options={options}
                                     styles={customStyles}
                                     components={animatedComponents}
                                     onChange={handleChangeRole}
                                 />
                             </Form.Group>
-                        </Col> 
+                        </Col>
 
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
                                 <Form.Label>{'Teléfono'}</Form.Label>
                                 <Form.Control
                                     type='number'
-                                    name='Telefono'
-                                    className={'mb-4'}
+                                    autoComplete='off'
+                                    className='mb-4'
+                                    maxLength={8}
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: user.password,
-                                            name: user.name,
-                                            lastname: user.lastname,
-                                            role: user.role, 
-                                            passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: e.target.value, 
-                                            imageProfile: user.imageProfile
-                                        })
+                                        if (validateStringPhoneNumber(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: user.password,
+                                                name: user.name,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: e.target.value,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        validateStringPhoneNumberAlert(e.target.value)
                                     }}
                                 ></Form.Control>
                             </Form.Group>
-                        </Col> 
+                        </Col>
 
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
                                 <Form.Label>{'Contraseña'}</Form.Label>
                                 <Form.Control
                                     type='password'
-                                    name='password'
                                     className={'mb-4'}
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: e.target.value,
-                                            name: user.name,
-                                            lastname: user.lastname,
-                                            role: user.role, 
-                                            passwordConfirm: user.passwordConfirm, 
-                                            phoneNumber: user.phoneNumber, 
-                                            imageProfile: user.imageProfile
-
-                                        })
+                                        if (validateStringPassword(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: e.target.value,
+                                                name: user.name,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        validateStringPasswordAlert(e.target.value)
                                     }}
                                 ></Form.Control>
                             </Form.Group>
-                        </Col> 
+                        </Col>
 
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
                                 <Form.Label>{'Confirma la contraseña'}</Form.Label>
                                 <Form.Control
                                     type='password'
-                                    name='password'
-                                    className={'mb-4'} 
+                                    className={'mb-4'}
                                     onChange={(e) => {
-                                        setUser({
-                                            username: user.username,
-                                            password: user.password,
-                                            name: user.name,
-                                            lastname: user.lastname,
-                                            role: user.role, 
-                                            passwordConfirm: e.target.value, 
-                                            phoneNumber: user.phoneNumber, 
-                                            imageProfile: user.imageProfile
-                                        })
+                                        if (validateStringPassword(e.target.value)) {
+                                            setUser({
+                                                username: user.username,
+                                                password: user.password,
+                                                name: user.name,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: e.target.value,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        validateStringPasswordAlert(e.target.value)
                                     }}
                                 ></Form.Control>
                             </Form.Group>
@@ -337,10 +370,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
                     <Button
                         variant='primary'
                         onClick={() => {
-                            signUp() 
+                            signUp()
                             //nameValidation()
-                            //onClose() 
-                            
+                            //onClose()
                         }}
                     >
                         {'Añadir '}

@@ -11,6 +11,10 @@ import {
     postData,
 } from '../../../services/api'
 import {CatalogLanguage} from '../../../models/catalogLanguage'
+import {
+    validateStringSinCaracteresEspeciales,
+    validateStringSoloNumeros,
+} from '../../validarCadena/validadorCadena'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -148,13 +152,15 @@ const AddCatalogo: FC<any> = ({show, onClose, tag, setTag, addTag}) => {
                             maxLength={20}
                             className={'mb-4'}
                             onChange={(e) => {
-                                setTag({
-                                    id_categoria: tag.id_categoria,
-                                    nombre: e.target.value,
-                                    icono: tag.icono,
-                                    estado: tag.estado,
-                                    id_lenguaje: tag.id_lenguaje,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setTag({
+                                        id_categoria: tag.id_categoria,
+                                        nombre: e.target.value,
+                                        icono: tag.icono,
+                                        estado: tag.estado,
+                                        id_lenguaje: tag.id_lenguaje,
+                                    })
+                                }
                             }}
                         ></Form.Control>
                     </Form.Group>
