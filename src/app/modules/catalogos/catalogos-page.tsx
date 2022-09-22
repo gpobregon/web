@@ -23,6 +23,12 @@ import {
     updateLanguageMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
+const alertLanguageDone = async () => {
+    swal({
+        text: 'Lenguaje creado',
+        icon: 'success',
+    })
+}
 
 const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
@@ -166,6 +172,7 @@ const CatalogosPage = () => {
             })
             await postData(addLanguageMethod, language)
             setModalAddLanguage(false)
+            alertLanguageDone()
             getLanguages()
         } else {
             alertNotNullInputsObj({
@@ -537,6 +544,7 @@ const CatalogosPage = () => {
 
                 <AddLanguaje
                     show={modalAddLanguage}
+                    setShow={setModalAddLanguage}
                     onClose={() => setModalAddLanguage(false)}
                     language={newIdioma}
                     setLanguage={setNewIdioma}
