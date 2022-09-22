@@ -188,6 +188,7 @@ const ConfSite = () => {
   async function postSite(sitee: any) {
     if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != ''&& site.portada_path != '') {
       const sit: any = await postData(sitesMethod + "/add", sitee)
+      navigate(`/template/movil/${site.id_sitio}`)
     } else {
       alertNotNullInputs()
     }
@@ -622,7 +623,7 @@ const ConfSite = () => {
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={`/template/movil/${site.id_sitio}`}>
+               
                         <Button
                           onClick={() => {
 
@@ -636,7 +637,7 @@ const ConfSite = () => {
                           {' '}
                           <i className='fa-solid fa-pencil' ></i> Crear
                         </Button>
-                      </Link>
+                      
                     </div>
                   </div>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>

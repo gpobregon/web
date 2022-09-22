@@ -541,7 +541,7 @@ const AddPoint = () => {
                                         </div>
                                         <br></br>
                                         <div className='row'>
-                                            <Link to={'/sitios'}>
+                                           
                                                 <Button
                                                     onClick={() => {
                                                         addNewPoint()
@@ -557,7 +557,7 @@ const AddPoint = () => {
                                                     {' '}
                                                     <i className='fa-solid fa-pencil'></i> Crear
                                                 </Button>
-                                            </Link>
+                                           
                                         </div>
                                     </div>
                                     <div className=' col-md-6 col-xs-12 col-lg-6'>
