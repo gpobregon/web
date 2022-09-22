@@ -72,6 +72,7 @@ const AddRoute = () => {
         setruta(route)
         setGetimg(route.imagenes as Imagen[])
         setagregrarPaso(route.pasos)
+        imgprincipal.img_principal = route.img_principal
         // console.log(route)
     }
     const [imgtempomodal, setImgtempomodal] = useState({
@@ -141,14 +142,14 @@ const AddRoute = () => {
 
         if (id === -1) {
             //agregar iamgen de referencia por primera vez 
-
-            arrayimagenes.push({
-                id_image: -1,
-                descripcion: '',
-                posicion_en_lista: 1,
-                img_path: URLAWS +"sitePages/"+ url,
-                estado: 1
-            })
+            console.log(imgtempomodal)
+            // arrayimagenes.push({
+            //     id_image: -1,
+            //     descripcion: '',
+            //     posicion_en_lista: 1,
+            //     img_path: URLAWS +"sitePages/"+ url,
+            //     estado: 1
+            // })
             setImagenes({
                 id_punto_a: puntos.id_punto_a,
                 id_punto_b: puntos.id_punto_b,
@@ -212,23 +213,14 @@ const AddRoute = () => {
 
         if (imagen != '') {
             if (numeroImg === 1) {
-                setImgtempomodal({
-                    imagen1: URLAWS+"sitePages/" + imagen,
-                    imagen2: imgtempomodal.imagen2,
-                    imagen3: imgtempomodal.imagen3
-                })
+                imgtempomodal.imagen1=URLAWS+"sitePages/" + imagen
+                
             } else if (numeroImg === 2) {
-                setImgtempomodal({
-                    imagen1: imgtempomodal.imagen1,
-                    imagen2: URLAWS+"sitePages/" + imagen,
-                    imagen3: imgtempomodal.imagen3
-                })
+                imgtempomodal.imagen2=URLAWS+"sitePages/" + imagen
+              
             } else if (numeroImg === 3) {
-                setImgtempomodal({
-                    imagen1: imgtempomodal.imagen1,
-                    imagen2: imgtempomodal.imagen2,
-                    imagen3: URLAWS+"sitePages/" + imagen
-                })
+                imgtempomodal.imagen3=URLAWS+"sitePages/" + imagen
+              
             }
             setModalupIMG(false)
             imagenesReferencias(imagen)
@@ -269,8 +261,9 @@ const AddRoute = () => {
 
     }
     const addNewPaso = async () => {
-        await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
-        await obtenerRuta()
+      await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
+    
+    await obtenerRuta()
     }
 
     //alert methods-----------------------------------------------------------------------
@@ -492,14 +485,14 @@ const AddRoute = () => {
 
 
                                             <img className="card-img-top" src={
-                                                ruta?.img_principal == ''
+                                                imgprincipal.img_principal == ''
                                                     ? logo2
-                                                    : ruta?.img_principal
+                                                    : imgprincipal.img_principal
                                             }
                                                 alt="Card image cap"
 
                                                 onClick={
-                                                    ruta?.img_principal == ''
+                                                    imgprincipal.img_principal == ''
                                                         ? (e) => {
                                                             setModalupIMG(true)
                                                             setId(0)
@@ -525,15 +518,7 @@ const AddRoute = () => {
 
                                                     <Col>
                                                         <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => {
-                                                            setruta({
-                                                                id_punto_a: ruta!.id_punto_a,
-                                                                id_punto_b: ruta!.id_punto_b,
-                                                                estado: ruta!.estado,
-                                                                img_principal: '',
-                                                                imagenes: ruta!.imagenes,
-                                                                pasos: ruta!.pasos,
-
-                                                            })
+                                                           imgprincipal.img_principal=''
 
                                                         }}></Link>
                                                     </Col>
