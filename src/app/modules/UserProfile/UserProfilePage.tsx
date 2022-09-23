@@ -30,6 +30,7 @@ const UserProfilePage = () => {
     const [roles, setRoles] = useState<roleManager[]>([])
     //console.log("roles: ", roles);
     const [existUsers, setExistUsers] = useState(false)
+    const [existRoles, setExistRoles] = useState(false)
     const [dataUser, setDataUser] = useState({
         email: '',
         name: '',
@@ -48,22 +49,23 @@ const UserProfilePage = () => {
         email: '',
     })
 
+
+
     //TODO: get roles
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
+        setExistRoles(true)
     }
     // console.log(getRoles())   
+    console.log("roles: ", roles);
 
-    useEffect(() => {
-        getRoles()
-    }, [])
+    //esto me retorna el email del usuario con el que estoy logueado  
 
-    //esto me retorna el email del usuario con el que estoy logueado 
 
     const getEmail = async () => {
-         Auth.currentAuthenticatedUser().then((user) => {
-            const filter = roles.filter((item) => { return user.attributes['custom:role'] === item.nombre })
+        getRoles()
+        Auth.currentAuthenticatedUser().then((user) => {
             setDataUser({
                 email: user.attributes.email,
                 name: user.attributes.name,
@@ -71,15 +73,22 @@ const UserProfilePage = () => {
                 lastname: user.attributes['custom:lastname'],
                 imageProfile: user.attributes['custom:imageProfile'],
                 role: user.attributes['custom:role'],
-                descripcion: filter[0].descripcion  
+                descripcion: ''
             })
-        }) 
-    }           
+            const filter = roles.filter((item) => user.attributes['custom:role'] === item.nombre)
+            setDataUser({
+                ...dataUser,
+                descripcion: filter[0].descripcion
+            })
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        getEmail()
+    }, [existRoles])
 
     // getEmail()
-    useEffect(() => {
-        getEmail()
-    }, [])
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         const inputName = e.target.name
