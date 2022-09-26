@@ -15,7 +15,7 @@ const Recursos = () => {
         const item: any = acceptedFiles.map((file : any ) => Object.assign(file, {
             preview: URL.createObjectURL(file)
           }))
-          uploadResource(item)
+          uploadResource(item[0], 1)
       }
     });
     const thumbs = allResources.map((file : any, index : number) => {
@@ -30,7 +30,7 @@ const Recursos = () => {
         return () => allResources.forEach((file : any)=> URL.revokeObjectURL(file.preview));
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
-    
+
     return (
         <Fragment>
             <Row>
@@ -46,7 +46,7 @@ const Recursos = () => {
                 </Col>
             </Row>
             
-            <PerfectScrollbar style={{ height: '200px', width: '485.px' }} className="min-tumnail px-4">
+            <PerfectScrollbar style={{ height: '200px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
                 <Row>
                     {thumbs}
                 </Row>

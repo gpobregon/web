@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useContext } from 'react'
 import { Card, Row, Col, ButtonGroup, Button, Image } from 'react-bootstrap'
 import { toAbsoluteUrl } from '../../../../../_metronic/helpers'
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -10,8 +10,7 @@ import ElementosWeb from './elementosWeb'
 import Recursos from './recursos'
 
 const Index = () => {
-    const [btnActive, setBtnActive] = useState(1)
-    const { setChangeTypeEdit, changeTypeEdit } = useContext(ContentContext)
+    const { setChangeTypeEdit, changeTypeEdit, setBtnActive, btnActive } = useContext(ContentContext)
     return (
         <Card className="content-section text-white">
             <Card.Body>

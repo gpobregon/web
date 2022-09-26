@@ -1,35 +1,30 @@
-import React, {useState, FC} from 'react'
+import {useState, FC} from 'react'
 import {Button, Modal, Form} from 'react-bootstrap'
-import * as util from 'util'
-import * as fs from 'fs'
 import * as AWS from 'aws-sdk'
-import * as dotenv from 'dotenv'
-import {uuid} from 'uuidv4'
-import swal from 'sweetalert'
 
-const S3_BUCKET = 'mcd-archivos/notificaciones'
-const REGION = 'us-east-1'
-
-AWS.config.update({
-    accessKeyId: 'AKIAT3ANXPJIKZ7AOACD',
-    secretAccessKey: '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',
-})
-
-const myBucket = new AWS.S3({
-    params: {Bucket: S3_BUCKET},
-    region: REGION,
-})
-
-const UploadImage: FC<any> = ({show, onClose, uploadImage}) => {
-    const [img, setImg] = useState('')
+const UpJson: FC<any> = ({show, onClose, uploadJson, url}) => {
     const [progress, setProgress] = useState(0)
     const [selectedFile, setSelectedFile] = useState(null)
     const [porcentajeCargado, setPorcetajeCargado] = useState(0)
+    const [json, setJson] = useState('')
+
+    const S3_BUCKET = 'mcd-archivos/' + url
+    const REGION = 'us-east-1'
+
+    AWS.config.update({
+        accessKeyId: 'AKIAT3ANXPJIKZ7AOACD',
+        secretAccessKey: '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',
+    })
+
+    const myBucket = new AWS.S3({
+        params: {Bucket: S3_BUCKET},
+        region: REGION,
+    })
+
     const handleFileInput = (e: any) => {
         setSelectedFile(e.target.files[0])
-        setImg(e.target.files[0].name)
+        setJson(e.target.files[0].name)
     }
-
     const uploadFile = (file: any) => {
         const params = {
             ACL: 'public-read',
@@ -44,7 +39,7 @@ const UploadImage: FC<any> = ({show, onClose, uploadImage}) => {
                 if (evt.loaded / evt.total === 1) {
                     await delay(3000)
                     setProgress(0)
-                    uploadImage(img) // return the name of the file to the parent component
+                    uploadJson(json) // return the name of the file to the parent component
                 } else {
                     setPorcetajeCargado(Math.round((evt.loaded / evt.total) * 100))
                     setProgress(1)
@@ -68,10 +63,10 @@ const UploadImage: FC<any> = ({show, onClose, uploadImage}) => {
         <>
             <Modal show={show} onHide={onClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{'Escoge Tu Imagen'}</Modal.Title>
+                    <Modal.Title>Selecciona el archivo de configuración</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Control type='file' onChange={handleFileInput} accept='image/*' />
+                    <Form.Control type='file' onChange={handleFileInput} accept='.json' />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant='secondary' onClick={onClose}>
@@ -86,7 +81,7 @@ const UploadImage: FC<any> = ({show, onClose, uploadImage}) => {
                             }}
                         >
                             {progress === 1
-                                ? 'Cargando Imagen... ' + porcentajeCargado + '%'
+                                ? 'Cargando archivo de configuración... ' + porcentajeCargado + '%'
                                 : 'Listo'}
 
                             <i className={`bi-check2 text-white fs-3`}></i>
@@ -98,4 +93,4 @@ const UploadImage: FC<any> = ({show, onClose, uploadImage}) => {
     )
 }
 
-export default UploadImage
+export default UpJson

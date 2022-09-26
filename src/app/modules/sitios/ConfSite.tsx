@@ -188,6 +188,7 @@ const ConfSite = () => {
   async function postSite(sitee: any) {
     if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != ''&& site.portada_path != '') {
       const sit: any = await postData(sitesMethod + "/add", sitee)
+      navigate(`/template/movil/${site.id_sitio}`)
     } else {
       alertNotNullInputs()
     }
@@ -501,7 +502,6 @@ const ConfSite = () => {
                         style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoX == '' ? '' : site.geoX}
                         onChange={(e) => {
-                          console.log(validateStringSoloNumeros(e.target.value))
                           if(validateStringSoloNumeros(e.target.value)){
                           setSite({
                             id_sitio: site.id_sitio,
@@ -533,6 +533,7 @@ const ConfSite = () => {
                         style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoY == '' ? '' : site.geoY}
                         onChange={(e) => {
+                          if(validateStringSoloNumeros(e.target.value)){
                           setSite({
                             id_sitio: site.id_sitio,
                             nombre: site.nombre,
@@ -550,6 +551,7 @@ const ConfSite = () => {
                             publicado: site.publicado,
                             oculto: site.oculto,
                           })
+                        }
                         }}
                       />
                       <hr style={{ position: 'relative', top: '-20px' }}></hr>
@@ -564,6 +566,7 @@ const ConfSite = () => {
                   style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                   value={site.ubicacion != '' ? site.ubicacion : ''}
                   onChange={(e) => {
+                    if(validateStringSinCaracteresEspeciales(e.target.value)){
                     setSite({
                       id_sitio: site.id_sitio,
                       nombre: site.nombre,
@@ -581,6 +584,7 @@ const ConfSite = () => {
                       publicado: site.publicado,
                       oculto: site.oculto,
                     })
+                  }
                   }}
                   ></input>
                 <hr style={{ position: 'relative', top: '-20px' }}></hr>
@@ -622,7 +626,7 @@ const ConfSite = () => {
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={`/template/movil/${site.id_sitio}`}>
+               
                         <Button
                           onClick={() => {
 
@@ -636,7 +640,7 @@ const ConfSite = () => {
                           {' '}
                           <i className='fa-solid fa-pencil' ></i> Crear
                         </Button>
-                      </Link>
+                      
                     </div>
                   </div>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>

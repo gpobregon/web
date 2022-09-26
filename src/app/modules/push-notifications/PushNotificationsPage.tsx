@@ -184,7 +184,6 @@ const PushNotificationsPage = () => {
             setTimeout(chooseGetNotifications, 1000)
             setTimeout(chooseGetNotifications, 2000)
             setTimeout(chooseGetNotifications, 3000)
-
         } else {
             let notificationObj = {
                 nombre: notification.nombre,
@@ -498,7 +497,7 @@ const PushNotificationsPage = () => {
                                         </td>
                                         <td className='text-muted' style={{width: '200px'}}>
                                             {moment(notification.fecha_hora_programada).format(
-                                                'DD/MM/YYYY hh:mm'
+                                                'DD/MM/YYYY HH:mm'
                                             )}
                                         </td>
                                         <td style={{width: '50px'}}>
