@@ -435,7 +435,7 @@ const animatedComponents = makeAnimated()
                                 ></i>
 
 
-                                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></i>
+                                {/* <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></i> */}
                             </ul>
                         </div>
                     </div>
