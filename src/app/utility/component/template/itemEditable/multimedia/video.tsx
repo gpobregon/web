@@ -42,7 +42,7 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
             <div id={data.id} className={`editable ${data.textAling} w-100`}>
                 {
                     data.url ? ( 
-                    <video width="100%" height="240" controls autoPlay className={`rounded ${data.borderRadius} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
+                    <video width="100%" height="240" controls className={`rounded ${data.borderRadius} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
                         <source src={data.url}  type="video/mp4" />
                         <source src={data.url}  type="video/ogg" />
                         Your browser does not support the video tag.
