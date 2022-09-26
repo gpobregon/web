@@ -4,10 +4,15 @@ import UploadImage from './UploadImage'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
 import {URLAWS} from '../../../services/api'
+import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+
+import { initializeApp } from 'firebase-admin/app';
 
 const NewNotification: FC<any> = ({
     showCardAddNotification,
     toggleCardAddNotification,
+    notification,
+    setNotification,
     addNotification,
 }) => {
     const [scheduleNotification, setScheduleNotification] = useState(false)
@@ -29,20 +34,11 @@ const NewNotification: FC<any> = ({
         }
     }
 
-    let [notification, setNotification] = useState({
-        nombre: '',
-        descripcion: '',
-        imagen_path: '',
-        fecha_hora_programada: dateNow,
-        tipo: 0,
-        estado: 1,
-    })
-
     const uploadImage = async (image: string) => {
         setNotification({
             nombre: notification.nombre,
             descripcion: notification.descripcion,
-            imagen_path: URLAWS + image,
+            imagen_path: `${URLAWS}notificaciones/${image}`,
             fecha_hora_programada: notification.fecha_hora_programada,
             tipo: notification.tipo,
             estado: 1,
@@ -136,14 +132,16 @@ const NewNotification: FC<any> = ({
                             name='titleNotification'
                             placeholder='Ej. Nueva Actualización'
                             onChange={(e) => {
-                                setNotification({
-                                    nombre: e.target.value,
-                                    descripcion: notification.descripcion,
-                                    imagen_path: notification.imagen_path,
-                                    fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setNotification({
+                                        nombre: e.target.value,
+                                        descripcion: notification.descripcion,
+                                        imagen_path: notification.imagen_path,
+                                        fecha_hora_programada: notification.fecha_hora_programada,
+                                        tipo: 0,
+                                        estado: 1,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -158,14 +156,16 @@ const NewNotification: FC<any> = ({
                             placeholder='Escribe una breve descripción'
                             style={{height: '100px'}}
                             onChange={(e) => {
-                                setNotification({
-                                    nombre: notification.nombre,
-                                    descripcion: e.target.value,
-                                    imagen_path: notification.imagen_path,
-                                    fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setNotification({
+                                        nombre: notification.nombre,
+                                        descripcion: e.target.value,
+                                        imagen_path: notification.imagen_path,
+                                        fecha_hora_programada: notification.fecha_hora_programada,
+                                        tipo: 0,
+                                        estado: 1,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -216,7 +216,7 @@ const NewNotification: FC<any> = ({
                                 nombre: '',
                                 descripcion: '',
                                 imagen_path: '',
-                                fecha_hora_programada: dateNow,
+                                fecha_hora_programada: '',
                                 tipo: 1,
                                 estado: 1,
                             })
@@ -244,15 +244,6 @@ const NewNotification: FC<any> = ({
                                 })
 
                                 addNotification(notification)
-
-                                setNotification({
-                                    nombre: '',
-                                    descripcion: '',
-                                    imagen_path: '',
-                                    fecha_hora_programada: dateNow,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
                             }}
                         >
                             <span className='menu-icon me-0'>
@@ -275,15 +266,6 @@ const NewNotification: FC<any> = ({
                                 })
 
                                 addNotification(notification)
-
-                                setNotification({
-                                    nombre: '',
-                                    descripcion: '',
-                                    imagen_path: '',
-                                    fecha_hora_programada: dateNow,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
                             }}
                         >
                             <span className='menu-icon me-0'>

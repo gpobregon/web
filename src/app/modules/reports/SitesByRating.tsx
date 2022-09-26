@@ -29,7 +29,7 @@ const customStyles = {
     }),
     option: (base: any, state: any) => ({
         ...base,
-        background: state.isFocused ? '#7239ea' : '#323248',
+        background: state.isFocused ? '#009EF7' : '#323248',
         color: state.isFocused ? '#fff' : '#92929F',
         padding: 10,
     }),
@@ -146,9 +146,9 @@ const SitesByRating = ()=>{
                                 <Form.Label>Calificacion:</Form.Label> 
                                 <br/>
                                 <i className="bi bi-emoji-angry " style={{fontSize: 30, cursor: 'pointer', color: '#009EF7' }}></i>  
-                                <i className="bi bi-emoji-frown" style={{fontSize: 30, paddingLeft: 40, cursor: 'pointer'  }} ></i> 
-                                <i className="bi bi-emoji-smile" style={{fontSize: 30, paddingLeft: 40, cursor: 'pointer'  }} ></i> 
-                                <i className="bi bi-emoji-laughing" style={{fontSize: 30, paddingLeft: 40, cursor: 'pointer'  }} ></i>
+                                <i className="bi bi-emoji-frown" style={{fontSize: 30, paddingLeft: 20, cursor: 'pointer'  }} ></i> 
+                                <i className="bi bi-emoji-smile" style={{fontSize: 30, paddingLeft: 20, cursor: 'pointer'  }} ></i> 
+                                <i className="bi bi-emoji-laughing" style={{fontSize: 30, paddingLeft: 20, cursor: 'pointer'  }} ></i>
                             </Form.Group>
                         </Col>  
                         

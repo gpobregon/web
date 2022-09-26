@@ -29,6 +29,7 @@ type datosPuntoInteres = {
     estado: boolean
     es_visible: boolean
     publicado: boolean
+    nombreSala: string
 }
 type id_punto_a = {
     id_punto_a: number
@@ -55,13 +56,16 @@ const SalaRutas: FC<id_punto_a> = (props) => {
         estado: 1,
     })
     const getRutas = async () => {
+        try{
         const data: any = await postData(getRoutefInterest, { id_punto_a: props.id_punto_a });
         setRutas(data as any[])
-
         if (data.length === 0) {
             setRutas([{ id_punto: 0 }])
         }
-        console.log(data);
+        }catch(e:any){
+            console.log(e.message)
+        }
+        // console.log(data);
         // for (let i = 0; i < puntoInteres.length; i++) {
         //     for (let j = 0; j < data.length; j++) {
         //         if (puntoInteres[i].id_punto === data[j].id_punto) {
@@ -78,14 +82,14 @@ const SalaRutas: FC<id_punto_a> = (props) => {
 
 
         // }
-        console.log(puntoInteres);
+        // console.log(puntoInteres);
 
     }
 
     const getSalas = async () => {
         const rooms: any = await postData(RoomsMethod, { id_sitio: props.id_sitio })
         await getRutas()
-        console.log(rooms);
+        // console.log(rooms);
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
         // setVistaPrevia(false)
@@ -94,16 +98,16 @@ const SalaRutas: FC<id_punto_a> = (props) => {
         setPuntoInteres(interes)
         getRutas()
     }
-    const deleteRoom = (id: number, longitud: number) => {
+    const deleteRoom = (nombre:string,id: number, longitud: number) => {
         if (longitud > 0) {
             swal({
                 icon: "error",
-                title: "¡Error al Eliminar Sala" + id + "!",
+                title: "¡Error al Eliminar Sala: \n" + nombre + "!",
                 text: "No se puede eliminar una sala con puntos de interés",
             });
         } else {
             swal({
-                title: "¿Estas seguro de Eliminar Sala " + id + "?",
+                title: "¿Estas seguro de Eliminar Sala " + nombre + "?",
                 icon: "warning",
                 buttons: ["No", "Sí"],
 
@@ -166,9 +170,28 @@ const SalaRutas: FC<id_punto_a> = (props) => {
 
     }
     const eliminarRuta = async (id: number) => {
-        await postData(deleteRuta, { id_punto_a: props.id_punto_a, id_punto_b: id })
 
-        getSalas();
+        swal({
+            title: "¿Estas seguro de Eliminar Ruta ?",
+            icon: "warning",
+            buttons: ["No", "Sí"],
+
+        }).then(async res => {
+            if (res) {
+                await postData(deleteRuta, { id_punto_a: props.id_punto_a, id_punto_b: id })
+                setPuntoInteres([])
+                setRooms([])
+                getRutas();
+                getSalas();
+                swal({
+                    text: "Se elimino con éxito",
+                    icon: "success",
+                    timer: 2000,
+
+                })
+            }
+        });
+
     }
 
 
@@ -195,18 +218,18 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                             for (let i = 0; i < temporal.length; i++) {
                                                 for (let j = 0; j < rutas.length; j++) {
                                                     if (temporal[i].id_punto === rutas[j].id_punto) {
-                                    
+
                                                         temporal[i].rutaActiva = true
                                                     } else {
                                                         if (temporal[i].rutaActiva) {
-                                    
+
                                                         } else {
                                                             temporal[i].rutaActiva = false
                                                         }
                                                     }
                                                 }
-                                    
-                                    
+
+
                                             }
                                             seteatPuntoInteres(temporal);
                                             setIdSala(sala.id_sala);
@@ -217,117 +240,16 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                             {sala.nombre}
 
                                         </Button>
-                                        <Button variant="outline-dark" size="sm"
-                                            onClick={() => {
-                                                setupdateRoom({
-                                                    id_sala: sala.id_sala,
-                                                    id_sitio: upRoom.id_sitio,
-                                                    nombre: sala.nombre,
-                                                    descripcion: sala.descripcion,
-                                                    tipo: true,
-                                                    estado: 1
-                                                })
-                                                setModalUpdateRoom(true)
-                                            }}
-                                            style={{ width: '5px', height: '40px' }} >
-                                            <i className='fa-solid fa-pencil '
-                                                style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            </i>
-                                        </Button>
-                                        <Button variant="outline-dark" size="sm"
-                                            onClick={() => { deleteRoom(sala.id_sala, sala.points_of_interest.length) }}
-                                            style={{ width: '5px', height: '40px' }} >
-                                            <i className='fa-solid fa-xmark '
-                                                style={{ color: '#92929F', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            </i>
-                                        </Button>
+                                        
                                     </>
 
 
                                 ))
                                 }
-                                <Button variant="outline-dark" size="sm" onClick={() => setModalAddRoom(true)}>
-                                    Nueva Sala
-                                    <i
-                                        className='fa-solid bi-plus '
-                                        id='center2'
-                                        onClick={() => {
-                                        }}
-                                        style={{ color: '#92929F', fontSize: '20px', marginTop: '-5px' }}
-                                    ></i>
-                                </Button>
+                               
                             </div>
                             <hr style={{ position: 'relative' }}></hr>
                             <br></br>
-
-
-
-
-                            {/* <div className="list-container">
-
-
-
-                                <div className='row'>
-                                    <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-start'>
-
-                                        <Card style={{ display: 'flex', padding: 30, height: 15, justifyContent: 'center', flexDirection: 'column', }}>
-                                            <Card.Title className='text-center' style={{ flexDirection: 'row' }}>
-
-                                            </Card.Title>
-                                            <Card.Subtitle className="text-white" style={{ alignItems: 'flex-start', paddingLeft: 10, marginLeft: '75px' }} >punto de interes</Card.Subtitle>
-                                            <Card.Subtitle className='text-muted' style={{ alignItems: 'flex-start', paddingLeft: 10, paddingTop: 5, marginLeft: '75px' }} >descripcion interes</Card.Subtitle>
-                                            <span className='menu-ico' style={{ left: 10, position: 'absolute' }}>
-
-                                                <i className={`bi bi-list`} style={{ fontSize: 20, marginRight: '10px' }}></i>
-                                                <Card.Img
-                                                    src="https://www.guatemala.com/fotos/2019/05/Finca-El-Espinero-Tecpan-Guatemala-885x500.jpg"
-
-                                                
-
-
-                                                    style={{ width: '25%', height: '25%', borderRadius: '10px' }}
-                                                    alt='...'
-                                                    className='card-img-top img1'
-                                                    onClick={() => {
-
-                                                    }}
-
-                                                />
-                                            </span>
-                                        </Card>
-                                    </div>
-                                    <div className='col-xs-12 col-md-12 col-lg-6 d-flex justify-content-end'>
-
-                                        <div id='center2'>
-                                            <ul className='nav justify-content-end'>
-                                                <Button className="btn btn-secondary " style={{ marginRight: '10px' }}>
-                                                    <i className="bi bi-signpost"></i>
-                                                    <i className="bi bi-signpost-split"></i>
-                                                    {'Editar Ruta'}
-
-
-                                                </Button>
-
-
-                                                <i className="bi-solid bi-trash3 background-button"
-                                                    id='center2'
-                                                    style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
-                                                    onClick={() => {
-                                                 
-
-                                                    }}
-                                                ></i>
-
-
-                                            </ul>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-
-
-                            </div> */}
 
                             <div className="list-container">
 
@@ -381,7 +303,7 @@ const SalaRutas: FC<id_punto_a> = (props) => {
 
                                                             <ul className='nav justify-content-end'>
                                                                 {
-                                                                    
+
                                                                     punto.rutaActiva === true ?
                                                                         <>
                                                                             <Button className="btn btn-secondary " style={{ marginRight: '10px' }}
@@ -391,7 +313,9 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                         state: {
                                                                                             id_punto_a: props.id_punto_a,
                                                                                             id_punto_b: punto.id_punto,
-                                                                                            interes: props.puntosIteres
+                                                                                            interes: props.puntosIteres,
+                                                                                            nombre_punto_a: props.puntosIteres.nombre,
+                                                                                            nombre_punto_b: punto.nombre,
                                                                                         }
                                                                                     })
                                                                                 }}>
@@ -420,7 +344,9 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                         state: {
                                                                                             id_punto_a: props.id_punto_a,
                                                                                             id_punto_b: punto.id_punto,
-                                                                                            interes: props.puntosIteres
+                                                                                            interes: props.puntosIteres,
+                                                                                            nombre_punto_a: props.puntosIteres.nombre,
+                                                                                            nombre_punto_b: punto.nombre,
                                                                                         }
                                                                                     })
                                                                                 }}>
@@ -434,25 +360,6 @@ const SalaRutas: FC<id_punto_a> = (props) => {
 
 
                                                             </ul>
-                                                            {/* <ul className='nav justify-content-end'>
-                                                            <Button className="btn btn-secondary " style={{ marginRight: '10px' }}>
-                                                                <i className="bi bi-signpost-split"></i>
-                                                                {'Editar Ruta'}
-                                                            </Button>
-
-
-                                                            <i className="bi-solid bi-trash3 background-button"
-                                                                id='center2'
-                                                                style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
-                                                                onClick={() => {
-                                                                    // console.log(punto.es_portada_de_sitio)
-
-                                                                }}
-                                                            ></i>
-
-
-                                                        </ul> */}
-
                                                         </div>
 
                                                     </div>
@@ -476,7 +383,6 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                             <Card className="text-center">
                                 <Card.Body>
                                     <Card.Title>Vista Previa de Sala</Card.Title>
-                                    {/* <Card.Img src={logo}/> */}
                                     <Card.Img src={imagen} />
                                 </Card.Body>
                             </Card>

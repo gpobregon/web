@@ -12,8 +12,15 @@ import Video from "./multimedia/video"
 import Audio from "./multimedia/audio"
 import Carousel from "./multimedia/carousel"
 import Image360 from "./multimedia/image360"
+import Picture from "./multimedia/image"
 
 import Event from "./informacion/event"
+// Web
+import Hero1 from "./web/hero/hero1"
+import Hero2 from "./web/hero/hero2"
+
+import Content1 from "./web/contenido/contenido1"
+import Content2 from "./web/contenido/contenido2"
 
 export interface CardProps {
   id: any
@@ -106,11 +113,18 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateE
       { data.type === 'url' && <Url removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'map' && <Map referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       
-      { data.type === 'video' && <Video referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'video' && <Video removeItem={removeItem} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'audio' && <Audio removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'carousel' && <Carousel referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'carousel' && <Carousel removeItem={removeItem} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'image-360' && <Image360 referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'event' && <Event />}
+      { data.type === 'image' && <Picture removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'event' && <Event removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+
+      { data.type === '1-hero' && <Hero1 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === '2-hero' && <Hero2 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+
+      { data.type === 'contenido1' && <Content1 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'contenido2' && <Content2 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
     </Fragment>
   )
 }

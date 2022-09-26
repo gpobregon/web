@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import Interes from "./components/sitios-interes/sala-interes";
 import logo from './upload-image_03.jpg';
 import UpImage from './components/upload-image';
+import {validateStringSinCaracteresEspeciales,validateStringSoloNumeros} from '../validarCadena/validadorCadena';
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
   item => ({ label: item, value: item })
 );
@@ -187,6 +188,7 @@ const ConfSite = () => {
   async function postSite(sitee: any) {
     if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != ''&& site.portada_path != '') {
       const sit: any = await postData(sitesMethod + "/add", sitee)
+      navigate(`/template/movil/${site.id_sitio}`)
     } else {
       alertNotNullInputs()
     }
@@ -248,7 +250,7 @@ const ConfSite = () => {
       ubicacion: site.ubicacion,
       geoX: site.geoX,
       geoY: site.geoY,
-      portada_path: URLAWS + imagen,
+      portada_path: URLAWS +"sitePages/"+ imagen,
       estado: site.estado,
       creado: site.creado,
       editado: site.editado,
@@ -263,6 +265,8 @@ const ConfSite = () => {
     }
   };
   const [modalupimg, setModalupIMG] = useState(false)
+
+  
 
   return (
     <>
@@ -368,7 +372,7 @@ const ConfSite = () => {
                   id='center2'
                   style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}
                 ></i>
-                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}></i>
+                {/* <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#4F4B4B', display: 'flex', marginRight: '4px' }}></i> */}
               </ul>
             </div>
           </div>
@@ -416,6 +420,7 @@ const ConfSite = () => {
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
                           to={''}
+                          onClick={() => { setModalupIMG(true)}}
                         ></Link>
                       </Col>
                       <Col>
@@ -448,7 +453,7 @@ const ConfSite = () => {
                 </div>
               </div>
 
-              <div className='col-xs-12 col-md-4 col-lg-4'>
+              <div className='col-xs-12 col-md-6 col-xl-4'>
                 <br></br>
 
                 <div id='is-relative'>
@@ -460,6 +465,9 @@ const ConfSite = () => {
                     value={site.nombre == '' ? '' : site.nombre}
                     style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                     onChange={(e) => {
+
+                     console.log( validateStringSinCaracteresEspeciales(e.target.value))
+                     if(validateStringSinCaracteresEspeciales(e.target.value)){
                       setSite({
                         id_sitio: site.id_sitio,
                         nombre: e.target.value,
@@ -477,6 +485,7 @@ const ConfSite = () => {
                         publicado: site.publicado,
                         oculto: site.oculto,
                       })
+                    }
                     }}
 
 
@@ -488,12 +497,12 @@ const ConfSite = () => {
                     <div className='col-6'>
                       <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoX</label>
                       <input
-                        type='number'
-                        pattern='[0-9]*'
+                       type='text'
                         className='form-control'
                         style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoX == '' ? '' : site.geoX}
                         onChange={(e) => {
+                          if(validateStringSoloNumeros(e.target.value)){
                           setSite({
                             id_sitio: site.id_sitio,
                             nombre: site.nombre,
@@ -511,6 +520,7 @@ const ConfSite = () => {
                             publicado: site.publicado,
                             oculto: site.oculto,
                           })
+                        }
                         }}
                       />
                       <hr style={{ position: 'relative', top: '-20px' }}></hr>
@@ -518,12 +528,12 @@ const ConfSite = () => {
                     <div className='col-6'>
                       <label style={{ fontSize: '14px', color: '#FFFFFF' }}>GeoY</label>
                       <input
-                        type='number'
-                        pattern='[0-9]*'
+                        type='text'
                         className='form-control'
                         style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                         value={site.geoY == '' ? '' : site.geoY}
                         onChange={(e) => {
+                          if(validateStringSoloNumeros(e.target.value)){
                           setSite({
                             id_sitio: site.id_sitio,
                             nombre: site.nombre,
@@ -541,12 +551,12 @@ const ConfSite = () => {
                             publicado: site.publicado,
                             oculto: site.oculto,
                           })
+                        }
                         }}
                       />
                       <hr style={{ position: 'relative', top: '-20px' }}></hr>
                     </div>
                   </div>
-                </div>
                 <br />
                 <label style={{ fontSize: '14px', color: '#FFFFFF' }}>Ubicación</label>
                 <br></br>
@@ -556,6 +566,7 @@ const ConfSite = () => {
                   style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                   value={site.ubicacion != '' ? site.ubicacion : ''}
                   onChange={(e) => {
+                    if(validateStringSinCaracteresEspeciales(e.target.value)){
                     setSite({
                       id_sitio: site.id_sitio,
                       nombre: site.nombre,
@@ -573,8 +584,9 @@ const ConfSite = () => {
                       publicado: site.publicado,
                       oculto: site.oculto,
                     })
+                  }
                   }}
-                ></input>
+                  ></input>
                 <hr style={{ position: 'relative', top: '-20px' }}></hr>
                 <br></br>
                 <label>Etiquetas</label>
@@ -588,10 +600,11 @@ const ConfSite = () => {
                     isMulti
                     options={categorys}
                     onChange={handleChange}
-                  ></Select>
+                    ></Select>
+                    </div>
                 </div>
               </div>
-              <div className='col-xs-12 col-md-5 col-lg-5 mb-5'>
+              <div className='col-xs-12 col-md-12 col-xl-5 mb-5'>
                 <div className='row mt-6 gx-10 m-auto'>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>
                     <div className='row'>
@@ -613,7 +626,7 @@ const ConfSite = () => {
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={`/template/movil/${site.id_sitio}`}>
+               
                         <Button
                           onClick={() => {
 
@@ -627,7 +640,7 @@ const ConfSite = () => {
                           {' '}
                           <i className='fa-solid fa-pencil' ></i> Crear
                         </Button>
-                      </Link>
+                      
                     </div>
                   </div>
                   <div className=' col-md-6 col-xs-12 col-lg-6'>

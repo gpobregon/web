@@ -7,7 +7,7 @@
     "@aws-amplify/ui-react": "^3.1.0",
     "@formatjs/intl-pluralrules": "4.3.3",
     "@formatjs/intl-relativetimeformat": "10.0.1",
-    "@fortawesome/fontawesome-free": "^6.1.1",
+    "@fortawesome/fontawesome-free": "^6.2.0",
     "@fullcalendar/core": "5.8.0",
     "@fullcalendar/daygrid": "^5.11.2",
     "@fullcalendar/interaction": "^5.11.2",
@@ -25,6 +25,7 @@
     "chart.js": "3.7.1",
     "clsx": "1.1.1",
     "dom-to-image": "^2.6.0",
+    "firebase-admin": "^11.0.1",
     "formik": "2.2.9",
     "html-to-image": "^1.10.4",
     "immutability-helper": "^3.1.1",
@@ -51,6 +52,7 @@
     "react-dom": "18.0.0",
     "react-dropzone": "^14.2.2",
     "react-hook-form": "^7.34.0",
+    "react-image-crop": "^10.0.6",
     "react-inlinesvg": "3.0.0",
     "react-intl": "5.25.0",
     "react-multi-select-component": "^4.3.2",
@@ -100,8 +102,8 @@
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "rtl": "webpack --config webpack-rtl.config.js",
-    "aws-configure":"aws configure --profile mcd-demo",
-    "deploy":"aws s3 sync build/ s3://mcd-demo-cg --profile mcd-demo"
+    "aws-configure": "aws configure --profile mcd-demo",
+    "deploy": "aws s3 sync build/ s3://mcd-demo-cg --profile mcd-demo"
   },
   "eslintConfig": {
     "extends": [

@@ -11,6 +11,10 @@ import {
     postData,
 } from '../../../services/api'
 import {CatalogLanguage} from '../../../models/catalogLanguage'
+import {
+    validateStringSinCaracteresEspeciales,
+    validateStringSoloNumeros,
+} from '../../validarCadena/validadorCadena'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -35,7 +39,7 @@ const customStyles = {
     }),
     option: (base: any, state: any) => ({
         ...base,
-        background: state.isFocused ? '#7239ea' : '#323248',
+        background: state.isFocused ? '#009EF7' : '#323248',
         color: state.isFocused ? '#fff' : '#92929F',
         padding: 10,
     }),
@@ -56,17 +60,35 @@ const customStyles = {
 }
 
 const options = [
-    {value: 'car-front', label: 'car-front'},
-    {value: 'book', label: 'book'},
-    {value: 'apple', label: 'apple'},
+    {value: 'binoculars', label: 'binoculars'},
+    {value: 'building', label: 'building'},
+    {value: 'camera', label: 'camera'},
+    {value: 'car', label: 'car'},
+    {value: 'church', label: 'church'},
+    {value: 'cloud-sun', label: 'cloud-sun'},
+    {value: 'film', label: 'film'},
+    {value: 'graduation-cap', label: 'graduation-cap'},
+    {value: 'hospital', label: 'hospital'},
+    {value: 'landmark', label: 'landmark'},
+    {value: 'life-ring', label: 'life-ring'},
+    {value: 'map-marker-alt', label: 'map-marker-alt'},
+    {value: 'monument', label: 'monument'},
+    {value: 'mountain', label: 'mountain'},
+    {value: 'mug-hot', label: 'cup-hot'},
+    {value: 'plane', label: 'plane'},
+    {value: 'paint-brush', label: 'paint-brush'},
+    {value: 'palette', label: 'palette'},
+    {value: 'puzzle-piece', label: 'puzzle-piece'},
+    {value: 'seedling', label: 'seedling'},
+    {value: 'shopping-bag', label: 'shopping-bag'},
+    {value: 'store', label: 'store'},
     {value: 'tree', label: 'tree'},
-    {value: 'bank', label: 'bank'},
-    {value: 'airplane', label: 'airplane'},
+    {value: 'umbrella-beach', label: 'umbrella-beach'},
 ]
 
 const optionTemplate = (option: any) => (
     <span>
-        <i className={`bi-${option.value} text-white`} style={{fontSize: 16}}></i>
+        <i className={`fa-solid fa-${option.value} text-white fa-fw fa-xl`}></i>
         {`ㅤ${option.label}`}
     </span>
 )
@@ -78,7 +100,7 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
+const AddCatalogo: FC<any> = ({show, onClose, tag, setTag, addTag}) => {
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
     const getLanguages = async () => {
@@ -94,14 +116,6 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
         value: language.id_lenguaje,
         label: language.nombre,
     }))
-
-    const [tag, setTag] = useState({
-        id_categoria: 0,
-        nombre: '',
-        icono: '',
-        estado: 1,
-        id_lenguaje: 1,
-    })
 
     const handleChangeIcon = (event: any) => {
         setTag({
@@ -135,15 +149,18 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                         <Form.Control
                             type='text'
                             name='nombre'
+                            maxLength={20}
                             className={'mb-4'}
                             onChange={(e) => {
-                                setTag({
-                                    id_categoria: tag.id_categoria,
-                                    nombre: e.target.value,
-                                    icono: tag.icono,
-                                    estado: tag.estado,
-                                    id_lenguaje: tag.id_lenguaje,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setTag({
+                                        id_categoria: tag.id_categoria,
+                                        nombre: e.target.value,
+                                        icono: tag.icono,
+                                        estado: tag.estado,
+                                        id_lenguaje: tag.id_lenguaje,
+                                    })
+                                }
                             }}
                         ></Form.Control>
                     </Form.Group>
@@ -171,20 +188,25 @@ const AddCatalogo: FC<any> = ({show, onClose, addTag}) => {
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>
-                        {'Cancelar '}
-                        <i className={`bi-x text-white fs-3`}></i>
-                    </Button>
                     <Button
-                        variant='primary'
+                        variant='secondary'
                         onClick={() => {
                             setTag({
                                 id_categoria: 0,
                                 nombre: '',
                                 icono: '',
                                 estado: 1,
-                                id_lenguaje: 1,
+                                id_lenguaje: 0,
                             })
+                            onClose()
+                        }}
+                    >
+                        {'Cancelar '}
+                        <i className={`bi-x text-white fs-3`}></i>
+                    </Button>
+                    <Button
+                        variant='primary'
+                        onClick={() => {
                             addTag(tag)
                         }}
                     >

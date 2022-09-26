@@ -24,9 +24,16 @@ export function AsideMenuMain() {
       />
       <AsideMenuItem
         to='/notificaciones-push'
-        title='Alertas'
-        bsTitle='Alertas'
+        title='Notificaciones'
+        bsTitle='Notificaciones'
         fontIcon='bi bi-bell'
+        className='py-3'
+      /> 
+      <AsideMenuItem
+        to='/offline'
+        title='Offline'
+        bsTitle='Offline'
+        fontIcon='bi bi-wifi-off'
         className='py-3'
       />
       <AsideMenuItem
@@ -42,7 +49,7 @@ export function AsideMenuMain() {
         bsTitle='Usuarios'
         fontIcon='bi bi-people'
         className='py-3'
-      />
+      /> 
     </>
   )
 }

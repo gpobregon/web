@@ -1,43 +1,36 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useContext } from 'react'
 import { Row, Col, InputGroup, Form } from 'react-bootstrap'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import {useDropzone} from 'react-dropzone';
 import AudioResource from '../../../../utility/component/resource/audio';
-import Image from '../../../../utility/component/template/item/recursos/image'
-import { testRecursos } from '../../../../utility/global/data'
-const Recursos = () => {
+import Image from '../../../../utility/component/resource/image'
+import { ContentContext } from '../context'
 
-    const [files, setFiles] = useState<any>([])
+const Recursos = () => {
+    const { uploadResource, allResources, destroyOneResource } = useContext(ContentContext)
+
     const {getRootProps, getInputProps} = useDropzone({
-      accept: {
-        'image/*': []
-      },
+      accept: { 'image/*': [], 'video/*': [], 'audio/*': [] },
       onDrop: (acceptedFiles : any) => {
         const item: any = acceptedFiles.map((file : any ) => Object.assign(file, {
             preview: URL.createObjectURL(file)
           }))
-        setFiles([...files, item ]);
+          uploadResource(item[0], 1)
       }
     });
-    const thumbs = files.map((file : any, index : number) => (
-        <Col key={index} lg={6}>
-            {
-                file[0] ? <Image data={file[0]} /> : <AudioResource item={file} />
-            }
-            
-        </Col>
-    ));
+    const thumbs = allResources.map((file : any, index : number) => {
+        return (
+            <Col key={index} lg={6}>
+                { file.tipo.includes('image/') ? <Image item={file}  destroyOneResource={destroyOneResource}/> : <AudioResource item={file}  destroyOneResource={destroyOneResource} /> }
+            </Col>
+        )
+    })
 
     useEffect(() => {
-        // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-        return () => files.forEach((file : any)=> URL.revokeObjectURL(file.preview));
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+        return () => allResources.forEach((file : any)=> URL.revokeObjectURL(file.preview));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
-    
-    useEffect(() => {
-        setFiles(testRecursos)
-    },[])
-    console.log(testRecursos)
+
     return (
         <Fragment>
             <Row>
@@ -53,17 +46,14 @@ const Recursos = () => {
                 </Col>
             </Row>
             
-            <PerfectScrollbar style={{ height: '200px' }} className="min-tumnail">
+            <PerfectScrollbar style={{ height: '200px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
                 <Row>
                     {thumbs}
                 </Row>
             </PerfectScrollbar>
             
             <Row className="pt-5">
-                <Col 
-                    // style={{ border: '1px dashed #009EF7', padding: '50px' }} 
-                    // className="text-center"
-                >
+                <Col>
                     <section className="w-100">
                         <div {...getRootProps({className: 'dropzone'})}>
                             <input {...getInputProps()} />
