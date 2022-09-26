@@ -4,11 +4,14 @@ import swal from "sweetalert";
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Paso } from "../../../../models/paso";
 import { Route } from "../../../../models/ruta";
-import { addImagePrincipal, addImages, addPasos, ObtenerRuta, postData, URLAWS } from "../../../../services/api";
+import { addImagePrincipal, addImages, addPasos, getData, languagesMethod, ObtenerRuta, postData, URLAWS } from "../../../../services/api";
 import logo from '../../upload-image_03.jpg';
 import logo2 from '../../upload-image-h_04.jpg';
 import UpImage from "../upload-image";
 import { Imagen } from "../../../../models/imagenes";
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated'
+import { CatalogLanguage } from "../../../../models/catalogLanguage";
 type datosPuntoInteres2 = {
     id_punto: number
     lenguajes: [
@@ -228,7 +231,17 @@ const AddRoute = () => {
 
 
     };
-
+    //Selecciona idoma de la guia
+    const [languages, setLanguages] = useState<CatalogLanguage[]>([])
+    const getLanguages = async () => {
+        const language: any = await getData(languagesMethod)
+        setLanguages(language.data as CatalogLanguage[])
+        // console.log(language)
+    }
+    const languagesOptions = languages?.map((language) => ({
+        value: language.id_lenguaje,
+        label: language.nombre,
+    }))
 
 
 
@@ -236,8 +249,54 @@ const AddRoute = () => {
         if (contador === 0) {
 
             obtenerRuta()
+            getLanguages()
         }
     }, [contador])
+
+//estilo select de idioma ==============================
+const animatedComponents = makeAnimated()
+    const customStyles = {
+        control: (base: any, state: any) => ({
+            ...base,
+            background: 'transparent',
+            borderColor: state.isFocused ? '#474761' : '#323248',
+            borderRadius: 6.175,
+            color: '#92929F',
+            '&:hover': {
+                borderColor: '#323248',
+            },
+            '&:focus': {
+                borderColor: '#323248',
+            },
+            '&:active': {
+                borderColor: '#323248',
+            },
+        }),
+        input: (base: any, state: any) => ({
+            ...base,
+            color: '#92929f',
+        }),
+        option: (base: any, state: any) => ({
+            ...base,
+            background: state.isFocused ? '#009EF7' : '#323248',
+            color: state.isFocused ? '#fff' : '#92929F',
+            padding: 10,
+        }),
+        singleValue: (base: any) => ({
+            ...base,
+            color: '#fff',
+        }),
+        menu: (base: any) => ({
+            ...base,
+            borderRadius: 6.175,
+            background: '#323248',
+        }),
+        menuList: (base: any) => ({
+            ...base,
+            padding: 0,
+            borderRadius: 6.175,
+        }),
+    }
 
     const telefonosHandler = async (e: any, idx: any) => {
         const nuevaDesc = e.target.value;
@@ -384,8 +443,21 @@ const AddRoute = () => {
                 </div>
             </div>
             <br />
+            <div className='row'>
+              
+            <div className='col'>
             <h1 style={{ color: 'white', fontSize: '18px' }}>Configuración del sitio</h1>
             <h5 style={{ color: '#565674', fontSize: '14px' }}>Lista de Sitios - Configuración del Sitio</h5>
+            </div>
+            <div  className='col d-flex align-items-center justify-content-end'>
+            <Select
+              styles={customStyles}
+              components={animatedComponents}
+            options={languagesOptions}
+             placeholder={'Seleccione un lenguaje'}
+             />
+             </div>
+             </div>
             <br />
             <div className='row'>
                 <div className='card centrado'>

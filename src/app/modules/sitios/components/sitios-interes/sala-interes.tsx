@@ -96,7 +96,7 @@ const Interes: FC<id_sitio> = (props) => {
         const rooms: any = await postData(RoomsMethod, props)
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
-        console.log(rooms.salas)
+        // console.log(rooms.salas)
     }
 
     const seteatPuntoInteres = (interes: any) => {
@@ -612,40 +612,40 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 marginRight: '4px',
                                                             }}
                                                             onClick={(event) => {
-                                                                let lenaguajeDefault = ''
-                                                                for (
-                                                                    let i = 0;
-                                                                    i < languages.length;
-                                                                    i++
-                                                                ) {
-                                                                    for (
-                                                                        let j = 0;
-                                                                        j < punto.lenguajes.length;
-                                                                        j++
-                                                                    ) {
-                                                                        if (
-                                                                            languages[i]
-                                                                                .id_lenguaje ===
-                                                                            punto.lenguajes[j]
-                                                                                .id_lenguaje
-                                                                        ) {
+                                                                // let lenaguajeDefault = ''
+                                                                // for (
+                                                                //     let i = 0;
+                                                                //     i < languages.length;
+                                                                //     i++
+                                                                // ) {
+                                                                //     for (
+                                                                //         let j = 0;
+                                                                //         j < punto.lenguajes.length;
+                                                                //         j++
+                                                                //     ) {
+                                                                //         if (
+                                                                //             languages[i]
+                                                                //                 .id_lenguaje ===
+                                                                //             punto.lenguajes[j]
+                                                                //                 .id_lenguaje
+                                                                //         ) {
                                                                             // setLenaguajeDefault(languages[i].descripcion)
 
-                                                                            lenaguajeDefault =
-                                                                                languages[i].nombre
-                                                                        }
-                                                                    }
-                                                                }
-                                                                console.log(punto.lenguajes)
-                                                                console.log(lenaguajeDefault)
-                                                                const languageEscogido =
-                                                                    punto.lenguajes.map(
-                                                                        (language) => ({
-                                                                            value: language.id_lenguaje,
-                                                                            label: lenaguajeDefault,
-                                                                        })
-                                                                    )
-                                                                console.log(languageEscogido)
+                                                                //             lenaguajeDefault =
+                                                                //                 languages[i].nombre
+                                                                //         }
+                                                                //     }
+                                                                // }
+                                                                // console.log(punto.lenguajes)
+                                                                // console.log(lenaguajeDefault)
+                                                                // const languageEscogido =
+                                                                //     punto.lenguajes.map(
+                                                                //         (language) => ({
+                                                                //             value: language.id_lenguaje,
+                                                                //             label: lenaguajeDefault,
+                                                                //         })
+                                                                //     )
+                                                                // console.log(languageEscogido)
                                                                 navigate(
                                                                     '/sitios/edit-point-interes',
                                                                     {
