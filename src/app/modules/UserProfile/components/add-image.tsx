@@ -7,14 +7,13 @@ import * as dotenv from 'dotenv';
 import { uuid } from 'uuidv4';
 import swal from "sweetalert";
 
-const S3_BUCKET = 'mcd-backoffice-upload/fotoPerfiles';
-const REGION = 'us-east-2';
-
+const S3_BUCKET = 'mcd-archivos/fotoPerfiles';
+const REGION =  'us-east-1';
 
 
 AWS.config.update({
-    accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-    secretAccessKey: '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'
+    accessKeyId: 'AKIAT3ANXPJIKZ7AOACD',
+    secretAccessKey: '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'
 })
 
 const myBucket = new AWS.S3({
