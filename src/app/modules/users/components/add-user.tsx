@@ -16,7 +16,7 @@ import {
     addUserMethod,
     getData,
     getRolesMethod,
-    postData, 
+    postData,
 } from '../../../services/api'
 import { Amplify, Auth } from 'aws-amplify'
 import { awsconfig } from '../../../../aws-exports'
@@ -81,9 +81,9 @@ const animatedComponents = makeAnimated()
 
 
 const options = [
-    {value: 'Admnistrador', label: 'Administrador'},
-    {value: 'Editor', label: 'Editor'},
-    {value: 'Gestor', label: 'Gestor'},
+    { value: 'Admnistrador', label: 'Administrador' },
+    { value: 'Editor', label: 'Editor' },
+    { value: 'Gestor', label: 'Gestor' },
 ]
 
 const alertLlenar = async () => {
@@ -122,9 +122,15 @@ const AddUser: FC<any> = ({ show, onClose }) => {
         role: '',
         passwordConfirm: '',
         phoneNumber: '',
-        imageProfile: 'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
+        imageProfile: 'https://mcd-archivos.s3.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
     })
 
+    const [num, setNum] = useState('');
+
+    const handleNumChange = (event: any) => {
+        const limit = 4;
+        setNum(event.target.value.slice(0, limit));
+    };
 
 
 
@@ -323,9 +329,11 @@ const AddUser: FC<any> = ({ show, onClose }) => {
                                 <Form.Label>{'Teléfono'}</Form.Label>
                                 <Form.Control
                                     type='number'
+                                    pattern="/^-?\d+\.?\d*$/"
                                     autoComplete='off'
-                                    className='mb-4'
-                                    maxLength={8}
+                                    className='mb-4' 
+                                    min = "8"
+                                    max = "8"
                                     onChange={(e) => {
                                         if (validateStringPhoneNumber(e.target.value)) {
                                             setUser({

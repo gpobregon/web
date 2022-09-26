@@ -6,9 +6,13 @@ import MultimediaAttr from './multimedia/index'
 type Model = {
     editItem: any
     updateElement: (data : any) => void
+    drop2: any
+    editItemResource: any
+    uploadResource: any
+    setEditItemResource: (data: any) => void
 }
 
-const Index: FC<Model> = ({ editItem, updateElement }) => {
+const Index: FC<Model> = ({ editItem, updateElement, drop2, editItemResource, uploadResource, setEditItemResource }) => {
     const Texts = ["title", "paragraph", "list"]
     const Information = ["curious-fact", "regulation", "schedule", "calendar", "event"]
     const Multimedia = ["image", "video", "audio", "carousel", "image-360"]
@@ -23,7 +27,7 @@ const Index: FC<Model> = ({ editItem, updateElement }) => {
                 Information.includes(editItem.type) && <Informacion editItem={editItem} updateElement={updateElement} />
             }
             { 
-                Multimedia.includes(editItem.type) && <MultimediaAttr editItem={editItem} updateElement={updateElement} />
+                Multimedia.includes(editItem.type) && <MultimediaAttr setEditItemResource={setEditItemResource} editItem={editItem} updateElement={updateElement} drop2={drop2} editItemResource={editItemResource} uploadResource={uploadResource}/>
             }
             { 
                 Others.includes(editItem.type) && <Textos editItem={editItem} updateElement={updateElement} />

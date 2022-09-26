@@ -1,9 +1,21 @@
+import { useDrag } from "react-dnd"
+
 import { FC } from 'react'
 type Props = {
     item: any
     destroyOneResource: (id : number) => void
 }
 const AudioResource: FC<Props> = ({ item, destroyOneResource }) => {
+    const [{ isDragging }, drag] = useDrag(() => ({
+        type: "image",
+        item: { item },
+        collect: (monitor) => {
+          return({
+            isDragging: !!monitor.isDragging(),
+          })
+        }
+      }));
+
         let Icono 
         if (item.tipo.includes('audio')) {
             Icono = 'music-note'
@@ -11,7 +23,7 @@ const AudioResource: FC<Props> = ({ item, destroyOneResource }) => {
             Icono = 'film'
         }
     return (
-        <div className="bkg-dark content-icon rounded my-2 text-center">
+        <div style={{ border: isDragging ? "1px dashed #009EF7" : "0px" }} className="bkg-dark content-icon rounded my-2 text-center"  ref={drag}>
             <div className="icon-wrapper">
                 <i className={`bi bi-${Icono} fa-4x text-white`}></i>
             </div>
