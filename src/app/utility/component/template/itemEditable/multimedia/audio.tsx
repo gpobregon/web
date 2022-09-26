@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
 import { Menu, Item, useContextMenu } from "react-contexify";
-import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
 
 type Model = {
     data: any
@@ -16,14 +15,6 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
   
   const { show } = useContextMenu({ id: "menu-id" });  
   
-  const changeText = (e : any) => {
-        const edit = {
-          ...data,
-          text: e.target.value
-        }
-        updateElement(edit)
-    }
-  
     const destroyItem = ( e : any) => {
       removeItem(e.triggerEvent.target.id);
       setEditItem([])
@@ -31,21 +22,38 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
 
     return ( 
           <div
-            onClick={() => setEditItem(data)} 
-            onContextMenu={show}
             ref={referencia}
             data-handler-id={handlerId}
+            onClick={() => setEditItem(data)}
             className="d-flex cursor-grabbing"
           >
-            <div className="p-1 py-1 d-flex align-items-center">
-              <i className="bi bi-grip-vertical fa-2x"/>
+            <div 
+                className="p-1 py-1 d-flex align-items-center"
+                id={data.id}
+                onContextMenu={show} >
+              <i className="bi bi-grip-vertical fa-2x" id={data.id}  />
             </div>
-            <div id={data.id} className={`editable ${data.textAling} w-100`}>
-                <audio controls autoPlay id={data.id}>
-                    <source src={toAbsoluteUrl(data.url)} type="audio/ogg" />
-                    <source src="horse.mp3" type="audio/mpeg" />
+            <Menu id={"menu-id"} theme="dark" data-test={data}>
+              <Item onClick={(e : any) => destroyItem(e)}>
+                <div>
+                    <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
+                </div>
+              </Item>
+            </Menu>
+            <div className={`editable ${data.textAling} w-100`}>
+               {
+                data.url ? 
+                (<audio controls autoPlay>
+                    <source src={data.url} type="audio/ogg" />
+                    <source src={data.url} type="audio/mpeg" />
+                    <source src={data.url} type="audio/mp3" />
                         Su navegador no es compatible con el elemento de audio.
-                </audio>
+                </audio>) 
+                :
+                (<audio controls autoPlay >
+                  Su navegador no es compatible con el elemento de audio.
+                </audio>)
+               } 
             </div>
             <Menu id={"menu-id"} theme="dark" data-test={data}>
               <Item onClick={(e : any) => destroyItem(e)}>

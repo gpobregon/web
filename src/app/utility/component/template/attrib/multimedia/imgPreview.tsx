@@ -26,5 +26,6 @@ export async function imgPreview(
   }
 
   previewUrl = URL.createObjectURL(blob)
+
   return previewUrl
 }

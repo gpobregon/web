@@ -25,6 +25,7 @@ import PushNotificationsPage from '../modules/push-notifications/PushNotificatio
 import UserProfilePage from '../modules/UserProfile/UserProfilePage'
 import AddRoute from '../modules/sitios/components/rutas-sitios-interes/add-route'
 import OfflineManagement from '../modules/offline/OfflinePage';
+import Container from '../modules/Test/index'
 
 
 const PrivateRoutes = () => {
@@ -71,6 +72,7 @@ const PrivateRoutes = () => {
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
         <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
         <Route path='/sitios/add-route' element={<AddRoute />} />
+        <Route path='/test' element={<Container />} />
                 {/* Lazy Modules */}
                 {/* {/* <Route
                     path='crafted/pages/profile/*'

@@ -113,9 +113,9 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateE
       { data.type === 'url' && <Url removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'map' && <Map referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       
-      { data.type === 'video' && <Video referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'video' && <Video removeItem={removeItem} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'audio' && <Audio removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'carousel' && <Carousel referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'carousel' && <Carousel removeItem={removeItem} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'image-360' && <Image360 referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'image' && <Picture removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'event' && <Event removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}

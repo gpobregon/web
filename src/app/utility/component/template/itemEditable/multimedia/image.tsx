@@ -16,14 +16,6 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
   
   const { show } = useContextMenu({ id: "menu-id" });  
   
-  const changeText = (e : any) => {
-        const edit = {
-          ...data,
-          text: e.target.value
-        }
-        updateElement(edit)
-    }
-  
     const destroyItem = ( e : any) => {
       removeItem(e.triggerEvent.target.id);
       setEditItem([])
@@ -32,16 +24,12 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
     return ( 
           <div
             onClick={() => setEditItem(data)} 
-            onContextMenu={show}
             ref={referencia}
             data-handler-id={handlerId}
             className="d-flex cursor-grabbing"
           >
-            <div className="p-1 py-1 d-flex align-items-center">
-              <i className="bi bi-grip-vertical fa-2x"/>
-            </div>
-            <div id={data.id} className={`editable ${data.textAling} w-100`}>
-              <img src={toAbsoluteUrl("/media/png/picture.png")} alt="" className="w-50"/>
+            <div className="p-1 py-1 d-flex align-items-center" id={data.id} onContextMenu={show}>
+              <i className="bi bi-grip-vertical fa-2x" id={data.id}/>
             </div>
             <Menu id={"menu-id"} theme="dark" data-test={data}>
               <Item onClick={(e : any) => destroyItem(e)}>
@@ -50,6 +38,10 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
                 </div>
               </Item>
             </Menu>
+            <div  className={`editable ${data.textAling} w-100`}>
+              <img src={!data.url ? toAbsoluteUrl("/media/png/picture.png") : data.url } alt="" className="w-50"/>
+            </div>
+            
           </div>
     )
 }
