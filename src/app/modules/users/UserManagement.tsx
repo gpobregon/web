@@ -107,7 +107,7 @@ const UserManagement: FC<any> = ({ show }) => {
         role: '',
         passwordConfirm: '',
         phoneNumber: '',
-        imageProfile: 'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
+        imageProfile: 'https://mcd-archivos.s3.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
     })
 
 
@@ -164,7 +164,11 @@ const UserManagement: FC<any> = ({ show }) => {
             AttributesToGet: ['name', 'email', 'custom:role', 'custom:phoneNumber', 'custom:imageProfile'],
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => { 
+            AWS.config.update({
+                accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
+                secretAccessKey: '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'
+            })
             let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
             cognito.listUsers(params, (err, data) => {
                 if (err) {
@@ -181,7 +185,11 @@ const UserManagement: FC<any> = ({ show }) => {
         })
     }
 
-    const updateUsuarios = async () => {
+    const updateUsuarios = async () => { 
+        AWS.config.update({
+            accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
+            secretAccessKey: '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'
+        })
         let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
         console.log("cognito: ", cognito);
         try {

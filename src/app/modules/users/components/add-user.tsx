@@ -122,7 +122,7 @@ const AddUser: FC<any> = ({ show, onClose }) => {
         role: '',
         passwordConfirm: '',
         phoneNumber: '',
-        imageProfile: 'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
+        imageProfile: 'https://mcd-archivos.s3.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
     })
 
     const [num, setNum] = useState('');
