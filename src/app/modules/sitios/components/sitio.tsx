@@ -51,7 +51,7 @@ const Sitio: FC<sitio> = (props) => {
     }
 
     return (
-        <div className='col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12'>
+        <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12 col-xs-12'>
             <Card
                 style={{
                     backgroundColor: '#1e1e2d',

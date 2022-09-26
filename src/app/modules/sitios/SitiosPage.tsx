@@ -15,6 +15,8 @@ const SitiosPage = () => {
     const [estado, setEstado] = useState(true)
     const [up, setUp] = useState(true)
     const [cantidadSite, setCantidadSite] = useState(0)
+    const [optionSort, setOptionSort] = useState('Agregado recientemente')
+    const [resultIcon, setResultIcon] = useState('bi-sort-up')
     const search = (search: string) => {
         if (!search) {
             setFilterSites(sites)
@@ -56,6 +58,22 @@ const SitiosPage = () => {
         console.log(numDescending)
         setEstado(true)
         setUp(true)
+    }
+
+    const toggleOptionSort = () => {
+        if (optionSort == 'Agregado recientemente') {
+            const numAscending = [...sites].sort((a, b) => moment(a.creado).diff(b.creado))
+            setSites(numAscending)
+            setFilterSites(numAscending)
+            setOptionSort('Agregado anteriormente')
+            setResultIcon('bi-sort-down')
+        } else if (optionSort == 'Agregado anteriormente') {
+            const numDescending = [...sites].sort((a, b) => moment(b.creado).diff(a.creado))
+            setSites(numDescending)
+            setFilterSites(numDescending)
+            setOptionSort('Agregado recientemente')
+            setResultIcon('bi-sort-up')
+        }
     }
 
     const downloadQR = () => {
@@ -174,30 +192,35 @@ const SitiosPage = () => {
 
             <br></br>
             <br></br>
-            <Row className='pb-10'>
-                <Col md={4} className='pb-10'>
-                    <span
-                        className={up == false ? 'bi bi-sort-down' : 'bi bi-sort-up'}
-                        onClick={estado == true ? ordernarAsc : ordenarDesc}
+            <div className='row justify-content-md-center'>
+            <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12'>
+                    <div
+                        className='d-flex align-items-center fs-5 text-muted'
+                        style={{cursor: 'pointer'}}
+                        onClick={toggleOptionSort}
                     >
-                        Agregados recientemente
-                    </span>
-                </Col>
-                <Col md={{span: 2, offset: 6}}>
+                        <i className={`${resultIcon} fs-1 me-2`}></i>
+                        {`${optionSort}`}
+                    </div>
+                </div>
+                <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 '>
+                    <div className='d-flex align-items-center justify-content-end'>
                     <Link to={'create'}>
                         <Button className='btn btn-primary'>
                             <i className='bi bi-file-earmark-plus'></i>
                             {'Nuevo sitio'}
                         </Button>
                     </Link>
-                </Col>
-            </Row>
+                    </div>
+                </div>
+            </div>
             <div className='row g-4'>
+                
                 {filterSites?.map((sitio) => (
                     <Sitio {...sitio} key={sitio.id_sitio.toString()} />
                 ))}
 
-                <div className='col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12'>
+                <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12 col-xs-12'>
                     <Card
                         style={{
                             backgroundColor: '#1e1e2d',
