@@ -1,24 +1,15 @@
-import { Box } from './Box.js'
-import { Dustbin } from './Dustbin.js'
-export const Container = () => (
-  <div>
-    <div style={{ overflow: 'hidden', clear: 'both', margin: '-1rem' }}>
-      <Dustbin greedy={true}>
-        <Dustbin greedy={true}>
-          <Dustbin greedy={true} />
-        </Dustbin>
-      </Dustbin>
-      <Dustbin>
-        <Dustbin>
-          <Dustbin />
-        </Dustbin>
-      </Dustbin>
-    </div>
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import Targets from './targets'
+import Target2 from './target2'
 
-    <div style={{ overflow: 'hidden', clear: 'both', marginTop: '1.5rem' }}>
-      <Box />
-    </div>
-  </div>
-)
+const Ejemplo = () => {
+  return (
+    <DndProvider backend={HTML5Backend}>
+        <Targets />
+        <Target2 />
+    </DndProvider>
+  )
+}
 
-export default Container
+export default Ejemplo
