@@ -23,12 +23,6 @@ import {
     updateLanguageMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
-const alertLanguageDone = async () => {
-    swal({
-        text: 'Lenguaje creado',
-        icon: 'success',
-    })
-}
 
 const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
@@ -111,13 +105,6 @@ const CatalogosPage = () => {
         setLanguages(lenguaje.data as CatalogLanguage[])
     }
 
-    const alertNotNullInputs = async () => {
-        swal({
-            text: '¡Faltan campos por completar!',
-            icon: 'warning',
-        })
-    }
-
     const alertNotNullInputsObj = async (data: any) => {
         let keys = Object.keys(data),
             msg = ''
@@ -152,6 +139,10 @@ const CatalogosPage = () => {
             })
             await postData(addCategoryMethod, tag)
             setModalAddTag(false)
+            swal({
+                text: 'Categoría creada',
+                icon: 'success',
+            })
             getTags()
         } else {
             alertNotNullInputsObj({
@@ -172,7 +163,10 @@ const CatalogosPage = () => {
             })
             await postData(addLanguageMethod, language)
             setModalAddLanguage(false)
-            alertLanguageDone()
+            swal({
+                text: 'Lenguaje creado',
+                icon: 'success',
+            })
             getLanguages()
         } else {
             alertNotNullInputsObj({
@@ -193,6 +187,10 @@ const CatalogosPage = () => {
             })
             await postData(updateCategoryMethod, tag)
             setModalUpdateTag({show: false, catalogo: {}})
+            swal({
+                text: 'Categoría actualizada',
+                icon: 'success',
+            })
             getTags()
         } else {
             alertNotNullInputsObj({
@@ -213,6 +211,10 @@ const CatalogosPage = () => {
             })
             await postData(updateLanguageMethod, idioma)
             setModalUpdateIdioma({show: false, language: {}})
+            swal({
+                text: 'Idioma actualizado',
+                icon: 'success',
+            })
             getLanguages()
         } else {
             alertNotNullInputsObj({

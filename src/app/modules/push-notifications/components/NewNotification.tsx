@@ -6,6 +6,8 @@ import {Button, Card, Col, Form} from 'react-bootstrap'
 import {URLAWS} from '../../../services/api'
 import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 
+import { initializeApp } from 'firebase-admin/app';
+
 const NewNotification: FC<any> = ({
     showCardAddNotification,
     toggleCardAddNotification,
