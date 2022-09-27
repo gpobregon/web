@@ -4,7 +4,7 @@ import UploadImage from './UploadImage'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
 import {URLAWS} from '../../../services/api'
-import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+import { validateStringSinCaracteresEspeciales } from '../../validarCadena/validadorCadena'
 
 import { initializeApp } from 'firebase-admin/app';
 

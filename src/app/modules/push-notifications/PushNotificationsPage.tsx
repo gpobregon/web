@@ -11,8 +11,6 @@ import {
     Table,
     ToggleButton,
 } from 'react-bootstrap'
-import ReactSelect from 'react-select'
-import makeAnimated from 'react-select/animated'
 import NewNotification from './components/NewNotification'
 import UpdateNotification from './components/UpdateNotification'
 import {Notification} from '../../models/notification'
@@ -26,6 +24,30 @@ import {
     updateNotificationMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
+
+// // Import the functions you need from the SDKs you need
+// import {initializeApp} from 'firebase/app'
+// import {getAnalytics} from 'firebase/analytics'
+// import admin from 'firebase-admin'
+
+// // TODO: Add SDKs for Firebase products that you want to use
+// // https://firebase.google.com/docs/web/setup#available-libraries
+
+// // Your web app's Firebase configuration
+// // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// const firebaseConfig = {
+//     apiKey: 'AIzaSyCZHWnJP-9ReEhOG9wL5d8FHWuqb-UjXKM',
+//     authDomain: 'cultura-guate-app.firebaseapp.com',
+//     projectId: 'cultura-guate-app',
+//     storageBucket: 'cultura-guate-app.appspot.com',
+//     messagingSenderId: '944933560370',
+//     appId: '1:944933560370:web:e21bc24f31bdfe3e729c2b',
+//     measurementId: 'G-34N6BPRNWY',
+// }
+
+// // Initialize Firebase
+// const app = initializeApp(firebaseConfig)
+// const analytics = getAnalytics(app)
 
 const PushNotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([])
@@ -179,6 +201,34 @@ const PushNotificationsPage = () => {
                 text: 'Notificación creada',
                 icon: 'success',
             })
+
+            const message = {
+                topic: '/topics/general',
+                notification: {
+                    body: 'This is an FCM notification that displays an image!',
+                    title: 'FCM Notification',
+                },
+                apns: {
+                    payload: {
+                        aps: {
+                            'mutable-content': 1,
+                        },
+                    },
+                    fcm_options: {
+                        image: 'https://mcd-archivos.s3.amazonaws.com/notificaciones/1280px-Tikal_Giaguaro.jpg',
+                    },
+                },
+            }
+
+            // admin
+            //     .messaging()
+            //     .send(message)
+            //     .then((response) => {
+            //         console.log('Successfully sent message:', response)
+            //     })
+            //     .catch((error) => {
+            //         console.log('Error sending message:', error)
+            //     })
 
             setTimeout(chooseGetNotifications, 500)
             setTimeout(chooseGetNotifications, 1000)
