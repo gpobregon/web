@@ -34,14 +34,23 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
 
   return (
         <div
-          onContextMenu={show}
           ref={referencia}
           data-handler-id={handlerId}
           className="d-flex cursor-grabbing"
         >
-          <div className="p-1 py-1 d-flex align-items-center">
-            <i className="bi bi-grip-vertical fa-2x"/>
+          <div 
+              className="p-1 py-1 d-flex align-items-center"
+              id={data.id}
+              onContextMenu={show} >
+            <i className="bi bi-grip-vertical fa-2x" id={data.id}  />
           </div>
+          <Menu id={"menu-id"} theme="dark" data-test={data}>
+            <Item onClick={(e : any) => destroyItem(e)}>
+              <div>
+                  <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
+              </div>
+            </Item>
+          </Menu>
           <div 
             ref={referencia}
             data-handler-id={handlerId}
@@ -56,13 +65,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
               <li id={data.id} className={data.typeList ? `list-group-item item-list` : ''}>{data.text}</li>
             </ul>
           </div> 
-          <Menu id={"menu-id"} theme="dark" data-test={data}>
-            <Item onClick={(e : any) => destroyItem(e)}>
-              <div>
-                  <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
-              </div>
-            </Item>
-          </Menu>
         </div>
   )
 }

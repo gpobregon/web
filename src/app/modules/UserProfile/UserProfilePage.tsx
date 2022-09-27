@@ -58,14 +58,15 @@ const UserProfilePage = () => {
         setExistRoles(true)
     }
     // console.log(getRoles())   
-    console.log("roles: ", roles);
+    //console.log("roles: ", roles);
 
     //esto me retorna el email del usuario con el que estoy logueado  
 
 
     const getEmail = async () => {
+        
         getRoles()
-        Auth.currentAuthenticatedUser().then((user) => {
+        Auth.currentUserInfo().then((user) => {
             setDataUser({
                 email: user.attributes.email,
                 name: user.attributes.name,
@@ -78,14 +79,23 @@ const UserProfilePage = () => {
             const filter = roles.filter((item) => user.attributes['custom:role'] === item.nombre)
             setDataUser({
                 ...dataUser,
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
                 descripcion: filter[0].descripcion
             })
         })
     }
 
+    console.log("dataUser: ", dataUser); 
+   
     useEffect(() => {
         getRoles()
         getEmail()
+        console.log("getEmail: ", getEmail());
     }, [existRoles])
 
     // getEmail()

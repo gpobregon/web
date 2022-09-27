@@ -1,13 +1,19 @@
-import { Fragment } from "react";
+import { Fragment, FC } from "react";
 import { Pannellum } from "pannellum-react";
 
-const Image360 = () => {
+
+type Model = {
+  data: any
+}
+
+const Image360: FC<Model> =  ({ data }) => {
+
   return (
     <Fragment>
       <Pannellum
         width="100%"
         height="300px"
-        image={'https://pannellum.org/images/cerro-toco-0.jpg'}
+        image={data.url}
         pitch={10}
         yaw={180}
         hfov={110}

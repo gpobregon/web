@@ -118,7 +118,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     // obtenermos el template 
     const oneData = async (item: any) => {
         const data = {
-            "id_punto": null,
+            "id_punto": -1,
             "id_sitio": id,
             "id_lenguaje": item.value
         }
