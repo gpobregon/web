@@ -37,6 +37,8 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                         nombre: e.target.value,
                                         descripcion: language.descripcion,
                                         estado: language.estado,
+                                        json_web:'',
+                                        json_movil:'',
                                     })
                                 }
                             }}
@@ -57,6 +59,8 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                         nombre: language.nombre,
                                         descripcion: e.target.value,
                                         estado: language.estado,
+                                        json_web:'',
+                                        json_movil:'',
                                     })
                                 }
                             }}
@@ -169,6 +173,8 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                 nombre: '',
                                 descripcion: '',
                                 estado: 1,
+                                json_web:'',
+                                json_movil:'',
                             })
                             onClose()
                         }}

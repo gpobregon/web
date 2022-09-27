@@ -23,6 +23,13 @@ import {
     updateLanguageMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
+import { ConsoleLogger } from '@aws-amplify/core'
+const alertLanguageDone = async () => {
+    swal({
+        text: 'Lenguaje creado',
+        icon: 'success',
+    })
+}
 
 const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
@@ -63,6 +70,8 @@ const CatalogosPage = () => {
         nombre: '',
         descripcion: '',
         estado: 1,
+        json_web:'',
+        json_movil:''
     })
 
     const [newIdioma, setNewIdioma] = useState({
@@ -70,6 +79,8 @@ const CatalogosPage = () => {
         nombre: '',
         descripcion: '',
         estado: 1,
+        json_web:'',
+        json_movil:'',
     })
 
     const getTags = async () => {
@@ -154,14 +165,17 @@ const CatalogosPage = () => {
     }
 
     const addLanguage = async (language: any) => {
+        console.log(language)
         if (language.nombre != '' && language.descripcion != '') {
             setNewIdioma({
                 id_lenguaje: 0,
                 nombre: '',
                 descripcion: '',
                 estado: 1,
+                json_web:'',
+                json_movil:''
             })
-            await postData(addLanguageMethod, language)
+           const asd= await postData(addLanguageMethod, language)
             setModalAddLanguage(false)
             swal({
                 text: 'Lenguaje creado',
@@ -208,6 +222,8 @@ const CatalogosPage = () => {
                 nombre: '',
                 descripcion: '',
                 estado: 1,
+                json_web:'',
+                json_movil:'',
             })
             await postData(updateLanguageMethod, idioma)
             setModalUpdateIdioma({show: false, language: {}})
@@ -352,6 +368,8 @@ const CatalogosPage = () => {
             nombre: language.nombre,
             descripcion: language.descripcion,
             estado: 1,
+            json_web:'',
+                json_movil:'',
         })
         setModalUpdateIdioma({show: true, language})
     }
