@@ -31,22 +31,13 @@ const Url: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, 
 
     return ( 
           <div
-            onContextMenu={show}
             ref={referencia}
             data-handler-id={handlerId}
             className="d-flex cursor-grabbing"
           >
-            <div className="p-1 py-1 d-flex align-items-center">
-              <i className="bi bi-grip-vertical fa-2x"/>
+            <div className="p-1 py-1 d-flex align-items-center" id={data.id} onContextMenu={show}>
+              <i className="bi bi-grip-vertical fa-2x" id={data.id} />
             </div>
-            <ContentEditable
-                id={data.id}
-                className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
-                html={ `${data.text}` } // innerHTML of the editable div
-                disabled={isDragging} // use true to disable edition
-                onChange={changeText} // handle innerHTML change
-                onClick={() => setEditItem(data)}
-            />
             <Menu id={"menu-id"} theme="dark" data-test={data}>
               <Item onClick={(e : any) => destroyItem(e)}>
                 <div>
@@ -54,6 +45,13 @@ const Url: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, 
                 </div>
               </Item>
             </Menu>
+            <ContentEditable
+                className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
+                html={ `${data.text}` } // innerHTML of the editable div
+                disabled={isDragging} // use true to disable edition
+                onChange={changeText} // handle innerHTML change
+                onClick={() => setEditItem(data)}
+            />
           </div>
     )
 }
