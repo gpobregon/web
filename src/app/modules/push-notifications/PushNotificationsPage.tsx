@@ -1,18 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import moment from 'moment'
-import {
-    Button,
-    ButtonGroup,
-    Card,
-    Col,
-    Container,
-    Form,
-    Row,
-    Table,
-    ToggleButton,
-} from 'react-bootstrap'
-import ReactSelect from 'react-select'
-import makeAnimated from 'react-select/animated'
+import {Button, ButtonGroup, Container, Form, Table, ToggleButton} from 'react-bootstrap'
 import NewNotification from './components/NewNotification'
 import UpdateNotification from './components/UpdateNotification'
 import {Notification} from '../../models/notification'
@@ -20,12 +8,46 @@ import {
     addNotificationMethod,
     deleteData,
     deleteNotificationMethod,
-    getData,
     notificationMethod,
     postData,
     updateNotificationMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
+
+// // Import the functions you need from the SDKs you need
+// import {initializeApp, credential, messaging} from 'firebase-admin'
+
+// // TODO: Add SDKs for Firebase products that you want to use
+// // https://firebase.google.com/docs/web/setup#available-libraries
+// // Initialize Firebase
+
+// const initFirebase = () => {
+//     const serviceAccount = require('../../../cultura-guate-app-firebase-adminsdk-1fwan-5cdd5e4cf6.json')
+//     initializeApp({
+//         credential: credential.cert(serviceAccount),
+//     })
+// }
+
+// initFirebase()
+
+// const sendPushNotification = () => {
+//     const message = {
+//         notification: {
+//             body: 'Prueba desde el back office',
+//             title: 'Prueba desde el back office',
+//         },
+//         topic: 'general',
+//     }
+
+//     messaging()
+//         .send(message)
+//         .then((response) => {
+//             console.log('Successfully sent message:', response)
+//         })
+//         .catch((error) => {
+//             console.log('Error sending message:', error)
+//         })
+// }
 
 const PushNotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([])
@@ -54,7 +76,7 @@ const PushNotificationsPage = () => {
     const [optionGetNotifications, setOptionGetNotifications] = useState('programadas')
 
     const chooseGetNotifications = async () => {
-        if (optionGetNotifications == 'historial') {
+        if (optionGetNotifications === 'historial') {
             getNotificationsHistory()
         } else {
             getNotificationsProgrammed()
@@ -82,7 +104,7 @@ const PushNotificationsPage = () => {
             quantity: '12',
         })
 
-        if (countNextResults.data.length == 0) {
+        if (countNextResults.data.length === 0) {
             setToggleButtonsPagination({
                 previous: false,
                 next: true,
@@ -106,7 +128,7 @@ const PushNotificationsPage = () => {
 
     const toggleCardAddNotification = (value: any) => {
         setShowCardAddNotification(value)
-        if (value == true) {
+        if (value === true) {
             setCardUpdateNotification({show: false, notification: {}})
         }
     }
@@ -155,9 +177,9 @@ const PushNotificationsPage = () => {
 
     const addNotification = async (notification: any) => {
         if (
-            notification.nombre != '' &&
-            notification.descripcion != '' &&
-            notification.imagen_path != ''
+            notification.nombre !== '' &&
+            notification.descripcion !== '' &&
+            notification.imagen_path !== ''
         ) {
             notification.fecha_hora_programada = moment(
                 notification.fecha_hora_programada
@@ -180,6 +202,8 @@ const PushNotificationsPage = () => {
                 icon: 'success',
             })
 
+            // sendPushNotification()
+
             setTimeout(chooseGetNotifications, 500)
             setTimeout(chooseGetNotifications, 1000)
             setTimeout(chooseGetNotifications, 2000)
@@ -197,9 +221,9 @@ const PushNotificationsPage = () => {
 
     const updateNotification = async (notification: any) => {
         if (
-            notification.nombre != '' &&
-            notification.descripcion != '' &&
-            notification.imagen_path != ''
+            notification.nombre !== '' &&
+            notification.descripcion !== '' &&
+            notification.imagen_path !== ''
         ) {
             notification.fecha_hora_programada = moment(
                 notification.fecha_hora_programada
@@ -245,7 +269,7 @@ const PushNotificationsPage = () => {
     }
 
     const toggleOptionSort = () => {
-        if (optionSort == 'Orden descendente') {
+        if (optionSort === 'Orden descendente') {
             const sortAscending = [...notifications].sort((a, b) =>
                 moment(b.fecha_hora_programada).diff(a.fecha_hora_programada)
             )
@@ -253,7 +277,7 @@ const PushNotificationsPage = () => {
 
             setOptionSort('Orden ascendente')
             setResultIcon('bi-sort-up')
-        } else if (optionSort == 'Orden ascendente') {
+        } else if (optionSort === 'Orden ascendente') {
             const sortDescending = [...notifications].sort((a, b) =>
                 moment(a.fecha_hora_programada).diff(b.fecha_hora_programada)
             )
@@ -269,17 +293,17 @@ const PushNotificationsPage = () => {
     const handleChangeCheckbox = (e: any) => {
         let isChecked = e.target.checked
 
-        if (isChecked == true) {
+        if (isChecked === true) {
             arrayDeleteNotifications.push(e.target.id)
         } else {
             arrayDeleteNotifications = arrayDeleteNotifications.filter(
-                (data) => data != e.target.id
+                (data) => data !== e.target.id
             )
         }
     }
 
     const deleteSelectedNotification = async () => {
-        if (arrayDeleteNotifications.length == 0) {
+        if (arrayDeleteNotifications.length === 0) {
             swal({
                 title: 'Selecciona notificaciones para eliminar',
                 icon: 'warning',
@@ -320,7 +344,7 @@ const PushNotificationsPage = () => {
     })
 
     const handlePrevPage = () => {
-        if (pageNumber == 1) {
+        if (pageNumber === 1) {
             setToggleButtonsPagination({
                 previous: true,
                 next: toggleButtonsPagination.next,
@@ -412,7 +436,7 @@ const PushNotificationsPage = () => {
 
                     <div
                         style={
-                            optionGetNotifications != 'historial'
+                            optionGetNotifications !== 'historial'
                                 ? {display: 'none'}
                                 : {display: 'flex', justifyContent: 'end'}
                         }
@@ -509,6 +533,7 @@ const PushNotificationsPage = () => {
                                                     borderRadius: '10px',
                                                 }}
                                                 src={notification.imagen_path}
+                                                alt='Imagen notificación'
                                             />
                                         </td>
                                         <td>
