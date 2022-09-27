@@ -26,14 +26,14 @@ const Topbar: FC = () => {
 })
 
 const getEmail = () => {
-    Auth.currentAuthenticatedUser().then((user) => {
-        setDataUser({
-            email: user.attributes.email,
-            name: user.attributes.name,
-            phoneNumber: user.attributes['custom:phoneNumber'],
-            lastname: user.attributes['custom:lastname'],
-            imageProfile: user.attributes['custom:imageProfile'],
-        })
+  Auth.currentUserInfo().then((user) => {
+    setDataUser({
+        email: user.attributes.email,
+        name: user.attributes.name,
+        phoneNumber: user.attributes['custom:phoneNumber'],
+        lastname: user.attributes['custom:lastname'],
+        imageProfile: user.attributes['custom:imageProfile'],
+    })
         //console.log(user.attributes['custom:phoneNumber']);
         //console.log(JSON.stringify(user.attributes))
         //console.log(user)
