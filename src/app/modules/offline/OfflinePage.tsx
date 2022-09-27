@@ -156,12 +156,18 @@ const OfflineManagement: FC<any> = ({show}) =>{
             >
                 <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'> 
                     <Row> 
-                        <Col md={4} sm={4} style={{paddingRight:'1rem'}}>
+                        <Col md={3} sm={3} style={{paddingRight:'1rem'}}>
                             
                             <h1>Ítems disponibles fuera de línea</h1> 
                             <p className="text-justify" style={{color:'#C7C7C7'}} >En este apartado puede seleccionar el contenido que el usuario podrá descargar en su aplicación tanto para sitios como para puntos de interés de un sitio.</p> 
-             
+
                         </Col> 
+                        <Col md={1} sm={1} style={{width:'1px'}} >
+                            <div className="d-flex " style={{height:'100%',width:'1px'}}>
+                                <div className="vr" style={{width:'1px'}}></div>
+                            </div>
+                        </Col>
+
                         <Col md={8} sm={8}> 
                         <div className='d-flex align-items-center position-relative' style={{ width: '100%', justifyContent: 'space-between' }}  >
                                 <h1>Contenido Descargable</h1>  
