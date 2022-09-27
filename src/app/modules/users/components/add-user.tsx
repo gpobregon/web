@@ -11,11 +11,16 @@ import {
     validateStringPhoneNumberAlert,
     validateStringSinCaracteresEspeciales,
 } from '../../validarCadena/validadorCadena'
-import {roleManager} from '../../../models/roleManager'
-import {addUserMethod, getData, getRolesMethod, postData} from '../../../services/api'
-import {Amplify, Auth} from 'aws-amplify'
-import {awsconfig} from '../../../../aws-exports'
-import {useAuth} from '../../auth/core/Auth'
+import { roleManager } from '../../../models/roleManager'
+import {
+    addUserMethod,
+    getData,
+    getRolesMethod,
+    postData,
+} from '../../../services/api'
+import { Amplify, Auth } from 'aws-amplify'
+import { awsconfig } from '../../../../aws-exports'
+import { useAuth } from '../../auth/core/Auth'
 import swal from 'sweetalert'
 
 Amplify.configure(awsconfig)
@@ -73,6 +78,19 @@ const customStyles = {
 
 const animatedComponents = makeAnimated()
 
+const options = [
+    { value: 'Admnistrador', label: 'Administrador' },
+    { value: 'Editor', label: 'Editor' },
+    { value: 'Gestor', label: 'Gestor' },
+]
+
+const alertLlenar = async () => {
+    swal({
+        text: '¡campos incompletos!',
+        icon: 'warning',
+    })
+}
+
 const alertEmail = async () => {
     swal({
         text: '¡Email invalido!',
@@ -93,9 +111,17 @@ const AddUser: FC<any> = ({show, onClose}) => {
             'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png',
     })
 
+    
+    const [num, setNum] = useState('');
+
+    const handleNumChange = (event: any) => {
+        const limit = 4;
+        setNum(event.target.value.slice(0, limit));
+    };
+    
     const [validEmail, setValidEmail] = useState(false)
     const [touchedEmailInput, setTouchedEmailInput] = useState(false)
-
+    
     const [validPassword, setValidPassword] = useState(false)
     const [touchedPasswordInput, setTouchedPasswordInput] = useState(false)
 
@@ -328,6 +354,7 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                 <Form.Label>{'Teléfono'}</Form.Label>
                                 <Form.Control
                                     type='number'
+                                    pattern="/^-?\d+\.?\d*$/"
                                     autoComplete='off'
                                     className='mb-4'
                                     onChange={(e) => {

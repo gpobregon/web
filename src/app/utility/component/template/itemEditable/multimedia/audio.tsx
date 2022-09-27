@@ -43,14 +43,14 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
             <div className={`editable ${data.textAling} w-100`}>
                {
                 data.url ? 
-                (<audio controls autoPlay>
+                (<audio controls>
                     <source src={data.url} type="audio/ogg" />
                     <source src={data.url} type="audio/mpeg" />
                     <source src={data.url} type="audio/mp3" />
                         Su navegador no es compatible con el elemento de audio.
                 </audio>) 
                 :
-                (<audio controls autoPlay >
+                (<audio controls>
                   Su navegador no es compatible con el elemento de audio.
                 </audio>)
                } 

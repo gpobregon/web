@@ -4,11 +4,14 @@ import swal from "sweetalert";
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Paso } from "../../../../models/paso";
 import { Route } from "../../../../models/ruta";
-import { addImagePrincipal, addImages, addPasos, ObtenerRuta, postData, URLAWS } from "../../../../services/api";
+import { addImagePrincipal, addImages, addPasos, getData, languagesMethod, ObtenerRuta, postData, URLAWS } from "../../../../services/api";
 import logo from '../../upload-image_03.jpg';
 import logo2 from '../../upload-image-h_04.jpg';
 import UpImage from "../upload-image";
 import { Imagen } from "../../../../models/imagenes";
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated'
+import { CatalogLanguage } from "../../../../models/catalogLanguage";
 type datosPuntoInteres2 = {
     id_punto: number
     lenguajes: [
@@ -66,14 +69,17 @@ const AddRoute = () => {
         id_punto_b: puntos.id_punto_b,
         img_principal: ''
     })
-    const hola = ''
+    const [lenguajes, setLenguajes] = useState({
+        id_lenguaje: 0,
+    })
     const obtenerRuta = async () => {
-        const route: any = await postData(ObtenerRuta, { id_punto_a: puntos.id_punto_a, id_punto_b: puntos.id_punto_b })
+        const route: any = await postData(ObtenerRuta, { id_punto_a: puntos.id_punto_a, id_punto_b: puntos.id_punto_b,id_lenguaje:lenguajes.id_lenguaje })
         setruta(route)
-        setGetimg(route.imagenes as Imagen[])
         setagregrarPaso(route.pasos)
-        imgprincipal.img_principal = route.img_principal
-        // console.log(route)
+        if (imgtempomodal.imagen1 == '' && imgtempomodal.imagen2 == '' && imgtempomodal.imagen3 == '' || getimg[0]?.img_path == '' && getimg[1]?.img_path == '' && getimg[2]?.img_path == ''){
+            setGetimg(route.imagenes as Imagen[])
+            imgprincipal.img_principal = route.img_principal
+        }
     }
     const [imgtempomodal, setImgtempomodal] = useState({
         imagen1: '',
@@ -83,44 +89,54 @@ const AddRoute = () => {
     const savechnage = async () => {
         // addImagePrincipal
         // addImages
+       if(lenguajes.id_lenguaje !=0){
         if (imgprincipal.img_principal != '') {
             await postData(addImagePrincipal, imgprincipal)
 
         }else{
-            swal("Error", "Falta alguna Imagen", "error")
+            swal("Error", "Falta agregar alguna imagen", "error")
             return
         }
 
         if(imgtempomodal.imagen1 != '' && imgtempomodal.imagen2 != '' && imgtempomodal.imagen3 != '' || getimg[0]?.img_path != '' && getimg[1]?.img_path != '' && getimg[2]?.img_path != ''){
         await postData(addImages, imganes)
-        await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
+        await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso, id_lenguaje: lenguajes.id_lenguaje })
         swal({
-            text: "Se Guardó guía correctamente ",
-            icon: "success",
-            timer: 2000,
-
+            title: '¿Quiere seguir editando ?',
+            icon: 'warning',
+            buttons: ['Sí', 'No'],
+        }).then(async (res) => {
+            navigate('/sitios/edit-point-interes', {
+                state: {
+                    id_punto: puntos.interes.id_punto,
+                    lenguajes: puntos.interes.lenguajes,
+                    id_sitio: puntos.interes.id_sitio,
+                    id_guia: puntos.interes.id_guia,
+                    nombre: puntos.interes.nombre,
+                    descripcion: puntos.interes.descripcion,
+                    geoX: puntos.interes.geoX,
+                    geoY: puntos.interes.geoY,
+                    portada_path: puntos.interes.portada_path,
+                    qr_path: puntos.interes.qr_path,
+                    es_portada_de_sitio: puntos.interes.es_portada_de_sitio,
+                    estado: puntos.interes.estado,
+                    es_visible: puntos.interes.es_visible,
+                    nombreSala: puntos.interes.nombreSala,
+                },
+            })
+            swal({
+                text: "Se Guardó guía correctamente ",
+                icon: "success",
+                timer: 2000,
+            })
         })
-        navigate('/sitios/edit-point-interes', {
-            state: {
-                id_punto: puntos.interes.id_punto,
-                lenguajes: puntos.interes.lenguajes,
-                id_sitio: puntos.interes.id_sitio,
-                id_guia: puntos.interes.id_guia,
-                nombre: puntos.interes.nombre,
-                descripcion: puntos.interes.descripcion,
-                geoX: puntos.interes.geoX,
-                geoY: puntos.interes.geoY,
-                portada_path: puntos.interes.portada_path,
-                qr_path: puntos.interes.qr_path,
-                es_portada_de_sitio: puntos.interes.es_portada_de_sitio,
-                estado: puntos.interes.estado,
-                es_visible: puntos.interes.es_visible,
-                nombreSala: puntos.interes.nombreSala,
-            },
-        })
+       
         }else{
-            swal("Error", "Falta alguna Imagen", "error")
+            swal("Error", "Falta agregar alguna imagen", "error")
         }
+       }else{
+        swal("Error", "Falta seleccionar el lenguaje", "error")
+       }
         // const g = await postData(addImages, imganes)
         // const a = await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
         // console.log(imganes)
@@ -228,16 +244,81 @@ const AddRoute = () => {
 
 
     };
-
+    //Selecciona idoma de la guia
+    const [languages, setLanguages] = useState<CatalogLanguage[]>([])
+    const getLanguages = async () => {
+        const language: any = await getData(languagesMethod)
+        setLanguages(language.data as CatalogLanguage[])
+        // console.log(language)
+    }
+    const languagesOptions = languages?.map((language) => ({
+        value: language.id_lenguaje,
+        label: language.nombre,
+    }))
 
 
 
     useEffect(() => {
         if (contador === 0) {
 
-            obtenerRuta()
+            // obtenerRuta()
+            getLanguages()
         }
     }, [contador])
+
+//estilo select de idioma ==============================
+const animatedComponents = makeAnimated()
+    const customStyles = {
+        control: (base: any, state: any) => ({
+            ...base,
+            background: 'transparent',
+            borderColor: state.isFocused ? '#474761' : '#323248',
+            borderRadius: 6.175,
+            color: '#92929F',
+            '&:hover': {
+                borderColor: '#323248',
+            },
+            '&:focus': {
+                borderColor: '#323248',
+            },
+            '&:active': {
+                borderColor: '#323248',
+            },
+        }),
+        input: (base: any, state: any) => ({
+            ...base,
+            color: '#92929f',
+        }),
+        option: (base: any, state: any) => ({
+            ...base,
+            background: state.isFocused ? '#009EF7' : '#323248',
+            color: state.isFocused ? '#fff' : '#92929F',
+            padding: 10,
+        }),
+        singleValue: (base: any) => ({
+            ...base,
+            color: '#fff',
+        }),
+        menu: (base: any) => ({
+            ...base,
+            borderRadius: 6.175,
+            background: '#323248',
+        }),
+        menuList: (base: any) => ({
+            ...base,
+            padding: 0,
+            borderRadius: 6.175,
+        }),
+    }
+// seleccionar idioma de la guia ==============================
+const handleChangeLanguage = async (e: any) => {
+    lenguajes.id_lenguaje = e.value
+    setagregrarPaso([])
+    await obtenerRuta()
+    // console.log(lenguajes.id_lenguaje)
+}
+// termina seleccionar idioma de la guia ==============================
+
 
     const telefonosHandler = async (e: any, idx: any) => {
         const nuevaDesc = e.target.value;
@@ -252,17 +333,16 @@ const AddRoute = () => {
         var editEstadopaso = agregrarPaso;
         editEstadopaso[idx - 1].estado = 0;
 
-        await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: editEstadopaso })
+        await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: editEstadopaso, id_lenguaje: lenguajes.id_lenguaje })
         var newArray = agregrarPaso.filter((item: any) => item.id_paso !== idx);
         setagregrarPaso(newArray);
         setContador(contador - 1)
-        setagregrarPaso([])
+        // setagregrarPaso([])
         await obtenerRuta()
 
     }
     const addNewPaso = async () => {
-      await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
-    
+     await postData(addPasos, { id_punto_a: puntos.id_punto_a, id_punto_b: puntos.id_punto_b, pasos: agregrarPaso, id_lenguaje: lenguajes.id_lenguaje })
     await obtenerRuta()
     }
 
@@ -376,7 +456,7 @@ const AddRoute = () => {
                                 ></i>
 
 
-                                <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></i>
+                                {/* <i className='fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></i> */}
                             </ul>
                         </div>
                     </div>
@@ -384,8 +464,22 @@ const AddRoute = () => {
                 </div>
             </div>
             <br />
+            <div className='row'>
+              
+            <div className='col'>
             <h1 style={{ color: 'white', fontSize: '18px' }}>Configuración del sitio</h1>
             <h5 style={{ color: '#565674', fontSize: '14px' }}>Lista de Sitios - Configuración del Sitio</h5>
+            </div>
+            <div  className='col d-flex align-items-center justify-content-end'>
+            <Select
+              styles={customStyles}
+              components={animatedComponents}
+                options={languagesOptions}
+             placeholder={'Seleccione un lenguaje'}
+             onChange={handleChangeLanguage}
+             />
+             </div>
+             </div>
             <br />
             <div className='row'>
                 <div className='card centrado'>
@@ -444,27 +538,38 @@ const AddRoute = () => {
                                 <div className='row mt-6 gx-10 m-auto'>
 
 
-
-                                    <Card style={{ display: 'flex', padding: 30, borderStyle: "dashed", borderWidth: '1px', borderColor: '#009EF7' }} onClick={(event) => {
-                                        if (agregrarPaso.length < 5) {
-                                            agregrarPaso.push({ id_punto_a: puntos.id_punto_a, id_punto_b: puntos.id_punto_b, id_paso: -1, descripcion: '', posicion_en_lista: agregrarPaso.length + 1, estado: 1 })
-                                            setContador(contador + 1)
-                                            addNewPaso()
-                                        } else {
-                                            alerta()
-                                        }
-                                    }}>
-                                        <Card.Title className='text-center' style={{ justifyContent: 'center' }}>
-
-
-                                            <i >
-
-
-                                                <Card.Subtitle className='text-muted mb-4'>   <i className={`bi bi-plus`}>Click para añadir un nuevo paso.</i></Card.Subtitle>
-                                            </i>
+                                {
+                                    lenguajes.id_lenguaje === 0 ?
+                                     <>
+                                        <Card style={{ display: 'flex', padding: 30, borderStyle: "dashed", borderWidth: '1px', borderColor: 'white' }} >
+                                            <Card.Title className='text-center' style={{ justifyContent: 'center' }}>
+                                                <i >
+                                                    <Card.Subtitle className='text-muted mb-4'>  Debes seleccionar un lenguaje antes de agregar un paso.</Card.Subtitle>
+                                                </i>
                                         </Card.Title>
 
-                                    </Card>
+                                        </Card>
+                                    </>
+                                :
+                                    <>
+                                        <Card style={{ display: 'flex', padding: 30, borderStyle: "dashed", borderWidth: '1px', borderColor: '#009EF7' }} onClick={(event) => {
+                                            if (agregrarPaso.length < 5) {
+                                                agregrarPaso.push({ id_punto_a: puntos.id_punto_a, id_punto_b: puntos.id_punto_b, id_paso: -1, descripcion: '', posicion_en_lista: agregrarPaso.length + 1, estado: 1 })
+                                                setContador(contador + 1)
+                                                addNewPaso()
+                                            } else {
+                                                alerta()
+                                            }
+                                        }}>
+                                            <Card.Title className='text-center' style={{ justifyContent: 'center' }}>
+                                                 <i >
+                                                    <Card.Subtitle className='text-muted mb-4'>   <i className={`bi bi-plus`}>Click para añadir un nuevo paso.</i></Card.Subtitle>
+                                                </i>
+                                            </Card.Title>
+                                        </Card>
+                                    </>
+                                }
+                                  
 
                                 </div>
 

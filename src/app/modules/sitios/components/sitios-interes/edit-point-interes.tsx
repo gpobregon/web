@@ -187,7 +187,7 @@ const EditPoint = () => {
     }
     const saveChanges = async () => {
         swal({
-            title: '¿Quiere Seguir Editando ?',
+            title: '¿Quiere seguir editando ?',
             icon: 'warning',
             buttons: ['Sí', 'No'],
         }).then(async (res) => {
@@ -208,12 +208,13 @@ const EditPoint = () => {
     //petitions----------------------------------------------------------------------------
     const addNewPoint = async () => {
         await postData(addNewPointInteres, sitio)
-        // console.log(sitio)
+
+        //  console.log(sitio)
     }
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
-        console.log(sitio)
+        // console.log(sitio)
     }
 
     const getSites = async () => {
@@ -253,12 +254,14 @@ const EditPoint = () => {
     // si son iguales se muestra el lenguaje la descripcion del punto de interes
     //si el lengauje no existe en el punto de interes se muestra un mensaje para asocarlo
     const [descripcion, setDescripcion] = useState('')
+    const [mostrarDescripcion, setMostrarDescripcion] = useState(false)
     const handleChangeLanguage = async (event: any) => {
         const result = datospuntoInteres.lenguajes?.filter(
             (language) => language.id_lenguaje === event.value
         )
         if (result[0]?.descripcion) {
             setDescripcion(result[0]?.descripcion)
+            setMostrarDescripcion(true)
             setSitio({
                 id_punto: datospuntoInteres.id_punto,
                 id_sitio: datospuntoInteres.id_sitio,
@@ -283,7 +286,9 @@ const EditPoint = () => {
                 icon: 'warning',
                 buttons: ['No', 'Sí'],
             }).then((res) => {
+                setMostrarDescripcion(false)
                 if (res) {
+                    setMostrarDescripcion(true)
                     setSitio({
                         id_punto: datospuntoInteres.id_punto,
                         id_sitio: datospuntoInteres.id_sitio,
@@ -305,7 +310,7 @@ const EditPoint = () => {
             })
         }
 
-        console.log(descripcion)
+        // console.log(descripcion)
     }
 
     // UPLOAD IMAGE-------------------------------------------------------------------------
@@ -653,44 +658,48 @@ const EditPoint = () => {
                                         placeholder={'Seleccione un lenguaje'}
                                     />
                                     <br />
-
-                                    <label style={{fontSize: '14px', color: '#FFFFFF'}}>
-                                        Descripcion
-                                    </label>
-                                    <Form.Control
-                                        as='textarea'
-                                        placeholder='Escribe una descripcion aqui'
-                                        style={{height: '100px'}}
-                                        value={descripcion}
-                                        onBlur={handleBlur}
-                                        onChange={(e) => {
-                                            if (
-                                                validateStringSinCaracteresEspeciales(
-                                                    e.target.value
-                                                )
-                                            ) {
-                                                setDescripcion(e.target.value)
-                                                setSitio({
-                                                    id_punto: datospuntoInteres.id_punto,
-                                                    id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
-                                                    descripcion: e.target.value,
-                                                    id_lenguaje: sitio.id_lenguaje,
-                                                    nombre: datospuntoInteres.nombre,
-                                                    geoX: sitio.geoX,
-                                                    geoY: sitio.geoY,
-                                                    portada_path: sitio.portada_path,
-                                                    qr_path: sitio.qr_path,
-                                                    es_portada_de_sitio: sitio.es_portada_de_sitio,
-                                                    estado: sitio.estado,
-                                                    es_visible: sitio.es_visible,
-                                                    publicado: true,
-                                                    id_lenguaje_anterior:
-                                                        sitio.id_lenguaje_anterior,
-                                                })
-                                            }
-                                        }}
-                                    />
+                                    {mostrarDescripcion == true && (
+                                        <>
+                                            <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                                Descripcion
+                                            </label>
+                                            <Form.Control
+                                                as='textarea'
+                                                placeholder='Escribe una descripcion aqui'
+                                                style={{height: '100px'}}
+                                                value={descripcion}
+                                                onBlur={handleBlur}
+                                                onChange={(e) => {
+                                                    if (
+                                                        validateStringSinCaracteresEspeciales(
+                                                            e.target.value
+                                                        )
+                                                    ) {
+                                                        setDescripcion(e.target.value)
+                                                        setSitio({
+                                                            id_punto: datospuntoInteres.id_punto,
+                                                            id_sitio: datospuntoInteres.id_sitio,
+                                                            id_guia: datospuntoInteres.id_guia,
+                                                            descripcion: e.target.value,
+                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            nombre: datospuntoInteres.nombre,
+                                                            geoX: sitio.geoX,
+                                                            geoY: sitio.geoY,
+                                                            portada_path: sitio.portada_path,
+                                                            qr_path: sitio.qr_path,
+                                                            es_portada_de_sitio:
+                                                                sitio.es_portada_de_sitio,
+                                                            estado: sitio.estado,
+                                                            es_visible: sitio.es_visible,
+                                                            publicado: true,
+                                                            id_lenguaje_anterior:
+                                                                sitio.id_lenguaje_anterior,
+                                                        })
+                                                    }
+                                                }}
+                                            />
+                                        </>
+                                    )}
 
                                     <br></br>
                                     {/* <label>Etiquetas</label>

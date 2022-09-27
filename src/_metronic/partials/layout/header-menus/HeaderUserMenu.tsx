@@ -17,7 +17,7 @@ const HeaderUserMenu: FC = () => {
     })
 
     const getEmail = () => {
-        Auth.currentAuthenticatedUser().then((user) => {
+        Auth.currentUserInfo().then((user) => {
             setDataUser({
                 email: user.attributes.email,
                 name: user.attributes.name,
