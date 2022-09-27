@@ -325,15 +325,14 @@ const SalaRutas: FC<id_punto_a> = (props) => {
 
 
                                                                             </Button>
-                                                                            <i className="bi-solid bi-trash3 background-button"
-                                                                                id='center2'
-                                                                                style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
-                                                                                onClick={() => {
-                                                                                    // console.log(punto.es_portada_de_sitio)
-                                                                                    eliminarRuta(punto.id_punto)
-                                                                                }}
-                                                                            ></i>
-
+                                                                            <Button className="btn btn-secondary " style={{ marginRight: '10px' }}
+                                                                               onClick={() => {
+                                                                                // console.log(punto.es_portada_de_sitio)
+                                                                                eliminarRuta(punto.id_punto)
+                                                                            }}
+                                                                            >
+                                                                            <i className="bi-trash3 "></i>
+                                                                            </Button>
                                                                         </>
                                                                         :
                                                                         <>

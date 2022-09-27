@@ -187,7 +187,7 @@ const EditPoint = () => {
     }
     const saveChanges = async () => {
         swal({
-            title: '¿Quiere Seguir Editando ?',
+            title: '¿Quiere seguir editando ?',
             icon: 'warning',
             buttons: ['Sí', 'No'],
         }).then(async (res) => {
