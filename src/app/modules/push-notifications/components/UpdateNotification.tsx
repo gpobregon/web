@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useState} from 'react'
 import imgUpload from '../upload-image_03.jpg'
 import UploadImage from './UploadImage'
 import moment from 'moment'
@@ -63,10 +63,6 @@ const UpdateNotification: FC<any> = ({
             estado: 1,
         })
     }
-
-    /* useEffect(() => {
-        setSwitchValue(notification?.tipo === 1 ? true : false)
-    }, []) */
 
     return (
         <div
