@@ -101,22 +101,20 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateE
 
   // const opacity = isDragging ? 0 : 1
   drag(drop(ref))
+  
   return (
-    // <div ref={ref} data-handler-id={handlerId}>
-    //   {text}
-    // </div>
     <Fragment>
       { data.type === 'title' && <Text removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'paragraph' && <Paragraph removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'list' && <List removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'schedule' && <Schedule removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'url' && <Url removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'map' && <Map referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'map' && <Map removeItem={removeItem} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       
       { data.type === 'video' && <Video removeItem={removeItem} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'audio' && <Audio removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'carousel' && <Carousel removeItem={removeItem} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'image-360' && <Image360 referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'image-360' && <Image360 removeItem={removeItem} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'image' && <Picture removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'event' && <Event removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
 
