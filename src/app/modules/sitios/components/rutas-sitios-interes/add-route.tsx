@@ -69,14 +69,18 @@ const AddRoute = () => {
         id_punto_b: puntos.id_punto_b,
         img_principal: ''
     })
-    const hola = ''
+    const [lenguajes, setLenguajes] = useState({
+        id_lenguaje: 0,
+    })
     const obtenerRuta = async () => {
-        const route: any = await postData(ObtenerRuta, { id_punto_a: puntos.id_punto_a, id_punto_b: puntos.id_punto_b })
+        console.log({ id_punto_a: puntos.id_punto_a, id_punto_b: puntos.id_punto_b,id_lenguaje:lenguajes.id_lenguaje })
+        const route: any = await postData(ObtenerRuta, { id_punto_a: puntos.id_punto_a, id_punto_b: puntos.id_punto_b,id_lenguaje:lenguajes })
         setruta(route)
-        setGetimg(route.imagenes as Imagen[])
         setagregrarPaso(route.pasos)
-        imgprincipal.img_principal = route.img_principal
-        // console.log(route)
+        if (imgtempomodal.imagen1 == '' && imgtempomodal.imagen2 == '' && imgtempomodal.imagen3 != '' && getimg[0]?.img_path == '' && getimg[1]?.img_path == '' && getimg[2]?.img_path == ''){
+            setGetimg(route.imagenes as Imagen[])
+            imgprincipal.img_principal = route.img_principal
+        }
     }
     const [imgtempomodal, setImgtempomodal] = useState({
         imagen1: '',
@@ -96,7 +100,7 @@ const AddRoute = () => {
 
         if(imgtempomodal.imagen1 != '' && imgtempomodal.imagen2 != '' && imgtempomodal.imagen3 != '' || getimg[0]?.img_path != '' && getimg[1]?.img_path != '' && getimg[2]?.img_path != ''){
         await postData(addImages, imganes)
-        await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
+        await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso, id_lenguaje: lenguajes.id_lenguaje })
         swal({
             text: "Se Guardó guía correctamente ",
             icon: "success",
@@ -248,7 +252,7 @@ const AddRoute = () => {
     useEffect(() => {
         if (contador === 0) {
 
-            obtenerRuta()
+            // obtenerRuta()
             getLanguages()
         }
     }, [contador])
@@ -297,6 +301,13 @@ const animatedComponents = makeAnimated()
             borderRadius: 6.175,
         }),
     }
+// seleccionar idioma de la guia ==============================
+const handleChangeLanguage = async (e: any) => {
+    lenguajes.id_lenguaje = e.value
+    await obtenerRuta()
+}
+// termina seleccionar idioma de la guia ==============================
+
 
     const telefonosHandler = async (e: any, idx: any) => {
         const nuevaDesc = e.target.value;
@@ -320,8 +331,8 @@ const animatedComponents = makeAnimated()
 
     }
     const addNewPaso = async () => {
-      await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
-    
+        console.log( { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso, id_lenguaje: lenguajes.id_lenguaje })
+     await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso, id_lenguaje: lenguajes })
     await obtenerRuta()
     }
 
@@ -453,8 +464,9 @@ const animatedComponents = makeAnimated()
             <Select
               styles={customStyles}
               components={animatedComponents}
-            options={languagesOptions}
+                options={languagesOptions}
              placeholder={'Seleccione un lenguaje'}
+             onChange={handleChangeLanguage}
              />
              </div>
              </div>
