@@ -24,8 +24,8 @@ export function AsideMenuMain() {
       />
       <AsideMenuItem
         to='/notificaciones-push'
-        title='Alertas'
-        bsTitle='Alertas'
+        title='Notificaciones'
+        bsTitle='Notificaciones'
         fontIcon='bi bi-bell'
         className='py-3'
       /> 

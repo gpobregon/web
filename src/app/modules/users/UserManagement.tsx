@@ -1,27 +1,22 @@
-import React, { FC, useState, useEffect } from 'react'
-import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap'
+import React, {FC, useState, useEffect} from 'react'
+import {Button, Col, Container, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
-import { initialQueryState, KTSVG, useDebounce } from '../../../_metronic/helpers'
+import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
 import AddUser from './components/add-user'
 import DeleteUser from './components/delete-user'
 import makeAnimated from 'react-select/animated'
-import { Link } from 'react-router-dom'
-import { awsconfig } from '../../../aws-exports'
-import { DataStore } from 'aws-amplify'
-import { Amplify, Auth } from 'aws-amplify'
+import {Link} from 'react-router-dom'
+import {awsconfig} from '../../../aws-exports'
+import {DataStore} from 'aws-amplify'
+import {Amplify, Auth} from 'aws-amplify'
 import * as AWS from 'aws-sdk'
 import {
     ListUsersResponse,
     UsersListType,
     UserType,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider'
-import { roleManager } from '../../models/roleManager'
-import {
-    getData,
-    postData,
-    getRolesMethod,
-    updateUserMethod
-} from '../../services/api'
+import {roleManager} from '../../models/roleManager'
+import {getData, postData, getRolesMethod, updateUserMethod} from '../../services/api'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -70,9 +65,9 @@ const customStyles = {
 }
 
 const options = [
-    { value: 'Admnistrador', label: 'Administrador' },
-    { value: 'Editor', label: 'Editor' },
-    { value: 'Gestor', label: 'Gestor' },
+    {value: 'Admnistrador', label: 'Administrador'},
+    {value: 'Editor', label: 'Editor'},
+    {value: 'Gestor', label: 'Gestor'},
 ]
 
 const animatedComponents = makeAnimated()
@@ -85,20 +80,21 @@ const animatedComponents = makeAnimated()
 // }
 
 // getEmail()
-const UserManagement: FC<any> = ({ show }) => {
+const UserManagement: FC<any> = ({show}) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
     const [users, setUsers] = useState<UserType[]>([])
-    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [modalAddUser, setModalAddUser] = useState(false)
-    const [modalDeleteUser, setModalDeleteUser] = useState({ show: false, user: {} })
+    const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
+
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
-    const [dataSelect, setDataSelect] = useState({ user: '', role: '' })
-    console.log("dataSelect: ", dataSelect);
+    const [dataSelect, setDataSelect] = useState({user: '', role: ''})
+
     const [searchInput, setSearchInput] = useState('')
     const [filteredResults, setFilteredResults] = useState(users)
+
     const [user, setUser] = useState({
         username: '',
         password: '',
@@ -110,9 +106,7 @@ const UserManagement: FC<any> = ({ show }) => {
         imageProfile: 'https://mcd-archivos.s3.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
     })
 
-
     const [roles, setRoles] = useState<roleManager[]>([])
-
 
     const searchItems = (searchValue: any) => {
         setSearchInput(searchValue)
@@ -134,7 +128,7 @@ const UserManagement: FC<any> = ({ show }) => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
     }
-    // console.log(getRoles())   
+    // console.log(getRoles())
 
     useEffect(() => {
         getRoles()
@@ -142,7 +136,7 @@ const UserManagement: FC<any> = ({ show }) => {
 
     const rolesOptions = roles.map((role) => ({
         value: role.nombre,
-        label: role.nombre
+        label: role.nombre,
     }))
 
     // for (let rol of roles) {
@@ -155,13 +149,19 @@ const UserManagement: FC<any> = ({ show }) => {
     }
 
     const showModalDeleteUser = (user: any) => {
-        setModalDeleteUser({ show: true, user })
+        setModalDeleteUser({show: true, user})
     }
 
     const getUsers = async () => {
         let params = {
             UserPoolId: awsconfig.userPoolId,
-            AttributesToGet: ['name', 'email', 'custom:role', 'custom:phoneNumber', 'custom:imageProfile'],
+            AttributesToGet: [
+                'name',
+                'email',
+                'custom:role',
+                'custom:phoneNumber',
+                'custom:imageProfile',
+            ],
         }
 
         return new Promise((resolve, reject) => { 
@@ -210,17 +210,22 @@ const UserManagement: FC<any> = ({ show }) => {
                 }
             )
 
-            const filter = roles.filter((item) => { return dataSelect.role === item.nombre })
-            console.log("filter: ", filter);
+            const filter = roles.filter((item) => {
+                return dataSelect.role === item.nombre
+            })
+            console.log('filter: ', filter)
 
+            let objeto = {
+                id_usuario: users[0].Username,
+                id_rol: filter[0].id_rol,
+                foto: user.imageProfile,
+            }
 
-            let objeto = { id_usuario: users[0].Username, id_rol: filter[0].id_rol, foto: user.imageProfile }
-
-            await postData(updateUserMethod, objeto).then(data => { console.log(data) })
-
-
+            await postData(updateUserMethod, objeto).then((data) => {
+                console.log(data)
+            })
         } catch (err) {
-            console.log("err: ", err);
+            console.log('err: ', err)
         }
         getUsers()
     }
@@ -251,9 +256,9 @@ const UserManagement: FC<any> = ({ show }) => {
             </div>
 
             {existUsers == true ? (
-                <div style={show == false ? { display: 'none' } : { display: 'block' }}>
+                <div style={show == false ? {display: 'none'} : {display: 'block'}}>
                     <Row className='mb-7'>
-                        <div className='text-left' style={{ paddingTop: 20 }}>
+                        <div className='text-left' style={{paddingTop: 20}}>
                             <h3 className='text-dark mt-0'>Gestión de Usuarios</h3>
                         </div>
                     </Row>
@@ -268,7 +273,7 @@ const UserManagement: FC<any> = ({ show }) => {
                             {/* <div className='d-flex align-items-center position-relative my-1'>  */}
                             <div
                                 className='d-flex align-items-center position-relative  '
-                                style={{ width: '100%', justifyContent: 'space-between' }}
+                                style={{width: '100%', justifyContent: 'space-between'}}
                             >
                                 <KTSVG
                                     path='/media/icons/duotune/general/gen021.svg'
@@ -514,12 +519,12 @@ const UserManagement: FC<any> = ({ show }) => {
                     <AddUser
                         show={modalAddUser}
                         onClose={() => setModalAddUser(false)}
-                    //addUser={addUser}
+                        //addUser={addUser}
                     />
 
                     <DeleteUser
                         show={modalDeleteUser.show}
-                        onClose={() => setModalDeleteUser({ show: false, user: {} })}
+                        onClose={() => setModalDeleteUser({show: false, user: {}})}
                         user={modalDeleteUser.user}
                     />
                 </div>
