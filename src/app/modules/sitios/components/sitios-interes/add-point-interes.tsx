@@ -14,7 +14,7 @@ import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import {status} from '../../../../models/status'
-import UpImage from '../upload-image'
+import UpImage from '../../../uploadFile/upload-image';
 import logo from '../../upload-image_03.jpg'
 import {CatalogLanguage} from '../../../../models/catalogLanguage'
 
@@ -612,7 +612,9 @@ const AddPoint = () => {
                     show={modalupimg}
                     onClose={() => setModalupIMG(false)}
                     cargarIMG={uploadImage}
-                />
+                    ubicacionBucket={'sitePages'}
+                    tipoArchivoPermitido={'image/*'}
+                    />
             </div>
         </>
     )

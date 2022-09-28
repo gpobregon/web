@@ -7,7 +7,7 @@ import { Route } from "../../../../models/ruta";
 import { addImagePrincipal, addImages, addPasos, getData, languagesMethod, ObtenerRuta, postData, URLAWS } from "../../../../services/api";
 import logo from '../../upload-image_03.jpg';
 import logo2 from '../../upload-image-h_04.jpg';
-import UpImage from "../upload-image";
+import UpImage from '../../../uploadFile/upload-image';
 import { Imagen } from "../../../../models/imagenes";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated'
@@ -585,6 +585,9 @@ const handleChangeLanguage = async (e: any) => {
                             <div className='col-xs-12 col-md-7 col-lg-7 mb-7'>
                                 <div className='row mt-6 gx-10 m-auto'>
                                     <div className=' col-md-12 col-xs-12 col-lg-12'>
+                                    {
+                                                    lenguajes.id_lenguaje!=0 &&
+                                                    <>
                                         <h5 className="card-title">Mapa de Ruta</h5>
                                         <div className="card mb-3" style={{ background: '#1B1B29' }}>
 
@@ -647,7 +650,8 @@ const handleChangeLanguage = async (e: any) => {
                                         <div className='row mt-6 gx-10 '>
                                             <div className='card-header row'>
                                                 <h5 className="card-title">Imagenes de Referencia</h5>
-                                                {
+                                               
+                                                    {
                                                     getimg.length === 0 ?
                                                         <>
                                                             <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6 '>
@@ -850,6 +854,8 @@ const handleChangeLanguage = async (e: any) => {
 
                                             </div>
                                         </div>
+                                        </>
+                                    }
                                     </div>
                                 </div>
                             </div>
@@ -860,10 +866,12 @@ const handleChangeLanguage = async (e: any) => {
             <br />
             <br />
             <UpImage
-                show={modalupimg}
-                onClose={() => setModalupIMG(false)}
-                cargarIMG={uploadImage}
-            />
+        show={modalupimg}
+        onClose={() => setModalupIMG(false)}
+        cargarIMG={uploadImage}
+        ubicacionBucket={'sitePages'}
+        tipoArchivoPermitido={'image/*'}
+      />
         </>
     );
 }
