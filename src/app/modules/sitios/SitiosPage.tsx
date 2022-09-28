@@ -15,6 +15,7 @@ const SitiosPage = () => {
     const [estado, setEstado] = useState(true)
     const [up, setUp] = useState(true)
     const [cantidadSite, setCantidadSite] = useState(0)
+    const [totalPages, setTotalPages] = useState(1)
     const [optionSort, setOptionSort] = useState('Agregado recientemente')
     const [resultIcon, setResultIcon] = useState('bi-sort-up')
     const search = (search: string) => {
@@ -36,10 +37,29 @@ const SitiosPage = () => {
 
     const getSites = async () => {
         const site: any = await postData(sitesMethod, {page: pageNumber, quantity: '8'})
-        console.log(site)
-        setCantidadSite(site.count)
+        // console.log(site)
+        setCantidadSite(site.site.length)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
+        const countNextResults: any = await postData(sitesMethod, {
+            page: pageNumber + 1,
+            quantity: '8',
+        })
+        if (countNextResults.site.length == 0) {
+            setToggleButtonsPagination({
+                previous: false,
+                next: true,
+            })
+        } else if (countNextResults.site.length > 0) {
+            setToggleButtonsPagination({
+                previous: toggleButtonsPagination.previous,
+                next: false,
+            })
+        }
+       
+        
+        let pagesLength = Math.ceil(site.site.length / 8)
+        setTotalPages(pagesLength)
     }
 
     const ordernarAsc = () => {
@@ -132,7 +152,7 @@ const SitiosPage = () => {
                         <div className='col-md-4 col-xs-12 searchDash  py-5 px-9'>
                             <h3 className=''>Gestor de Sitios</h3>
                             <h5 className='' style={{color: '#565674', fontSize: '10px'}}>
-                                | {cantidadSite} en total
+                                 {cantidadSite} en total
                             </h5>
                         </div>
 
@@ -149,41 +169,41 @@ const SitiosPage = () => {
                             </div>
                         </div>
 
-                        <div className='col-md-3 col-xs-2  py-6 px-10 '>
-                            <div className='d-flex align-items-center position-relative '>
-                                <div className='d-flex'>
-                                    <Button
-                                        variant='outline-secondary'
-                                        className='text-center'
-                                        title='Página anterior'
-                                        disabled={toggleButtonsPagination.previous}
-                                        onClick={() => handlePrevPage()}
-                                    >
-                                        <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
-                                    </Button>
+                        <div className='col-md-3 col-xs-2  py-6  '>
+                          
+                            <div className='d-flex'>
+                            <Button
+                                variant='outline-secondary'
+                                className='text-center'
+                                title='Página anterior'
+                                disabled={toggleButtonsPagination.previous}
+                                onClick={() => handlePrevPage()}
+                            >
+                                <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
+                            </Button>
 
-                                    <div
-                                        className='d-flex align-items-center justify-content-center'
-                                        style={{
-                                            width: '46px',
-                                            height: '46px',
-                                            backgroundColor: '#2B2B40',
-                                            borderRadius: '5px',
-                                        }}
-                                    >
-                                        {`${pageNumber}`}
-                                    </div>
+                            <div
+                                className='d-flex align-items-center justify-content-center px-4'
+                                style={{
+                                    height: '50px',
+                                    backgroundColor: '#2B2B40',
+                                    borderRadius: '5px',
+                                }}
+                            >
+                                <h5  style={{ fontSize: '13px'}}>Página {pageNumber} de {totalPages}</h5>
+                            
+                            </div>
 
-                                    <Button
-                                        variant='outline-secondary'
-                                        className='text-center'
-                                        title='Página siguiente'
-                                        disabled={toggleButtonsPagination.next}
-                                        onClick={() => handleNextPage()}
-                                    >
-                                        <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
-                                    </Button>
-                                </div>
+                            <Button
+                                variant='outline-secondary'
+                                className='text-center'
+                                title='Página siguiente'
+                                disabled={toggleButtonsPagination.next}
+                                onClick={() => handleNextPage()}
+                            >
+                                <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
+                            </Button>
+                        
                             </div>
                         </div>
                     </div>
