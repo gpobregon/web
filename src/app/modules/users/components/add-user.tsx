@@ -108,7 +108,7 @@ const AddUser: FC<any> = ({show, onClose}) => {
         passwordConfirm: '',
         phoneNumber: '',
         imageProfile:
-            'https://mcd-backoffice-upload.s3.us-east-2.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png',
+            'https://mcd-archivos.s3.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png',
     })
 
     
