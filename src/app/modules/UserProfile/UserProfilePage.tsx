@@ -7,7 +7,7 @@ import { Amplify, Auth } from 'aws-amplify'
 import { URLAWS, postData, updateUserMethod, getData, getRolesMethod } from '../../services/api'
 import { roleManager } from '../../models/roleManager'
 import * as AWS from 'aws-sdk'
-import UpImage from './components/add-image'
+import UpImage from '../uploadFile/upload-image';
 import {
     ListUsersResponse,
     UsersListType,
@@ -440,7 +440,9 @@ const UserProfilePage = () => {
                 show={modalupimg}
                 onClose={() => setModalupIMG(false)}
                 cargarIMG={uploadImage}
-            />
+                ubicacionBucket={'fotoPerfiles'}
+                tipoArchivoPermitido={'image/*'}
+                />
         </>
     )
 }

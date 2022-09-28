@@ -23,6 +23,7 @@ import {
     updateLanguageMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
+import { ConsoleLogger } from '@aws-amplify/core'
 const alertLanguageDone = async () => {
     swal({
         text: 'Lenguaje creado',
@@ -69,6 +70,8 @@ const CatalogosPage = () => {
         nombre: '',
         descripcion: '',
         estado: 1,
+        json_web:'',
+        json_movil:''
     })
 
     const [newIdioma, setNewIdioma] = useState({
@@ -76,6 +79,8 @@ const CatalogosPage = () => {
         nombre: '',
         descripcion: '',
         estado: 1,
+        json_web:'',
+        json_movil:'',
     })
 
     const getTags = async () => {
@@ -109,13 +114,6 @@ const CatalogosPage = () => {
     const getLanguages = async () => {
         const lenguaje: any = await getData(languagesMethod)
         setLanguages(lenguaje.data as CatalogLanguage[])
-    }
-
-    const alertNotNullInputs = async () => {
-        swal({
-            text: '¡Faltan campos por completar!',
-            icon: 'warning',
-        })
     }
 
     const alertNotNullInputsObj = async (data: any) => {
@@ -152,6 +150,10 @@ const CatalogosPage = () => {
             })
             await postData(addCategoryMethod, tag)
             setModalAddTag(false)
+            swal({
+                text: 'Categoría creada',
+                icon: 'success',
+            })
             getTags()
         } else {
             alertNotNullInputsObj({
@@ -163,16 +165,22 @@ const CatalogosPage = () => {
     }
 
     const addLanguage = async (language: any) => {
+        console.log(language)
         if (language.nombre != '' && language.descripcion != '') {
             setNewIdioma({
                 id_lenguaje: 0,
                 nombre: '',
                 descripcion: '',
                 estado: 1,
+                json_web:'',
+                json_movil:''
             })
-            await postData(addLanguageMethod, language)
+           const asd= await postData(addLanguageMethod, language)
             setModalAddLanguage(false)
-            alertLanguageDone()
+            swal({
+                text: 'Lenguaje creado',
+                icon: 'success',
+            })
             getLanguages()
         } else {
             alertNotNullInputsObj({
@@ -193,6 +201,10 @@ const CatalogosPage = () => {
             })
             await postData(updateCategoryMethod, tag)
             setModalUpdateTag({show: false, catalogo: {}})
+            swal({
+                text: 'Categoría actualizada',
+                icon: 'success',
+            })
             getTags()
         } else {
             alertNotNullInputsObj({
@@ -210,9 +222,15 @@ const CatalogosPage = () => {
                 nombre: '',
                 descripcion: '',
                 estado: 1,
+                json_web:'',
+                json_movil:'',
             })
             await postData(updateLanguageMethod, idioma)
             setModalUpdateIdioma({show: false, language: {}})
+            swal({
+                text: 'Idioma actualizado',
+                icon: 'success',
+            })
             getLanguages()
         } else {
             alertNotNullInputsObj({
@@ -350,6 +368,8 @@ const CatalogosPage = () => {
             nombre: language.nombre,
             descripcion: language.descripcion,
             estado: 1,
+            json_web:'',
+                json_movil:'',
         })
         setModalUpdateIdioma({show: true, language})
     }

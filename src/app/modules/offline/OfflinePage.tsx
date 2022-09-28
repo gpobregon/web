@@ -50,16 +50,16 @@ const OfflineManagement: FC<any> = ({show}) =>{
         })
         listParts.map((m:OfflinePartWithContent,index)=>{
                 
-            let el = <div key={index} id={m.id_part.toString()} className='d-flex align-items-center position-relative' style={{ width: '100%', justifyContent: 'space-between',marginTop:'10px',marginBottom:'10px' }}  >
-                    <h2>{m.nombre}</h2>  
-                </div> ;
-            arr.push(el)
+            // let el = <div key={index} id={m.id_part.toString()} className='col-md-6 col-xs-12' style={{marginTop:'10px',marginBottom:'10px' }}  >
+            //         <h2>{m.nombre}</h2>  
+            //     </div> ;
+            // arr.push(el)
             
             m.tipos_contenido.map((t:any)=>{
-                let x = <Col md={3} sm={12} lg={3}> 
+                let x = <Col md={12} sm={12} lg={12}> 
                         <Form.Check
                             key={t.id_type}
-                            style={{marginTop:'10px',marginBottom:'10px',marginRight:'0px'}}
+                            style={{marginTop:'10px',marginBottom:'10px',marginRight:'0px',color:'#C7C7C7'}}
                             inline
                             id={t.id_type}
                             label={t.nombre}
@@ -105,11 +105,16 @@ const OfflineManagement: FC<any> = ({show}) =>{
         
                 // console.log(arr);               
             })
-            arrWithRows.push(arr[0])
-            for(var i =1;i<arr.length;i=i+3){
-                let x = <Row>{arr[i]}{arr[i+1]}{arr[i+2]}</Row>
+            // arrWithRows.push(arr[0])
+            // for(var i =1;i<arr.length;i=i+3){
+
+                let x = <div key={index} id={m.id_part.toString()} className='col-md-6 col-xs-12' style={{marginTop:'10px',marginBottom:'10px' }}  >
+                <p style={{fontSize:'17px', color:'#C7C7C7'}}>{m.nombre}</p>  
+                {arr}
+       </div> 
+                // let x = <Row >{arr[i]}{arr[i+1]}{arr[i+2]}</Row>
                 arrWithRows.push(x)
-            }
+            // }
             arr = []
             }
         )
@@ -135,9 +140,10 @@ const OfflineManagement: FC<any> = ({show}) =>{
                 </div>
             </div> 
 
-            <Row className='mt-12 mb-9'>
-                    <div className='text-left'>
+            <Row className='mt-5 mb-9'>
+                    <div className='text-left col-xs-12 col-md-12 col-lg-12  px-11'>
                         <h2 className='text mb-0'>Configuración de Contenido Descargable</h2>
+                        <p style={{color:'#C7C7C7'}}>Lista de categorías</p>
                     </div> 
             </Row> 
 
@@ -150,22 +156,28 @@ const OfflineManagement: FC<any> = ({show}) =>{
             >
                 <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'> 
                     <Row> 
-                        <Col md={4} sm={4}>
+                        <Col md={3} sm={3} style={{paddingRight:'1rem'}}>
                             
                             <h1>Ítems disponibles fuera de línea</h1> 
-                            <p className="text-muted" >En este apartado puede seleccionar el contenido que el usuario podrá descargar en su aplicación tanto para sitios como para puntos de interés de un sitio.</p> 
-             
+                            <p className="text-justify" style={{color:'#C7C7C7'}} >En este apartado puede seleccionar el contenido que el usuario podrá descargar en su aplicación tanto para sitios como para puntos de interés de un sitio.</p> 
+
                         </Col> 
+                        <Col md={1} sm={1} style={{width:'1px'}} >
+                            <div className="d-flex " style={{height:'100%',width:'1px'}}>
+                                <div className="vr" style={{width:'1px'}}></div>
+                            </div>
+                        </Col>
 
                         <Col md={8} sm={8}> 
                         <div className='d-flex align-items-center position-relative' style={{ width: '100%', justifyContent: 'space-between' }}  >
                                 <h1>Contenido Descargable</h1>  
                             </div> 
-                            <div style={{paddingLeft:'10px'}}>
+                            <Row>
                                 {arrWithRows.map(e=>{
                                     return e
                                 })}
-                            </div>
+
+                            </Row>
 
                             
 
