@@ -12,7 +12,7 @@ import swal from "sweetalert";
 import { useForm } from 'react-hook-form';
 import Interes from "./components/sitios-interes/sala-interes";
 import logo from './upload-image_03.jpg';
-import UpImage from './components/upload-image';
+import UpImage from '../uploadFile/upload-image';
 import {validateStringSinCaracteresEspeciales,validateStringSoloNumeros} from '../validarCadena/validadorCadena';
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
   item => ({ label: item, value: item })
@@ -691,6 +691,8 @@ const ConfSite = () => {
         show={modalupimg}
         onClose={() => setModalupIMG(false)}
         cargarIMG={uploadImage}
+        ubicacionBucket={'sitePages'}
+        tipoArchivoPermitido={'image/*'}
       />
 
     </>

@@ -36,7 +36,7 @@ import {Category} from '../../models/category'
 import Interes from './components/sitios-interes/sala-interes'
 import {QRCodeCanvas} from 'qrcode.react'
 import logo from './upload-image_03.jpg'
-import UpImage from './components/upload-image'
+import UpImage from '../uploadFile/upload-image';
 import {ModelOperation} from '@aws-amplify/datastore'
 import {
     validateStringSinCaracteresEspeciales,
@@ -838,6 +838,8 @@ const EditSite = () => {
                 show={modalupimg}
                 onClose={() => setModalupIMG(false)}
                 cargarIMG={uploadImage}
+                ubicacionBucket={'sitePages'}
+                tipoArchivoPermitido={'image/*'}
             />
         </>
     )
