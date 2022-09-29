@@ -27,6 +27,7 @@ type sitio = {
     favorito: boolean
     publicado: boolean
     oculto: boolean
+    geo_json: string
 }
 
 const Sitio: FC<sitio> = (props) => {
@@ -116,6 +117,7 @@ const Sitio: FC<sitio> = (props) => {
                                     favorito: props.favorito,
                                     publicado: props.publicado,
                                     oculto: props.oculto,
+                                    geo_json: props.geo_json,
                                 },
                             })
                         }}

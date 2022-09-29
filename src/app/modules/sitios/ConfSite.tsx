@@ -108,6 +108,9 @@ const ConfSite = () => {
   const [show, setShow] = useState(false)
   const [categorys, setCategorys] = useState<Tag[]>([])
   const navigate = useNavigate()
+  const [unbicacionBucket, setUbicacionBucket] = useState('')
+  const [ArchivoPermitido, setArchivoPermitido] = useState('')
+  const [nombreJson, setNombreJson] = useState('')
   const [site, setSite] = useState({
     id_sitio: 0,
     nombre: '',
@@ -124,6 +127,7 @@ const ConfSite = () => {
     favorito: false,
     publicado: false,
     oculto: false,
+    geo_json: '',
   });
   const [status, setStatus] = useState<status>({
     id_sitio: site.id_sitio,
@@ -179,15 +183,16 @@ const ConfSite = () => {
       favorito: status.favorito,
       publicado: status.publicado,
       oculto: status.oculto,
+      geo_json: site.geo_json,
     })
 
-    console.log(site);
+    // console.log(site);
 
   };
   //methods to post data to api------------------------------------------------------
 
   async function postSite(sitee: any) {
-    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != ''&& site.portada_path != '') {
+    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != ''&& site.portada_path != ''&& site.geo_json != '') {
       const sit: any = await postData(sitesMethod + "/add", sitee)
       navigate(`/template/movil/${site.id_sitio}`)
     } else {
@@ -243,24 +248,16 @@ const ConfSite = () => {
   // UPLOAD IMAGE-------------------------------------------------------------------------
 
   const uploadImage = async (imagen: string) => {
-
-    setSite({
-      id_sitio: site.id_sitio,
-      nombre: site.nombre,
-      descripcion: site.descripcion,
-      ubicacion: site.ubicacion,
-      geoX: site.geoX,
-      geoY: site.geoY,
-      portada_path: URLAWS +"sitePages/"+ imagen,
-      estado: site.estado,
-      creado: site.creado,
-      editado: site.editado,
-      categorias: site.categorias,
-      id_municipio: site.id_municipio,
-      favorito: status.favorito,
-      publicado: status.publicado,
-      oculto: status.oculto,
-    })
+    if(ArchivoPermitido =='.json'){
+     
+        site.geo_json= URLAWS +"sitePages/GeoJSON/"+ imagen
+        setNombreJson(imagen)
+    }
+    else{
+   
+      site.portada_path= URLAWS +"sitePages/"+ imagen
+    
+  }
     if (imagen != '') {
       setModalupIMG(false)
     }
@@ -402,7 +399,9 @@ const ConfSite = () => {
                   onClick={
                     site.portada_path == ''
                       ? (e) => {
-                        setModalupIMG(true)
+                          setArchivoPermitido("image/*")
+                          setUbicacionBucket("sitePages")
+                          setModalupIMG(true)
                       }
                       : (e) => { }
                   }
@@ -421,7 +420,10 @@ const ConfSite = () => {
                         <Link
                           className='bi bi-arrow-left-right background-button text-info'
                           to={''}
-                          onClick={() => { setModalupIMG(true)}}
+                          onClick={() => { 
+                            setArchivoPermitido("image/*")
+                            setUbicacionBucket("sitePages")
+                            setModalupIMG(true)}}
                         ></Link>
                       </Col>
                       <Col>
@@ -447,6 +449,7 @@ const ConfSite = () => {
                           favorito: site.favorito,
                           publicado: site.publicado,
                           oculto: site.oculto,
+                          geo_json: site.geo_json,
                         })}></Link>
                       </Col>
                     </Row>
@@ -466,8 +469,6 @@ const ConfSite = () => {
                     value={site.nombre == '' ? '' : site.nombre}
                     style={{ border: '0', fontSize: '18px', color: '#FFFFFF' }}
                     onChange={(e) => {
-
-                     console.log( validateStringSinCaracteresEspeciales(e.target.value))
                      if(validateStringSinCaracteresEspeciales(e.target.value)){
                       setSite({
                         id_sitio: site.id_sitio,
@@ -485,6 +486,7 @@ const ConfSite = () => {
                         favorito: site.favorito,
                         publicado: site.publicado,
                         oculto: site.oculto,
+                        geo_json: site.geo_json,
                       })
                     }
                     }}
@@ -520,6 +522,7 @@ const ConfSite = () => {
                             favorito: site.favorito,
                             publicado: site.publicado,
                             oculto: site.oculto,
+                            geo_json: site.geo_json,
                           })
                         }
                         }}
@@ -551,6 +554,7 @@ const ConfSite = () => {
                             favorito: site.favorito,
                             publicado: site.publicado,
                             oculto: site.oculto,
+                            geo_json: site.geo_json,
                           })
                         }
                         }}
@@ -584,6 +588,7 @@ const ConfSite = () => {
                       favorito: site.favorito,
                       publicado: site.publicado,
                       oculto: site.oculto,
+                      geo_json: site.geo_json,
                     })
                   }
                   }}
@@ -614,6 +619,10 @@ const ConfSite = () => {
                                 alignItems: 'flex-start',
                                 justifyContent: 'center',
                             }}
+                            onClick={() => { 
+                              setArchivoPermitido(".json")
+                              setUbicacionBucket("sitePages/GeoJSON")
+                              setModalupIMG(true)}}
                         >
                             <div
                                 style={{
@@ -633,13 +642,15 @@ const ConfSite = () => {
                                 >
                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
 
-                                    <div>Subir un archivo</div>
+                                    <div>
+                                      {
+                                    site.geo_json == '' ? 'Subir GeoJSON' : nombreJson
+                                    }
+                                    </div>
                                 </div>
 
                                 <div
-                                    onClick={() => {
-                                       
-                                    }}
+                                    
                                 >
                                     <KTSVG
                                         path='/media/icons/duotune/general/gen035.svg'
@@ -740,10 +751,10 @@ const ConfSite = () => {
       </div>
       <UpImage
         show={modalupimg}
-        onClose={() => setModalupIMG(false)}
+        onClose={() =>{setArchivoPermitido(""); setUbicacionBucket(""); setModalupIMG(false)}}
         cargarIMG={uploadImage}
-        ubicacionBucket={'sitePages'}
-        tipoArchivoPermitido={'image/*'}
+        ubicacionBucket={unbicacionBucket}
+        tipoArchivoPermitido={ArchivoPermitido}
       />
 
     </>
