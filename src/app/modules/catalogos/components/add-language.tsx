@@ -2,20 +2,26 @@ import {FC, useState} from 'react'
 import {Button, Modal, Form, Card} from 'react-bootstrap'
 import {KTSVG} from '../../../../_metronic/helpers'
 import {URLAWS} from '../../../services/api'
-import { validateStringSinCaracteresEspeciales } from '../../validarCadena/validadorCadena'
+import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 import UpJson from './UpJson'
 
 const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, addLanguage}) => {
     const [showJson, setShowJson] = useState(false)
     const [url, setUrl] = useState('')
-    const [file, setFile] = useState('')
+    const [nameMovil, setNameMovil] = useState('')
+    const [nameWeb, setNameWeb] = useState('')
 
     const uploadJson = async (json: string) => {
-        setFile(URLAWS + url + '/' + json)
-        if (json != '') {
+        if (url === 'idiomasWeb') {
+            setNameWeb(json)
+        } else if (url === 'idiomasMovil') {
+            setNameMovil(json)
+        }
+        if (json !== '') {
             setShowJson(false)
         }
     }
+
     return (
         <>
             <Modal show={show} onHide={onClose}>
@@ -37,8 +43,8 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                         nombre: e.target.value,
                                         descripcion: language.descripcion,
                                         estado: language.estado,
-                                        json_web:'',
-                                        json_movil:'',
+                                        json_web: `${URLAWS}idiomasWeb/${nameWeb}`,
+                                        json_movil: `${URLAWS}idiomasMovil/${nameMovil}`,
                                     })
                                 }
                             }}
@@ -59,8 +65,8 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                         nombre: language.nombre,
                                         descripcion: e.target.value,
                                         estado: language.estado,
-                                        json_web:'',
-                                        json_movil:'',
+                                        json_web: `${URLAWS}idiomasWeb/${nameWeb}`,
+                                        json_movil: `${URLAWS}idiomasMovil/${nameMovil}`,
                                     })
                                 }
                             }}
@@ -95,7 +101,7 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                     }}
                                 >
                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
-                                    <div>Subir un archivo</div>
+                                    <div>{nameMovil !== '' ? nameMovil : 'Subir un archivo'}</div>
                                 </div>
                                 <div
                                     onClick={() => {
@@ -142,7 +148,7 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                 >
                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
 
-                                    <div>Subir un archivo</div>
+                                    <div>{nameWeb !== '' ? nameWeb : 'Subir un archivo'}</div>
                                 </div>
 
                                 <div
@@ -173,10 +179,13 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                 nombre: '',
                                 descripcion: '',
                                 estado: 1,
-                                json_web:'',
-                                json_movil:'',
+                                json_web: '',
+                                json_movil: '',
                             })
                             onClose()
+                            setNameMovil('')
+                            setNameWeb('')
+                            setUrl('')
                         }}
                     >
                         {'Cancelar '}
@@ -186,6 +195,9 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                         variant='primary'
                         onClick={() => {
                             addLanguage(language)
+                            setNameMovil('')
+                            setNameWeb('')
+                            setUrl('')
                         }}
                     >
                         {'Aplicar '}
@@ -197,6 +209,7 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                 url={url}
                 uploadJson={uploadJson}
                 show={showJson}
+                setShow={setShow}
                 onClose={() => {
                     setShowJson(false)
                     setShow(true)

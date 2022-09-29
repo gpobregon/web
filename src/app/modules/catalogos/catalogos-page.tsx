@@ -23,7 +23,7 @@ import {
     updateLanguageMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
-import { ConsoleLogger } from '@aws-amplify/core'
+import {ConsoleLogger} from '@aws-amplify/core'
 const alertLanguageDone = async () => {
     swal({
         text: 'Lenguaje creado',
@@ -33,17 +33,13 @@ const alertLanguageDone = async () => {
 
 const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
-    const [modalAddLanguage, setModalAddLanguage] = useState(false)
-
-    const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
+    const [modalAddLanguage, setModalAddLanguage] = useState({show: false, language: {}})
     const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
-
+    const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
     const [catalogos, setCatalogos] = useState<CatalogTag[]>([])
     const [totalTags, setTotalTags] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
-
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
-
     const [searchInput, setSearchInput] = useState('')
     const [optionSort, setOptionSort] = useState('Agregado recientemente')
     const [resultIcon, setResultIcon] = useState('bi-sort-up')
@@ -70,8 +66,8 @@ const CatalogosPage = () => {
         nombre: '',
         descripcion: '',
         estado: 1,
-        json_web:'',
-        json_movil:''
+        json_web: '',
+        json_movil: '',
     })
 
     const [newIdioma, setNewIdioma] = useState({
@@ -79,8 +75,8 @@ const CatalogosPage = () => {
         nombre: '',
         descripcion: '',
         estado: 1,
-        json_web:'',
-        json_movil:'',
+        json_web: '',
+        json_movil: '',
     })
 
     const getTags = async () => {
@@ -165,18 +161,17 @@ const CatalogosPage = () => {
     }
 
     const addLanguage = async (language: any) => {
-        console.log(language)
         if (language.nombre != '' && language.descripcion != '') {
             setNewIdioma({
                 id_lenguaje: 0,
                 nombre: '',
                 descripcion: '',
                 estado: 1,
-                json_web:'',
-                json_movil:''
+                json_web: '',
+                json_movil: '',
             })
-           const asd= await postData(addLanguageMethod, language)
-            setModalAddLanguage(false)
+            await postData(addLanguageMethod, language)
+            setModalAddLanguage({show: false, language: {}})
             swal({
                 text: 'Lenguaje creado',
                 icon: 'success',
@@ -222,8 +217,8 @@ const CatalogosPage = () => {
                 nombre: '',
                 descripcion: '',
                 estado: 1,
-                json_web:'',
-                json_movil:'',
+                json_web: '',
+                json_movil: '',
             })
             await postData(updateLanguageMethod, idioma)
             setModalUpdateIdioma({show: false, language: {}})
@@ -348,7 +343,7 @@ const CatalogosPage = () => {
         setModalAddTag(true)
     }
     const showModalLanguage = () => {
-        setModalAddLanguage(true)
+        setModalAddLanguage({show: true, language: {}})
     }
 
     const showModalUpdateTag = (catalogo: any) => {
@@ -368,8 +363,8 @@ const CatalogosPage = () => {
             nombre: language.nombre,
             descripcion: language.descripcion,
             estado: 1,
-            json_web:'',
-                json_movil:'',
+            json_web:  language.json_web,
+            json_movil:  language.json_movil,
         })
         setModalUpdateIdioma({show: true, language})
     }
@@ -542,7 +537,7 @@ const CatalogosPage = () => {
                         <Button
                             variant='primary'
                             className='mt-md-0 mt-4'
-                            onClick={() => setModalAddLanguage(true)}
+                            onClick={showModalLanguage}
                         >
                             <span className='menu-icon me-0  '>
                                 <i className={`bi-plus-circle fs-2`}></i>
@@ -563,9 +558,9 @@ const CatalogosPage = () => {
                 </Row>
 
                 <AddLanguaje
-                    show={modalAddLanguage}
+                    show={modalAddLanguage.show}
                     setShow={setModalAddLanguage}
-                    onClose={() => setModalAddLanguage(false)}
+                    onClose={() => setModalAddLanguage({show: false, language: {}})}
                     language={newIdioma}
                     setLanguage={setNewIdioma}
                     addLanguage={addLanguage}
@@ -573,6 +568,7 @@ const CatalogosPage = () => {
 
                 <UpdateLanguage
                     show={modalUpdateIdioma.show}
+                    setShow={setModalUpdateIdioma}
                     onClose={() => setModalUpdateIdioma({show: false, language: {}})}
                     language={modalUpdateIdioma.language}
                     idioma={idioma}
