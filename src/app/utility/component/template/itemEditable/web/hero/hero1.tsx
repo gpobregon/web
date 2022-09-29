@@ -13,6 +13,7 @@ type Model = {
     updateElement: (data : any) => void
     removeItem: (data : any) => void
 }
+
 const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
   
   const { show } = useContextMenu({ id: "menu-id" });  
@@ -36,10 +37,12 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
                 <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
               </Item>
             </Menu>
-            <Row className="w-100">
-                <NewCol />
-                <NewCol />
-            </Row>
+            <div className="w-100 me-3">
+              <Row>
+                  <NewCol section={0}  data={data} setEditItem={setEditItem} updateElement={updateElement} />
+                  <NewCol section={1} data={data} setEditItem={setEditItem} updateElement={updateElement} />
+              </Row>
+            </div>
           </div>
     )
 }
