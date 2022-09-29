@@ -164,14 +164,16 @@ const Element = [
             icon: 'Hero1.svg',
             typeElement: 'hero',
             section1: [],
-            section2: [],
+            section2: []
           },
           {
             text: 'Hero 2',
             type: "2-hero",
             typeIcon: 'svg',
             icon: 'Hero2.svg',
-            typeElement: 'hero'
+            typeElement: 'hero',
+            section1: [],
+            section2: []
           }
         ]
       },
