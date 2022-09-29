@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
+import NewCol from './col'
 import { Row, Col } from 'react-bootstrap'
 import { Menu, Item, useContextMenu } from "react-contexify";
 
@@ -11,8 +12,10 @@ type Model = {
     setEditItem: (data : any) => void
     updateElement: (data : any) => void
     removeItem: (data : any) => void
+    saveResourceElement: (data: string) => void
+    moveCard: (dragIndex: number, hoverIndex: number) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResourceElement, moveCard, setEditItem, updateElement, removeItem }) => { 
   
   const { show } = useContextMenu({ id: "menu-id" });  
     
@@ -38,9 +41,15 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
             <Row className="w-100">
               <Col className="border">
                 <Row>
-                  <Col className="border">
-                    Col 1
-                  </Col>
+                    <NewCol 
+                      section={0}
+                      data={data}
+                      moveCard={moveCard}
+                      removeItem={removeItem}
+                      setEditItem={setEditItem}
+                      updateElement={updateElement}
+                      saveResourceElement={saveResourceElement}
+                    />
                 </Row>
                 <Row>
                   <Col className="border">
