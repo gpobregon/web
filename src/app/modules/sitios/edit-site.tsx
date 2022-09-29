@@ -42,6 +42,7 @@ import {
     validateStringSinCaracteresEspeciales,
     validateStringSoloNumeros,
 } from '../validarCadena/validadorCadena'
+import { KTSVG } from '../../../_metronic/helpers'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -104,20 +105,19 @@ const EditSite = () => {
     const [qr, setQr] = useState<any>() //modal qr
     let [categorys, setCategorys] = useState<Tag[]>([])
     const [editcategorys, setEditCategory] = useState<Tag[]>([])
-    const [categorysHolder, setCategorysHolder] = useState('')
     const navigate = useNavigate()
-
+    const [nombreJson, setNombreJson] = useState('')
+    const [unbicacionBucket, setUbicacionBucket] = useState('')
+  const [ArchivoPermitido, setArchivoPermitido] = useState('')
     useEffect(() => {
         // console.log(state)
+        let aux=site.geo_json
+       let auxSplit=aux.split('/')
+        setNombreJson(auxSplit[auxSplit.length-1])
         getCategorys()
 
         setearStatus()
-        var txt = ''
-        for (var i = 0; i < site.categorias.length; i++) {
-            txt += site.categorias[i].nombre + ', '
-        }
-        txt = txt.substring(0, txt.length - 2)
-        setCategorysHolder(txt)
+       
     }, [])
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
@@ -204,6 +204,7 @@ const EditSite = () => {
             favorito: status.favorito,
             publicado: status.publicado,
             oculto: status.oculto,
+            geo_json: site.geo_json,
         })
         // console.log(status.favorito)
         // console.log(site)
@@ -285,33 +286,27 @@ const EditSite = () => {
             favorito: status.favorito,
             publicado: status.publicado,
             oculto: status.oculto,
+            geo_json: site.geo_json,
         })
         console.log(site)
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
     const uploadImage = async (imagen: string) => {
-        setSite({
-            id_sitio: site.id_sitio,
-            nombre: site.nombre,
-            descripcion: site.descripcion,
-            ubicacion: site.ubicacion,
-            geoX: site.geoX,
-            geoY: site.geoY,
-            portada_path: URLAWS + 'sitePages/' + imagen,
-            estado: site.estado,
-            creado: site.creado,
-            editado: site.editado,
-            categorias: site.categorias,
-            id_municipio: site.id_municipio,
-            favorito: status.favorito,
-            publicado: status.publicado,
-            oculto: status.oculto,
-        })
-        if (imagen != '') {
-            setModalupIMG(false)
+        if(ArchivoPermitido =='.json'){
+         
+            site.geo_json= URLAWS +"sitePages/GeoJSON/"+ imagen
+            setNombreJson(imagen)
         }
-    }
+        else{
+       
+          site.portada_path= URLAWS +"sitePages/"+ imagen
+        
+      }
+        if (imagen != '') {
+          setModalupIMG(false)
+        }
+      };
     const [modalupimg, setModalupIMG] = useState(false)
 
     //DONWLOAD QR-------------------------------------------------------------------------
@@ -522,7 +517,9 @@ const EditSite = () => {
                                     onClick={
                                         site.portada_path == ''
                                             ? (e) => {
-                                                  setModalupIMG(true)
+                                                setArchivoPermitido("image/*")
+                                                setUbicacionBucket("sitePages")
+                                                setModalupIMG(true)
                                               }
                                             : (e) => {}
                                     }
@@ -539,6 +536,9 @@ const EditSite = () => {
                                                     className='bi bi-arrow-left-right background-button text-info'
                                                     to={''}
                                                     onClick={() => {
+                                                        
+                                                        setArchivoPermitido("image/*")
+                                                        setUbicacionBucket("sitePages")
                                                         setModalupIMG(true)
                                                     }}
                                                 ></Link>
@@ -570,6 +570,7 @@ const EditSite = () => {
                                                             favorito: status.favorito,
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
+                                                            geo_json: site.geo_json,
                                                         })
                                                     }
                                                 ></Link>
@@ -614,6 +615,7 @@ const EditSite = () => {
                                                     favorito: status.favorito,
                                                     publicado: status.publicado,
                                                     oculto: status.oculto,
+                                                    geo_json: site.geo_json,
                                                 })
                                             }
                                         }}
@@ -653,6 +655,7 @@ const EditSite = () => {
                                                             favorito: status.favorito,
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
+                                                            geo_json: site.geo_json,
                                                         })
                                                     }
                                                 }}
@@ -691,6 +694,7 @@ const EditSite = () => {
                                                             favorito: status.favorito,
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
+                                                            geo_json: site.geo_json,
                                                         })
                                                     }
                                                 }}
@@ -731,14 +735,15 @@ const EditSite = () => {
                                                     favorito: status.favorito,
                                                     publicado: status.publicado,
                                                     oculto: status.oculto,
+                                                    geo_json: site.geo_json,
                                                 })
                                             }
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
-                                    <br></br>
+                               
                                     <label>Etiquetas</label>
-                                    <br />
+                                    
                                     <div className='form-control'>
                                         <Select
                                             closeMenuOnSelect={false}
@@ -751,6 +756,60 @@ const EditSite = () => {
                                             onChange={handleChange}
                                         ></Select>
                                     </div>
+                                    <br></br>
+                    <Form.Group>
+                        <Form.Label>Adjuntar GeoJSON</Form.Label>
+                        <Card
+                            className='mb-4'
+                            style={{
+                                backgroundColor: '#151521',
+                                height: '50px',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                justifyContent: 'center',
+                            }}
+                            onClick={() => {
+                                setArchivoPermitido(".json")
+                                setUbicacionBucket("sitePages/GeoJSON")
+                                setModalupIMG(true)
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
+
+                                    <div>{ site.geo_json==='' ? 'Subir GeoJSON' : nombreJson}</div>
+                                </div>
+
+                                <div
+                                   
+                                >
+                                    <KTSVG
+                                        path='/media/icons/duotune/general/gen035.svg'
+                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                    />
+                                </div>
+                            </div>
+                        </Card>
+                        <div style={{textAlign: 'center', color: 'gray'}}>
+                            Formato permitido: .json
+                        </div>
+                    </Form.Group>
+                    <br></br>
                                 </div>
                             </div>
                             <div className='col-xs-12 col-md-12 col-xl-5 mb-5'>
@@ -836,10 +895,10 @@ const EditSite = () => {
             <Interes id_sitio={site.id_sitio} />
             <UpImage
                 show={modalupimg}
-                onClose={() => setModalupIMG(false)}
+                onClose={() =>{setArchivoPermitido(""); setUbicacionBucket(""); setModalupIMG(false)}}
                 cargarIMG={uploadImage}
-                ubicacionBucket={'sitePages'}
-                tipoArchivoPermitido={'image/*'}
+                ubicacionBucket={unbicacionBucket}
+                tipoArchivoPermitido={ArchivoPermitido}
             />
         </>
     )
