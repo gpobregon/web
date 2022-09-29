@@ -22,6 +22,10 @@ const Url: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElemen
         setEditItem([])
     }
 
+    const saveElement = (e: any) => {
+        // saveResourceElement(e.triggerEvent.target.id)
+    }
+
     return (
         <div
             ref={referencia}
@@ -33,14 +37,15 @@ const Url: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElemen
                 className="p-1 py-1 d-flex align-items-center"
                 id={data.id}
                 onContextMenu={show}
-                >
+            >
                 <i className="bi bi-grip-vertical fa-2x" id={data.id} />
             </div>
             <Menu id={"menu-id"} theme="dark" data-test={data}>
                 <Item onClick={(e: any) => destroyItem(e)}>
-                    <div>
-                        <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
-                    </div>
+                    <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
+                </Item>
+                <Item onClick={(e: any) => saveElement(e)}>
+                    <i className="fa fa-save text-success pe-4" />Guardar Recurso
                 </Item>
             </Menu>
             <div className="w-100 text-center">

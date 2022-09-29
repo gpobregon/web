@@ -30,9 +30,10 @@ export interface CardProps {
   setEditItem: (data : any) => void
   updateElement: (data : any) => void
   removeItem: (data : any) => void
+  saveResourceElement: (data: string) => void
 }
 
-export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateElement, setEditItem, removeItem }) => {
+export const ItemEditable: FC<CardProps> = ({ id, data, index, saveResourceElement, moveCard, updateElement, setEditItem, removeItem }) => {
   const ref = useRef<HTMLDivElement>(null)
   const [{ handlerId }, drop] = useDrop<any, void, { handlerId: Identifier | null }>({
     accept: 'card',
@@ -104,7 +105,7 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateE
   
   return (
     <Fragment>
-      { data.type === 'title' && <Text removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'title' && <Text saveResourceElement={saveResourceElement} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'paragraph' && <Paragraph removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'list' && <List removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'schedule' && <Schedule removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
