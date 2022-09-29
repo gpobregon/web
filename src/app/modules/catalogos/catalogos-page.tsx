@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {Container, Col, Row, Button, InputGroup, Form, Stack} from 'react-bootstrap'
 import moment from 'moment'
-
 import Catalogo from './components/catalogo'
 import UpdateCatalogo from './components/update-catalogo'
 import UpdateLanguage from './components/update-language'
@@ -82,9 +81,6 @@ const CatalogosPage = () => {
         json_web: '',
         json_movil: '',
     })
-
-    let navigate = useNavigate()
-    const [roles, setRoles] = useState<roleManager[]>([])
 
     const getTags = async () => {
         const catalogos: any = await postData(categorysMethod, {page: pageNumber, quantity: '12'})
@@ -370,8 +366,8 @@ const CatalogosPage = () => {
             nombre: language.nombre,
             descripcion: language.descripcion,
             estado: 1,
-            json_web:  language.json_web,
-            json_movil:  language.json_movil,
+            json_web: language.json_web,
+            json_movil: language.json_movil,
         })
         setModalUpdateIdioma({show: true, language})
     }
@@ -401,38 +397,40 @@ const CatalogosPage = () => {
         })
     }
 
+    let navigate = useNavigate()
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
-        setRoles(role.data as roleManager[])
-        setRoles(role.data as roleManager[])
-        setRoles(role.data as roleManager[])
-        console.log("🚀 ~ file: catalogos-page.tsx ~ line 395 ~ getRoles ~ role.data", role.data)
-
-        console.log('🚀 ~ file: catalogos-page.tsx ~ line 396 ~ getRoles ~ roles', roles)
+        setExistRoles(true)
     }
 
     const validateRole = async () => {
-        getRoles()
-
         Auth.currentUserInfo().then((user) => {
-            getRoles()
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+            
             console.log(
-                '🚀 ~ file: catalogos-page.tsx ~ line 410 ~ Auth.currentUserInfo ~ roles',
-                roles
+                '🚀 ~ file: catalogos-page.tsx ~ line 415 ~ filter ~ filter',
+                filter[0].gestor_categorias_idiomas
             )
 
-            const filter = roles.filter((role) => {return user.attributes['custom:role'] === role.nombre})
-            console.log(filter)
+            if (filter[0]?.gestor_categorias_idiomas === false) {
+                navigate('/errors/404', {replace: true})
+            }
         })
     }
 
     useEffect(() => {
         getRoles()
-    }, [])
+        validateRole()
+    }, [existRoles])
 
     useEffect(() => {
-        validateRole()
+        getRoles()
         getTags()
         getLanguages()
     }, [pageNumber])
