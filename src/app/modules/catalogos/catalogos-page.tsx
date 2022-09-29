@@ -16,6 +16,7 @@ import {
     categorysMethod,
     deleteData,
     getData,
+    getRolesMethod,
     languagesMethod,
     lengthTagsMethod,
     postData,
@@ -23,6 +24,9 @@ import {
     updateLanguageMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
+import {Auth} from 'aws-amplify'
+import {useNavigate} from 'react-router-dom'
+import {roleManager} from '../../models/roleManager'
 import {ConsoleLogger} from '@aws-amplify/core'
 const alertLanguageDone = async () => {
     swal({
@@ -78,6 +82,9 @@ const CatalogosPage = () => {
         json_web: '',
         json_movil: '',
     })
+
+    let navigate = useNavigate()
+    const [roles, setRoles] = useState<roleManager[]>([])
 
     const getTags = async () => {
         const catalogos: any = await postData(categorysMethod, {page: pageNumber, quantity: '12'})
@@ -394,7 +401,38 @@ const CatalogosPage = () => {
         })
     }
 
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setRoles(role.data as roleManager[])
+        setRoles(role.data as roleManager[])
+        setRoles(role.data as roleManager[])
+        console.log("🚀 ~ file: catalogos-page.tsx ~ line 395 ~ getRoles ~ role.data", role.data)
+
+        console.log('🚀 ~ file: catalogos-page.tsx ~ line 396 ~ getRoles ~ roles', roles)
+    }
+
+    const validateRole = async () => {
+        getRoles()
+
+        Auth.currentUserInfo().then((user) => {
+            getRoles()
+            console.log(
+                '🚀 ~ file: catalogos-page.tsx ~ line 410 ~ Auth.currentUserInfo ~ roles',
+                roles
+            )
+
+            const filter = roles.filter((role) => {return user.attributes['custom:role'] === role.nombre})
+            console.log(filter)
+        })
+    }
+
     useEffect(() => {
+        getRoles()
+    }, [])
+
+    useEffect(() => {
+        validateRole()
         getTags()
         getLanguages()
     }, [pageNumber])
