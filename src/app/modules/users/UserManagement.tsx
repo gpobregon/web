@@ -5,7 +5,7 @@ import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
 import AddUser from './components/add-user'
 import DeleteUser from './components/delete-user'
 import makeAnimated from 'react-select/animated'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {awsconfig} from '../../../aws-exports'
 import {DataStore} from 'aws-amplify'
 import {Amplify, Auth} from 'aws-amplify'
@@ -103,7 +103,8 @@ const UserManagement: FC<any> = ({show}) => {
         role: '',
         passwordConfirm: '',
         phoneNumber: '',
-        imageProfile: 'https://mcd-archivos.s3.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
+        imageProfile:
+            'https://mcd-archivos.s3.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png',
     })
 
     const [roles, setRoles] = useState<roleManager[]>([])
@@ -128,21 +129,11 @@ const UserManagement: FC<any> = ({show}) => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
     }
-    // console.log(getRoles())
-
-    useEffect(() => {
-        getRoles()
-    }, [])
 
     const rolesOptions = roles.map((role) => ({
         value: role.nombre,
         label: role.nombre,
     }))
-
-    // for (let rol of roles) {
-    //     console.log(rol)
-    // }
-    // console.log('----------------------------------------')
 
     const showModalAddUser = () => {
         setModalAddUser(true)
@@ -164,12 +155,12 @@ const UserManagement: FC<any> = ({show}) => {
             ],
         }
 
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             AWS.config.update({
                 accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-                secretAccessKey: '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'
+                secretAccessKey: 'rvCszAWqn5wblHF84gVngauqQo8rSerzyzqW1jc2',
             })
-            let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
+            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.listUsers(params, (err, data) => {
                 if (err) {
                     console.log(err)
@@ -185,13 +176,13 @@ const UserManagement: FC<any> = ({show}) => {
         })
     }
 
-    const updateUsuarios = async () => { 
+    const updateUsuarios = async () => {
         AWS.config.update({
             accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-            secretAccessKey: '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'
+            secretAccessKey: 'rvCszAWqn5wblHF84gVngauqQo8rSerzyzqW1jc2',
         })
-        let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
-        console.log("cognito: ", cognito);
+        let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+        console.log('cognito: ', cognito)
         try {
             cognito.adminUpdateUserAttributes(
                 {
@@ -231,8 +222,31 @@ const UserManagement: FC<any> = ({show}) => {
     }
 
     useEffect(() => {
+        getRoles()
         getUsers()
     }, [])
+
+    let navigate = useNavigate()
+    const [existRoles, setExistRoles] = useState(false)
+
+    
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_usuarios === false) {
+                navigate('/errors/404', {replace: true})
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
 
     return (
         <Container fluid>
@@ -314,7 +328,7 @@ const UserManagement: FC<any> = ({show}) => {
                                 </thead>
                                 <tbody>
                                     {existUsers == true ? (
-                                        searchInput.length > 1 ?
+                                        searchInput.length > 1 ? (
                                             filteredResults?.map((item: any) => (
                                                 <tr key={item.Username}>
                                                     <td>
@@ -335,7 +349,6 @@ const UserManagement: FC<any> = ({show}) => {
                                                                     borderRadius: '50%',
                                                                 }}
                                                             ></img>
-
                                                         </div>
                                                     </td>
                                                     <td>
@@ -379,7 +392,8 @@ const UserManagement: FC<any> = ({show}) => {
                                                         ) : (
                                                             <></>
                                                         )}
-                                                        {buttonAcept === true && item === banderID ? (
+                                                        {buttonAcept === true &&
+                                                        item === banderID ? (
                                                             <div className='d-flex align-items-center'>
                                                                 {/* cheque */}
                                                                 <Button
@@ -402,16 +416,22 @@ const UserManagement: FC<any> = ({show}) => {
                                                     <td>
                                                         <label
                                                             className='btn btn-light btn-active-light-danger btn-sm'
-                                                            onClick={() => showModalDeleteUser(item)}
+                                                            onClick={() =>
+                                                                showModalDeleteUser(item)
+                                                            }
                                                         >
                                                             {'Eliminar '}
                                                             <span className='menu-icon me-0'>
-                                                                <i className={`bi bi-trash-fill`}></i>
+                                                                <i
+                                                                    className={`bi bi-trash-fill`}
+                                                                ></i>
                                                             </span>
                                                         </label>
                                                     </td>
                                                 </tr>
-                                            )) : users?.map((item: any) => (
+                                            ))
+                                        ) : (
+                                            users?.map((item: any) => (
                                                 <tr key={item.Username}>
                                                     <td>
                                                         <div
@@ -431,7 +451,6 @@ const UserManagement: FC<any> = ({show}) => {
                                                                     borderRadius: '50%',
                                                                 }}
                                                             ></img>
-
                                                         </div>
                                                     </td>
                                                     <td>
@@ -475,7 +494,8 @@ const UserManagement: FC<any> = ({show}) => {
                                                         ) : (
                                                             <></>
                                                         )}
-                                                        {buttonAcept === true && item === banderID ? (
+                                                        {buttonAcept === true &&
+                                                        item === banderID ? (
                                                             <div className='d-flex align-items-center'>
                                                                 {/* cheque */}
                                                                 <Button
@@ -498,16 +518,21 @@ const UserManagement: FC<any> = ({show}) => {
                                                     <td>
                                                         <label
                                                             className='btn btn-light btn-active-light-danger btn-sm'
-                                                            onClick={() => showModalDeleteUser(item)}
+                                                            onClick={() =>
+                                                                showModalDeleteUser(item)
+                                                            }
                                                         >
                                                             {'Eliminar '}
                                                             <span className='menu-icon me-0'>
-                                                                <i className={`bi bi-trash-fill`}></i>
+                                                                <i
+                                                                    className={`bi bi-trash-fill`}
+                                                                ></i>
                                                             </span>
                                                         </label>
                                                     </td>
                                                 </tr>
                                             ))
+                                        )
                                     ) : (
                                         <></>
                                     )}

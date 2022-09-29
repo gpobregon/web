@@ -343,33 +343,61 @@ const CatalogosPage = () => {
     }
 
     const showModalAddTag = () => {
-        setModalAddTag(true)
+        if (permissionCreateTag) {
+            setModalAddTag(true)
+        } else {
+            swal({
+                title: 'No tienes permiso para crear una categoría',
+                icon: 'warning',
+            })
+        }
     }
     const showModalLanguage = () => {
-        setModalAddLanguage({show: true, language: {}})
+        if (permissionCreateLanguage) {
+            setModalAddLanguage({show: true, language: {}})
+        } else {
+            swal({
+                title: 'No tienes permiso para crear un lenguaje',
+                icon: 'warning',
+            })
+        }
     }
 
     const showModalUpdateTag = (catalogo: any) => {
-        setTag({
-            id_categoria: catalogo.id_categoria,
-            nombre: catalogo.nombre,
-            icono: catalogo.icono,
-            estado: 1,
-            id_lenguaje: catalogo.idioma.id,
-        })
-        setModalUpdateTag({show: true, catalogo})
+        if (permissionEditTag) {
+            setTag({
+                id_categoria: catalogo.id_categoria,
+                nombre: catalogo.nombre,
+                icono: catalogo.icono,
+                estado: 1,
+                id_lenguaje: catalogo.idioma.id,
+            })
+            setModalUpdateTag({show: true, catalogo})
+        } else {
+            swal({
+                title: 'No tienes permiso para editar una categoría',
+                icon: 'warning',
+            })
+        }
     }
 
     const showModalUpdateIdioma = (language: any) => {
-        setIdioma({
-            id_lenguaje: language.id_lenguaje,
-            nombre: language.nombre,
-            descripcion: language.descripcion,
-            estado: 1,
-            json_web: language.json_web,
-            json_movil: language.json_movil,
-        })
-        setModalUpdateIdioma({show: true, language})
+        if (permissionEditLanguage) {
+            setIdioma({
+                id_lenguaje: language.id_lenguaje,
+                nombre: language.nombre,
+                descripcion: language.descripcion,
+                estado: 1,
+                json_web: language.json_web,
+                json_movil: language.json_movil,
+            })
+            setModalUpdateIdioma({show: true, language})
+        } else {
+            swal({
+                title: 'No tienes permiso para editar un lenguaje',
+                icon: 'warning',
+            })
+        }
     }
 
     let [pageNumber, setPageNumber] = useState(1)
@@ -401,6 +429,14 @@ const CatalogosPage = () => {
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
+    const [permissionCreateLanguage, setPermissionCreateLanguage] = useState(true)
+    const [permissionEditLanguage, setPermissionEditLanguage] = useState(true)
+    const [permissionDeleteLanguage, setPermissionDeleteLanguage] = useState(false)
+
+    const [permissionCreateTag, setPermissionCreateTag] = useState(true)
+    const [permissionEditTag, setPermissionEditTag] = useState(true)
+    const [permissionDeleteTag, setPermissionDeleteTag] = useState(false)
+
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
@@ -412,11 +448,6 @@ const CatalogosPage = () => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
             })
-            
-            console.log(
-                '🚀 ~ file: catalogos-page.tsx ~ line 415 ~ filter ~ filter',
-                filter[0].gestor_categorias_idiomas
-            )
 
             if (filter[0]?.gestor_categorias_idiomas === false) {
                 navigate('/errors/404', {replace: true})
@@ -541,6 +572,7 @@ const CatalogosPage = () => {
                               />
                           ))}
                 </Row>
+
                 <AddCatalogo
                     show={modalAddTag}
                     onClose={() => setModalAddTag(false)}
@@ -557,6 +589,7 @@ const CatalogosPage = () => {
                     setTag={setTag}
                     updateTag={updateTag}
                     deleteTag={deleteTag}
+                    permissionDeleteTag={permissionDeleteTag}
                 />
             </Container>
 
@@ -611,6 +644,7 @@ const CatalogosPage = () => {
                     setIdioma={setIdioma}
                     updateIdioma={updateIdioma}
                     deleteIdioma={deleteIdioma}
+                    permissionDeleteLanguage={permissionDeleteLanguage}
                 />
             </Container>
         </>

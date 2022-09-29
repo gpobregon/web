@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from 'react'
 import {Container, Row, Col, Button, Card} from 'react-bootstrap'
-import {getData, sitesMethod, deleteData, postData} from '../../services/api'
+import {getData, sitesMethod, deleteData, postData, getRolesMethod} from '../../services/api'
 import Sitio from './components/sitio'
 import {Site} from '../../models/site'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import moment from 'moment'
 import logo from './upload-image_03.jpg'
 import QRCode from 'qrcode.react'
+import { roleManager } from '../../models/roleManager'
+import { Auth } from 'aws-amplify'
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -114,6 +116,33 @@ const SitiosPage = () => {
         })
     }
 
+    let navigate = useNavigate()
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_sitios === false) {
+                navigate('/errors/404', {replace: true})
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
     //UseEffect para obtener los sitios --------------------------------------------------------------
     useEffect(() => {
         getSites()
@@ -193,7 +222,7 @@ const SitiosPage = () => {
             <br></br>
             <br></br>
             <div className='row justify-content-md-center'>
-            <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12'>
+                <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12'>
                     <div
                         className='d-flex align-items-center fs-5 text-muted'
                         style={{cursor: 'pointer'}}
@@ -205,17 +234,16 @@ const SitiosPage = () => {
                 </div>
                 <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 '>
                     <div className='d-flex align-items-center justify-content-end'>
-                    <Link to={'create'}>
-                        <Button className='btn btn-primary'>
-                            <i className='bi bi-file-earmark-plus'></i>
-                            {'Nuevo sitio'}
-                        </Button>
-                    </Link>
+                        <Link to={'create'}>
+                            <Button className='btn btn-primary'>
+                                <i className='bi bi-file-earmark-plus'></i>
+                                {'Nuevo sitio'}
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </div>
             <div className='row g-4'>
-                
                 {filterSites?.map((sitio) => (
                     <Sitio {...sitio} key={sitio.id_sitio.toString()} />
                 ))}

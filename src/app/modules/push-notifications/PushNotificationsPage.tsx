@@ -8,11 +8,16 @@ import {
     addNotificationMethod,
     deleteData,
     deleteNotificationMethod,
+    getData,
+    getRolesMethod,
     notificationMethod,
     postData,
     updateNotificationMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
+import { useNavigate } from 'react-router-dom'
+import { roleManager } from '../../models/roleManager'
+import { Auth } from 'aws-amplify'
 
 // // Import the functions you need from the SDKs you need
 // import {initializeApp, credential, messaging} from 'firebase-admin'
@@ -361,6 +366,33 @@ const PushNotificationsPage = () => {
             next: false,
         })
     }
+
+    let navigate = useNavigate()
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_notificaciones === false) {
+                navigate('/errors/404', {replace: true})
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
 
     useEffect(() => {
         chooseGetNotifications()

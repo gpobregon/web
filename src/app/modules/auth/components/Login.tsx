@@ -202,7 +202,7 @@ export function Login() {
                             ) : null}
                         </Form.Group>
 
-                        <div className='d-flex mb-10 mt-10 justify-content-between '>
+                        <div className='d-flex mb-10 mt-10 justify-content-end '>
                             <Link to='/auth/forgot-password' style={{paddingLeft: 10}}>
                                 {'Olvidé mi contraseña'}
                             </Link>
