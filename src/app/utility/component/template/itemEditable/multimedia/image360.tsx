@@ -22,7 +22,11 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
         removeItem(e.triggerEvent.target.id);
         setEditItem([])
     }
-console.log(data.url)
+
+    const saveElement = (e: any) => {
+        // saveResourceElement(e.triggerEvent.target.id)
+    }
+
     return (
         <div
             ref={referencia}
@@ -38,28 +42,29 @@ console.log(data.url)
             </div>
             <Menu id={"menu-id"} theme="dark" data-test={data}>
                 <Item onClick={(e: any) => destroyItem(e)}>
-                    <div>
-                        <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
-                    </div>
+                    <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
+                </Item>
+                <Item onClick={(e: any) => saveElement(e)}>
+                    <i className="fa fa-save text-success pe-4" />Guardar Recurso
                 </Item>
             </Menu>
             <div id={data.id} className={`editable ${data.textAling} w-100 text-center`}>
                 {
                     data.url ? (
                         <Img360 data={data} />
-                    ) 
-                    : 
-                    (
-                        <Fragment>
-                            <Image
-                                alt="Logo"
-                                width="100px"
-                                className={`max-h-100px cursor-pointer`}
-                                src={toAbsoluteUrl(`/media/svg/iconsFigma/${data.icon}`)}
-                            />
-                            <p className="icon-name text-truncate mb-0 mt-1 small">Imagen 360°</p>
-                        </Fragment>
                     )
+                        :
+                        (
+                            <Fragment>
+                                <Image
+                                    alt="Logo"
+                                    width="100px"
+                                    className={`max-h-100px cursor-pointer`}
+                                    src={toAbsoluteUrl(`/media/svg/iconsFigma/${data.icon}`)}
+                                />
+                                <p className="icon-name text-truncate mb-0 mt-1 small">Imagen 360°</p>
+                            </Fragment>
+                        )
                 }
             </div>
         </div>

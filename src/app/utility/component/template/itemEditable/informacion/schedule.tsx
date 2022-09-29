@@ -22,6 +22,10 @@ const Schedule: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditI
     setEditItem([])
   }
 
+  const saveElement = (e: any) => {
+    // saveResourceElement(e.triggerEvent.target.id)
+  }
+
   return (
     <div
       ref={referencia}
@@ -34,13 +38,14 @@ const Schedule: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditI
       </div>
       <Menu id={"menu-id"} theme="dark" data-test={data}>
         <Item onClick={(e: any) => destroyItem(e)}>
-          <div>
-            <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
-          </div>
+          <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
+        </Item>
+        <Item onClick={(e: any) => saveElement(e)}>
+          <i className="fa fa-save text-success pe-4" />Guardar Recurso
         </Item>
       </Menu>
       <Row id={data.id} className="d-flex justify-content-center w-100">
-        <Col lg={6} sm={12} xs={12} className={`my-0 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
+        <Col lg={8} sm={12} xs={12} className={`my-0 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
           <div id={data.id} className="border rounded-pill py-1">
             <Row className="d-flex justify-content-center">
               <Col id={data.id} lg={2} className="d-flex justify-content-center align-items-center">

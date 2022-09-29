@@ -11,11 +11,18 @@ export function appendData(all, data) {
     return [...all, data];
 }
 
+function interpretHTML(data) {
+    return {
+      __html: data
+    };
+  };
+
 export const setDataList = (el) => {
+    // console.log(interpretHTML(el))
     const L = el.firstChild.getElementsByTagName('li')
     let Array = []
     for (let i = 0; i < L.length; i++) {
-        if (L[i].textContent !== 'Elemento 1' || L[i].textContent) {
+        if (L[i].textContent !== 'Elemento 1' || L[i].textContent !== '') {
             Array.push( { index: i, value : L[i].textContent } );
         }
     }
