@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 const meses=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sept","Oct","Nov","Dic"];
 
 const Element = [
@@ -36,13 +37,16 @@ const Element = [
             typeIcon: 'bi',
             icon: 'list-ul',
             type: "list",
-            text: 'Elemento',
+            text: 'Element',
+            content: '<ul><li>Elemento 1</li></ul>',
             textAling: "text-star",
             fontWeight: "fw-normal",
             fontFamily: "fw-normal",
             textDecoration: "",
             typeList: "",
-            item: [],
+            item: [
+              {index: 0, value: 'Elemento 1'}
+            ],
             typeElement: 'texts'
           }
         ]
@@ -158,14 +162,19 @@ const Element = [
             type: "1-hero",
             typeIcon: 'svg',
             icon: 'Hero1.svg',
-            typeElement: 'hero'
+            typeElement: 'hero',
+            section1: [],
+            section2: []
           },
           {
             text: 'Hero 2',
             type: "2-hero",
             typeIcon: 'svg',
             icon: 'Hero2.svg',
-            typeElement: 'hero'
+            typeElement: 'hero',
+            section1: [],
+            section2: [],
+            section3: []
           }
         ]
       },
@@ -185,7 +194,8 @@ const Element = [
             type: "contenido2",
             typeIcon: 'svg',
             icon: 'Contenido2.svg',
-            typeElement: 'contenido'
+            typeElement: 'contenido',
+            textAling: "text-center"
           }
         ]
       },

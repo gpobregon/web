@@ -30,6 +30,7 @@ type sitio = {
     oculto: boolean
     permissionEditSite: boolean
     permissionDeleteSite: boolean
+    geo_json: string
 }
 
 const Sitio: FC<sitio> = (props) => {
@@ -132,7 +133,8 @@ const Sitio: FC<sitio> = (props) => {
                                         id_municipio: props.id_municipio,
                                         favorito: props.favorito,
                                         publicado: props.publicado,
-                                        oculto: props.oculto,
+                                        oculto: props.oculto, 
+                                        geo_json: props.geo_json,
                                     },
                                 })
                             } else {
@@ -140,7 +142,7 @@ const Sitio: FC<sitio> = (props) => {
                                     title: 'No tienes permiso para editar un sitio',
                                     icon: 'warning',
                                 })
-                            }
+                            }        
                         }}
                     >
                         <i className='bi bi-pencil-square'></i>

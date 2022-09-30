@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
 import ContentEditable from "react-contenteditable";
+import { stripHtml } from '../../../../../utility/global/index';
 import { Menu, Item, useContextMenu } from "react-contexify";
 
 type Model = {
@@ -11,15 +12,16 @@ type Model = {
   setEditItem: (data: any) => void
   updateElement: (data: any) => void
   removeItem: (data: any) => void
+  saveResourceElement: (data: string) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem, saveResourceElement }) => {
 
   const { show } = useContextMenu({ id: "menu-id" });
 
   const changeText = (e: any) => {
     const edit = {
       ...data,
-      text: e.target.value
+      text: stripHtml(e.target.value)
     }
     updateElement(edit)
   }
@@ -28,11 +30,15 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     removeItem(e.triggerEvent.target.id);
     setEditItem([])
   }
+  const saveElement = (e: any) => {
+    saveResourceElement(e.triggerEvent.target.id)
+  }
 
   return (
     <div
       ref={referencia}
       data-handler-id={handlerId}
+      onClick={() => setEditItem(data)}
       className="d-flex cursor-grabbing"
     >
       <div
@@ -43,9 +49,10 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       </div>
       <Menu id={"menu-id"} theme="dark" data-test={data}>
         <Item onClick={(e: any) => destroyItem(e)}>
-          <div>
-            <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
-          </div>
+          <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
+        </Item>
+        <Item onClick={(e: any) => saveElement(e)}>
+          <i className="fa fa-save text-success pe-4" />Guardar Recurso
         </Item>
       </Menu>
       <ContentEditable

@@ -46,7 +46,7 @@ const Recursos = () => {
                 </Col>
             </Row>
             
-            <PerfectScrollbar style={{ height: '200px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
+            <PerfectScrollbar style={{ height: '310px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
                 <Row>
                     {thumbs}
                 </Row>

@@ -164,7 +164,12 @@ const CatalogosPage = () => {
     }
 
     const addLanguage = async (language: any) => {
-        if (language.nombre != '' && language.descripcion != '') {
+        if (
+            language.nombre !== '' &&
+            language.descripcion !== '' &&
+            language.json_web !== '' &&
+            language.json_movil !== ''
+        ) {
             setNewIdioma({
                 id_lenguaje: 0,
                 nombre: '',
@@ -184,6 +189,8 @@ const CatalogosPage = () => {
             alertNotNullInputsObj({
                 nombre: language.nombre,
                 descripcion: language.descripcion,
+                json_web: language.json_web,
+                json_movil: language.json_movil,
             })
         }
     }
@@ -214,7 +221,12 @@ const CatalogosPage = () => {
     }
 
     const updateIdioma = async (idioma: any) => {
-        if (idioma.nombre != '' && idioma.descripcion != '') {
+        if (
+            idioma.nombre !== '' &&
+            idioma.descripcion !== '' &&
+            idioma.json_web !== '' &&
+            idioma.json_movil !== ''
+        ) {
             setIdioma({
                 id_lenguaje: 1,
                 nombre: '',
@@ -234,6 +246,8 @@ const CatalogosPage = () => {
             alertNotNullInputsObj({
                 nombre: idioma.nombre,
                 descripcion: idioma.descripcion,
+                json_web: idioma.json_web,
+                json_movil: idioma.json_movil,
             })
         }
     }

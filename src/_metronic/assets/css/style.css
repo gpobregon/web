@@ -276,3 +276,7 @@ input[type=number]::-webkit-outer-spin-button {
 .bg-transparent {
   background: none !important;
 }
+
+.menu-icon {
+  min-width: 50px !important;
+}
