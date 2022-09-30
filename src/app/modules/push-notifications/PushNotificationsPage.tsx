@@ -41,7 +41,7 @@ const PushNotificationsPage = () => {
         fecha_hora_programada: dateNow,
         tipo: 0,
         estado: 1,
-    })
+    })   
 
     const [optionGetNotifications, setOptionGetNotifications] = useState('programadas')
 
@@ -54,9 +54,7 @@ const PushNotificationsPage = () => {
     }
 
     const getNotificationsProgrammed = async () => {
-        const notificationsData: any = await postData(`${notificationMethod}/programmed`, {
-            id_usuario: 'lenguaje 1',
-        })
+        const notificationsData: any = await getData(`${notificationMethod}/programmed`)
         setNotifications(notificationsData.data as Notification[])
         setOptionGetNotifications('programadas')
     }
@@ -378,8 +376,7 @@ const PushNotificationsPage = () => {
     const [permissionCreateNotification, setPermissionCreateNotification] = useState(true)
     const [permissionEditNotificationProgrammed, setPermissionEditNotificationProgrammed] =
         useState(true)
-    const [permissionEditNotificationHistory, setPermissionEditNotificationHistory] =
-        useState(true)
+    const [permissionEditNotificationHistory, setPermissionEditNotificationHistory] = useState(true)
     const [permissionDeleteNotificationProgrammed, setPermissionDeleteNotificationProgrammed] =
         useState(true)
     const [permissionDeleteNotificationHistory, setPermissionDeleteNotificationHistory] =
