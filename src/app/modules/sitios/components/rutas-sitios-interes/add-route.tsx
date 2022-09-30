@@ -223,19 +223,9 @@ const AddRoute = () => {
             })
         } else if (id === 0) {
             //  agregar imagenPrincipal;
-            setImgprincipal({
-                id_punto_a: puntos.id_punto_a,
-                id_punto_b: puntos.id_punto_b,
-                img_principal: URLAWS + 'sitePages/' + url,
-            })
-            setruta({
-                id_punto_a: ruta!.id_punto_a,
-                id_punto_b: ruta!.id_punto_b,
-                estado: ruta!.estado,
-                img_principal: URLAWS + 'sitePages/' + url, //mostrar la imagen principal en el modal
-                imagenes: ruta!.imagenes,
-                pasos: ruta!.pasos,
-            })
+
+            imgprincipal.img_principal = URLAWS + 'sitePages/' + url
+            ruta!.img_principal = URLAWS + 'sitePages/' + url
         } else {
             //editar imagen de referencia
             getimg[numeroImg].img_path = URLAWS + 'sitePages/' + url //mostrar la imagen en el modal
@@ -255,12 +245,14 @@ const AddRoute = () => {
     }
     const uploadImage = async (imagen: string) => {
         if (imagen != '') {
-            if (numeroImg === 1) {
-                imgtempomodal.imagen1 = URLAWS + 'sitePages/' + imagen
-            } else if (numeroImg === 2) {
-                imgtempomodal.imagen2 = URLAWS + 'sitePages/' + imagen
-            } else if (numeroImg === 3) {
-                imgtempomodal.imagen3 = URLAWS + 'sitePages/' + imagen
+            if (id != 0) {
+                if (numeroImg === 1) {
+                    imgtempomodal.imagen1 = URLAWS + 'sitePages/' + imagen
+                } else if (numeroImg === 2) {
+                    imgtempomodal.imagen2 = URLAWS + 'sitePages/' + imagen
+                } else if (numeroImg === 3) {
+                    imgtempomodal.imagen3 = URLAWS + 'sitePages/' + imagen
+                }
             }
             setModalupIMG(false)
             imagenesReferencias(imagen)
@@ -798,6 +790,7 @@ const AddRoute = () => {
                                                                         }
 
                                                                         setModalupIMG(true)
+                                                                        setId(0)
                                                                     }}
                                                                 ></Link>
                                                             </Col>
