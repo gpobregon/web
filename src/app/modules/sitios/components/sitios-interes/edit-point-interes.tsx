@@ -186,6 +186,12 @@ const EditPoint = () => {
             }
         })
     }
+    async function postSiteMaquetar(tipo:string) {
+        await updatePoint()
+          navigate(`/template/punto/${tipo}/${sitio.id_punto}`)
+        
+      }
+
     const saveChanges = async () => {
         swal({
             title: '¿Quiere seguir editando ?',
@@ -215,7 +221,7 @@ const EditPoint = () => {
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
-        // console.log(sitio)
+         console.log(updatePoint)
     }
 
     const getSites = async () => {
@@ -748,9 +754,7 @@ const EditPoint = () => {
                                                     // addNewPoint();
                                                     // window.location.href = "../sitios";
 
-                                                    console.log(
-                                                        'creado con el boton de sitio mobil'
-                                                    )
+                                                    postSiteMaquetar('movil')
                                                 }}
                                                 className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                                             >
@@ -785,10 +789,7 @@ const EditPoint = () => {
                                             <Button
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                                                 onClick={() => {
-                                                    //   navigate('/site')
-                                                    //   postSite(site)
-                                                    window.location.href = '../sitios'
-                                                    console.log('creado con el boton de sitio web')
+                                                    postSiteMaquetar('web')
                                                 }}
                                             >
                                                 <i className='fa-solid fa-pencil '></i> Crear

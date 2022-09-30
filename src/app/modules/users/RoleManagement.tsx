@@ -1,5 +1,5 @@
 import React, {FC, useState, useEffect} from 'react'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {
     Button,
     Col,
@@ -25,6 +25,7 @@ import {
 import {roleManager} from '../../models/roleManager'
 import swal from 'sweetalert'
 import {validateStringSinCaracteresEspeciales} from '../validarCadena/validadorCadena'
+import {Auth} from 'aws-amplify'
 
 const RoleManagement: FC<any> = ({show}) => {
     const [roles, setRoles] = useState<roleManager[]>([])
@@ -106,7 +107,7 @@ const RoleManagement: FC<any> = ({show}) => {
     const addRole = async () => {
         await postData(addRolesMethod, {
             nombre: 'Nuevo rol',
-            descripcion: 'descripción del rol',
+            descripcion: 'Descripción del nuevo rol',
             idioma_crear: false,
             idioma_editar: false,
             idioma_eliminar: false,
@@ -227,14 +228,38 @@ const RoleManagement: FC<any> = ({show}) => {
         // })
     }
 
-    useEffect(() => {
-        getRoles()
-    }, [])
-
     for (let rol of roles) {
         console.log(rol)
     }
     console.log('----------------------------------------')
+
+    let navigate = useNavigate()
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateRole, setPermissionCreateRole] = useState(true)
+    const [permissionEditRole, setPermissionEditRole] = useState(true)
+    const [permissionDeleteRole, setPermissionDeleteRole] = useState(true)
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_usuarios === false) {
+                navigate('/errors/404', {replace: true})
+            } else {
+                setPermissionCreateRole(filter[0]?.rol_crear)
+                setPermissionEditRole(filter[0]?.rol_editar)
+                setPermissionDeleteRole(filter[0]?.rol_eliminar)
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles, permissionEditRole, permissionDeleteRole])
 
     return (
         <Container fluid>
@@ -262,7 +287,20 @@ const RoleManagement: FC<any> = ({show}) => {
                 </div>
 
                 <div className='d-flex justify-content-end'>
-                    <Button variant='primary' className='mt-md-0 mt-4' onClick={() => addRole()}>
+                    <Button
+                        variant='primary'
+                        className='mt-md-0 mt-4'
+                        onClick={() => {
+                            if (!permissionCreateRole) {
+                                swal({
+                                    title: 'No tienes permiso para crear un rol',
+                                    icon: 'warning',
+                                })
+                                return
+                            }
+                            addRole()
+                        }}
+                    >
                         <span className='menu-icon me-0  '>
                             <i className={`bi bi-plus fs-1`}></i>
                         </span>
@@ -297,7 +335,8 @@ const RoleManagement: FC<any> = ({show}) => {
                                     sitio_visible: rol.sitio_visible,
                                     sitio_maquetar: rol.sitio_maquetar,
                                     sitio_sala_crear: rol.sitio_sala_crear,
-                                    sitio_establecer_imagen_principal: rol.sitio_establecer_imagen_principal,
+                                    sitio_establecer_imagen_principal:
+                                        rol.sitio_establecer_imagen_principal,
                                     sitio_punto_crear: rol.sitio_punto_crear,
                                     sitio_punto_editar: rol.sitio_punto_editar,
                                     sitio_punto_eliminar: rol.sitio_punto_eliminar,
@@ -310,18 +349,27 @@ const RoleManagement: FC<any> = ({show}) => {
                                     sitio_punto_ruta_eliminar: rol.sitio_punto_eliminar,
                                     sitio_punto_ruta_pasos_crear: rol.sitio_punto_ruta_pasos_crear,
                                     sitio_punto_ruta_pasos_editar: rol.sitio_punto_ruta_mapa_editar,
-                                    sitio_punto_ruta_pasos_eliminar: rol.sitio_punto_ruta_imagen_eliminar,
-                                    sitio_punto_ruta_imagen_crear: rol.sitio_punto_ruta_imagen_crear,
-                                    sitio_punto_ruta_imagen_editar: rol.sitio_punto_ruta_imagen_editar,
-                                    sitio_punto_ruta_imagen_eliminar: rol.sitio_punto_ruta_imagen_eliminar,
+                                    sitio_punto_ruta_pasos_eliminar:
+                                        rol.sitio_punto_ruta_imagen_eliminar,
+                                    sitio_punto_ruta_imagen_crear:
+                                        rol.sitio_punto_ruta_imagen_crear,
+                                    sitio_punto_ruta_imagen_editar:
+                                        rol.sitio_punto_ruta_imagen_editar,
+                                    sitio_punto_ruta_imagen_eliminar:
+                                        rol.sitio_punto_ruta_imagen_eliminar,
                                     sitio_punto_ruta_mapa_crear: rol.sitio_punto_ruta_mapa_crear,
                                     sitio_punto_ruta_mapa_editar: rol.sitio_punto_ruta_mapa_editar,
-                                    sitio_punto_ruta_mapa_eliminar: rol.sitio_punto_ruta_mapa_eliminar,
+                                    sitio_punto_ruta_mapa_eliminar:
+                                        rol.sitio_punto_ruta_mapa_eliminar,
                                     notificacion_crear: rol.notificacion_crear,
-                                    notificacion_programada_editar: rol.notificacion_programada_editar,
-                                    notificacion_programada_eliminar: rol.notificacion_programada_eliminar,
-                                    notificacion_historial_editar: rol.notificacion_historial_editar,
-                                    notificacion_historial_eliminar: rol.notificacion_historial_eliminar,
+                                    notificacion_programada_editar:
+                                        rol.notificacion_programada_editar,
+                                    notificacion_programada_eliminar:
+                                        rol.notificacion_programada_eliminar,
+                                    notificacion_historial_editar:
+                                        rol.notificacion_historial_editar,
+                                    notificacion_historial_eliminar:
+                                        rol.notificacion_historial_eliminar,
                                     offline_sitios: rol.offline_sitios,
                                     offline_puntos: rol.offline_puntos,
                                     reportes: rol.reportes,
@@ -361,9 +409,11 @@ const RoleManagement: FC<any> = ({show}) => {
                                             <InputGroup className='mb-5'>
                                                 <Form.Control
                                                     defaultValue={rol.nombre}
+                                                    disabled={!permissionEditRole}
                                                     style={{
                                                         fontSize: 18,
                                                         borderColor: 'transparent',
+                                                        backgroundColor: 'transparent',
                                                         borderBottomWidth: '2px',
                                                         borderBottomStyle: 'solid',
                                                         borderBottomColor: '#565674',
@@ -401,6 +451,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                             <Form.Control
                                                 as='textarea'
                                                 className='p-5'
+                                                disabled={!permissionEditRole}
                                                 defaultValue={rol.descripcion}
                                                 style={{
                                                     height: '100px',
@@ -464,1173 +515,1592 @@ const RoleManagement: FC<any> = ({show}) => {
                                                 <i
                                                     className='bi bi-trash text-danger'
                                                     style={{fontSize: 20, cursor: 'pointer'}}
-                                                    onClick={() =>
+                                                    onClick={() => {
+                                                        if (!permissionDeleteRole) {
+                                                            swal({
+                                                                title: 'No tienes permiso para eliminar un rol',
+                                                                icon: 'warning',
+                                                            })
+                                                            return
+                                                        }
                                                         deleteRole({
                                                             id_rol: rol.id_rol,
                                                         })
-                                                    }
+                                                    }}
                                                 ></i>
                                             </div>
                                         </div>
 
-
-                                        {/* ----------------------------------------------CATEGORIAS E IDIOMAS--------------------------------------------------------------------------- */}
-
-                                        <Row style={{ paddingTop: 15 }}>
-                                            <Col md={6} sm={6}>
-                                                <Accordion>
-                                                    <Accordion.Header>
-                                                        <Form.Check
-                                                            inline
-                                                            defaultChecked={rol.gestor_categorias_idiomas}
-                                                            label='Catalogos'
-                                                            onChange={(e) => {
-                                                                setStateRole((role) => ({
-                                                                    ...role,
-                                                                    id_rol: role.id_rol,
-                                                                    gestor_categorias_idiomas: e.target.checked,
-                                                                }))
-
-                                                                // await postData(editRoleMethod, stateRole)
-                                                                // getRoles()
-                                                            }}
-                                                        />
-                                                    </Accordion.Header>
-                                                    <Accordion.Body>
-
-                                                        <Accordion>
-                                                            <Accordion.Header>Categorías</Accordion.Header>
-                                                            <Accordion.Body>
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.categoria_crear}
-                                                                        label='Crear categoría'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                categoria_crear: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.categoria_editar}
-                                                                        label='Editar categoría'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                categoria_editar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.categoria_eliminar}
-                                                                        label='Eliminar categoría'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                categoria_eliminar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-                                                            </Accordion.Body>
-                                                        </Accordion>
-
-                                                        <Accordion>
-                                                            <Accordion.Header>Idiomas</Accordion.Header>
-                                                            <Accordion.Body>
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.idioma_crear}
-                                                                        label='Crear idioma'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                idioma_crear: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.idioma_editar}
-                                                                        label='Editar idioma'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                idioma_editar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.idioma_eliminar}
-                                                                        label='Eliminar idioma'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                idioma_eliminar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-                                                            </Accordion.Body>
-                                                        </Accordion>
-
-
-                                                    </Accordion.Body>
-
-
-
-                                                </Accordion>
-
-                                            </Col>
-
-                                            <Col md={6} sm={6}>
-
-                                                <Accordion>
-                                                    <Accordion.Header>
-                                                        <Form.Check
-                                                            inline
-                                                            defaultChecked={rol.gestor_offline}
-                                                            label='Offline  '
-                                                            onChange={(e) => {
-                                                                setStateRole((role) => ({
-                                                                    ...role,
-                                                                    id_rol: role.id_rol,
-                                                                    gestor_offline: e.target.checked
-                                                                }))
-
-                                                                // await postData(editRoleMethod, stateRole)
-                                                                // getRoles()
-                                                            }}
-                                                        />
-
-                                                    </Accordion.Header>
-                                                    <Accordion.Body>
-
-                                                        <Accordion>
-                                                            <Accordion.Header>Configuración de contenido descargable</Accordion.Header>
-                                                            <Accordion.Body>
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.offline_sitios}
-                                                                        label='Seleccionar contenido descarble de Sitios'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                offline_sitios: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.offline_puntos}
-                                                                        label='Seleccionar contenido descarble de Puntos de interés'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                offline_puntos: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-                                                            </Accordion.Body>
-                                                        </Accordion>
-
-                                                    </Accordion.Body>
-                                                </Accordion>
-
-                                            </Col>
-                                        </Row>
-
-                                        {/* -----------------------------------------------SITIOS Y REPORTES-------------------------------------------------------------------------- */}
-
-                                        <Row style={{ paddingTop: 15 }}>
-                                            <Col md={6} sm={6}>
-                                                <Accordion>
-                                                    <Accordion.Header>
-                                                        <Form.Check
-                                                            inline
-                                                            defaultChecked={rol.gestor_sitios}
-                                                            label='Sitios'
-                                                            onChange={(e) => {
-                                                                setStateRole((role) => ({
-                                                                    ...role,
-                                                                    id_rol: role.id_rol,
-                                                                    gestor_sitios: e.target.checked,
-                                                                }))
-
-                                                                // await postData(editRoleMethod, stateRole)
-                                                                // getRoles()
-                                                            }}
-                                                        />
-                                                    </Accordion.Header>
-                                                    <Accordion.Body>
-
-                                                        <Accordion>
-                                                            <Accordion.Header>Gestor de sitios</Accordion.Header>
-                                                            <Accordion.Body>
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_crear}
-                                                                        label='Nuevo sitio'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_crear: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_editar}
-                                                                        label='Editar sitio'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_editar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_eliminar}
-                                                                        label='Eliminar sitio'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_eliminar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-                                                            </Accordion.Body>
-                                                        </Accordion>
-
-                                                        <Accordion>
-                                                            <Accordion.Header>Configuración de Sitios</Accordion.Header>
-                                                            <Accordion.Body>
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_crear}
-                                                                        label='Crear sitio'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_crear: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_favorito}
-                                                                        label='Marcar sitio destacado'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_favorito: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_visible}
-                                                                        label='Mostrar / ocultar sitio'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_visible: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_maquetar}
-                                                                        label='Maquetación movil'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_maquetar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_maquetar}
-                                                                        label='Maquetación web'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_maquetar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_sala_crear}
-                                                                        label='Crear salas'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_sala_crear: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_establecer_imagen_principal}
-                                                                        label='Imagen principal de salas'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_establecer_imagen_principal: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_punto_crear}
-                                                                        label='Crear punto de interés'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_punto_crear: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_punto_editar}
-                                                                        label='Editar punto de interés'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_punto_editar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_punto_ordenar}
-                                                                        label='Ordenar punto de interés'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_punto_ordenar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_punto_eliminar}
-                                                                        label='Eliminar punto de interés'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_punto_eliminar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-                                                            </Accordion.Body>
-                                                        </Accordion>
-
-                                                        <Accordion>
-                                                            <Accordion.Header>Configuración de Puntos de interés</Accordion.Header>
-                                                            <Accordion.Body>
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_punto_editar}
-                                                                        label='Edición'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_punto_editar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_punto_visible}
-                                                                        label='Mostrar / Ocultar punto de interés'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_punto_visible: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_punto_maquetar}
-                                                                        label='Maquetación móvil'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_punto_maquetar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_punto_maquetar}
-                                                                        label='Maquetación web'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_punto_maquetar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.sitio_punto_publicar}
-                                                                        label='Publicar puntos de interés'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                sitio_punto_publicar: e.target.checked,
-                                                                            }))
-
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-
-                                                                <Accordion>
-                                                                    <Accordion.Header>Rutas</Accordion.Header>
-                                                                    <Accordion.Body>
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_crear}
-                                                                                label='Crear Ruta'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                        <div
+                                            style={{
+                                                display:
+                                                    permissionEditRole === true ? 'block' : 'none',
+                                            }}
+                                        >
+                                            {/* ----------------------------------------------CATEGORIAS E IDIOMAS--------------------------------------------------------------------------- */}
+
+                                            <Row style={{paddingTop: 15}}>
+                                                <Col md={6} sm={6}>
+                                                    <Accordion>
+                                                        <Accordion.Header>
+                                                            <Form.Check
+                                                                inline
+                                                                defaultChecked={
+                                                                    rol.gestor_categorias_idiomas
+                                                                }
+                                                                label='Catalogos'
+                                                                onChange={(e) => {
+                                                                    setStateRole((role) => ({
+                                                                        ...role,
+                                                                        id_rol: role.id_rol,
+                                                                        gestor_categorias_idiomas:
+                                                                            e.target.checked,
+                                                                    }))
+
+                                                                    // await postData(editRoleMethod, stateRole)
+                                                                    // getRoles()
+                                                                }}
+                                                            />
+                                                        </Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <Accordion>
+                                                                <Accordion.Header>
+                                                                    Categorías
+                                                                </Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.categoria_crear
+                                                                            }
+                                                                            label='Crear categoría'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_crear: e.target.checked,
-                                                                                    }))
+                                                                                        categoria_crear:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_editar}
-                                                                                label='Editar Ruta'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.categoria_editar
+                                                                            }
+                                                                            label='Editar categoría'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_editar: e.target.checked,
-                                                                                    }))
+                                                                                        categoria_editar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_eliminar}
-                                                                                label='Eliminar Ruta'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.categoria_eliminar
+                                                                            }
+                                                                            label='Eliminar categoría'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_eliminar: e.target.checked,
-                                                                                    }))
+                                                                                        categoria_eliminar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+                                                                </Accordion.Body>
+                                                            </Accordion>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_pasos_crear}
-                                                                                label='Crear pasos'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                            <Accordion>
+                                                                <Accordion.Header>
+                                                                    Idiomas
+                                                                </Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.idioma_crear
+                                                                            }
+                                                                            label='Crear idioma'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_pasos_crear: e.target.checked,
-                                                                                    }))
+                                                                                        idioma_crear:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_pasos_editar}
-                                                                                label='Editar pasos'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.idioma_editar
+                                                                            }
+                                                                            label='Editar idioma'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_pasos_editar: e.target.checked,
-                                                                                    }))
+                                                                                        idioma_editar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_pasos_eliminar}
-                                                                                label='Eliminar pasos'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.idioma_eliminar
+                                                                            }
+                                                                            label='Eliminar idioma'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_pasos_eliminar: e.target.checked,
-                                                                                    }))
+                                                                                        idioma_eliminar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+                                                                </Accordion.Body>
+                                                            </Accordion>
+                                                        </Accordion.Body>
+                                                    </Accordion>
+                                                </Col>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_mapa_crear}
-                                                                                label='Cargar mapa'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                <Col md={6} sm={6}>
+                                                    <Accordion>
+                                                        <Accordion.Header>
+                                                            <Form.Check
+                                                                inline
+                                                                defaultChecked={rol.gestor_offline}
+                                                                label='Offline  '
+                                                                onChange={(e) => {
+                                                                    setStateRole((role) => ({
+                                                                        ...role,
+                                                                        id_rol: role.id_rol,
+                                                                        gestor_offline:
+                                                                            e.target.checked,
+                                                                    }))
+
+                                                                    // await postData(editRoleMethod, stateRole)
+                                                                    // getRoles()
+                                                                }}
+                                                            />
+                                                        </Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <Accordion>
+                                                                <Accordion.Header>
+                                                                    Configuración de contenido
+                                                                    descargable
+                                                                </Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.offline_sitios
+                                                                            }
+                                                                            label='Seleccionar contenido descarble de Sitios'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_mapa_crear: e.target.checked,
-                                                                                    }))
+                                                                                        offline_sitios:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_mapa_editar}
-                                                                                label='Editar mapa'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.offline_puntos
+                                                                            }
+                                                                            label='Seleccionar contenido descarble de Puntos de interés'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_mapa_editar: e.target.checked,
-                                                                                    }))
+                                                                                        offline_puntos:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+                                                                </Accordion.Body>
+                                                            </Accordion>
+                                                        </Accordion.Body>
+                                                    </Accordion>
+                                                </Col>
+                                            </Row>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_mapa_eliminar}
-                                                                                label='Eliminar mapa'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                            {/* -----------------------------------------------SITIOS Y REPORTES-------------------------------------------------------------------------- */}
+
+                                            <Row style={{paddingTop: 15}}>
+                                                <Col md={6} sm={6}>
+                                                    <Accordion>
+                                                        <Accordion.Header>
+                                                            <Form.Check
+                                                                inline
+                                                                defaultChecked={rol.gestor_sitios}
+                                                                label='Sitios'
+                                                                onChange={(e) => {
+                                                                    setStateRole((role) => ({
+                                                                        ...role,
+                                                                        id_rol: role.id_rol,
+                                                                        gestor_sitios:
+                                                                            e.target.checked,
+                                                                    }))
+
+                                                                    // await postData(editRoleMethod, stateRole)
+                                                                    // getRoles()
+                                                                }}
+                                                            />
+                                                        </Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <Accordion>
+                                                                <Accordion.Header>
+                                                                    Gestor de sitios
+                                                                </Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_crear
+                                                                            }
+                                                                            label='Nuevo sitio'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_mapa_eliminar: e.target.checked,
-                                                                                    }))
+                                                                                        sitio_crear:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_imagen_crear}
-                                                                                label='Cargar imagen de referencia'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_editar
+                                                                            }
+                                                                            label='Editar sitio'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_imagen_crear: e.target.checked,
-                                                                                    }))
+                                                                                        sitio_editar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_imagen_editar}
-                                                                                label='Editar imagen de referencia'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_eliminar
+                                                                            }
+                                                                            label='Eliminar sitio'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_imagen_editar: e.target.checked,
-                                                                                    }))
+                                                                                        sitio_eliminar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
-                                                                                }}
-                                                                            />
-                                                                        </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+                                                                </Accordion.Body>
+                                                            </Accordion>
 
-                                                                        <Row style={{ paddingTop: 15 }}>
-                                                                            <Form.Check
-                                                                                inline
-                                                                                defaultChecked={rol.sitio_punto_ruta_imagen_eliminar}
-                                                                                label='Eliminar imagen de referencia'
-                                                                                onChange={(e) => {
-                                                                                    setStateRole((role) => ({
+                                                            <Accordion>
+                                                                <Accordion.Header>
+                                                                    Configuración de Sitios
+                                                                </Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_crear
+                                                                            }
+                                                                            label='Crear sitio'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
                                                                                         ...role,
                                                                                         id_rol: role.id_rol,
-                                                                                        sitio_punto_ruta_imagen_eliminar: e.target.checked,
-                                                                                    }))
+                                                                                        sitio_crear:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                                    // await postData(editRoleMethod, stateRole)
-                                                                                    // getRoles()
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_favorito
+                                                                            }
+                                                                            label='Marcar sitio destacado'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_favorito:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_visible
+                                                                            }
+                                                                            label='Mostrar / ocultar sitio'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_visible:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_maquetar
+                                                                            }
+                                                                            label='Maquetación movil'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_maquetar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_maquetar
+                                                                            }
+                                                                            label='Maquetación web'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_maquetar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_sala_crear
+                                                                            }
+                                                                            label='Crear salas'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_sala_crear:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_establecer_imagen_principal
+                                                                            }
+                                                                            label='Imagen principal de salas'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_establecer_imagen_principal:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_punto_crear
+                                                                            }
+                                                                            label='Crear punto de interés'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_punto_crear:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_punto_editar
+                                                                            }
+                                                                            label='Editar punto de interés'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_punto_editar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_punto_ordenar
+                                                                            }
+                                                                            label='Ordenar punto de interés'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_punto_ordenar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_punto_eliminar
+                                                                            }
+                                                                            label='Eliminar punto de interés'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_punto_eliminar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+                                                                </Accordion.Body>
+                                                            </Accordion>
+
+                                                            <Accordion>
+                                                                <Accordion.Header>
+                                                                    Configuración de Puntos de
+                                                                    interés
+                                                                </Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_punto_editar
+                                                                            }
+                                                                            label='Edición'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_punto_editar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_punto_visible
+                                                                            }
+                                                                            label='Mostrar / Ocultar punto de interés'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_punto_visible:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_punto_maquetar
+                                                                            }
+                                                                            label='Maquetación móvil'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_punto_maquetar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_punto_maquetar
+                                                                            }
+                                                                            label='Maquetación web'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_punto_maquetar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.sitio_punto_publicar
+                                                                            }
+                                                                            label='Publicar puntos de interés'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        sitio_punto_publicar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
+
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+
+                                                                    <Accordion>
+                                                                        <Accordion.Header>
+                                                                            Rutas
+                                                                        </Accordion.Header>
+                                                                        <Accordion.Body>
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
                                                                                 }}
-                                                                            />
-                                                                        </Row>
-                                                                    </Accordion.Body>
-                                                                </Accordion>
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_crear
+                                                                                    }
+                                                                                    label='Crear Ruta'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_crear:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                                            </Accordion.Body>
-                                                        </Accordion>
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
-                                                    </Accordion.Body>
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_editar
+                                                                                    }
+                                                                                    label='Editar Ruta'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_editar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_eliminar
+                                                                                    }
+                                                                                    label='Eliminar Ruta'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_eliminar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                                </Accordion>
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
-                                            </Col>
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_pasos_crear
+                                                                                    }
+                                                                                    label='Crear pasos'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_pasos_crear:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                            <Col md={6} sm={6}>
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
-                                                <Accordion>
-                                                    <Accordion.Header>
-                                                        <Form.Check
-                                                            inline
-                                                            defaultChecked={rol.gestor_reportes}
-                                                            label='Reportes'
-                                                            onChange={(e) => {
-                                                                setStateRole((role) => ({
-                                                                    ...role,
-                                                                    id_rol: role.id_rol,
-                                                                    gestor_reportes: e.target.checked
-                                                                }))
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_pasos_editar
+                                                                                    }
+                                                                                    label='Editar pasos'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_pasos_editar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                                                // await postData(editRoleMethod, stateRole)
-                                                                // getRoles()
-                                                            }}
-                                                        />
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
-                                                    </Accordion.Header>
-                                                    <Accordion.Body>
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_pasos_eliminar
+                                                                                    }
+                                                                                    label='Eliminar pasos'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_pasos_eliminar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_mapa_crear
+                                                                                    }
+                                                                                    label='Cargar mapa'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_mapa_crear:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                                    </Accordion.Body>
-                                                </Accordion>
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
-                                            </Col>
-                                        </Row>
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_mapa_editar
+                                                                                    }
+                                                                                    label='Editar mapa'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_mapa_editar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                        {/* -----------------------------------------------ALERTAS Y USUARIOS-------------------------------------------------------------------------- */}
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
-                                        <Row style={{ paddingTop: 15 }}>
-                                            <Col md={6} sm={6}>
-                                                <Accordion>
-                                                    <Accordion.Header>
-                                                        <Form.Check
-                                                            inline
-                                                            defaultChecked={rol.gestor_notificaciones}
-                                                            label='Alertas'
-                                                            onChange={(e) => {
-                                                                setStateRole((role) => ({
-                                                                    ...role,
-                                                                    id_rol: role.id_rol,
-                                                                    gestor_notificaciones: e.target.checked,
-                                                                }))
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_mapa_eliminar
+                                                                                    }
+                                                                                    label='Eliminar mapa'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_mapa_eliminar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                                                // await postData(editRoleMethod, stateRole)
-                                                                // getRoles()
-                                                            }}
-                                                        />
-                                                    </Accordion.Header>
-                                                    <Accordion.Body>
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
-                                                        <Accordion>
-                                                            <Accordion.Header>Notificaciones</Accordion.Header>
-                                                            <Accordion.Body>
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.notificacion_crear}
-                                                                        label='Crear notificación'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                notificacion_crear: e.target.checked,
-                                                                            }))
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_imagen_crear
+                                                                                    }
+                                                                                    label='Cargar imagen de referencia'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_imagen_crear:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.notificacion_programada_editar}
-                                                                        label='Editar notificaciones programadas'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                notificacion_programada_editar: e.target.checked,
-                                                                            }))
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_imagen_editar
+                                                                                    }
+                                                                                    label='Editar imagen de referencia'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_imagen_editar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
 
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.notificacion_programada_eliminar}
-                                                                        label='Eliminar notificaciones programadas'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                notificacion_programada_eliminar: e.target.checked,
-                                                                            }))
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.sitio_punto_ruta_imagen_eliminar
+                                                                                    }
+                                                                                    label='Eliminar imagen de referencia'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                sitio_punto_ruta_imagen_eliminar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
+                                                                        </Accordion.Body>
+                                                                    </Accordion>
+                                                                </Accordion.Body>
+                                                            </Accordion>
+                                                        </Accordion.Body>
+                                                    </Accordion>
+                                                </Col>
 
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.notificacion_historial_editar}
-                                                                        label='Editar notificaciones de historial'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                notificacion_historial_editar: e.target.checked,
-                                                                            }))
+                                                <Col md={6} sm={6}>
+                                                    <Accordion>
+                                                        <Accordion.Header>
+                                                            <Form.Check
+                                                                inline
+                                                                defaultChecked={rol.gestor_reportes}
+                                                                label='Reportes'
+                                                                onChange={(e) => {
+                                                                    setStateRole((role) => ({
+                                                                        ...role,
+                                                                        id_rol: role.id_rol,
+                                                                        gestor_reportes:
+                                                                            e.target.checked,
+                                                                    }))
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                                    // await postData(editRoleMethod, stateRole)
+                                                                    // getRoles()
+                                                                }}
+                                                            />
+                                                        </Accordion.Header>
+                                                        <Accordion.Body></Accordion.Body>
+                                                    </Accordion>
+                                                </Col>
+                                            </Row>
 
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.notificacion_historial_eliminar}
-                                                                        label='Eliminar notificaciones de historial'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                notificacion_historial_eliminar: e.target.checked,
-                                                                            }))
+                                            {/* -----------------------------------------------ALERTAS Y USUARIOS-------------------------------------------------------------------------- */}
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-                                                            </Accordion.Body>
-                                                        </Accordion>
+                                            <Row style={{paddingTop: 15}}>
+                                                <Col md={6} sm={6}>
+                                                    <Accordion>
+                                                        <Accordion.Header>
+                                                            <Form.Check
+                                                                inline
+                                                                defaultChecked={
+                                                                    rol.gestor_notificaciones
+                                                                }
+                                                                label='Alertas'
+                                                                onChange={(e) => {
+                                                                    setStateRole((role) => ({
+                                                                        ...role,
+                                                                        id_rol: role.id_rol,
+                                                                        gestor_notificaciones:
+                                                                            e.target.checked,
+                                                                    }))
 
-                                                    </Accordion.Body>
+                                                                    // await postData(editRoleMethod, stateRole)
+                                                                    // getRoles()
+                                                                }}
+                                                            />
+                                                        </Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <Accordion>
+                                                                <Accordion.Header>
+                                                                    Notificaciones
+                                                                </Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.notificacion_crear
+                                                                            }
+                                                                            label='Crear notificación'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        notificacion_crear:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.notificacion_programada_editar
+                                                                            }
+                                                                            label='Editar notificaciones programadas'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        notificacion_programada_editar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                </Accordion>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                            </Col>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.notificacion_programada_eliminar
+                                                                            }
+                                                                            label='Eliminar notificaciones programadas'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        notificacion_programada_eliminar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                            <Col md={6} sm={6}>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                <Accordion>
-                                                    <Accordion.Header>
-                                                        <Form.Check
-                                                            inline
-                                                            defaultChecked={rol.gestor_usuarios}
-                                                            label='Usuarios'
-                                                            onChange={(e) => {
-                                                                setStateRole((role) => ({
-                                                                    ...role,
-                                                                    id_rol: role.id_rol,
-                                                                    gestor_usuarios: e.target.checked
-                                                                }))
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.notificacion_historial_editar
+                                                                            }
+                                                                            label='Editar notificaciones de historial'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        notificacion_historial_editar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                // await postData(editRoleMethod, stateRole)
-                                                                // getRoles()
-                                                            }}
-                                                        />
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                    </Accordion.Header>
-                                                    <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.notificacion_historial_eliminar
+                                                                            }
+                                                                            label='Eliminar notificaciones de historial'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        notificacion_historial_eliminar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                        <Accordion>
-                                                            <Accordion.Header>Gestión de usuarios</Accordion.Header>
-                                                            <Accordion.Body>
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.usuarios_crear}
-                                                                        label='Crear usuarios'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                usuarios_crear: e.target.checked,
-                                                                            }))
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+                                                                </Accordion.Body>
+                                                            </Accordion>
+                                                        </Accordion.Body>
+                                                    </Accordion>
+                                                </Col>
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                <Col md={6} sm={6}>
+                                                    <Accordion>
+                                                        <Accordion.Header>
+                                                            <Form.Check
+                                                                inline
+                                                                defaultChecked={rol.gestor_usuarios}
+                                                                label='Usuarios'
+                                                                onChange={(e) => {
+                                                                    setStateRole((role) => ({
+                                                                        ...role,
+                                                                        id_rol: role.id_rol,
+                                                                        gestor_usuarios:
+                                                                            e.target.checked,
+                                                                    }))
 
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.usuarios_editar}
-                                                                        label='Editar roles de usuarios'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                usuarios_editar: e.target.checked,
-                                                                            }))
+                                                                    // await postData(editRoleMethod, stateRole)
+                                                                    // getRoles()
+                                                                }}
+                                                            />
+                                                        </Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <Accordion>
+                                                                <Accordion.Header>
+                                                                    Gestión de usuarios
+                                                                </Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.usuarios_crear
+                                                                            }
+                                                                            label='Crear usuarios'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        usuarios_crear:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.usuarios_eliminar}
-                                                                        label='Eliminar usuarios'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                usuarios_eliminar: e.target.checked,
-                                                                            }))
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.usuarios_editar
+                                                                            }
+                                                                            label='Editar roles de usuarios'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        usuarios_editar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.usuarios_buscar}
-                                                                        label='Buscar usuarios'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                usuarios_buscar: e.target.checked,
-                                                                            }))
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.usuarios_eliminar
+                                                                            }
+                                                                            label='Eliminar usuarios'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        usuarios_eliminar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
-                                                            </Accordion.Body>
-                                                        </Accordion>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                        <Accordion>
-                                                            <Accordion.Header>Gestión de roles</Accordion.Header>
-                                                            <Accordion.Body>
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.rol_crear}
-                                                                        label='Crear roles'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                rol_crear: e.target.checked,
-                                                                            }))
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.usuarios_buscar
+                                                                            }
+                                                                            label='Buscar usuarios'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        usuarios_buscar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+                                                                </Accordion.Body>
+                                                            </Accordion>
 
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.rol_editar}
-                                                                        label='Editar roles'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                rol_editar: e.target.checked,
-                                                                            }))
+                                                            <Accordion>
+                                                                <Accordion.Header>
+                                                                    Gestión de roles
+                                                                </Accordion.Header>
+                                                                <Accordion.Body>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.rol_crear
+                                                                            }
+                                                                            label='Crear roles'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        rol_crear:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                                <Row style={{ paddingTop: 15 }}>
-                                                                    <Form.Check
-                                                                        inline
-                                                                        defaultChecked={rol.rol_eliminar}
-                                                                        label='Eliminar roles'
-                                                                        onChange={(e) => {
-                                                                            setStateRole((role) => ({
-                                                                                ...role,
-                                                                                id_rol: role.id_rol,
-                                                                                rol_eliminar: e.target.checked,
-                                                                            }))
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.rol_editar
+                                                                            }
+                                                                            label='Editar roles'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        rol_editar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                                            // await postData(editRoleMethod, stateRole)
-                                                                            // getRoles()
-                                                                        }}
-                                                                    />
-                                                                </Row>
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
 
-                                                            </Accordion.Body>
-                                                        </Accordion>
+                                                                    <Row style={{paddingTop: 15}}>
+                                                                        <Form.Check
+                                                                            inline
+                                                                            defaultChecked={
+                                                                                rol.rol_eliminar
+                                                                            }
+                                                                            label='Eliminar roles'
+                                                                            onChange={(e) => {
+                                                                                setStateRole(
+                                                                                    (role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        rol_eliminar:
+                                                                                            e.target
+                                                                                                .checked,
+                                                                                    })
+                                                                                )
 
-                                                    </Accordion.Body>
-                                                </Accordion>
-
-                                            </Col>
-                                        </Row>
-
-
+                                                                                // await postData(editRoleMethod, stateRole)
+                                                                                // getRoles()
+                                                                            }}
+                                                                        />
+                                                                    </Row>
+                                                                </Accordion.Body>
+                                                            </Accordion>
+                                                        </Accordion.Body>
+                                                    </Accordion>
+                                                </Col>
+                                            </Row>
+                                        </div>
                                     </Col>
                                 </Row>
                             </div>

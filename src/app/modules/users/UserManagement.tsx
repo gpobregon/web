@@ -248,6 +248,11 @@ const UserManagement: FC<any> = ({show}) => {
 
             if (filter[0]?.gestor_usuarios === false) {
                 navigate('/errors/404', {replace: true})
+            } else {
+                setPermissionCreateUsers(filter[0]?.usuarios_crear)
+                setPermissionEditUsers(filter[0]?.usuarios_editar)
+                setPermissionDeleteUsers(filter[0]?.usuarios_eliminar)
+                setPermissionSearchUsers(filter[0]?.usuarios_buscar)
             }
         })
     }
@@ -255,13 +260,13 @@ const UserManagement: FC<any> = ({show}) => {
     useEffect(() => {
         getRoles()
         validateRole()
-    }, [existRoles])
+    }, [existRoles, permissionEditUsers])
 
     const rolesOptions = roles.map((role) => ({
         value: role.nombre,
         label: role.nombre,
     }))
-    
+
     return (
         <Container fluid>
             <div

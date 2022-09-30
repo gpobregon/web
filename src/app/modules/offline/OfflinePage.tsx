@@ -65,6 +65,8 @@ const OfflineManagement: FC<any> = ({show}) => {
                             label={t.nombre}
                             checked={t.checked}
                             onChange={async (e: any) => {
+                                await validateRole()
+
                                 if (m.nombre === 'Sitios' && !permissionOfflineSites) {
                                     swal({
                                         title: 'No tienes los permisos para cambiar el contenido descargable de los sitios',
@@ -105,11 +107,6 @@ const OfflineManagement: FC<any> = ({show}) => {
                                     estado: x2.estado,
                                 })
                                 setListParts(listParts)
-                                //     }
-
-                                // }
-
-                                // }
                             }}
                             name='group1'
                             // type={type}
@@ -165,6 +162,9 @@ const OfflineManagement: FC<any> = ({show}) => {
 
             if (filter[0]?.gestor_offline === false) {
                 navigate('/errors/404', {replace: true})
+            } else {
+                setPermissionOfflineSites(filter[0]?.offline_sitios)
+                setPermissionOfflinePoints(filter[0]?.offline_puntos)
             }
         })
     }
@@ -172,12 +172,11 @@ const OfflineManagement: FC<any> = ({show}) => {
     useEffect(() => {
         getRoles()
         validateRole()
-    }, [existRoles])
+    }, [existRoles, listParts])
 
     useEffect(() => {
         listParts = []
         getOfflineParts()
-
         // console.log(listParts);
     }, [listParts])
 

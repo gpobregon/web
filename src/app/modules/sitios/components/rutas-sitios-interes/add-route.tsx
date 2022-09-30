@@ -97,8 +97,7 @@ const AddRoute = () => {
             swal("Error", "Falta agregar alguna imagen", "error")
             return
         }
-
-        if(imgtempomodal.imagen1 != '' && imgtempomodal.imagen2 != '' && imgtempomodal.imagen3 != '' || getimg[0]?.img_path != '' && getimg[1]?.img_path != '' && getimg[2]?.img_path != ''){
+        if(imgtempomodal.imagen1 != '' && imgtempomodal.imagen2 != '' && imgtempomodal.imagen3 != '' || getimg.length == 3){
         await postData(addImages, imganes)
         await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso, id_lenguaje: lenguajes.id_lenguaje })
         swal({
@@ -106,6 +105,7 @@ const AddRoute = () => {
             icon: 'warning',
             buttons: ['Sí', 'No'],
         }).then(async (res) => {
+            if (res) {
             navigate('/sitios/edit-point-interes', {
                 state: {
                     id_punto: puntos.interes.id_punto,
@@ -124,11 +124,13 @@ const AddRoute = () => {
                     nombreSala: puntos.interes.nombreSala,
                 },
             })
+        }
             swal({
                 text: "Se Guardó guía correctamente ",
                 icon: "success",
                 timer: 2000,
             })
+      
         })
        
         }else{
@@ -741,7 +743,7 @@ const handleChangeLanguage = async (e: any) => {
                                                                             {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                                                                         </Col>
                                                                         <Col>
-                                                                            <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => { }}></Link>
+                                                                            <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => { imgtempomodal.imagen2 = ""}}></Link>
                                                                         </Col>
                                                                     </Row>
                                                                 </div>
@@ -788,7 +790,7 @@ const handleChangeLanguage = async (e: any) => {
                                                                             {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                                                                         </Col>
                                                                         <Col>
-                                                                            <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => { }}></Link>
+                                                                            <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => {imgtempomodal.imagen1 = "" }}></Link>
                                                                         </Col>
                                                                     </Row>
                                                                 </div>
@@ -840,7 +842,7 @@ const handleChangeLanguage = async (e: any) => {
                                                                                 {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                                                                             </Col>
                                                                             <Col>
-                                                                                <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => { img.img_path = '' }}></Link>
+                                                                                <Link className='bi bi-trash background-button text-danger' to={''} onClick={() => { getimg[index].img_path = '' }}></Link>
                                                                             </Col>
                                                                         </Row>
                                                                     </div>
