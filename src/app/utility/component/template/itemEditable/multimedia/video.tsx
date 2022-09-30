@@ -19,6 +19,11 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
     removeItem(e.triggerEvent.target.id);
     setEditItem([])
   }
+
+  const saveElement = (e: any) => {
+    // saveResourceElement(e.triggerEvent.target.id)
+  }
+
   return (
     <div
       ref={referencia}
@@ -34,9 +39,10 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
       </div>
       <Menu id={"menu-id"} theme="dark" data-test={data}>
         <Item onClick={(e: any) => destroyItem(e)}>
-          <div>
-            <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
-          </div>
+          <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
+        </Item>
+        <Item onClick={(e: any) => saveElement(e)}>
+          <i className="fa fa-save text-success pe-4" />Guardar Recurso
         </Item>
       </Menu>
       <div id={data.id} className={`editable ${data.textAling} w-100`}>

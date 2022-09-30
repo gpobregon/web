@@ -28,22 +28,24 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [board, setBoard] = useState<any>([])
     const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
-    const [btnActive, setBtnActive] = useState<Number>(1)
+    const [hasDropped, setHasDropped] = useState<boolean>(false)
+    const [hasDroppedOnChild, setHasDroppedOnChild] = useState<boolean>(false)
+    const [changeModeEditor, setChangeModeEditor] = useState<Number>(1)
     const { setShowLoad } = useContext(LoadingContext)
     const [allResources, setAllResource] = useState<any>([])
     const [oneDataSite, setOneDataSite] = useState<any>([])
     const [changeLaguage, setChangeLaguage] = useState<any>([])
-    const [changeTypeEdit, setChangeTypeEdit] = useState<number>(1)
+    const [changeTypeEdit, setChangeTypeEdit] = useState<Number>(1)
     let [count, setCount] = useState(0)
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
-    const { id } = useParams()
+    const { id, tipo } = useParams()
     // Agregar elemento
     const addElement = (data: any) => {
         const response = validElement(data.type)
         const result = response.filter((item: any) => data.type === item.type);
         if (data.typeElement === 'multimedia') {
-            setBtnActive(2)
+            setChangeModeEditor(2)
         }
         setCount((count: number) => 1)
         const item = result[0]
@@ -59,15 +61,24 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             ]
         );
     };
-    // Dragable central
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [{ isOver }, drop] = useDrop(() => ({
-        accept: "image",
-        drop: (item: any) => addElement(item.data),
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-        }),
-    }));
+    const [{ isOver, isOverCurrent }, drop] = useDrop(
+        () => ({
+          accept: 'image',
+          drop(item: any, monitor: any) {
+            const didDrop = monitor.didDrop()
+            if (didDrop) {
+              return
+            }
+            addElement(item.data)
+          },
+          collect: (monitor) => ({
+            isOver: monitor.isOver(),
+            isOverCurrent: monitor.isOver({ shallow: true }),
+          }),
+        })
+      )
 
     // Dragable fotos
 
@@ -104,23 +115,29 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     // Cambiar Lenguaje
     const changeLangegeSelect = (data: any) => {
         setChangeLaguage(data)
-        oneData(data)
+        oneData(data, changeTypeEdit === 1 ? true : false)
     }
 
+    const ChangeMode = (type: number) => {
+        setChangeTypeEdit(type)
+        oneData(changeLaguage, type === 1 ? true : false)
+    }
+    
     // get all data
     const getLenguate = async () => {
         const response: any = await getData('language/select')
         setLanguage(response.data.length > 0 ? response.data : [])
         setChangeLaguage(response.data.length > 0 ? response.data[0] : [])
-        oneData(response.data.length > 0 ? response.data[0] : [])
+        oneData(response.data.length > 0 ? response.data[0] : [], changeTypeEdit === 1 ? true : false)
     }
 
     // obtenermos el template 
-    const oneData = async (item: any) => {
+    const oneData = async (item: any, type: boolean) => {
         const data = {
-            "id_punto": -1,
-            "id_sitio": id,
-            "id_lenguaje": item.value
+            "id_punto": tipo === 'punto' ? id  : -1,
+            "id_sitio": tipo === 'sitio' ? id  : -1,
+            "id_lenguaje": item.value,
+            "es_movil": type
         }
         const response: any = await postData('site/mobile/getone', data)
         if (response.data.length > 0) {
@@ -134,14 +151,16 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     // guardamos el template
     const storeTemplate = async () => {
+        setShowLoad(true)
         const dataTemplate = {
-            "id_punto": null,
+            "id_punto": -1,
             "id_sitio": id,
             "id_lenguaje": changeLaguage.value,
             "nombre": "Nombre editado3 sitio movil 1",
             "descripcion": "descripcion2 editado sitio movil 1",
             "contenido": JSON.stringify(board),
             "version": "version sitio movil 1",
+            "es_movil": changeTypeEdit === 1 ? true : false,
             "estado": 1
         }
         const response: any = await postData('site/mobile/set', dataTemplate)
@@ -152,6 +171,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                     icon: 'success',
                 }
             )
+        setShowLoad(false)
     }
 
     // elimina items dragados en el editor
@@ -179,11 +199,14 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         const url = `${process.env.REACT_APP_URLAWS}resource-${changeTypeEdit === 1 ? 'mobile' : 'web'}-${id}-${file.name}`;
         const fileResource =
         {
-            "id_punto": null,
+            "id_punto": -1,
             "id_sitio": id,
             "nombre": file.name,
             "url": url,
             "tipo": file.type,
+            "contenido": '',
+            "tipo_elemento": '',
+            "es_movil": changeTypeEdit === 1 ? true : false,
             "estado": 1
         }
 
@@ -244,6 +267,14 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         setShowLoad(false) 
     }
 
+    // Guardar recurso individual de tipo elemento
+
+    const saveResourceElement = (id: string) => {
+        const item = board.filter((item: any) => String(item.id) === String(id))
+        console.log(item)
+    }
+
+    // ------------------------------------------------------
     useEffect(
         () => {
             if (board.length > 0 && count === 1) {
@@ -269,12 +300,11 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         language,
         editItem,
         moveCard,
-        btnActive,
+        ChangeMode,        
         removeItem,
         setEditItem,
         oneDataSite,
         allResources,
-        setBtnActive,
         discardChange,
         updateElement,
         storeTemplate,
@@ -283,10 +313,12 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         uploadResource,
         setChangeLaguage,
         editItemResource,
-        setChangeTypeEdit,
+        changeModeEditor,
         destroyOneResource,
         changeLangegeSelect,
-        setEditItemResource
+        setEditItemResource,
+        setChangeModeEditor,
+        saveResourceElement
     }
 
     return (

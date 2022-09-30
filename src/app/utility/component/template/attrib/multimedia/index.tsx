@@ -31,6 +31,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
     }
 
     const cropImage = async () => {
+        changeResource()
         const img = dataURLtoFile(dataResource, editItemResource.nombre.replace('.jpg', ".png").replace('.jpeg', ".png"))
         const response = await uploadResource(img, 2)
         changeSizeTitle({ url: response })
@@ -67,7 +68,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
     }
     useEffect(() => {
 
-        if (editItemResource.tipo && (editItemResource.tipo.includes('video') || editItemResource.tipo.includes('audio') ||  (editItemResource.tipo.includes('image') && editItem.type === 'image-360'))) {
+        if (editItemResource.tipo && (editItemResource.tipo.includes('video') || editItemResource.tipo.includes('audio') || (editItemResource.tipo.includes('image') && editItem.type === 'image-360'))) {
             changeSizeTitle({ url: editItemResource.url })
         }
 
@@ -82,9 +83,10 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                         <div className="py-2 d-flex flex-row">
                             <div className="tooltip-container mx-2">
                                 <Button
+                                    size="sm"
                                     variant="secondary"
                                     className="btn-icon tooltip-trigger"
-                                    onClick={() => changeResource() }
+                                    onClick={() => changeResource()}
                                 >
                                     <Image
                                         alt="Logo"
@@ -99,6 +101,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
 
                             <div className="tooltip-container mx-2">
                                 <Button
+                                    size="sm"
                                     variant="secondary"
                                     className="btn-icon tooltip-trigger"
                                     onClick={() => cropImage()}
@@ -113,8 +116,24 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                                     Recortar
                                 </div>
                             </div>
+
                             <div className="tooltip-container mx-2">
                                 <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    className="btn-icon tooltip-trigger"
+                                    onClick={() => changeSizeTitle({ url: editItemResource.url })}
+                                >
+                                    <i className="fa fa-check fs-3 text-success"></i>
+                                </Button>
+                                <div className="tooltip-one">
+                                    Asignar
+                                </div>
+                            </div>
+
+                            <div className="tooltip-container mx-2">
+                                <Button
+                                    size="sm"
                                     variant="secondary"
                                     className="btn-icon tooltip-trigger"
                                     onClick={() => changeSizeTitle({ borderRadius: 'rounded-top' })}
@@ -169,7 +188,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                             <div className="resource-element size-resource-video rounded d-flex justify-content-center align-items-center">
                                 <span className="text-center">
                                     <p><i className="bi bi-arrow-90deg-down text-white" /></p>
-                                    <p>Arrasta {(editItem.type === 'video') ? 'un video' : (editItem.type === 'audio') ? 'un audio' : 'una Imagen 360°' } de los recursos</p>
+                                    <p>Arrasta {(editItem.type === 'video') ? 'un video' : (editItem.type === 'audio') ? 'un audio' : 'una Imagen 360°'} de los recursos</p>
                                 </span>
                             </div>
                         </Col>
@@ -182,7 +201,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                             <Button
                                 variant="secondary"
                                 className="btn-icon tooltip-trigger"
-                                onClick={() => changeResource() }
+                                onClick={() => changeResource()}
                                 disabled={!editItemResource.url}
                             >
                                 <Image

@@ -58,70 +58,17 @@ const PrivateRoutes = () => {
         <Route path='/reportes/sitios-por-calificacion' element={<SitesByRating />}  /> 
         <Route path='/reportes/reporte-de-usuario' element={<UserReport />}  />
         <Route path='sitios' element={<SitiosPage />} /> 
-        <Route path="/template">
+        <Route path="/template/:tipo">
             <Route path="movil/:id" element={<Template />} />
             <Route path="web/:id" element={<Template />} />
         </Route>
         <Route path='notificaciones-push' element={<PushNotificationsPage />} /> 
         <Route path='/offline' element={<OfflineManagement />} />
-        <Route path="/template">
-            <Route path="movil/:id" element={<Template />} />
-            <Route path="web/:id" element={<Template />} />
-        </Route>
         <Route path='notificaciones-push' element={<PushNotificationsPage />} />
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
         <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
         <Route path='/sitios/add-route' element={<AddRoute />} />
         <Route path='/test' element={<Container />} />
-                {/* Lazy Modules */}
-                {/* {/* <Route
-                    path='crafted/pages/profile/*'
-                    element={
-                        <SuspensedView>
-                            <ProfilePage />
-                        </SuspensedView>
-                    }
-                />
-                <Route
-                    path='crafted/pages/wizards/*'
-                    element={
-                        <SuspensedView>
-                            <WizardsPage />
-                        </SuspensedView>
-                    }
-                />
-                <Route
-                    path='crafted/widgets/*'
-                    element={
-                        <SuspensedView>
-                            <WidgetsPage />
-                        </SuspensedView>
-                    }
-                />
-                <Route
-                    path='crafted/account/*'
-                    element={
-                        <SuspensedView>
-                            <AccountPage />
-                        </SuspensedView>
-                    }
-                />
-                <Route
-                    path='apps/chat/*'
-                    element={
-                        <SuspensedView>
-                            <ChatPage />
-                        </SuspensedView>
-                    }
-                />
-                <Route
-                    path='apps/user-management/*'
-                    element={
-                        <SuspensedView>
-                            <UsersPage />
-                        </SuspensedView>
-                    }
-                /> */} 
                 {/* Page Not Found */}
                 <Route path='*' element={<Navigate to='/error/404' />} />
             </Route>

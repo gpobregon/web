@@ -1,11 +1,11 @@
-import React, { ChangeEvent, useState, useEffect } from 'react'
-import { Button, Col, Container, Form, Row } from 'react-bootstrap'
-import { getToBase64 } from './base64'
-import { awsconfig } from '../../../aws-exports'
+import React, {ChangeEvent, useState, useEffect} from 'react'
+import {Button, Col, Container, Form, Row} from 'react-bootstrap'
+import {getToBase64} from './base64'
+import {awsconfig} from '../../../aws-exports'
 import imgUpload from './upload-image_03.jpg'
-import { Amplify, Auth } from 'aws-amplify'
-import { URLAWS, postData, updateUserMethod, getData, getRolesMethod } from '../../services/api'
-import { roleManager } from '../../models/roleManager'
+import {Amplify, Auth} from 'aws-amplify'
+import {URLAWS, postData, updateUserMethod, getData, getRolesMethod} from '../../services/api'
+import {roleManager} from '../../models/roleManager'
 import * as AWS from 'aws-sdk'
 import UpImage from '../uploadFile/upload-image';
 import {
@@ -13,7 +13,7 @@ import {
     UsersListType,
     UserType,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider'
-import { json } from 'node:stream/consumers'
+import {json} from 'node:stream/consumers'
 
 interface Profile {
     fileImage: any
@@ -38,7 +38,7 @@ const UserProfilePage = () => {
         lastname: '',
         imageProfile: '',
         role: '',
-        descripcion: ''
+        descripcion: '',
     })
 
     const [form, setForm] = useState<Profile>({
@@ -49,22 +49,18 @@ const UserProfilePage = () => {
         email: '',
     })
 
-
-
     //TODO: get roles
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
         setExistRoles(true)
     }
-    // console.log(getRoles())   
+    // console.log(getRoles())
     //console.log("roles: ", roles);
 
-    //esto me retorna el email del usuario con el que estoy logueado  
-
+    //esto me retorna el email del usuario con el que estoy logueado
 
     const getEmail = async () => {
-        
         getRoles()
         Auth.currentUserInfo().then((user) => {
             setDataUser({
@@ -74,7 +70,7 @@ const UserProfilePage = () => {
                 lastname: user.attributes['custom:lastname'],
                 imageProfile: user.attributes['custom:imageProfile'],
                 role: user.attributes['custom:role'],
-                descripcion: ''
+                descripcion: '',
             })
             const filter = roles.filter((item) => user.attributes['custom:role'] === item.nombre)
             setDataUser({
@@ -85,17 +81,17 @@ const UserProfilePage = () => {
                 lastname: user.attributes['custom:lastname'],
                 imageProfile: user.attributes['custom:imageProfile'],
                 role: user.attributes['custom:role'],
-                descripcion: filter[0].descripcion
+                descripcion: filter[0].descripcion,
             })
         })
     }
 
-    console.log("dataUser: ", dataUser); 
-   
+    console.log('dataUser: ', dataUser)
+
     useEffect(() => {
         getRoles()
         getEmail()
-        console.log("getEmail: ", getEmail());
+        console.log('getEmail: ', getEmail())
     }, [existRoles])
 
     // getEmail()
@@ -135,7 +131,7 @@ const UserProfilePage = () => {
                 phoneNumber: dataUser.phoneNumber,
                 imageProfile: URLAWS + 'fotoPerfiles/' + imagen,
                 role: dataUser.role,
-                descripcion: ''
+                descripcion: '',
             })
             setModalupIMG(false)
             setShowUpdateButton(false)
@@ -144,7 +140,7 @@ const UserProfilePage = () => {
 
     const updateUsuarios = async () => {
         const user = await Auth.currentAuthenticatedUser()
-        console.log("user: ", user);
+        console.log('user: ', user)
         const result = await Auth.updateUserAttributes(user, {
             name: dataUser.name,
             //email: dataUser.email,
@@ -153,12 +149,20 @@ const UserProfilePage = () => {
             'custom:phoneNumber': dataUser.phoneNumber,
             'custom:imageProfile': dataUser.imageProfile,
         })
-        const filter = roles.filter((item) => { return dataUser.role === item.nombre })
+        const filter = roles.filter((item) => {
+            return dataUser.role === item.nombre
+        })
 
-        console.log("filter: ", filter);
-        let objeto = { id_usuario: user.username, id_rol: filter[0].id_rol, foto: dataUser.imageProfile }
+        console.log('filter: ', filter)
+        let objeto = {
+            id_usuario: user.username,
+            id_rol: filter[0].id_rol,
+            foto: dataUser.imageProfile,
+        }
 
-        await postData(updateUserMethod, objeto).then(data => { console.log(data) })
+        await postData(updateUserMethod, objeto).then((data) => {
+            console.log(data)
+        })
         setShowUpdateButton(true)
     }
     const [modalupimg, setModalupIMG] = useState(false)
@@ -216,7 +220,7 @@ const UserProfilePage = () => {
                                 <Col md={5} className='d-flex'>
                                     <div className='d-flex flex-column justify-content-center mx-xxl-9 mx-xl-9 mx-md-9'>
                                         <h2 className='mb-5'>{dataUser.role}</h2>
-                                        <p className='' style={{ color: '#92929F' }}>
+                                        <p className='' style={{color: '#92929F'}}>
                                             {dataUser.descripcion}
                                         </p>
                                     </div>
@@ -243,11 +247,11 @@ const UserProfilePage = () => {
                             <h2 className='mb-5'>Editor</h2>
                             <hr
                                 className='mb-5'
-                                style={{ border: '1px solid rgba(86, 86, 116, 0.1)' }}
+                                style={{border: '1px solid rgba(86, 86, 116, 0.1)'}}
                             />
                             <div
                                 className='d-xl-flex align-items-center'
-                                style={{ borderRadius: '5px' }}
+                                style={{borderRadius: '5px'}}
                             >
                                 <div>
                                     <img
@@ -259,9 +263,9 @@ const UserProfilePage = () => {
                                         onClick={
                                             dataUser.imageProfile == ''
                                                 ? (e) => {
-                                                    setModalupIMG(true)
-                                                }
-                                                : (e) => { }
+                                                      setModalupIMG(true)
+                                                  }
+                                                : (e) => {}
                                         }
                                         style={{
                                             width: '200px',
@@ -307,7 +311,7 @@ const UserProfilePage = () => {
                             <h2 className='mb-5'>Información del perfil</h2>
                             <hr
                                 className='mb-5'
-                                style={{ border: '1px solid rgba(86, 86, 116, 0.1)' }}
+                                style={{border: '1px solid rgba(86, 86, 116, 0.1)'}}
                             />
 
                             <Row className='mb-5'>
@@ -326,7 +330,7 @@ const UserProfilePage = () => {
                                                     phoneNumber: dataUser.phoneNumber,
                                                     imageProfile: dataUser.imageProfile,
                                                     role: dataUser.role,
-                                                    descripcion: ''
+                                                    descripcion: '',
                                                 })
                                             }}
                                             disabled={showUpdateButton}
@@ -349,7 +353,7 @@ const UserProfilePage = () => {
                                                     phoneNumber: dataUser.phoneNumber,
                                                     imageProfile: dataUser.imageProfile,
                                                     role: dataUser.role,
-                                                    descripcion: ''
+                                                    descripcion: '',
                                                 })
                                             }}
                                         ></Form.Control>
@@ -372,7 +376,7 @@ const UserProfilePage = () => {
                                                     phoneNumber: e.target.value,
                                                     imageProfile: dataUser.imageProfile,
                                                     role: dataUser.role,
-                                                    descripcion: ''
+                                                    descripcion: '',
                                                 })
                                             }}
                                             disabled={showUpdateButton}
@@ -397,8 +401,8 @@ const UserProfilePage = () => {
                             <Row
                                 style={
                                     showUpdateButton == true
-                                        ? { display: 'block' }
-                                        : { display: 'none' }
+                                        ? {display: 'block'}
+                                        : {display: 'none'}
                                 }
                             >
                                 <Col lg={12} md={12} sm={12}>
@@ -409,7 +413,7 @@ const UserProfilePage = () => {
                                 </Col>
                             </Row>
 
-                            <Row style={showUpdateButton == true ? { display: 'none' } : {}}>
+                            <Row style={showUpdateButton == true ? {display: 'none'} : {}}>
                                 <Col lg={6} md={6} sm={6}>
                                     <Button
                                         variant='secondary w-100'

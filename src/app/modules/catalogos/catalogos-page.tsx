@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {Container, Col, Row, Button, InputGroup, Form, Stack} from 'react-bootstrap'
 import moment from 'moment'
-
 import Catalogo from './components/catalogo'
 import UpdateCatalogo from './components/update-catalogo'
 import UpdateLanguage from './components/update-language'
@@ -16,6 +15,7 @@ import {
     categorysMethod,
     deleteData,
     getData,
+    getRolesMethod,
     languagesMethod,
     lengthTagsMethod,
     postData,
@@ -23,7 +23,10 @@ import {
     updateLanguageMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
-import { ConsoleLogger } from '@aws-amplify/core'
+import {Auth} from 'aws-amplify'
+import {useNavigate} from 'react-router-dom'
+import {roleManager} from '../../models/roleManager'
+import {ConsoleLogger} from '@aws-amplify/core'
 const alertLanguageDone = async () => {
     swal({
         text: 'Lenguaje creado',
@@ -33,17 +36,13 @@ const alertLanguageDone = async () => {
 
 const CatalogosPage = () => {
     const [modalAddTag, setModalAddTag] = useState(false)
-    const [modalAddLanguage, setModalAddLanguage] = useState(false)
-
-    const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
+    const [modalAddLanguage, setModalAddLanguage] = useState({show: false, language: {}})
     const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
-
+    const [modalUpdateTag, setModalUpdateTag] = useState({show: false, catalogo: {}})
     const [catalogos, setCatalogos] = useState<CatalogTag[]>([])
     const [totalTags, setTotalTags] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
-
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
-
     const [searchInput, setSearchInput] = useState('')
     const [optionSort, setOptionSort] = useState('Agregado recientemente')
     const [resultIcon, setResultIcon] = useState('bi-sort-up')
@@ -70,8 +69,8 @@ const CatalogosPage = () => {
         nombre: '',
         descripcion: '',
         estado: 1,
-        json_web:'',
-        json_movil:''
+        json_web: '',
+        json_movil: '',
     })
 
     const [newIdioma, setNewIdioma] = useState({
@@ -79,8 +78,8 @@ const CatalogosPage = () => {
         nombre: '',
         descripcion: '',
         estado: 1,
-        json_web:'',
-        json_movil:'',
+        json_web: '',
+        json_movil: '',
     })
 
     const getTags = async () => {
@@ -165,18 +164,22 @@ const CatalogosPage = () => {
     }
 
     const addLanguage = async (language: any) => {
-        console.log(language)
-        if (language.nombre != '' && language.descripcion != '') {
+        if (
+            language.nombre !== '' &&
+            language.descripcion !== '' &&
+            language.json_web !== '' &&
+            language.json_movil !== ''
+        ) {
             setNewIdioma({
                 id_lenguaje: 0,
                 nombre: '',
                 descripcion: '',
                 estado: 1,
-                json_web:'',
-                json_movil:''
+                json_web: '',
+                json_movil: '',
             })
-           const asd= await postData(addLanguageMethod, language)
-            setModalAddLanguage(false)
+            await postData(addLanguageMethod, language)
+            setModalAddLanguage({show: false, language: {}})
             swal({
                 text: 'Lenguaje creado',
                 icon: 'success',
@@ -186,6 +189,8 @@ const CatalogosPage = () => {
             alertNotNullInputsObj({
                 nombre: language.nombre,
                 descripcion: language.descripcion,
+                json_web: language.json_web,
+                json_movil: language.json_movil,
             })
         }
     }
@@ -216,14 +221,19 @@ const CatalogosPage = () => {
     }
 
     const updateIdioma = async (idioma: any) => {
-        if (idioma.nombre != '' && idioma.descripcion != '') {
+        if (
+            idioma.nombre !== '' &&
+            idioma.descripcion !== '' &&
+            idioma.json_web !== '' &&
+            idioma.json_movil !== ''
+        ) {
             setIdioma({
                 id_lenguaje: 1,
                 nombre: '',
                 descripcion: '',
                 estado: 1,
-                json_web:'',
-                json_movil:'',
+                json_web: '',
+                json_movil: '',
             })
             await postData(updateLanguageMethod, idioma)
             setModalUpdateIdioma({show: false, language: {}})
@@ -236,6 +246,8 @@ const CatalogosPage = () => {
             alertNotNullInputsObj({
                 nombre: idioma.nombre,
                 descripcion: idioma.descripcion,
+                json_web: idioma.json_web,
+                json_movil: idioma.json_movil,
             })
         }
     }
@@ -345,33 +357,62 @@ const CatalogosPage = () => {
     }
 
     const showModalAddTag = () => {
-        setModalAddTag(true)
+        if (permissionCreateTag) {
+            setModalAddTag(true)
+        } else {
+            swal({
+                title: 'No tienes permiso para crear una categoría',
+                icon: 'warning',
+            })
+        }
     }
+    
     const showModalLanguage = () => {
-        setModalAddLanguage(true)
+        if (permissionCreateLanguage) {
+            setModalAddLanguage({show: true, language: {}})
+        } else {
+            swal({
+                title: 'No tienes permiso para crear un lenguaje',
+                icon: 'warning',
+            })
+        }
     }
 
     const showModalUpdateTag = (catalogo: any) => {
-        setTag({
-            id_categoria: catalogo.id_categoria,
-            nombre: catalogo.nombre,
-            icono: catalogo.icono,
-            estado: 1,
-            id_lenguaje: catalogo.idioma.id,
-        })
-        setModalUpdateTag({show: true, catalogo})
+        if (permissionEditTag) {
+            setTag({
+                id_categoria: catalogo.id_categoria,
+                nombre: catalogo.nombre,
+                icono: catalogo.icono,
+                estado: 1,
+                id_lenguaje: catalogo.idioma.id,
+            })
+            setModalUpdateTag({show: true, catalogo})
+        } else {
+            swal({
+                title: 'No tienes permiso para editar una categoría',
+                icon: 'warning',
+            })
+        }
     }
 
     const showModalUpdateIdioma = (language: any) => {
-        setIdioma({
-            id_lenguaje: language.id_lenguaje,
-            nombre: language.nombre,
-            descripcion: language.descripcion,
-            estado: 1,
-            json_web:'',
-                json_movil:'',
-        })
-        setModalUpdateIdioma({show: true, language})
+        if (permissionEditLanguage) {
+            setIdioma({
+                id_lenguaje: language.id_lenguaje,
+                nombre: language.nombre,
+                descripcion: language.descripcion,
+                estado: 1,
+                json_web: language.json_web,
+                json_movil: language.json_movil,
+            })
+            setModalUpdateIdioma({show: true, language})
+        } else {
+            swal({
+                title: 'No tienes permiso para editar un lenguaje',
+                icon: 'warning',
+            })
+        }
     }
 
     let [pageNumber, setPageNumber] = useState(1)
@@ -399,7 +440,43 @@ const CatalogosPage = () => {
         })
     }
 
+    let navigate = useNavigate()
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateLanguage, setPermissionCreateLanguage] = useState(true)
+    const [permissionEditLanguage, setPermissionEditLanguage] = useState(true)
+    const [permissionDeleteLanguage, setPermissionDeleteLanguage] = useState(true)
+
+    const [permissionCreateTag, setPermissionCreateTag] = useState(true)
+    const [permissionEditTag, setPermissionEditTag] = useState(true)
+    const [permissionDeleteTag, setPermissionDeleteTag] = useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_categorias_idiomas === false) {
+                navigate('/errors/404', {replace: true})
+            }
+        })
+    }
+
     useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
+    useEffect(() => {
+        getRoles()
         getTags()
         getLanguages()
     }, [pageNumber])
@@ -510,6 +587,7 @@ const CatalogosPage = () => {
                               />
                           ))}
                 </Row>
+
                 <AddCatalogo
                     show={modalAddTag}
                     onClose={() => setModalAddTag(false)}
@@ -526,6 +604,7 @@ const CatalogosPage = () => {
                     setTag={setTag}
                     updateTag={updateTag}
                     deleteTag={deleteTag}
+                    permissionDeleteTag={permissionDeleteTag}
                 />
             </Container>
 
@@ -542,7 +621,7 @@ const CatalogosPage = () => {
                         <Button
                             variant='primary'
                             className='mt-md-0 mt-4'
-                            onClick={() => setModalAddLanguage(true)}
+                            onClick={showModalLanguage}
                         >
                             <span className='menu-icon me-0  '>
                                 <i className={`bi-plus-circle fs-2`}></i>
@@ -563,9 +642,9 @@ const CatalogosPage = () => {
                 </Row>
 
                 <AddLanguaje
-                    show={modalAddLanguage}
+                    show={modalAddLanguage.show}
                     setShow={setModalAddLanguage}
-                    onClose={() => setModalAddLanguage(false)}
+                    onClose={() => setModalAddLanguage({show: false, language: {}})}
                     language={newIdioma}
                     setLanguage={setNewIdioma}
                     addLanguage={addLanguage}
@@ -573,13 +652,15 @@ const CatalogosPage = () => {
 
                 <UpdateLanguage
                     show={modalUpdateIdioma.show}
+                    setShow={setModalUpdateIdioma}
                     onClose={() => setModalUpdateIdioma({show: false, language: {}})}
-                    language={modalUpdateIdioma.language}
+                    // language={modalUpdateIdioma.language}
                     idioma={idioma}
                     setIdioma={setIdioma}
                     updateIdioma={updateIdioma}
                     deleteIdioma={deleteIdioma}
-                />
+                    permissionDeleteLanguage={permissionDeleteLanguage}
+                 />
             </Container>
         </>
     )

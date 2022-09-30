@@ -1,5 +1,5 @@
-import React, { FC, useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import React, {FC, useState, useEffect} from 'react'
+import {Link} from 'react-router-dom'
 import {
     Button,
     Col,
@@ -12,7 +12,7 @@ import {
     InputGroup,
     FloatingLabel,
 } from 'react-bootstrap'
-import { initialQueryState, KTSVG, useDebounce } from '../../../_metronic/helpers'
+import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
 import {
     addRolesMethod,
     getData,
@@ -22,11 +22,11 @@ import {
     deleteRoleMethod,
     deleteData,
 } from '../../services/api'
-import { roleManager } from '../../models/roleManager'
+import {roleManager} from '../../models/roleManager'
 import swal from 'sweetalert'
-import { validateStringSinCaracteresEspeciales } from '../validarCadena/validadorCadena'
+import {validateStringSinCaracteresEspeciales} from '../validarCadena/validadorCadena'
 
-const RoleManagement: FC<any> = ({ show }) => {
+const RoleManagement: FC<any> = ({show}) => {
     const [roles, setRoles] = useState<roleManager[]>([])
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
@@ -170,7 +170,7 @@ const RoleManagement: FC<any> = ({ show }) => {
             title: 'Se ha agregado un nuevo rol',
             icon: 'success',
         })
-        setTimeout(() => document.location.href = '/usuarios/role-management', 750)
+        setTimeout(() => (document.location.href = '/usuarios/role-management'), 750)
     }
 
     //TODO: update role
@@ -178,9 +178,6 @@ const RoleManagement: FC<any> = ({ show }) => {
         await postData(editRoleMethod, role)
         getRoles()
     }
-
-
-
 
     //TODO: delete role
     const deleteRole = async (role: any) => {
@@ -201,15 +198,14 @@ const RoleManagement: FC<any> = ({ show }) => {
             if (flag) {
                 const deleteInfo: any = await deleteData(deleteRoleMethod, role)
                 if (deleteInfo.id_rol.en_uso === undefined) {
-
                     swal({
                         title: 'Se ha eliminado el rol',
                         icon: 'success',
                     })
 
-                    setTimeout(() => document.location.href = '/usuarios/role-management', 750)
+                    setTimeout(() => (document.location.href = '/usuarios/role-management'), 750)
                 } else {
-                    console.log("deleteInfo: ", deleteInfo);
+                    console.log('deleteInfo: ', deleteInfo)
                     swal({
                         title: 'Error al eliminar rol',
                         text: `Este rol esta siendo usado por usuarios`,
@@ -222,10 +218,6 @@ const RoleManagement: FC<any> = ({ show }) => {
         } catch (error) {
             console.log(error)
         }
-
-
-
-
 
         // await deleteData(deleteRoleMethod, role)
         // getRoles()
@@ -465,13 +457,13 @@ const RoleManagement: FC<any> = ({ show }) => {
                                     <Col md={8} sm={8}>
                                         <div
                                             className='d-flex align-items-center'
-                                            style={{ width: '100%', justifyContent: 'space-between' }}
+                                            style={{width: '100%', justifyContent: 'space-between'}}
                                         >
                                             <h1>Funciones de este Rol</h1>
                                             <div className='d-flex justify-content-end'>
                                                 <i
                                                     className='bi bi-trash text-danger'
-                                                    style={{ fontSize: 20, cursor: 'pointer' }}
+                                                    style={{fontSize: 20, cursor: 'pointer'}}
                                                     onClick={() =>
                                                         deleteRole({
                                                             id_rol: rol.id_rol,

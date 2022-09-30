@@ -4,7 +4,8 @@ import makeAnimated from 'react-select/animated'
 import {Button, Modal, Form} from 'react-bootstrap'
 import {CatalogLanguage} from '../../../models/catalogLanguage'
 import {getData, languagesMethod} from '../../../services/api'
-import { validateStringSinCaracteresEspeciales } from '../../validarCadena/validadorCadena'
+import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+import swal from 'sweetalert'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -121,7 +122,16 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, tag, setTag, updateTag, deleteTag}) => {
+const UpdateCatalogo: FC<any> = ({
+    show,
+    onClose,
+    catalogo,
+    tag,
+    setTag,
+    updateTag,
+    deleteTag,
+    permissionDeleteTag,
+}) => {
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
     const getLanguages = async () => {
@@ -234,14 +244,21 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, tag, setTag, updateTa
                     <Button
                         variant='secondary'
                         onClick={() => {
-                            deleteTag(modifiedTagDelete)
-                            setTag({
-                                id_categoria: 0,
-                                nombre: '',
-                                icono: '',
-                                estado: 1,
-                                id_lenguaje: 0,
-                            })
+                            if (permissionDeleteTag) {
+                                deleteTag(modifiedTagDelete)
+                                setTag({
+                                    id_categoria: 0,
+                                    nombre: '',
+                                    icono: '',
+                                    estado: 1,
+                                    id_lenguaje: 0,
+                                })
+                            } else {
+                                swal({
+                                    title: 'No tienes permiso para eliminar una categoría',
+                                    icon: 'warning',
+                                })
+                            }
                         }}
                     >
                         <i className={`bi-trash text-white fs-3`}></i>
