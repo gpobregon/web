@@ -40,8 +40,10 @@ const SitiosPage = () => {
 
     const getSites = async () => {
         const site: any = await postData(sitesMethod, {page: pageNumber, quantity: '8'})
+        const coutsite: any = await getData(`${sitesMethod}/count`)
         // console.log(site)
-        setCantidadSite(site.site.length)
+        
+        setCantidadSite(coutsite.count)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
         const countNextResults: any = await postData(sitesMethod, {
@@ -61,7 +63,8 @@ const SitiosPage = () => {
         }
        
         
-        let pagesLength = Math.ceil(site.site.length / 8)
+        let pagesLength = Math.ceil(coutsite.count / 8)
+        console.log(pagesLength)
         setTotalPages(pagesLength)
     }
 
