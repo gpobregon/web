@@ -14,6 +14,7 @@ export interface roleManager {
     sitio_crear: boolean
     sitio_editar: boolean
     sitio_eliminar: boolean
+    
     sitio_favorito: boolean
     sitio_publicar: boolean
     sitio_visible: boolean
@@ -62,14 +63,14 @@ export interface roleManager {
     rol_editar: boolean
     rol_eliminar: boolean
 
-    gestor_sitios: boolean
-    gestor_notificaciones: boolean
-    gestor_puntos_de_interes: boolean
-    gestor_reportes: boolean
-    gestor_usuarios: boolean
-    gestor_offline: boolean
-    gestor_roles: boolean
     gestor_categorias_idiomas: boolean
+    gestor_sitios: boolean
+    gestor_puntos_de_interes: boolean
+    gestor_notificaciones: boolean
+    gestor_reportes: boolean
+    gestor_offline: boolean
+    gestor_usuarios: boolean
+    gestor_roles: boolean
 
     estado: number
 }

@@ -366,7 +366,7 @@ const CatalogosPage = () => {
             })
         }
     }
-    
+
     const showModalLanguage = () => {
         if (permissionCreateLanguage) {
             setModalAddLanguage({show: true, language: {}})
@@ -466,6 +466,14 @@ const CatalogosPage = () => {
 
             if (filter[0]?.gestor_categorias_idiomas === false) {
                 navigate('/errors/404', {replace: true})
+            } else {
+                setPermissionCreateLanguage(filter[0]?.idioma_crear)
+                setPermissionEditLanguage(filter[0]?.idioma_editar)
+                setPermissionDeleteLanguage(filter[0]?.idioma_eliminar)
+
+                setPermissionCreateTag(filter[0]?.categoria_crear)
+                setPermissionEditTag(filter[0]?.categoria_editar)
+                setPermissionDeleteTag(filter[0]?.categoria_eliminar)
             }
         })
     }
