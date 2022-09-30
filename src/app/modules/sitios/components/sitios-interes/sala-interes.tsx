@@ -434,10 +434,11 @@ const Interes: FC<id_sitio> = (props) => {
                                                 <Card
                                                     style={{
                                                         display: 'flex',
-                                                        padding: 30,
-                                                        height: 15,
+                                                        padding: 12,
+                                                        height: '100%',
                                                         justifyContent: 'center',
                                                         flexDirection: 'column',
+                                                       
                                                     }}
                                                 >
                                                     <Card.Title
@@ -448,7 +449,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                         className='text-white'
                                                         style={{
                                                             alignItems: 'flex-start',
-                                                            paddingLeft: 10,
+                                                            paddingLeft: 20,
                                                             marginLeft: '75px',
                                                         }}
                                                     >
@@ -458,7 +459,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                         className='text-muted'
                                                         style={{
                                                             alignItems: 'flex-start',
-                                                            paddingLeft: 10,
+                                                            paddingLeft: 20,
                                                             paddingTop: 5,
                                                             marginLeft: '75px',
                                                         }}
@@ -671,6 +672,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                             es_visible:
                                                                                 punto.es_visible,
                                                                             nombreSala: nombresala,
+                                                                            publicado: punto.publicado,
                                                                         },
                                                                     }
                                                                 )
