@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useContext } from 'react'
 import { Card, Row, Col, ButtonGroup, Button, Image } from 'react-bootstrap'
 import { toAbsoluteUrl } from '../../../../../_metronic/helpers'
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -10,25 +10,24 @@ import ElementosWeb from './elementosWeb'
 import Recursos from './recursos'
 
 const Index = () => {
-    const [btnActive, setBtnActive] = useState(1)
-    const { setChangeTypeEdit, changeTypeEdit } = useContext(ContentContext)
+    const { ChangeMode, changeTypeEdit, setChangeModeEditor, changeModeEditor } = useContext(ContentContext)
     return (
         <Card className="content-section text-white">
             <Card.Body>
                 <Row>
                     <Col lg={4}>
                         <Card.Body className="seccion-dark rounded height-section">
-                            <h1 className="text-white">{btnActive === 1 ? 'Agregar Elemento' : 'Recursos Disponibles' }</h1>
+                            <h1 className="text-white">{changeModeEditor === 1 ? 'Agregar Elemento' : 'Recursos Disponibles' }</h1>
                             <span>
                                 Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                             </span>
                             <ButtonGroup className="w-100 py-5">
-                                <Button size="sm" className="text-white" variant={btnActive === 1 ? 'primary' : 'dark bkg-dark'} onClick={() => setBtnActive(1)}>{ changeTypeEdit === 1 ? 'Elementos' : 'Diseño' }</Button>
-                                <Button size="sm" className="text-white" variant={btnActive === 2 ? 'primary' : 'dark bkg-dark'} onClick={() => setBtnActive(2)}>Recursos</Button>
+                                <Button size="sm" className="text-white" variant={changeModeEditor === 1 ? 'primary' : 'dark bkg-dark'} onClick={() => setChangeModeEditor(1)}>{ changeTypeEdit === 1 ? 'Elementos' : 'Diseño' }</Button>
+                                <Button size="sm" className="text-white" variant={changeModeEditor === 2 ? 'primary' : 'dark bkg-dark'} onClick={() => setChangeModeEditor(2)}>Recursos</Button>
                             </ButtonGroup>
                             
                                 {
-                                    btnActive === 1 ?<PerfectScrollbar className="h-75"> { changeTypeEdit === 1 ? <ElementosMovil/> : <ElementosWeb/> } </PerfectScrollbar>: <Recursos/>
+                                    changeModeEditor === 1 ?<PerfectScrollbar className="h-75"> { changeTypeEdit === 1 ? <ElementosMovil/> : <ElementosWeb/> } </PerfectScrollbar>: <Recursos/>
                                 }
                         </Card.Body>
                     </Col>
@@ -41,7 +40,7 @@ const Index = () => {
                                         style={{ fill: 'red' }}
                                         className={`max-h-70px cursor-pointer tooltip-trigger`}
                                         src={toAbsoluteUrl(`/media/svg/iconsFigma/${changeTypeEdit === 1 ? 'Movil-active.svg' : 'Movil.svg' }`)}
-                                        onClick={() => setChangeTypeEdit(1)}
+                                        onClick={() => ChangeMode(1)}
                                     />
                                 <div className="tooltip-one">
                                        Maquetación Móvil
@@ -52,7 +51,7 @@ const Index = () => {
                                         alt="Logo"
                                         className={`max-h-70px cursor-pointer tooltip-trigger`}
                                         src={toAbsoluteUrl(`/media/svg/iconsFigma/${changeTypeEdit === 2 ? 'Desktop-active.svg' : 'Desktop.svg' }`)}
-                                        onClick={() => setChangeTypeEdit(2)}
+                                        onClick={() => ChangeMode(2)}
                                     />
                                     <div className="tooltip-one">
                                        Maquetación Web

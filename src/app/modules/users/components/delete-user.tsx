@@ -6,7 +6,12 @@ import Auth from '@aws-amplify/auth'
 import {CognitoUser} from 'amazon-cognito-identity-js'
 
 import {awsconfig} from '../../../../aws-exports'
-import * as AWS from 'aws-sdk'
+import * as AWS from 'aws-sdk' 
+
+import { 
+    deleteData,
+    deleteUserMethod
+} from '../../../services/api'
 
 import {
     ListUsersResponse,
@@ -86,7 +91,7 @@ const customStyles = {
     }),
     option: (base: any, state: any) => ({
         ...base,
-        background: state.isFocused ? '#7239ea' : '#323248',
+        background: state.isFocused ? '#009EF7' : '#323248',
         color: state.isFocused ? '#fff' : '#92929F',
         padding: 10,
     }),
@@ -107,7 +112,9 @@ const customStyles = {
 }
 
 const DeleteUser: FC<any> = ({show, onClose, user}) => {
+    console.log("user hook: ", user);
     const [users, setUsers] = useState<UserType[]>([])
+    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [params, setParams] = useState({name: ''})
 
@@ -136,10 +143,10 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
     const deleteUsuarios = async () => {
         var params = {
             UserPoolId: awsconfig.userPoolId /* required */,
-            Username: user.Attributes[3].Value /* required */,
+            Username: user.Attributes[4].Value /* required */,
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.adminDeleteUser(params, (err, data) => {
                 if (err) {
@@ -148,8 +155,10 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                 } else {
                     resolve(data)
                 }
-            })
-        })
+            })   
+                let objeto = {id_usuario: user.Username}
+             await deleteData(deleteUserMethod, objeto)
+        }) 
     }
 
     return (
@@ -173,13 +182,13 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                             </Col>
 
                             <Col lg={4} md={4} sm={3}>
-                                <div>{`${user.Attributes[1].Value}`}</div>
-                                <div className='text-muted'>{`${user.Attributes[3].Value}`}</div>
+                                <div>{`${user.Attributes[2].Value}`}</div>
+                                <div className='text-muted'>{`${user.Attributes[4].Value}`}</div>
                             </Col>
 
                             <Col lg={4} md={4} sm={3}>
                                 <div>Rol</div>
-                                <div className='text-muted'>{`${user.Attributes[2].Value}`}</div>
+                                <div className='text-muted'>{`${user.Attributes[3].Value}`}</div>
                             </Col>
                         </Row>
                     ) : (
@@ -204,7 +213,7 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                         variant='btn btn-light-danger btn-active-danger'
                         onClick={() => {
                             deleteUsuarios()
-                            document.location.href = '/usuarios/user-management'
+                            setTimeout(() => document.location.href = '/usuarios/user-management', 750)
                         }}
                     >
                         {'Eliminar '}

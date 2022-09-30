@@ -1,45 +1,186 @@
-import React, {useState, FC} from 'react'
-import {Button, Modal, Form} from 'react-bootstrap'
+import {FC, useState} from 'react'
+import {Button, Modal, Form, Card} from 'react-bootstrap'
+import {KTSVG} from '../../../../_metronic/helpers'
+import {URLAWS} from '../../../services/api'
+import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+import UpJson from './UpJson'
 
-const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage}) => {
+const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, addLanguage}) => {
+    const [showJson, setShowJson] = useState(false)
+    const [url, setUrl] = useState('')
+
+    const [nameMovil, setNameMovil] = useState('')
+    const [nameWeb, setNameWeb] = useState('')
+
+    const uploadJson = (json: string) => {
+        if (url === 'idiomasWeb') {
+            setNameWeb(json)
+
+            setLanguage({
+                id_lenguaje: language.id_lenguaje,
+                nombre: language.nombre,
+                descripcion: language.descripcion,
+                estado: language.estado,
+                json_web: `${URLAWS}idiomasWeb/${json}`,
+                json_movil: language.json_movil,
+            })
+            setShowJson(false)
+        } else {
+            setNameMovil(json)
+
+            setLanguage({
+                id_lenguaje: language.id_lenguaje,
+                nombre: language.nombre,
+                descripcion: language.descripcion,
+                estado: language.estado,
+                json_web: language.json_web,
+                json_movil: `${URLAWS}idiomasMovil/${json}`,
+            })
+            setShowJson(false)
+        }
+    }
+
     return (
         <>
             <Modal show={show} onHide={onClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{'Configuración de idioma'}</Modal.Title>
+                    <Modal.Title>Configuración de idioma</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group>
-                        <Form.Label>{'Nombre del idioma'}</Form.Label>
+                        <Form.Label>Nombre del idioma</Form.Label>
                         <Form.Control
+                            value={language.nombre}
                             type='text'
                             maxLength={20}
-                            className={'mb-4'}
+                            className='mb-4'
                             onChange={(e) => {
-                                setLanguage({
-                                    id_lenguaje: language.id_lenguaje,
-                                    nombre: e.target.value,
-                                    descripcion: language.descripcion,
-                                    estado: language.estado,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setLanguage({
+                                        id_lenguaje: language.id_lenguaje,
+                                        nombre: e.target.value,
+                                        descripcion: language.descripcion,
+                                        estado: language.estado,
+                                        json_web: language.json_web,
+                                        json_movil: language.json_movil,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>{'Descripción'}</Form.Label>
+                        <Form.Label>Descripción</Form.Label>
                         <Form.Control
+                            value={language.descripcion}
+                            className='mb-4'
                             type='text'
                             maxLength={20}
                             name='descripcion'
                             onChange={(e) => {
-                                setLanguage({
-                                    id_lenguaje: language.id_lenguaje,
-                                    nombre: language.nombre,
-                                    descripcion: e.target.value,
-                                    estado: language.estado,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setLanguage({
+                                        id_lenguaje: language.id_lenguaje,
+                                        nombre: language.nombre,
+                                        descripcion: e.target.value,
+                                        estado: language.estado,
+                                        json_web: language.json_web,
+                                        json_movil: language.json_movil,
+                                    })
+                                }
                             }}
                         />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Adjuntar Plantilla - Movil</Form.Label>
+                        <Card
+                            className='mb-4'
+                            style={{
+                                backgroundColor: '#151521',
+                                height: '50px',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                justifyContent: 'center',
+                            }}
+                            onClick={() => {
+                                setShow(false)
+                                setShowJson(true)
+                                setUrl('idiomasMovil')
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
+                                    <div>{nameMovil !== '' ? nameMovil : 'Subir un archivo'}</div>
+                                </div>
+
+                                <KTSVG
+                                    path='/media/icons/duotune/general/gen035.svg'
+                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                />
+                            </div>
+                        </Card>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Adjuntar Plantilla - Website</Form.Label>
+                        <Card
+                            className='mb-4'
+                            style={{
+                                backgroundColor: '#151521',
+                                height: '50px',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                justifyContent: 'center',
+                            }}
+                            onClick={() => {
+                                setShow(false)
+                                setShowJson(true)
+                                setUrl('idiomasWeb')
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
+
+                                    <div>{nameWeb !== '' ? nameWeb : 'Subir un archivo'}</div>
+                                </div>
+
+                                <KTSVG
+                                    path='/media/icons/duotune/general/gen035.svg'
+                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                />
+                            </div>
+                        </Card>
+                        <div style={{textAlign: 'center', color: 'gray'}}>
+                            Formato permitido: .json
+                        </div>
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
@@ -51,7 +192,12 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                                 nombre: '',
                                 descripcion: '',
                                 estado: 1,
+                                json_web: '',
+                                json_movil: '',
                             })
+                            setNameMovil('')
+                            setNameWeb('')
+                            setUrl('')
                             onClose()
                         }}
                     >
@@ -62,6 +208,9 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                         variant='primary'
                         onClick={() => {
                             addLanguage(language)
+                            setNameMovil('')
+                            setNameWeb('')
+                            setUrl('')
                         }}
                     >
                         {'Aplicar '}
@@ -69,6 +218,16 @@ const AddLanguaje: FC<any> = ({show, onClose, language, setLanguage, addLanguage
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <UpJson
+                url={url}
+                uploadJson={uploadJson}
+                show={showJson}
+                setShow={setShow}
+                onClose={() => {
+                    setShowJson(false)
+                    setShow(true)
+                }}
+            />
         </>
     )
 }

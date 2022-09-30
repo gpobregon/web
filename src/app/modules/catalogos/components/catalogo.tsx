@@ -19,7 +19,8 @@ const Catalogo: FC<any> = ({data, showModal}) => {
                     style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
                 >
                     <span className='menu-ico'>
-                        <i className={`bi-${data.icono} text-white`} style={{fontSize: 30}}></i>
+                        <i className={`fa-solid fa-${data.icono} text-white fa-2x`}></i>
+                        {/* <i className={`bi-${data.icono} text-white`} style={{fontSize: 30}}></i> */}
                     </span>
                 </Card.Title>
                 <Card.Subtitle className='text-muted mb-4'>{data.nombre}</Card.Subtitle>

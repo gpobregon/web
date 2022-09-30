@@ -7,24 +7,21 @@ import * as dotenv from 'dotenv';
 import { uuid } from 'uuidv4';
 import swal from "sweetalert";
 
-const S3_BUCKET = 'mcd-backoffice-upload/fotoPerfiles';
-const REGION = 'us-east-2';
-
-
-
 AWS.config.update({
-    accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-    secretAccessKey: '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'
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
 })
 
-const myBucket = new AWS.S3({
-    params: { Bucket: S3_BUCKET },
-    region: REGION,
-})
-
-const UpImage: FC<any> = ({ show, onClose, cargarIMG }) => {
-
-
+const UpImage: FC<any> = ({ show, onClose, cargarIMG,ubicacionBucket,tipoArchivoPermitido }) => {
+    const S3_BUCKET = `mcd-archivos/${ubicacionBucket}`;
+    const REGION = process.env.REACT_APP_REGION;
+    
+    
+    
+    const myBucket = new AWS.S3({
+        params: { Bucket: S3_BUCKET },
+        region: REGION,
+    })
 
 
     const [img, setImg] = useState('')
@@ -79,7 +76,7 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG }) => {
                     <Modal.Title>{'Escoge Tu Imagen'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Control type="file" onChange={handleFileInput} accept="image/*"/>
+                    <Form.Control type="file" onChange={handleFileInput} accept={tipoArchivoPermitido}/>
                 
                 </Modal.Body>
                 <Modal.Footer>

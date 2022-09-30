@@ -4,6 +4,8 @@ import makeAnimated from 'react-select/animated'
 import {Button, Modal, Form} from 'react-bootstrap'
 import {CatalogLanguage} from '../../../models/catalogLanguage'
 import {getData, languagesMethod} from '../../../services/api'
+import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+import swal from 'sweetalert'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -28,7 +30,7 @@ const customStyles = {
     }),
     option: (base: any, state: any) => ({
         ...base,
-        background: state.isFocused ? '#7239ea' : '#323248',
+        background: state.isFocused ? '#009EF7' : '#323248',
         color: state.isFocused ? '#fff' : '#92929F',
         padding: 10,
     }),
@@ -48,18 +50,67 @@ const customStyles = {
     }),
 }
 
+// const options = [
+//     {value: 'airplane', label: 'airplane'},
+//     {value: 'bag', label: 'bag'},
+//     {value: 'bank', label: 'bank'},
+//     {value: 'basket', label: 'basket'},
+//     {value: 'binoculars', label: 'binoculars'},
+//     {value: 'brightness-alt-high', label: 'brightness-alt-high'},
+//     {value: 'brush', label: 'brush'},
+//     {value: 'building', label: 'building'},
+//     {value: 'camera-reels', label: 'camera-reels'},
+//     {value: 'car-front', label: 'car-front'},
+//     {value: 'cloud-sun', label: 'cloud-sun'},
+//     {value: 'cup-hot', label: 'cup-hot'},
+//     {value: 'bi-film', label: 'bi-film'},
+//     {value: 'bi-flower1', label: 'bi-flower1'},
+//     {value: 'geo-alt', label: 'geo-alt'},
+//     {value: 'bi-hospital', label: 'bi-hospital'},
+//     {value: 'image-alt', label: 'image-alt'},
+//     {value: 'life-preserver', label: 'life-preserver'},
+//     {value: 'mortarboard', label: 'mortarboard'},
+//     {value: 'palette', label: 'palette'},
+//     {value: 'puzzle', label: 'puzzle'},
+//     {value: 'tree', label: 'tree'},
+//     {value: 'tsunami', label: 'tsunami'},
+// ]
+
+// const optionTemplate = (option: any) => (
+//     <span>
+//         <i className={`bi-${option.value} text-white`} style={{fontSize: 16}}></i>
+//         {`ㅤ${option.label}`}
+//     </span>
+// )
+
 const options = [
-    {value: 'car-front', label: 'car-front'},
-    {value: 'book', label: 'book'},
-    {value: 'apple', label: 'apple'},
+    {value: 'plane', label: 'plane'},
+    {value: 'shopping-bag', label: 'shopping-bag'},
+    {value: 'landmark', label: 'landmark'},
+    {value: 'store', label: 'store'},
+    {value: 'binoculars', label: 'binoculars'},
+    {value: 'paint-brush', label: 'paint-brush'},
+    {value: 'building', label: 'building'},
+    {value: 'camera', label: 'camera'},
+    {value: 'car', label: 'car'},
+    {value: 'cloud-sun', label: 'cloud-sun'},
+    {value: 'mug-hot', label: 'cup-hot'},
+    {value: 'film', label: 'film'},
+    {value: 'seedling', label: 'seedling'},
+    {value: 'map-marker-alt', label: 'map-marker-alt'},
+    {value: 'hospital', label: 'hospital'},
+    {value: 'mountain', label: 'mountain'},
+    {value: 'life-ring', label: 'life-ring'},
+    {value: 'graduation-cap', label: 'graduation-cap'},
+    {value: 'palette', label: 'palette'},
+    {value: 'puzzle-piece', label: 'puzzle-piece'},
     {value: 'tree', label: 'tree'},
-    {value: 'bank', label: 'bank'},
-    {value: 'airplane', label: 'airplane'},
+    {value: 'umbrella-beach', label: 'umbrella-beach'},
 ]
 
 const optionTemplate = (option: any) => (
     <span>
-        <i className={`bi-${option.value} text-white`} style={{fontSize: 16}}></i>
+        <i className={`fa-solid fa-${option.value} text-white fa-fw fa-xl`}></i>
         {`ㅤ${option.label}`}
     </span>
 )
@@ -71,7 +122,16 @@ const optionsWithIcons = options.map((option) => ({
 
 const animatedComponents = makeAnimated()
 
-const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, tag, setTag, updateTag, deleteTag}) => {
+const UpdateCatalogo: FC<any> = ({
+    show,
+    onClose,
+    catalogo,
+    tag,
+    setTag,
+    updateTag,
+    deleteTag,
+    permissionDeleteTag,
+}) => {
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
     const getLanguages = async () => {
@@ -137,13 +197,15 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, tag, setTag, updateTa
                             name='nombre'
                             className={'mb-4'}
                             onChange={(e) => {
-                                setTag({
-                                    id_categoria: catalogo.id_categoria,
-                                    nombre: e.target.value,
-                                    icono: tag.icono,
-                                    estado: tag.estado,
-                                    id_lenguaje: tag.id_lenguaje,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setTag({
+                                        id_categoria: catalogo.id_categoria,
+                                        nombre: e.target.value,
+                                        icono: tag.icono,
+                                        estado: tag.estado,
+                                        id_lenguaje: tag.id_lenguaje,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -182,14 +244,21 @@ const UpdateCatalogo: FC<any> = ({show, onClose, catalogo, tag, setTag, updateTa
                     <Button
                         variant='secondary'
                         onClick={() => {
-                            deleteTag(modifiedTagDelete)
-                            setTag({
-                                id_categoria: 0,
-                                nombre: '',
-                                icono: '',
-                                estado: 1,
-                                id_lenguaje: 0,
-                            })
+                            if (permissionDeleteTag) {
+                                deleteTag(modifiedTagDelete)
+                                setTag({
+                                    id_categoria: 0,
+                                    nombre: '',
+                                    icono: '',
+                                    estado: 1,
+                                    id_lenguaje: 0,
+                                })
+                            } else {
+                                swal({
+                                    title: 'No tienes permiso para eliminar una categoría',
+                                    icon: 'warning',
+                                })
+                            }
                         }}
                     >
                         <i className={`bi-trash text-white fs-3`}></i>

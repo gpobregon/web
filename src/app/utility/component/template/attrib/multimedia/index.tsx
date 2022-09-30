@@ -1,33 +1,28 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC, useState, useRef } from 'react'
+import { FC, useState, useEffect, useRef, Fragment } from 'react'
 import { Row, Col, Button, ButtonGroup, Form } from 'react-bootstrap'
+import { generateRandomString } from '../../../../../utility/global/index'
+import { dataURLtoFile } from '../../../../global/index'
 import { Image } from 'react-bootstrap';
 import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
-import ReactCrop, {
-    centerCrop,
-    makeAspectCrop,
-    Crop,
-    PixelCrop,
-  } from 'react-image-crop'
 import CropImage from './cropImage'
 
 type Model = {
-    editItem: any
-    updateElement: (data : any) => void
+    editItem: any,
+    updateElement: (data: any) => void,
+    drop2: any
+    editItemResource: any
+    uploadResource: any
+    setEditItemResource: (data: any) => void
 }
 
-const AttrText: FC<Model> = ({ editItem, updateElement }) => {
-
-    const [imgSrc, setImgSrc] = useState('')
-    const previewCanvasRef = useRef<HTMLCanvasElement>(null)
-    const imgRef = useRef<HTMLImageElement>(null)
-    const [crop, setCrop] = useState<Crop>()
-    const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
-    const [scale, setScale] = useState(1)
-    const [rotate, setRotate] = useState(0)
-    const [aspect, setAspect] = useState<number | undefined>(16 / 9)
-
-    const changeSizeTitle = (data : {}) => {
+const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource, uploadResource, setEditItemResource }) => {
+    const [dataResource, setDataResource] = useState([])
+    const titulo = useRef<HTMLInputElement>(null)
+    const descripcion = useRef<HTMLInputElement>(null)
+    const changeSizeTitle = (data: {}) => {
         const item = {
             ...editItem,
             ...data
@@ -35,40 +30,63 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
         updateElement(item)
     }
 
-    // useDebounceEffect(
-    //     async () => {
-    //       if (
-    //         completedCrop?.width &&
-    //         completedCrop?.height &&
-    //         imgRef.current &&
-    //         previewCanvasRef.current
-    //       ) {
-    //         // We use canvasPreview as it's much faster than imgPreview.
-    //         canvasPreview(
-    //           imgRef.current,
-    //           previewCanvasRef.current,
-    //           completedCrop,
-    //           scale,
-    //           rotate,
-    //         )
-    //       }
-    //     },
-    //     100,
-    //     [completedCrop, scale, rotate],
-    //   )
+    const cropImage = async () => {
+        changeResource()
+        const img = dataURLtoFile(dataResource, editItemResource.nombre.replace('.jpg', ".png").replace('.jpeg', ".png"))
+        const response = await uploadResource(img, 2)
+        changeSizeTitle({ url: response })
+    }
+
+    const clearDataFormCarousel = () => {
+        if (titulo.current && descripcion.current) {
+            titulo.current.value = '';
+            descripcion.current.value = '';
+            setEditItemResource([])
+        }
+    }
+    const appedItemsCarousel = () => {
+        if (titulo.current && titulo.current.value && descripcion.current && descripcion.current.value && editItemResource.url) {
+            const items = {
+                id: generateRandomString(7),
+                url: editItemResource.url,
+                titulo: titulo.current && titulo.current.value,
+                descripcion: descripcion.current && descripcion.current.value
+            }
+            changeSizeTitle({ list: [...editItem.list, items] })
+            clearDataFormCarousel()
+        }
+    }
+
+    const destroyElementCarousel = (id: string) => {
+        const response = editItem.list.filter((item: any) => String(item.id) !== String(id))
+        changeSizeTitle({ list: response })
+    }
+
+    const changeResource = () => {
+        changeSizeTitle({ url: '' })
+        setEditItemResource([])
+    }
+    useEffect(() => {
+
+        if (editItemResource.tipo && (editItemResource.tipo.includes('video') || editItemResource.tipo.includes('audio') || (editItemResource.tipo.includes('image') && editItem.type === 'image-360'))) {
+            changeSizeTitle({ url: editItemResource.url })
+        }
+
+    }, [editItemResource])
 
     return (
-        <div className="w-100">
-             { 
+        <div className="w-100 text-center" ref={drop2}>
+            {
                 (editItem.type === 'image') &&
                 <Row>
                     <Col className="d-flex justify-content-center ">
                         <div className="py-2 d-flex flex-row">
                             <div className="tooltip-container mx-2">
-                                <Button 
+                                <Button
+                                    size="sm"
                                     variant="secondary"
                                     className="btn-icon tooltip-trigger"
-                                    onClick={() => changeSizeTitle({ borderRadius: 'rounded-top' })}
+                                    onClick={() => changeResource()}
                                 >
                                     <Image
                                         alt="Logo"
@@ -80,12 +98,13 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
                                     Cambiar Imagen
                                 </div>
                             </div>
-                                                        
+
                             <div className="tooltip-container mx-2">
-                                <Button 
+                                <Button
+                                    size="sm"
                                     variant="secondary"
                                     className="btn-icon tooltip-trigger"
-                                    onClick={() => changeSizeTitle({ borderRadius: 'rounded-top' })}
+                                    onClick={() => cropImage()}
                                 >
                                     <Image
                                         alt="Logo"
@@ -97,8 +116,24 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
                                     Recortar
                                 </div>
                             </div>
+
                             <div className="tooltip-container mx-2">
-                                <Button 
+                                <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    className="btn-icon tooltip-trigger"
+                                    onClick={() => changeSizeTitle({ url: editItemResource.url })}
+                                >
+                                    <i className="fa fa-check fs-3 text-success"></i>
+                                </Button>
+                                <div className="tooltip-one">
+                                    Asignar
+                                </div>
+                            </div>
+
+                            <div className="tooltip-container mx-2">
+                                <Button
+                                    size="sm"
                                     variant="secondary"
                                     className="btn-icon tooltip-trigger"
                                     onClick={() => changeSizeTitle({ borderRadius: 'rounded-top' })}
@@ -115,70 +150,143 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
                             </div>
                         </div>
                     </Col>
-                    <Col lg={12}>
-                        <div className="w-100">
-                            <CropImage />
-                        </div>
-                    </Col>
-                    <Col lg={12}>
-                        <small>foto-1.jpg</small>
-                    </Col>
-                    {/* <Col lg={12} className="mx-1 px-0">
-                        <Form.Label><small>{editItem.type === 'schedule' ? 'Hora' : 'Fecha' } inicial</small></Form.Label>
-                        <Form.Control 
-                            size="sm" 
-                            defaultValue={editItem.startHour} 
-                            type={editItem.type === 'schedule' ? 'time' : 'date' } 
-                            onChange={(e : any) => changeSizeTitle(editItem.type === 'schedule' ? { startHour: e.target.value } : { startDate: e.target.value })}
-                        />
-                    </Col> */}
+                    {
+                        editItemResource.nombre ?
+                            (<Fragment>
+                                <Col lg={12}>
+                                    <div className="w-100">
+                                        <CropImage
+                                            editItemResource={editItemResource}
+                                            setDataResource={setDataResource}
+                                        />
+                                    </div>
+                                </Col>
+                                <Col lg={12}>
+                                    <small>{editItemResource.nombre}</small>
+                                </Col>
+                            </Fragment>)
+                            : (
+                                <Row>
+                                    <Col>
+                                        <div className="resource-element size-resource-video rounded d-flex justify-content-center align-items-center">
+                                            <span className="text-center">
+                                                <p><i className="bi bi-arrow-90deg-down text-white" /></p>
+                                                <p>Arrasta una imagen de los recursos</p>
+                                            </span>
+                                        </div>
+                                    </Col>
+                                </Row>
+                            )
+                    }
+
                 </Row>
             }
-            { (editItem.type === 'video') &&
-                <Row>
-                    <Col>
-                        <div className="resource-element size-resource-video rounded d-flex justify-content-center align-items-center">
-                            <span className="text-center">
-                                <p><i className="bi bi-arrow-90deg-down text-white"/></p>
-                                <p>Arrasta un video de los recursos</p>
-                            </span>
+            {(editItem.type === 'video' || editItem.type === 'audio' || editItem.type === 'image-360') &&
+                <Fragment>
+                    <Row>
+                        <Col>
+                            <div className="resource-element size-resource-video rounded d-flex justify-content-center align-items-center">
+                                <span className="text-center">
+                                    <p><i className="bi bi-arrow-90deg-down text-white" /></p>
+                                    <p>Arrasta {(editItem.type === 'video') ? 'un video' : (editItem.type === 'audio') ? 'un audio' : 'una Imagen 360°'} de los recursos</p>
+                                </span>
+                            </div>
+                        </Col>
+                        <Col lg={12}>
+                            <small>{editItemResource.nombre}</small>
+                        </Col>
+                    </Row>
+                    <Row className="mt-3">
+                        <div className="tooltip-container">
+                            <Button
+                                variant="secondary"
+                                className="btn-icon tooltip-trigger"
+                                onClick={() => changeResource()}
+                                disabled={!editItemResource.url}
+                            >
+                                <Image
+                                    alt="Logo"
+                                    className={`max-h-100px cursor-pointer`}
+                                    src={toAbsoluteUrl(`/media/svg/iconsFigma/Change.svg`)}
+                                />
+                            </Button>
+                            <div className="tooltip-one">
+                                Cambiar Imagen
+                            </div>
                         </div>
-                    </Col>
-                    <Col lg={12}>
-                        <small>video-1.mp4</small>
-                    </Col>
-                </Row>
+                    </Row>
+                </Fragment>
+
             }
 
             {(editItem.type === 'carousel') &&
-                <Row>
-                    <Col>
-                        <div className="resource-element size-resource-video rounded d-flex justify-content-center align-items-center">
-                            <span className="text-center">
-                                <p><i className="bi bi-arrow-90deg-down text-white"/></p>
-                                <p>Arrasta una imagen</p>
-                            </span>
-                        </div>
-                    </Col>
-                    <Col lg={12}>
-                        <small>video-1.mp4</small>
-                    </Col>
-                    <Col lg={12} className="py-3">
-                        <Form.Label>Título</Form.Label>
-                        <Form.Control type="text" size="sm" placeholder="Títitulo" />
-                    </Col>
-                    <Col lg={12}>
-                        <Form.Label>Descripción</Form.Label>
-                        <Form.Control type="text" size="sm" placeholder="Descripción" />
-                    </Col>
-                    <Col lg={12} className="pt-3 d-flex justify-content-center">
-                        <Button size="sm">Agregar</Button>
-                    </Col>
-                </Row>
+                <Fragment>
+                    <Row>
+                        <Col>
+                            {
+                                !editItemResource.url ?
+                                    (
+                                        <div className="resource-element size-resource-video rounded d-flex justify-content-center align-items-center">
+                                            <span className="text-center">
+                                                <p><i className="bi bi-arrow-90deg-down text-white" /></p>
+                                                <p>Arrasta una imagen</p>
+                                            </span>
+                                        </div>
+                                    )
+                                    :
+                                    (
+                                        <div className="w-100">
+                                            <Image
+                                                alt="Logo"
+                                                className={`h-100 mh-150px cursor-pointer`}
+                                                src={editItemResource.url}
+                                            />
+                                        </div>
+                                    )
+                            }
+                        </Col>
+                        <Col lg={12}>
+                            <small>{editItemResource.nombre}</small>
+                        </Col>
+                        <Col lg={12} className="py-3">
+                            <Form.Label>Título</Form.Label>
+                            <Form.Control type="text" size="sm" placeholder="Títitulo" ref={titulo} />
+                            {titulo.current && !titulo.current.value && 'El título es requerido'}
+                        </Col>
+                        <Col lg={12}>
+                            <Form.Label>Descripción</Form.Label>
+                            <Form.Control type="text" size="sm" placeholder="Descripción" ref={descripcion} />
+                            {descripcion.current && !descripcion.current.value && 'El título es requerido'}
+                        </Col>
+                        <Col lg={12} className="pt-3 d-flex justify-content-center">
+                            <Button type="button" size="sm" onClick={() => appedItemsCarousel()}>Agregar</Button>
+                        </Col>
+
+                    </Row>
+                    <Row className="mt-5">
+                        <Col>
+                            <ul className="list-group overflow-auto" style={{ height: "100px" }}>
+                                {
+                                    editItem.list.map((item: any, index: number) => {
+                                        return (
+                                            <li className="list-group-item bg-transparent" key={index}>
+                                                <div className="d-flex">
+                                                    <div className="p-2 w-100">{item.titulo}</div>
+                                                    <div className="p-2 flex-shrink-1" onClick={() => destroyElementCarousel(item.id)}><i className="bi bi-trash text-danger cursor-pointer"></i></div>
+                                                </div>
+                                            </li>
+                                        )
+                                    }
+                                    )
+                                }
+                            </ul>
+                        </Col>
+                    </Row>
+                </Fragment>
             }
             <Row className="pt-5">
                 <Col lg={12}>
-                    { 
+                    {
                         (editItem.type === 'video') &&
                         <Row>
                             <Form.Label>Tipo de Borde</Form.Label>
@@ -189,7 +297,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
                             </ButtonGroup>
                         </Row>
                     }
-                    
+
                 </Col>
             </Row>
         </div>

@@ -1,9 +1,12 @@
 import React, {FC, useState} from 'react'
 import imgUpload from '../upload-image_03.jpg'
-import UploadImage from './UploadImage'
+import UpImage from '../../uploadFile/upload-image';
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
 import {URLAWS} from '../../../services/api'
+import { validateStringSinCaracteresEspeciales } from '../../validarCadena/validadorCadena'
+
+// import { initializeApp } from 'firebase-admin/app';
 
 const NewNotification: FC<any> = ({
     showCardAddNotification,
@@ -129,14 +132,16 @@ const NewNotification: FC<any> = ({
                             name='titleNotification'
                             placeholder='Ej. Nueva Actualización'
                             onChange={(e) => {
-                                setNotification({
-                                    nombre: e.target.value,
-                                    descripcion: notification.descripcion,
-                                    imagen_path: notification.imagen_path,
-                                    fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setNotification({
+                                        nombre: e.target.value,
+                                        descripcion: notification.descripcion,
+                                        imagen_path: notification.imagen_path,
+                                        fecha_hora_programada: notification.fecha_hora_programada,
+                                        tipo: 0,
+                                        estado: 1,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -151,14 +156,16 @@ const NewNotification: FC<any> = ({
                             placeholder='Escribe una breve descripción'
                             style={{height: '100px'}}
                             onChange={(e) => {
-                                setNotification({
-                                    nombre: notification.nombre,
-                                    descripcion: e.target.value,
-                                    imagen_path: notification.imagen_path,
-                                    fecha_hora_programada: notification.fecha_hora_programada,
-                                    tipo: 0,
-                                    estado: 1,
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setNotification({
+                                        nombre: notification.nombre,
+                                        descripcion: e.target.value,
+                                        imagen_path: notification.imagen_path,
+                                        fecha_hora_programada: notification.fecha_hora_programada,
+                                        tipo: 0,
+                                        estado: 1,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -270,10 +277,12 @@ const NewNotification: FC<any> = ({
                 </div>
             </Card>
 
-            <UploadImage
+            <UpImage
                 show={modalUploadIMG}
                 onClose={() => setModalUploadIMG(false)}
-                uploadImage={uploadImage}
+                cargarIMG={uploadImage}
+                ubicacionBucket={'notificaciones'}
+                tipoArchivoPermitido={'image/*'}
             />
         </div>
     )

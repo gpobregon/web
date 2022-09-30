@@ -1,12 +1,13 @@
-import React, { useState, FC } from 'react'
-import { Button, Modal, Form } from 'react-bootstrap'
-
-const AddRoom: FC<any> = ({ show, onClose, addRoom, id_sitio }) => {
+import React, {useState, FC} from 'react'
+import {Button, Modal, Form} from 'react-bootstrap'
+import swal from 'sweetalert'
+import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
+const AddRoom: FC<any> = ({show, onClose, addRoom, id_sitio}) => {
     const [createRoom, setCreateRoom] = useState({
         id_sitio: id_sitio,
         nombre: '',
         descripcion: '',
-        tipo: true
+        tipo: true,
     })
 
     return (
@@ -23,12 +24,14 @@ const AddRoom: FC<any> = ({ show, onClose, addRoom, id_sitio }) => {
                             name='nombre'
                             className={'mb-4'}
                             onChange={(e) => {
-                                setCreateRoom({
-                                    id_sitio: createRoom.id_sitio,
-                                    nombre: e.target.value,
-                                    descripcion: createRoom.descripcion,
-                                    tipo: createRoom.tipo
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setCreateRoom({
+                                        id_sitio: createRoom.id_sitio,
+                                        nombre: e.target.value,
+                                        descripcion: createRoom.descripcion,
+                                        tipo: createRoom.tipo,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -38,12 +41,14 @@ const AddRoom: FC<any> = ({ show, onClose, addRoom, id_sitio }) => {
                             type='text'
                             name='descripcion'
                             onChange={(e) => {
-                                setCreateRoom({
-                                    id_sitio: createRoom.id_sitio,
-                                    nombre: createRoom.nombre,
-                                    descripcion: e.target.value,
-                                    tipo: createRoom.tipo
-                                })
+                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
+                                    setCreateRoom({
+                                        id_sitio: createRoom.id_sitio,
+                                        nombre: createRoom.nombre,
+                                        descripcion: e.target.value,
+                                        tipo: createRoom.tipo,
+                                    })
+                                }
                             }}
                         />
                     </Form.Group>
@@ -56,8 +61,14 @@ const AddRoom: FC<any> = ({ show, onClose, addRoom, id_sitio }) => {
                     <Button
                         variant='primary'
                         onClick={() => {
-                            console.log(createRoom)
-                            addRoom(createRoom)
+                            if (createRoom.nombre != '' && createRoom.descripcion != '') {
+                                addRoom(createRoom)
+                            } else {
+                                swal({
+                                    text: '¡Faltan campos por completar!',
+                                    icon: 'warning',
+                                })
+                            }
                         }}
                     >
                         {'Aplicar '}

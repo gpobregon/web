@@ -1,38 +1,70 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
+import { Menu, Item, useContextMenu } from "react-contexify";
 
 type Model = {
-    data: any
-    referencia: any
-    handlerId: any
-    setEditItem: (data: any) => void
-    updateElement: (data: any) => void
+  data: any
+  referencia: any
+  handlerId: any
+  setEditItem: (data: any) => void
+  updateElement: (data: any) => void
+  removeItem: (data: any) => void
 }
 
-const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElement }) => {
+const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
-    return (
+  const { show } = useContextMenu({ id: "menu-id" });
 
-        <div
-            onClick={() => setEditItem(data)} 
-            ref={referencia} 
-            data-handler-id={handlerId}
-            className={`editable p-3`}
-        >
-            <iframe 
-                 
-                 className={`rounded ${data.borderRadius} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
-                width="100%" 
-                height="300" 
-                src="https://www.youtube.com/embed/pAE5vJBTbRY" 
-                title="Travesia en Guatemala, guía turistica en Guate" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen
-            />
-        </div>
+  const destroyItem = (e: any) => {
+    removeItem(e.triggerEvent.target.id);
+    setEditItem([])
+  }
 
-    )
+  const saveElement = (e: any) => {
+    // saveResourceElement(e.triggerEvent.target.id)
+  }
+
+  return (
+    <div
+      ref={referencia}
+      data-handler-id={handlerId}
+      onClick={() => setEditItem(data)}
+      className="d-flex cursor-grabbing"
+    >
+      <div
+        className="p-1 py-1 d-flex align-items-center"
+        id={data.id}
+        onContextMenu={show} >
+        <i className="bi bi-grip-vertical fa-2x" id={data.id} />
+      </div>
+      <Menu id={"menu-id"} theme="dark" data-test={data}>
+        <Item onClick={(e: any) => destroyItem(e)}>
+          <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
+        </Item>
+        <Item onClick={(e: any) => saveElement(e)}>
+          <i className="fa fa-save text-success pe-4" />Guardar Recurso
+        </Item>
+      </Menu>
+      <div id={data.id} className={`editable ${data.textAling} w-100`}>
+        {
+          data.url ? (
+            <video width="100%" height="240" controls className={`rounded ${data.borderRadius} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
+              <source src={data.url} type="video/mp4" />
+              <source src={data.url} type="video/ogg" />
+              Your browser does not support the video tag.
+            </video>
+          ) :
+            (
+              <div className="bkg-dark content-icon rounded my-2 text-center" >
+                <div className="icon-wrapper">
+                  <i className={`bi bi-film fa-4x text-white`}></i>
+                </div>
+              </div>
+            )
+        }
+      </div>
+    </div>
+  )
 }
 
 export default Video
