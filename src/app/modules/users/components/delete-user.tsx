@@ -213,7 +213,7 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                         variant='btn btn-light-danger btn-active-danger'
                         onClick={() => {
                             deleteUsuarios()
-                            document.location.href = '/usuarios/user-management'
+                            setTimeout(() => document.location.href = '/usuarios/user-management', 750)
                         }}
                     >
                         {'Eliminar '}
