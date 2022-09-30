@@ -3,11 +3,11 @@ import {Button, Modal, Form, Card} from 'react-bootstrap'
 import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 import {KTSVG} from '../../../../_metronic/helpers'
 import UpJson from './UpJson'
+import { URLAWS } from '../../../services/api'
 
 const UpdateLanguage: FC<any> = ({
     show,
     onClose,
-    language,
     idioma,
     setIdioma,
     updateIdioma,
@@ -18,14 +18,30 @@ const UpdateLanguage: FC<any> = ({
     const [url, setUrl] = useState('')
     const [nameMovil, setNameMovil] = useState('')
     const [nameWeb, setNameWeb] = useState('')
-
     const uploadJson = (json: string) => {
         if (url === 'idiomasWeb') {
             setNameWeb(json)
-        } else if (url === 'idiomasMovil') {
+        
+            setIdioma({
+                id_lenguaje: idioma?.id_lenguaje,
+                nombre: idioma?.nombre,
+                descripcion: idioma?.descripcion,
+                estado: idioma?.estado,
+                json_web: `${URLAWS}idiomasWeb/${json}`,
+                json_movil: idioma?.json_movil,
+            })
+            setShowJson(false)
+        } else  {
             setNameMovil(json)
-        }
-        if (json !== '') {
+        
+            setIdioma({
+                id_lenguaje: idioma?.id_lenguaje,
+                nombre: idioma?.nombre,
+                descripcion: idioma?.descripcion,
+                estado: idioma?.estado,
+                json_web: idioma?.json_web,
+                json_movil: `${URLAWS}idiomasMovil/${json}`,
+            })
             setShowJson(false)
         }
     }
@@ -47,7 +63,7 @@ const UpdateLanguage: FC<any> = ({
                             onChange={(e) => {
                                 if (validateStringSinCaracteresEspeciales(e.target.value)) {
                                     setIdioma({
-                                        id_lenguaje: language?.id_lenguaje,
+                                        id_lenguaje: idioma?.id_lenguaje,
                                         nombre: e.target.value,
                                         descripcion: idioma?.descripcion,
                                         estado: idioma?.estado,
@@ -69,7 +85,7 @@ const UpdateLanguage: FC<any> = ({
                             onChange={(e) => {
                                 if (validateStringSinCaracteresEspeciales(e.target.value)) {
                                     setIdioma({
-                                        id_lenguaje: language?.id_lenguaje,
+                                        id_lenguaje: idioma?.id_lenguaje,
                                         nombre: idioma?.nombre,
                                         descripcion: e.target.value,
                                         estado: idioma?.estado,
@@ -194,7 +210,7 @@ const UpdateLanguage: FC<any> = ({
                                 json_movil: '',
                             })
                             deleteIdioma({
-                                id_lenguaje: language?.id_lenguaje,
+                                id_lenguaje: idioma?.id_lenguaje,
                                 estado: 0,
                             })
                         }}
@@ -224,6 +240,7 @@ const UpdateLanguage: FC<any> = ({
                     <Button
                         variant='primary'
                         onClick={() => {
+                            console.log(idioma)
                             updateIdioma(idioma)
                             setNameMovil('')
                             setNameWeb('')

@@ -232,6 +232,7 @@ const CatalogosPage = () => {
                 json_web: '',
                 json_movil: '',
             })
+            console.log(idioma)
             await postData(updateLanguageMethod, idioma)
             setModalUpdateIdioma({show: false, language: {}})
             swal({
@@ -584,7 +585,7 @@ const CatalogosPage = () => {
                     show={modalUpdateIdioma.show}
                     setShow={setModalUpdateIdioma}
                     onClose={() => setModalUpdateIdioma({show: false, language: {}})}
-                    language={modalUpdateIdioma.language}
+                    // language={modalUpdateIdioma.language}
                     idioma={idioma}
                     setIdioma={setIdioma}
                     updateIdioma={updateIdioma}
