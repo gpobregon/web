@@ -249,7 +249,6 @@ const UpdateLanguage: FC<any> = ({
                     <Button
                         variant='primary'
                         onClick={() => {
-                            console.log(idioma)
                             updateIdioma(idioma)
                             setNameMovil('')
                             setNameWeb('')
