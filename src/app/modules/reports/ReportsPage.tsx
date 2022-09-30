@@ -22,7 +22,7 @@ const ReportsPage = () => {
                 return user.attributes['custom:role'] === role.nombre
             })
 
-            if (filter[0]?.gestor_offline === false) {
+            if (filter[0]?.gestor_reportes === false) {
                 navigate('/errors/404', {replace: true})
             }
         })
