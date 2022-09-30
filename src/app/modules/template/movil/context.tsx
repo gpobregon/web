@@ -1,11 +1,11 @@
 /* eslint-disable no-empty-pattern */
 // context/todoContext.tsx
+import { updateData, appendData, validElement, generateRandomString } from '../../../utility/global/index'
 import { createContext, FC, useState, useCallback, useEffect, useContext } from 'react'
 import { WithChildren } from '../../../utility/models/childrenContext'
 import { LoadingContext } from '../../../utility/component/loading/context'
-import { updateData, appendData, validElement, generateRandomString } from '../../../utility/global/index'
 import { getData, postData } from '../../../services/api'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import update from 'immutability-helper'
 import { useDrop } from "react-dnd"
 import swal from 'sweetalert'
@@ -28,8 +28,6 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [board, setBoard] = useState<any>([])
     const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
-    const [hasDropped, setHasDropped] = useState<boolean>(false)
-    const [hasDroppedOnChild, setHasDroppedOnChild] = useState<boolean>(false)
     const [changeModeEditor, setChangeModeEditor] = useState<Number>(1)
     const { setShowLoad } = useContext(LoadingContext)
     const [allResources, setAllResource] = useState<any>([])
@@ -40,6 +38,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
     const { id, tipo } = useParams()
+    const navigate = useNavigate()
     // Agregar elemento
     const addElement = (data: any) => {
         const response = validElement(data.type)
@@ -279,16 +278,22 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         () => {
             if (board.length > 0 && count === 1) {
                 setEditItem(_.last(board))
-                setCount((count: number) => 0)
+                setCount((count: number) => count = 0)
             }
             
         }, [board, count]
     )
     // ------------------------------------------------------------
     useEffect(() => {
-        getAllResources()
-        getLenguate()
-        oneSite()
+        
+        if (tipo === 'sitio' || tipo === 'punto') {
+            getAllResources()
+            getLenguate()
+            oneSite()
+        } else {
+            navigate(`/error/404`)
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     
