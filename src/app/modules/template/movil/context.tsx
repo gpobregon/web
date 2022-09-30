@@ -204,6 +204,9 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             "nombre": file.name,
             "url": url,
             "tipo": file.type,
+            "contenido": '',
+            "tipo_elemento": '',
+            "es_movil": changeTypeEdit === 1 ? true : false,
             "estado": 1
         }
 
