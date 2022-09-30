@@ -260,7 +260,7 @@ const UserManagement: FC<any> = ({show}) => {
     useEffect(() => {
         getRoles()
         validateRole()
-    }, [existRoles])
+    }, [existRoles, permissionEditUsers])
 
     const rolesOptions = roles.map((role) => ({
         value: role.nombre,
