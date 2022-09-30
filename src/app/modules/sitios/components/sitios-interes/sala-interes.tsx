@@ -14,6 +14,7 @@ import {
     OrderPointOfInterest,
     getData,
     languagesMethod,
+    getRolesMethod,
 } from '../../../../services/api'
 import {Room} from '../../../../models/rooms'
 import swal from 'sweetalert'
@@ -29,6 +30,8 @@ import domtoimage from 'dom-to-image'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import SalaRutas from '../rutas-sitios-interes/sala-rutas'
 import {CatalogLanguage} from '../../../../models/catalogLanguage'
+import {Auth} from 'aws-amplify'
+import {roleManager} from '../../../../models/roleManager'
 
 type id_sitio = {
     id_sitio: number
@@ -235,24 +238,62 @@ const Interes: FC<id_sitio> = (props) => {
     // 	setPuntoInteres(_fruitItems)
     // }
 
+    // * Restricción por rol
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateRoom, setPermissionCreateRoom] = useState(true)
+    const [permissionSetPrincipalImage, setPermissionSetPrincipalImage] = useState(true)
+
+    const [permissionCreatePoint, setPermissionCreatePoint] = useState(true)
+    const [permissionEditPoint, setPermissionEditPoint] = useState(true)
+    const [permissionDeletePoint, setPermissionDeletePoint] = useState(true)
+    const [permissionSortPoint, setPermissionSortPoint] = useState(true)
+    const [permissionChangeVisibilityPoint, setPermissionChangeVisibilityPoint] = useState(true)
+    const [permissionPostPoint, setPermissionPostPoint] = useState(true)
+    const [permissionMockPoint, setPermissionMockPoint] = useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.sitio_editar === false) {
+                navigate('/errors/404', {replace: true})
+            } else {
+                setPermissionCreateRoom(filter[0]?.sitio_sala_crear)
+                setPermissionSetPrincipalImage(filter[0]?.sitio_establecer_imagen_principal)
+
+                setPermissionCreatePoint(filter[0]?.sitio_punto_crear)
+                setPermissionEditPoint(filter[0]?.sitio_punto_editar)
+                setPermissionDeletePoint(filter[0]?.sitio_punto_eliminar)
+                setPermissionSortPoint(filter[0]?.sitio_punto_ordenar)
+                setPermissionChangeVisibilityPoint(filter[0]?.sitio_punto_visible)
+                setPermissionPostPoint(filter[0]?.sitio_punto_publicar)
+                setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
+    // * Fin restricción por rol
+
     return (
         <>
             <div className=' '>
                 <div className='row'>
                     <div className='col-9'>
-                        {/* <div className='card'>
-                            <br></br>
-                            <div>
-                                <Button variant="secondary" size="sm">
-                                    Sitio 01
-                                </Button>{' '}
-                                <Button variant="secondary" size="sm">
-                                    Nueva Sala
-                                </Button>
-                            </div>
-                            <br></br>
-                        </div> */}
-
                         <div className='card'>
                             <br></br>
                             <div style={{marginLeft: '15px'}}>
@@ -330,7 +371,16 @@ const Interes: FC<id_sitio> = (props) => {
                                 <Button
                                     variant='outline-dark'
                                     size='sm'
-                                    onClick={() => setModalAddRoom(true)}
+                                    onClick={() => {
+                                        if (!permissionCreateRoom) {
+                                            swal({
+                                                title: 'No tienes permiso para crear salas',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
+                                        setModalAddRoom(true)
+                                    }}
                                 >
                                     Nueva Sala
                                     <i
@@ -424,7 +474,16 @@ const Interes: FC<id_sitio> = (props) => {
                                         key={index}
                                         className='list-item'
                                         draggable
-                                        onDragStart={(e) => (dragItem.current = index)}
+                                        onDragStart={(e) => {
+                                            if (!permissionSortPoint) {
+                                                swal({
+                                                    title: 'No tienes permiso para ordenar puntos de interés',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
+                                            dragItem.current = index
+                                        }}
                                         onDragEnter={(e) => (dragOverItem.current = index)}
                                         onDragEnd={handleSort}
                                         onDragOver={(e) => e.preventDefault()}
@@ -438,7 +497,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                         height: '100%',
                                                         justifyContent: 'center',
                                                         flexDirection: 'column',
-                                                       
                                                     }}
                                                 >
                                                     <Card.Title
@@ -564,6 +622,16 @@ const Interes: FC<id_sitio> = (props) => {
                                                                             : 'bi bi-record-circle'
                                                                     }
                                                                     onClick={() => {
+                                                                        if (
+                                                                            !permissionSetPrincipalImage
+                                                                        ) {
+                                                                            swal({
+                                                                                title: 'No tienes permiso para establecer una imagen principal',
+                                                                                icon: 'warning',
+                                                                            })
+                                                                            return
+                                                                        }
+
                                                                         punto.es_portada_de_sitio =
                                                                             !punto.es_portada_de_sitio
                                                                         changeImagePrincipal(
@@ -591,6 +659,13 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 }
                                                                 id='center2'
                                                                 onClick={() => {
+                                                                    if (!permissionChangeVisibilityPoint) {
+                                                                        swal({
+                                                                            title: 'No tienes permiso para cambiar la visibilidad de los puntos de interés',
+                                                                            icon: 'warning',
+                                                                        })
+                                                                        return
+                                                                    }
                                                                     punto.es_visible =
                                                                         !punto.es_visible
                                                                     changeStatus(
@@ -613,6 +688,13 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 marginRight: '4px',
                                                             }}
                                                             onClick={(event) => {
+                                                                if (!permissionEditPoint) {
+                                                                    swal({
+                                                                        title: 'No tienes permiso para editar un punto de interés',
+                                                                        icon: 'warning',
+                                                                    })
+                                                                    return
+                                                                }
                                                                 // let lenaguajeDefault = ''
                                                                 // for (
                                                                 //     let i = 0;
@@ -630,7 +712,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 //             punto.lenguajes[j]
                                                                 //                 .id_lenguaje
                                                                 //         ) {
-                                                                            // setLenaguajeDefault(languages[i].descripcion)
+                                                                // setLenaguajeDefault(languages[i].descripcion)
 
                                                                 //             lenaguajeDefault =
                                                                 //                 languages[i].nombre
@@ -672,7 +754,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                                             es_visible:
                                                                                 punto.es_visible,
                                                                             nombreSala: nombresala,
-                                                                            publicado: punto.publicado,
+                                                                            publicado:
+                                                                                punto.publicado,
                                                                         },
                                                                     }
                                                                 )
@@ -687,6 +770,13 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 marginRight: '20px',
                                                             }}
                                                             onClick={() => {
+                                                                if (!permissionDeletePoint) {
+                                                                    swal({
+                                                                        title: 'No tienes permiso para eliminar un punto de interés',
+                                                                        icon: 'warning',
+                                                                    })
+                                                                    return
+                                                                }
                                                                 // console.log(punto.es_portada_de_sitio)
                                                                 deletePointInteres(
                                                                     punto.id_punto,
@@ -731,6 +821,14 @@ const Interes: FC<id_sitio> = (props) => {
                                                 borderColor: '#009EF7',
                                             }}
                                             onClick={(event) => {
+                                                if (!permissionCreatePoint) {
+                                                    swal({
+                                                        title: 'No tienes permiso para crear un nuevo punto de interés',
+                                                        icon: 'warning',
+                                                    })
+                                                    return
+                                                }
+
                                                 if (idsala != undefined) {
                                                     navigate('/sitios/create-point-interes', {
                                                         state: {
