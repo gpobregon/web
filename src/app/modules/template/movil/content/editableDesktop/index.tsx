@@ -10,7 +10,7 @@ const EditableDesktop = () => {
         <Fragment>
             <Col lg={12}>
                 <div className="bkg-dark rounded height-section-editable p-4" style={{ height: '565px' }} ref={drop}>
-                    <PerfectScrollbar component="div"  style={{ height: '550px', width:"100%" }}>
+                    <PerfectScrollbar component="div"  style={{ height: '550px', width:"100%", paddingBottom: '100px' }}>
                         {
                             board.map((item: any, index: number) => {
 
