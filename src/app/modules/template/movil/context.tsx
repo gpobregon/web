@@ -72,15 +72,12 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
               return
             }
             addElement(item.data)
-            setHasDropped(true)
-            setHasDroppedOnChild(didDrop)
           },
           collect: (monitor) => ({
             isOver: monitor.isOver(),
             isOverCurrent: monitor.isOver({ shallow: true }),
           }),
-        }),
-        [setHasDropped, setHasDroppedOnChild],
+        })
       )
 
     // Dragable fotos

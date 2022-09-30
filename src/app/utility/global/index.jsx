@@ -11,12 +11,6 @@ export function appendData(all, data) {
     return [...all, data];
 }
 
-function interpretHTML(data) {
-    return {
-      __html: data
-    };
-  };
-
 export const setDataList = (el) => {
     // console.log(interpretHTML(el))
     const L = el.firstChild.getElementsByTagName('li')
