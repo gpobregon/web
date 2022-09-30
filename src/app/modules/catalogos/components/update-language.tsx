@@ -14,7 +14,6 @@ const UpdateLanguage: FC<any> = ({
     deleteIdioma,
     setShow,
 }) => {
-    
     const [showJson, setShowJson] = useState(false)
     const [url, setUrl] = useState('')
     const [nameMovil, setNameMovil] = useState('')
@@ -92,6 +91,11 @@ const UpdateLanguage: FC<any> = ({
                                 alignItems: 'flex-start',
                                 justifyContent: 'center',
                             }}
+                            onClick={() => {
+                                setShow(false)
+                                setShowJson(true)
+                                setUrl('idiomasMovil')
+                            }}
                         >
                             <div
                                 style={{
@@ -116,18 +120,11 @@ const UpdateLanguage: FC<any> = ({
                                             : idioma?.json_movil?.split('/').pop()}
                                     </div>
                                 </div>
-                                <div
-                                    onClick={() => {
-                                        setShow(false)
-                                        setShowJson(true)
-                                        setUrl('idiomasMovil')
-                                    }}
-                                >
-                                    <KTSVG
-                                        path='/media/icons/duotune/general/gen035.svg'
-                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
-                                    />
-                                </div>
+
+                                <KTSVG
+                                    path='/media/icons/duotune/general/gen035.svg'
+                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                />
                             </div>
                         </Card>
                     </Form.Group>
@@ -141,6 +138,11 @@ const UpdateLanguage: FC<any> = ({
                                 display: 'flex',
                                 alignItems: 'flex-start',
                                 justifyContent: 'center',
+                            }}
+                            onClick={() => {
+                                setShow(false)
+                                setShowJson(true)
+                                setUrl('idiomasWeb')
                             }}
                         >
                             <div
@@ -168,18 +170,10 @@ const UpdateLanguage: FC<any> = ({
                                     </div>
                                 </div>
 
-                                <div
-                                    onClick={() => {
-                                        setShow(false)
-                                        setShowJson(true)
-                                        setUrl('idiomasWeb')
-                                    }}
-                                >
-                                    <KTSVG
-                                        path='/media/icons/duotune/general/gen035.svg'
-                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
-                                    />
-                                </div>
+                                <KTSVG
+                                    path='/media/icons/duotune/general/gen035.svg'
+                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                />
                             </div>
                         </Card>
                         <div style={{textAlign: 'center', color: 'gray'}}>
@@ -218,6 +212,8 @@ const UpdateLanguage: FC<any> = ({
                                 json_web: '',
                                 json_movil: '',
                             })
+                            setNameMovil('')
+                            setNameWeb('')
                             setUrl('')
                             onClose()
                         }}
@@ -229,6 +225,8 @@ const UpdateLanguage: FC<any> = ({
                         variant='primary'
                         onClick={() => {
                             updateIdioma(idioma)
+                            setNameMovil('')
+                            setNameWeb('')
                             setUrl('')
                         }}
                     >
