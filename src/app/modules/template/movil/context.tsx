@@ -1,11 +1,11 @@
 /* eslint-disable no-empty-pattern */
 // context/todoContext.tsx
+import { updateData, appendData, validElement, generateRandomString } from '../../../utility/global/index'
 import { createContext, FC, useState, useCallback, useEffect, useContext } from 'react'
 import { WithChildren } from '../../../utility/models/childrenContext'
 import { LoadingContext } from '../../../utility/component/loading/context'
-import { updateData, appendData, validElement, generateRandomString } from '../../../utility/global/index'
 import { getData, postData } from '../../../services/api'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import update from 'immutability-helper'
 import { useDrop } from "react-dnd"
 import swal from 'sweetalert'
@@ -28,8 +28,6 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [board, setBoard] = useState<any>([])
     const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
-    const [hasDropped, setHasDropped] = useState<boolean>(false)
-    const [hasDroppedOnChild, setHasDroppedOnChild] = useState<boolean>(false)
     const [changeModeEditor, setChangeModeEditor] = useState<Number>(1)
     const { setShowLoad } = useContext(LoadingContext)
     const [allResources, setAllResource] = useState<any>([])
@@ -39,7 +37,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     let [count, setCount] = useState(0)
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
-    const { id } = useParams()
+    const { id, tipo } = useParams()
+    const navigate = useNavigate()
     // Agregar elemento
     const addElement = (data: any) => {
         const response = validElement(data.type)
@@ -65,30 +64,30 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [{ isOver, isOverCurrent }, drop] = useDrop(
         () => ({
-          accept: 'image',
-          drop(item: any, monitor: any) {
-            const didDrop = monitor.didDrop()
-            if (didDrop) {
-              return
-            }
-            addElement(item.data)
-          },
-          collect: (monitor) => ({
-            isOver: monitor.isOver(),
-            isOverCurrent: monitor.isOver({ shallow: true }),
-          }),
+            accept: 'image',
+            drop(item: any, monitor: any) {
+                const didDrop = monitor.didDrop()
+                if (didDrop) {
+                    return
+                }
+                addElement(item.data)
+            },
+            collect: (monitor) => ({
+                isOver: monitor.isOver(),
+                isOverCurrent: monitor.isOver({ shallow: true }),
+            }),
         })
-      )
+    )
 
     // Dragable fotos
 
-    const [{},drop2] = useDrop(() => ({
-      accept: "image",
-      drop: (item: any) => updateElementResource(item),
-      collect: (monitor) => ({
-          isOver: !!monitor.isOver(),
-      }),
-  }));
+    const [{ }, drop2] = useDrop(() => ({
+        accept: "image",
+        drop: (item: any) => updateElementResource(item),
+        collect: (monitor) => ({
+            isOver: !!monitor.isOver(),
+        }),
+    }));
 
     // Arrastrar elemento 
     const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
@@ -104,7 +103,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }, [])
 
     // Actualizar el recurso a editar 
-    const updateElementResource = (item : any) => {
+    const updateElementResource = (item: any) => {
         setEditItemResource(item.item)
     }
     // Actualizar data de un item
@@ -134,8 +133,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     // obtenermos el template 
     const oneData = async (item: any, type: boolean) => {
         const data = {
-            "id_punto": -1,
-            "id_sitio": id,
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : -1,
             "id_lenguaje": item.value,
             "es_movil": type
         }
@@ -194,7 +193,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     // Recursos
 
-    const uploadResource = async (file: any, option : number) => {
+    const uploadResource = async (file: any, option: number) => {
         setShowLoad(true)
         const url = `${process.env.REACT_APP_URLAWS}resource-${changeTypeEdit === 1 ? 'mobile' : 'web'}-${id}-${file.name}`;
         const fileResource =
@@ -204,6 +203,9 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             "nombre": file.name,
             "url": url,
             "tipo": file.type,
+            "contenido": '',
+            "tipo_elemento": '',
+            "es_movil": changeTypeEdit === 1 ? true : false,
             "estado": 1
         }
 
@@ -215,26 +217,28 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         };
         // URLAWS
         myBucket.putObject(params)
+            .on('httpUploadProgress', async (evt) => {
+                if(evt.loaded/evt.total === 1){ 
+                    const response: any = await postData('site/mobile/resource/add', fileResource)
+                    setAllResource(appendData(allResources, response.data))
+                    if (option === 1) {
+                        response &&
+                            swal(
+                                {
+                                    text: 'Recurso almacenado con exito',
+                                    icon: 'success',
+                                }
+                            )
+                    } else {
+                        setShowLoad(false)
+                        return url
+                    }
+                    setShowLoad(false)
+                }
+            })
             .send((err) => {
                 if (err) console.log(err)
             })
-
-        const response: any = await postData('site/mobile/resource/add', fileResource)
-        setAllResource(appendData(allResources, response.data))
-        if(option === 1) {
-            response &&
-            swal(
-                {
-                    text: 'Recurso almacenado con exito',
-                    icon: 'success',
-                }
-            )
-        } else {
-            setShowLoad(false)  
-            return url
-        }
-
-        setShowLoad(false)        
     }
 
     // Se obienen todos los recursos
@@ -250,7 +254,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
     // Eliminacion de un recurso
     const destroyOneResource = async (id: number) => {
-        setShowLoad(true) 
+        setShowLoad(true)
         const response: any = await postData('site/mobile/resource/delete', { "id_recurso": id })
         const items = allResources.filter((item: any) => String(item.id_recurso) !== String(id))
         setAllResource(items)
@@ -261,7 +265,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                     icon: 'success',
                 }
             )
-        setShowLoad(false) 
+        setShowLoad(false)
     }
 
     // Guardar recurso individual de tipo elemento
@@ -276,19 +280,25 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         () => {
             if (board.length > 0 && count === 1) {
                 setEditItem(_.last(board))
-                setCount((count: number) => 0)
+                setCount((count: number) => count = 0)
             }
-            
+
         }, [board, count]
     )
     // ------------------------------------------------------------
     useEffect(() => {
-        getAllResources()
-        getLenguate()
-        oneSite()
+
+        if (tipo === 'sitio' || tipo === 'punto') {
+            getAllResources()
+            getLenguate()
+            oneSite()
+        } else {
+            navigate(`/error/404`)
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-    
+
     const value = {
         drop,
         drop2,
@@ -297,7 +307,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         language,
         editItem,
         moveCard,
-        ChangeMode,        
+        ChangeMode,
         removeItem,
         setEditItem,
         oneDataSite,
@@ -319,8 +329,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     return (
-        <ContentContext.Provider value= { value } >
-          { children }
+        <ContentContext.Provider value={value} >
+            {children}
         </ContentContext.Provider>
-          )
+    )
 }

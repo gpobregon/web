@@ -1,34 +1,41 @@
-import {FC, useEffect, useState} from 'react'
+import {FC, useState} from 'react'
 import {Button, Modal, Form, Card} from 'react-bootstrap'
 import {KTSVG} from '../../../../_metronic/helpers'
 import {URLAWS} from '../../../services/api'
 import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 import UpJson from './UpJson'
 
-const AddLanguaje: FC<any> = ({
-    show,
-    setShow,
-    onClose,
-    language,
-    setLanguage,
-    addLanguage,
-}) => {
+const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, addLanguage}) => {
     const [showJson, setShowJson] = useState(false)
     const [url, setUrl] = useState('')
-    const [fileMovil, setFileMovil] = useState('')
-    const [fileWeb, setFileWeb] = useState('')
+
     const [nameMovil, setNameMovil] = useState('')
     const [nameWeb, setNameWeb] = useState('')
 
     const uploadJson = (json: string) => {
         if (url === 'idiomasWeb') {
             setNameWeb(json)
-            setFileWeb(json)
-        } else if (url === 'idiomasMovil') {
+
+            setLanguage({
+                id_lenguaje: language.id_lenguaje,
+                nombre: language.nombre,
+                descripcion: language.descripcion,
+                estado: language.estado,
+                json_web: `${URLAWS}idiomasWeb/${json}`,
+                json_movil: language.json_movil,
+            })
+            setShowJson(false)
+        } else {
             setNameMovil(json)
-            setFileMovil(json)
-        }
-        if (json !== '') {
+
+            setLanguage({
+                id_lenguaje: language.id_lenguaje,
+                nombre: language.nombre,
+                descripcion: language.descripcion,
+                estado: language.estado,
+                json_web: language.json_web,
+                json_movil: `${URLAWS}idiomasMovil/${json}`,
+            })
             setShowJson(false)
         }
     }
@@ -54,8 +61,8 @@ const AddLanguaje: FC<any> = ({
                                         nombre: e.target.value,
                                         descripcion: language.descripcion,
                                         estado: language.estado,
-                                        json_web: `${URLAWS}idiomasWeb/${fileWeb}`,
-                                        json_movil: `${URLAWS}idiomasMovil/${fileMovil}`,
+                                        json_web: language.json_web,
+                                        json_movil: language.json_movil,
                                     })
                                 }
                             }}
@@ -76,8 +83,8 @@ const AddLanguaje: FC<any> = ({
                                         nombre: language.nombre,
                                         descripcion: e.target.value,
                                         estado: language.estado,
-                                        json_web: `${URLAWS}idiomasWeb/${fileWeb}`,
-                                        json_movil: `${URLAWS}idiomasMovil/${fileMovil}`,
+                                        json_web: language.json_web,
+                                        json_movil: language.json_movil,
                                     })
                                 }
                             }}
@@ -93,6 +100,11 @@ const AddLanguaje: FC<any> = ({
                                 display: 'flex',
                                 alignItems: 'flex-start',
                                 justifyContent: 'center',
+                            }}
+                            onClick={() => {
+                                setShow(false)
+                                setShowJson(true)
+                                setUrl('idiomasMovil')
                             }}
                         >
                             <div
@@ -114,18 +126,11 @@ const AddLanguaje: FC<any> = ({
                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
                                     <div>{nameMovil !== '' ? nameMovil : 'Subir un archivo'}</div>
                                 </div>
-                                <div
-                                    onClick={() => {
-                                        setShow(false)
-                                        setShowJson(true)
-                                        setUrl('idiomasMovil')
-                                    }}
-                                >
-                                    <KTSVG
-                                        path='/media/icons/duotune/general/gen035.svg'
-                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
-                                    />
-                                </div>
+
+                                <KTSVG
+                                    path='/media/icons/duotune/general/gen035.svg'
+                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                />
                             </div>
                         </Card>
                     </Form.Group>
@@ -139,6 +144,11 @@ const AddLanguaje: FC<any> = ({
                                 display: 'flex',
                                 alignItems: 'flex-start',
                                 justifyContent: 'center',
+                            }}
+                            onClick={() => {
+                                setShow(false)
+                                setShowJson(true)
+                                setUrl('idiomasWeb')
                             }}
                         >
                             <div
@@ -162,18 +172,10 @@ const AddLanguaje: FC<any> = ({
                                     <div>{nameWeb !== '' ? nameWeb : 'Subir un archivo'}</div>
                                 </div>
 
-                                <div
-                                    onClick={() => {
-                                        setShow(false)
-                                        setShowJson(true)
-                                        setUrl('idiomasWeb')
-                                    }}
-                                >
-                                    <KTSVG
-                                        path='/media/icons/duotune/general/gen035.svg'
-                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
-                                    />
-                                </div>
+                                <KTSVG
+                                    path='/media/icons/duotune/general/gen035.svg'
+                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                />
                             </div>
                         </Card>
                         <div style={{textAlign: 'center', color: 'gray'}}>
@@ -193,6 +195,8 @@ const AddLanguaje: FC<any> = ({
                                 json_web: '',
                                 json_movil: '',
                             })
+                            setNameMovil('')
+                            setNameWeb('')
                             setUrl('')
                             onClose()
                         }}
