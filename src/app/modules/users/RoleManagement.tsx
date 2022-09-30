@@ -5,6 +5,7 @@ import {
     Col,
     Form,
     Row,
+    Accordion,
     Table,
     Card,
     Container,
@@ -66,7 +67,7 @@ const RoleManagement: FC<any> = ({ show }) => {
             gestor_roles: false,
             gestor_categorias_idiomas: false,
             estado: 1,
-        }) 
+        })
         swal({
             title: 'Se ha agregado un nuevo rol',
             icon: 'success',
@@ -333,159 +334,1146 @@ const RoleManagement: FC<any> = ({ show }) => {
                                             </div>
                                         </div>
 
-                                        <Row style={{ paddingTop: 15 }}>
-                                            <Col md={6} sm={6}>
-                                                <Form.Check
-                                                    inline
-                                                    defaultChecked={rol.gestor_sitios}
-                                                    label='Editar sitios'
-                                                    onChange={(e) => {
-                                                        setStateRole((role) => ({
-                                                            ...role,
-                                                            id_rol: role.id_rol,
-                                                            gestor_sitios: e.target.checked,
-                                                        }))
 
-                                                        // await postData(editRoleMethod, stateRole)
-                                                        // getRoles()
-                                                    }}
-                                                />
-                                            </Col>
-
-                                            <Col md={6} sm={6}>
-                                                <Form.Check
-                                                    inline
-                                                    defaultChecked={rol.gestor_notificaciones}
-                                                    label='Gestor de notificaciones'
-                                                    onChange={(e) => {
-                                                        setStateRole((role) => ({
-                                                            ...role,
-                                                            id_rol: role.id_rol,
-                                                            gestor_notificaciones: e.target.checked,
-                                                        }))
-
-                                                        // await postData(editRoleMethod, stateRole)
-                                                        // getRoles()
-                                                    }}
-                                                />
-                                            </Col>
-                                        </Row>
+                                        {/* ----------------------------------------------CATEGORIAS E IDIOMAS--------------------------------------------------------------------------- */}
 
                                         <Row style={{ paddingTop: 15 }}>
                                             <Col md={6} sm={6}>
-                                                <Form.Check
-                                                    inline
-                                                    defaultChecked={rol.gestor_puntos_de_interes}
-                                                    label='Editar puntos de Interés'
-                                                    onChange={(e) => {
-                                                        setStateRole((role) => ({
-                                                            ...role,
-                                                            id_rol: role.id_rol,
-                                                            gestor_puntos_de_interes:
-                                                                e.target.checked,
-                                                        }))
+                                                <Accordion>
+                                                    <Accordion.Header>
+                                                        <Form.Check
+                                                            inline
+                                                            defaultChecked={rol.gestor_usuarios}
+                                                            label='Catalogos'
+                                                            onChange={(e) => {
+                                                                setStateRole((role) => ({
+                                                                    ...role,
+                                                                    id_rol: role.id_rol,
+                                                                    gestor_usuarios: e.target.checked,
+                                                                }))
 
-                                                        // await postData(editRoleMethod, stateRole)
-                                                        // getRoles()
-                                                    }}
-                                                />
+                                                                // await postData(editRoleMethod, stateRole)
+                                                                // getRoles()
+                                                            }}
+                                                        />
+                                                    </Accordion.Header>
+                                                    <Accordion.Body>
+
+                                                        <Accordion>
+                                                            <Accordion.Header>Categorías</Accordion.Header>
+                                                            <Accordion.Body>
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Crear categoría'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Editar categoría'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Eliminar categoría'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+                                                            </Accordion.Body>
+                                                        </Accordion>
+
+                                                        <Accordion>
+                                                            <Accordion.Header>Idiomas</Accordion.Header>
+                                                            <Accordion.Body>
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Crear idioma'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Editar idioma'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Eliminar idioma'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+                                                            </Accordion.Body>
+                                                        </Accordion>
+
+
+                                                    </Accordion.Body>
+
+
+
+                                                </Accordion>
+
                                             </Col>
 
                                             <Col md={6} sm={6}>
-                                                <Form.Check
-                                                    inline
-                                                    defaultChecked={rol.gestor_reportes}
-                                                    label='Gestionar Reportes'
-                                                    onChange={(e) => {
-                                                        setStateRole((role) => ({
-                                                            ...role,
-                                                            id_rol: role.id_rol,
-                                                            gestor_reportes: e.target.checked,
-                                                        }))
 
-                                                        // await postData(editRoleMethod, stateRole)
-                                                        // getRoles()
-                                                    }}
-                                                />
+                                                <Accordion>
+                                                    <Accordion.Header>
+                                                        <Form.Check
+                                                            inline
+                                                            defaultChecked={rol.gestor_usuarios}
+                                                            label='Offline  '
+                                                            onChange={(e) => {
+                                                                setStateRole((role) => ({
+                                                                    ...role,
+                                                                    id_rol: role.id_rol,
+                                                                    gestor_usuarios: e.target.checked
+                                                                }))
+
+                                                                // await postData(editRoleMethod, stateRole)
+                                                                // getRoles()
+                                                            }}
+                                                        />
+
+                                                    </Accordion.Header>
+                                                    <Accordion.Body>
+
+                                                        <Accordion>
+                                                            <Accordion.Header>Configuración de contenido descargable</Accordion.Header>
+                                                            <Accordion.Body>
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Seleccionar contenido descarble de Sitios'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Seleccionar contenido descarble de Puntos de interés'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+                                                            </Accordion.Body>
+                                                        </Accordion>
+
+                                                    </Accordion.Body>
+                                                </Accordion>
+
                                             </Col>
                                         </Row>
+
+                                        {/* -----------------------------------------------SITIOS Y REPORTES-------------------------------------------------------------------------- */}
 
                                         <Row style={{ paddingTop: 15 }}>
                                             <Col md={6} sm={6}>
-                                                <Form.Check
-                                                    inline
-                                                    defaultChecked={rol.gestor_usuarios}
-                                                    label='Editar Usuarios'
-                                                    onChange={(e) => {
-                                                        setStateRole((role) => ({
-                                                            ...role,
-                                                            id_rol: role.id_rol,
-                                                            gestor_usuarios: e.target.checked,
-                                                        }))
+                                                <Accordion>
+                                                    <Accordion.Header>
+                                                        <Form.Check
+                                                            inline
+                                                            defaultChecked={rol.gestor_usuarios}
+                                                            label='Sitios'
+                                                            onChange={(e) => {
+                                                                setStateRole((role) => ({
+                                                                    ...role,
+                                                                    id_rol: role.id_rol,
+                                                                    gestor_usuarios: e.target.checked,
+                                                                }))
 
-                                                        // await postData(editRoleMethod, stateRole)
-                                                        // getRoles()
-                                                    }}
-                                                />
+                                                                // await postData(editRoleMethod, stateRole)
+                                                                // getRoles()
+                                                            }}
+                                                        />
+                                                    </Accordion.Header>
+                                                    <Accordion.Body>
+
+                                                        <Accordion>
+                                                            <Accordion.Header>Gestor de sitios</Accordion.Header>
+                                                            <Accordion.Body>
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Nuevo sitio'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Editar sitio'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Eliminar sitio'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+                                                            </Accordion.Body>
+                                                        </Accordion>
+
+                                                        <Accordion>
+                                                            <Accordion.Header>Configuración de Sitios</Accordion.Header>
+                                                            <Accordion.Body>
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Crear sitio'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Marcar sitio destacado'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Mostrar / ocultar sitio'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Maquetación movil'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Maquetación web'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Crear salas'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Imagen principal de salas'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Crear punto de interés'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Editar punto de interés'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Ordenar punto de interés'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Eliminar punto de interés'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+                                                            </Accordion.Body>
+                                                        </Accordion>
+
+                                                        <Accordion>
+                                                            <Accordion.Header>Configuración de Puntos de interés</Accordion.Header>
+                                                            <Accordion.Body>
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Edición'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Mostrar / Ocultar punto de interés'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Maquetación móvil'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Maquetación web'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Publicar puntos de interés'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Accordion>
+                                                                    <Accordion.Header>Rutas</Accordion.Header>
+                                                                    <Accordion.Body>
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Crear Ruta'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Editar Ruta'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Eliminar Ruta'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Crear pasos'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Editar pasos'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Eliminar pasos'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Cargar mapa'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Editar mapa'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Eliminar mapa'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Cargar imagen de referencia'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Editar imagen de referencia'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+
+                                                                        <Row style={{ paddingTop: 15 }}>
+                                                                            <Form.Check
+                                                                                inline
+                                                                                defaultChecked={rol.gestor_sitios}
+                                                                                label='Eliminar imagen de referencia'
+                                                                                onChange={(e) => {
+                                                                                    setStateRole((role) => ({
+                                                                                        ...role,
+                                                                                        id_rol: role.id_rol,
+                                                                                        gestor_sitios: e.target.checked,
+                                                                                    }))
+
+                                                                                    // await postData(editRoleMethod, stateRole)
+                                                                                    // getRoles()
+                                                                                }}
+                                                                            />
+                                                                        </Row>
+                                                                    </Accordion.Body>
+                                                                </Accordion>
+
+                                                            </Accordion.Body>
+                                                        </Accordion>
+
+                                                    </Accordion.Body>
+
+
+
+                                                </Accordion>
+
                                             </Col>
 
                                             <Col md={6} sm={6}>
-                                                <Form.Check
-                                                    inline
-                                                    defaultChecked={rol.gestor_offline}
-                                                    label='Gestor Offline'
-                                                    onChange={(e) => {
-                                                        setStateRole((role) => ({
-                                                            ...role,
-                                                            id_rol: role.id_rol,
-                                                            gestor_offline: e.target.checked,
-                                                        }))
 
-                                                        // await postData(editRoleMethod, stateRole)
-                                                        // getRoles()
-                                                    }}
-                                                />
+                                                <Accordion>
+                                                    <Accordion.Header>
+                                                        <Form.Check
+                                                            inline
+                                                            defaultChecked={rol.gestor_usuarios}
+                                                            label='Reportes'
+                                                            onChange={(e) => {
+                                                                setStateRole((role) => ({
+                                                                    ...role,
+                                                                    id_rol: role.id_rol,
+                                                                    gestor_usuarios: e.target.checked
+                                                                }))
+
+                                                                // await postData(editRoleMethod, stateRole)
+                                                                // getRoles()
+                                                            }}
+                                                        />
+
+                                                    </Accordion.Header>
+                                                    <Accordion.Body>
+
+
+
+                                                    </Accordion.Body>
+                                                </Accordion>
+
                                             </Col>
                                         </Row>
+
+                                        {/* -----------------------------------------------ALERTAS Y USUARIOS-------------------------------------------------------------------------- */}
 
                                         <Row style={{ paddingTop: 15 }}>
                                             <Col md={6} sm={6}>
-                                                <Form.Check
-                                                    inline
-                                                    defaultChecked={rol.gestor_roles}
-                                                    label='Editar Roles'
-                                                    onChange={(e) => {
-                                                        setStateRole((role) => ({
-                                                            ...role,
-                                                            id_rol: role.id_rol,
-                                                            gestor_roles: e.target.checked,
-                                                        }))
+                                                <Accordion>
+                                                    <Accordion.Header>
+                                                        <Form.Check
+                                                            inline
+                                                            defaultChecked={rol.gestor_usuarios}
+                                                            label='Alertas'
+                                                            onChange={(e) => {
+                                                                setStateRole((role) => ({
+                                                                    ...role,
+                                                                    id_rol: role.id_rol,
+                                                                    gestor_usuarios: e.target.checked,
+                                                                }))
 
-                                                        // await postData(editRoleMethod, stateRole)
-                                                        // getRoles()
-                                                    }}
-                                                />
+                                                                // await postData(editRoleMethod, stateRole)
+                                                                // getRoles()
+                                                            }}
+                                                        />
+                                                    </Accordion.Header>
+                                                    <Accordion.Body>
+
+                                                        <Accordion>
+                                                            <Accordion.Header>Notificaciones</Accordion.Header>
+                                                            <Accordion.Body>
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Crear notificación'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Editar notificaciones programadas'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Editar notificaciones de historial'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Eliminar notificaciones de historial'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+                                                            </Accordion.Body>
+                                                        </Accordion>
+
+                                                    </Accordion.Body>
+
+
+
+                                                </Accordion>
+
                                             </Col>
 
                                             <Col md={6} sm={6}>
-                                                <Form.Check
-                                                    inline
-                                                    defaultChecked={rol.gestor_categorias_idiomas}
-                                                    label='Gestor de Categorias e Idiomas'
-                                                    onChange={(e) => {
-                                                        setStateRole((role) => ({
-                                                            ...role,
-                                                            id_rol: role.id_rol,
-                                                            gestor_categorias_idiomas:
-                                                                e.target.checked,
-                                                        }))
 
-                                                        // await postData(editRoleMethod, stateRole)
-                                                        // getRoles()
-                                                    }}
-                                                />
+                                                <Accordion>
+                                                    <Accordion.Header>
+                                                        <Form.Check
+                                                            inline
+                                                            defaultChecked={rol.gestor_usuarios}
+                                                            label='Usuarios'
+                                                            onChange={(e) => {
+                                                                setStateRole((role) => ({
+                                                                    ...role,
+                                                                    id_rol: role.id_rol,
+                                                                    gestor_usuarios: e.target.checked
+                                                                }))
+
+                                                                // await postData(editRoleMethod, stateRole)
+                                                                // getRoles()
+                                                            }}
+                                                        />
+
+                                                    </Accordion.Header>
+                                                    <Accordion.Body>
+
+                                                        <Accordion>
+                                                            <Accordion.Header>Gestión de usuarios</Accordion.Header>
+                                                            <Accordion.Body>
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Crear usuarios'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Editar roles de usuarios'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Eliminar usuarios'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Buscar usuarios'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+                                                            </Accordion.Body>
+                                                        </Accordion>
+
+                                                        <Accordion>
+                                                            <Accordion.Header>Gestión de roles</Accordion.Header>
+                                                            <Accordion.Body>
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Crear roles'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Editar roles'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                                <Row style={{ paddingTop: 15 }}>
+                                                                    <Form.Check
+                                                                        inline
+                                                                        defaultChecked={rol.gestor_sitios}
+                                                                        label='Eliminar roles'
+                                                                        onChange={(e) => {
+                                                                            setStateRole((role) => ({
+                                                                                ...role,
+                                                                                id_rol: role.id_rol,
+                                                                                gestor_sitios: e.target.checked,
+                                                                            }))
+
+                                                                            // await postData(editRoleMethod, stateRole)
+                                                                            // getRoles()
+                                                                        }}
+                                                                    />
+                                                                </Row>
+
+                                                            </Accordion.Body>
+                                                        </Accordion>
+
+                                                    </Accordion.Body>
+                                                </Accordion>
+
                                             </Col>
                                         </Row>
+
+
                                     </Col>
                                 </Row>
                             </div>
