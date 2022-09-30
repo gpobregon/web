@@ -14,12 +14,13 @@ const UpdateLanguage: FC<any> = ({
     deleteIdioma,
     setShow,
 }) => {
+    
     const [showJson, setShowJson] = useState(false)
     const [url, setUrl] = useState('')
     const [nameMovil, setNameMovil] = useState('')
     const [nameWeb, setNameWeb] = useState('')
 
-    const uploadJson = async (json: string) => {
+    const uploadJson = (json: string) => {
         if (url === 'idiomasWeb') {
             setNameWeb(json)
         } else if (url === 'idiomasMovil') {
@@ -217,10 +218,8 @@ const UpdateLanguage: FC<any> = ({
                                 json_web: '',
                                 json_movil: '',
                             })
-                            onClose()
-                            setNameMovil('')
-                            setNameWeb('')
                             setUrl('')
+                            onClose()
                         }}
                     >
                         {'Cancelar '}
@@ -230,8 +229,6 @@ const UpdateLanguage: FC<any> = ({
                         variant='primary'
                         onClick={() => {
                             updateIdioma(idioma)
-                            setNameMovil('')
-                            setNameWeb('')
                             setUrl('')
                         }}
                     >
