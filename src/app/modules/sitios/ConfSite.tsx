@@ -191,15 +191,13 @@ const ConfSite = () => {
   };
   //methods to post data to api------------------------------------------------------
 
-  async function postSite(sitee: any) {
+  async function postSite(sitee: any,tipo:string) {
     if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != ''&& site.portada_path != ''&& site.geo_json != '') {
       const sit: any = await postData(sitesMethod + "/add", sitee)
-      navigate(`/template/movil/${site.id_sitio}`)
+      navigate(`/template/sitio/${tipo}/${sit.id_sitio}`)
     } else {
       alertNotNullInputs()
     }
-
-
   }
   async function postDefault(route: string, object: any) {
     const sit: any = await postData(route, object)
@@ -692,10 +690,9 @@ const ConfSite = () => {
                         <Button
                           onClick={() => {
 
-                            postSite(site)
+                            postSite(site,'movil')
 
 
-                            console.log('creado con el boton de sitio mobil')
                           }}
                           className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                         >
@@ -722,19 +719,19 @@ const ConfSite = () => {
                     </div>
                     <br></br>
                     <div className='row'>
-                    <Link to={`/template/web/${site.id_sitio}`}>
+                  
                       <Button
                         className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                         onClick={() => {
                           //   navigate('/site')
-                          postSite(site)
+                          postSite(site, 'web')
                        
-                          console.log('creado con el boton de sitio web')
+                        
                         }}
                       >
                         <i className='fa-solid fa-pencil '></i> Crear
                       </Button>
-                      </Link>
+                    
                     </div>
                   </div>
                 </div>

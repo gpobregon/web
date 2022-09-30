@@ -178,6 +178,18 @@ const EditSite = () => {
             alertNotNullInputs()
         }
     }
+
+      //methods to post data to api------------------------------------------------------
+
+  async function postSiteMaquetar(sitee: any,tipo:string) {
+    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != ''&& site.portada_path != ''&& site.geo_json != '') {
+      const sit: any = await postData(updateSiteMethod, sitee)
+      navigate(`/template/sitio/${tipo}/${sit.id_sitio}`)
+    } else {
+      alertNotNullInputs()
+    }
+  }
+
     async function postDefault(route: string, object: any) {
         const sit: any = await postData(route, object)
     }
@@ -839,12 +851,19 @@ const EditSite = () => {
                                         </div>
                                         <br></br>
                                         <div className='row'>
-                                            <Link to={`/template/movil/${site.id_sitio}`}>
-                                                <Button className='btn btn-info col-md-12 col-sm-12 col-lg-12'>
+                                          
+                                                <Button className='btn btn-info col-md-12 col-sm-12 col-lg-12' 
+                                                  onClick={() => {
+                                                    //   navigate('/site')
+                                                    postSiteMaquetar(site, 'web')
+                                                 
+                                                  
+                                                  }}
+                                                >
                                                     {' '}
                                                     <i className='fa-solid fa-pencil'></i> Crear
                                                 </Button>
-                                            </Link>
+                                           
                                         </div>
                                     </div>
                                     <div className=' col-md-6 col-xs-12 col-lg-6'>
@@ -869,18 +888,19 @@ const EditSite = () => {
                                         </div>
                                         <br></br>
                                         <div className='row'>
-                                            <Link to={`/template/web/${site.id_sitio}`}>
+                                         
                                                 <Button
                                                     className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                                                     onClick={() => {
-                                                        console.log(
-                                                            'creado con el boton de sitio web'
-                                                        )
-                                                    }}
+                                                        //   navigate('/site')
+                                                        postSiteMaquetar(site, 'web')
+                                                     
+                                                      
+                                                      }}
                                                 >
                                                     <i className='fa-solid fa-pencil '></i> Crear
                                                 </Button>
-                                            </Link>
+                                            
                                         </div>
                                     </div>
                                 </div>
