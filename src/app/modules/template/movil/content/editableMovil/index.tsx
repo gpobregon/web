@@ -12,7 +12,7 @@ const EditableMovil = () => {
         <Fragment>
             <Col lg={6}>
                 <div className="bkg-dark rounded p-4" ref={drop}>
-                    <PerfectScrollbar className="height-section-editable" component="div">
+                    <PerfectScrollbar className="height-section-editable" component="div" style={{ paddingBottom: '100px' }}>
                         {
                             board.map((item : any, index : number) => {
 

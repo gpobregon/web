@@ -40,6 +40,7 @@ const UpJson: FC<any> = ({show, onClose, uploadJson, url, setShow}) => {
                     await delay(3000)
                     setProgress(0)
                     uploadJson(json) // return the name of the file to the parent component
+                    setShow({show: true, language: {}})
                 } else {
                     setPorcetajeCargado(Math.round((evt.loaded / evt.total) * 100))
                     setProgress(1)
@@ -56,7 +57,6 @@ const UpJson: FC<any> = ({show, onClose, uploadJson, url, setShow}) => {
     const handleSubmit = async () => {
         if (progress === 0) {
             uploadFile(selectedFile) //upload file to s3
-            setShow({show: true, language: {}})
         }
     }
 

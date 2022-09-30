@@ -5,6 +5,7 @@ import {getData, sitesMethod, deleteData} from '../../../services/api'
 import swal from 'sweetalert'
 import SitiosPage from '../SitiosPage'
 import {Link, useNavigate} from 'react-router-dom'
+
 type sitio = {
     id_sitio: number
     nombre: string
@@ -27,28 +28,37 @@ type sitio = {
     favorito: boolean
     publicado: boolean
     oculto: boolean
+    permissionEditSite: boolean
+    permissionDeleteSite: boolean
     geo_json: string
 }
 
 const Sitio: FC<sitio> = (props) => {
     const navigate = useNavigate()
     const deleteSites = async () => {
-        swal({
-            title: '¿Estas seguro de Eliminar  ' + props.nombre + '?',
-            icon: 'warning',
-            buttons: ['No', 'Sí'],
-        }).then(async (res) => {
-            if (res) {
-                await deleteData(sitesMethod, {id_sitio: props.id_sitio})
-                swal({
-                    text: 'Se elimino con éxito',
-                    icon: 'success',
-                    timer: 2000,
-                })
-                navigate('/')
-                //  window.location.reload(); //reload page
-            }
-        })
+        if (props.permissionDeleteSite) {
+            swal({
+                title: '¿Estas seguro de Eliminar  ' + props.nombre + '?',
+                icon: 'warning',
+                buttons: ['No', 'Sí'],
+            }).then(async (res) => {
+                if (res) {
+                    await deleteData(sitesMethod, {id_sitio: props.id_sitio})
+                    swal({
+                        text: 'Se elimino con éxito',
+                        icon: 'success',
+                        timer: 2000,
+                    })
+                    navigate('/')
+                    //  window.location.reload(); //reload page
+                }
+            })
+        } else {
+            swal({
+                title: 'No tienes permiso para eliminar un sitio',
+                icon: 'warning',
+            })
+        }
     }
 
     return (
@@ -66,7 +76,13 @@ const Sitio: FC<sitio> = (props) => {
                     variant='top'
                     src={`${props.portada_path}`}
                     className='mb-5 card-img-top img1'
-                    style={{width: '100%', height: '260px', objectFit: 'cover', objectPosition: 'center center', borderRadius: 10}}
+                    style={{
+                        width: '100%',
+                        height: '260px',
+                        objectFit: 'cover',
+                        objectPosition: 'center center',
+                        borderRadius: 10,
+                    }}
                 />
                 <div className='card-body'>
                     <div
@@ -100,26 +116,33 @@ const Sitio: FC<sitio> = (props) => {
                     <Button
                         style={{width: '47%'}}
                         onClick={(event) => {
-                            navigate('/sitios/edit', {
-                                state: {
-                                    id_sitio: props.id_sitio,
-                                    nombre: props.nombre,
-                                    descripcion: props.descripcion,
-                                    ubicacion: props.ubicacion,
-                                    geoX: props.geoX,
-                                    geoY: props.geoY,
-                                    portada_path: props.portada_path,
-                                    estado: props.estado,
-                                    creado: props.creado,
-                                    editado: props.editado,
-                                    categorias: props.categorias,
-                                    id_municipio: props.id_municipio,
-                                    favorito: props.favorito,
-                                    publicado: props.publicado,
-                                    oculto: props.oculto,
-                                    geo_json: props.geo_json,
-                                },
-                            })
+                            if (props.permissionEditSite) {
+                                navigate('/sitios/edit', {
+                                    state: {
+                                        id_sitio: props.id_sitio,
+                                        nombre: props.nombre,
+                                        descripcion: props.descripcion,
+                                        ubicacion: props.ubicacion,
+                                        geoX: props.geoX,
+                                        geoY: props.geoY,
+                                        portada_path: props.portada_path,
+                                        estado: props.estado,
+                                        creado: props.creado,
+                                        editado: props.editado,
+                                        categorias: props.categorias,
+                                        id_municipio: props.id_municipio,
+                                        favorito: props.favorito,
+                                        publicado: props.publicado,
+                                        oculto: props.oculto, 
+                                        geo_json: props.geo_json,
+                                    },
+                                })
+                            } else {
+                                swal({
+                                    title: 'No tienes permiso para editar un sitio',
+                                    icon: 'warning',
+                                })
+                            }        
                         }}
                     >
                         <i className='bi bi-pencil-square'></i>

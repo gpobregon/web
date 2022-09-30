@@ -1,12 +1,15 @@
 import React, {useState, useEffect} from 'react'
 import {Container, Row, Col, Button, Card} from 'react-bootstrap'
-import {getData, sitesMethod, deleteData, postData} from '../../services/api'
+import {getData, sitesMethod, deleteData, postData, getRolesMethod} from '../../services/api'
 import Sitio from './components/sitio'
 import {Site} from '../../models/site'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import moment from 'moment'
 import logo from './upload-image_03.jpg'
 import QRCode from 'qrcode.react'
+import {roleManager} from '../../models/roleManager'
+import {Auth} from 'aws-amplify'
+import swal from 'sweetalert'
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -134,6 +137,37 @@ const SitiosPage = () => {
         })
     }
 
+    let navigate = useNavigate()
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateSite, setPermissionCreateSite] = useState(true)
+    const [permissionEditSite, setPermissionEditSite] = useState(true)
+    const [permissionDeleteSite, setPermissionDeleteSite] = useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_sitios === false) {
+                navigate('/errors/404', {replace: true})
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
     //UseEffect para obtener los sitios --------------------------------------------------------------
     useEffect(() => {
         getSites()
@@ -212,32 +246,40 @@ const SitiosPage = () => {
 
             <br></br>
             <br></br>
-            <div className='row justify-content-md-center'>
-            <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12'>
-                    <div
-                        className='d-flex align-items-center fs-5 text-muted'
-                        style={{cursor: 'pointer'}}
-                        onClick={toggleOptionSort}
-                    >
-                        <i className={`${resultIcon} fs-1 me-2`}></i>
-                        {`${optionSort}`}
-                    </div>
+            <div className='d-flex justify-content-between'>
+                <div
+                    className='d-flex align-items-center fs-5 text-muted'
+                    style={{cursor: 'pointer'}}
+                    onClick={toggleOptionSort}
+                >
+                    <i className={`${resultIcon} fs-1 me-2`}></i>
+                    {`${optionSort}`}
                 </div>
-                <div className='col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12 '>
-                    <div className='d-flex align-items-center justify-content-end'>
-                    <Link to={'create'}>
-                        <Button className='btn btn-primary'>
-                            <i className='bi bi-file-earmark-plus'></i>
-                            {'Nuevo sitio'}
-                        </Button>
-                    </Link>
-                    </div>
-                </div>
+                <Button
+                    className='btn btn-primary'
+                    onClick={() => {
+                        if (permissionCreateSite) {
+                            navigate('/sitios/create', {replace: true})
+                        } else {
+                            swal({
+                                title: 'No tienes permiso para crear un sitio',
+                                icon: 'warning',
+                            })
+                        }
+                    }}
+                >
+                    <i className='bi bi-file-earmark-plus'></i>
+                    {'Nuevo sitio'}
+                </Button>
             </div>
             <div className='row g-4'>
-                
                 {filterSites?.map((sitio) => (
-                    <Sitio {...sitio} key={sitio.id_sitio.toString()} />
+                    <Sitio
+                        {...sitio}
+                        key={sitio.id_sitio.toString()}
+                        permissionEditSite={permissionEditSite}
+                        permissionDeleteSite={permissionDeleteSite}
+                    />
                 ))}
 
                 <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12 col-xs-12'>
@@ -251,8 +293,7 @@ const SitiosPage = () => {
                             display: 'table',
                         }}
                     >
-                        <Link
-                            to={'create'}
+                        <div
                             style={{
                                 whiteSpace: 'nowrap',
                                 textOverflow: ' ellipsis',
@@ -260,6 +301,16 @@ const SitiosPage = () => {
                                 display: 'table-cell',
                                 verticalAlign: 'middle',
                                 textAlign: 'center',
+                            }}
+                            onClick={() => {
+                                if (permissionCreateSite) {
+                                    navigate('/sitios/create', {replace: true})
+                                } else {
+                                    swal({
+                                        title: 'No tienes permiso para crear un sitio',
+                                        icon: 'warning',
+                                    })
+                                }
                             }}
                         >
                             <svg
@@ -284,7 +335,7 @@ const SitiosPage = () => {
                             >
                                 Nuevo Sitio
                             </Card.Text>
-                        </Link>
+                        </div>
                     </Card>
                 </div>
             </div>
