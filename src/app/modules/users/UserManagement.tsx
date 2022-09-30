@@ -5,7 +5,7 @@ import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
 import AddUser from './components/add-user'
 import DeleteUser from './components/delete-user'
 import makeAnimated from 'react-select/animated'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {awsconfig} from '../../../aws-exports'
 import {DataStore} from 'aws-amplify'
 import {Amplify, Auth} from 'aws-amplify'
@@ -17,6 +17,7 @@ import {
 } from 'aws-sdk/clients/cognitoidentityserviceprovider'
 import {roleManager} from '../../models/roleManager'
 import {getData, postData, getRolesMethod, updateUserMethod} from '../../services/api'
+import swal from 'sweetalert'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -64,12 +65,6 @@ const customStyles = {
     }),
 }
 
-const options = [
-    {value: 'Admnistrador', label: 'Administrador'},
-    {value: 'Editor', label: 'Editor'},
-    {value: 'Gestor', label: 'Gestor'},
-]
-
 const animatedComponents = makeAnimated()
 
 //esto me retorna el email del usuario con el que estoy logueado
@@ -103,7 +98,8 @@ const UserManagement: FC<any> = ({show}) => {
         role: '',
         passwordConfirm: '',
         phoneNumber: '',
-        imageProfile: 'https://mcd-archivos.s3.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png'
+        imageProfile:
+            'https://mcd-archivos.s3.amazonaws.com/fotoPerfiles/Usuario-Vacio-300x300.png',
     })
 
     const [roles, setRoles] = useState<roleManager[]>([])
@@ -128,27 +124,28 @@ const UserManagement: FC<any> = ({show}) => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
     }
-    // console.log(getRoles())
-
-    useEffect(() => {
-        getRoles()
-    }, [])
-
-    const rolesOptions = roles.map((role) => ({
-        value: role.nombre,
-        label: role.nombre,
-    }))
-
-    // for (let rol of roles) {
-    //     console.log(rol)
-    // }
-    // console.log('----------------------------------------')
 
     const showModalAddUser = () => {
+        if (!permissionCreateUsers) {
+            swal({
+                title: 'No tienes permiso para crear usuarios',
+                icon: 'warning',
+            })
+            return
+        }
+
         setModalAddUser(true)
     }
 
     const showModalDeleteUser = (user: any) => {
+        if (!permissionDeleteUsers) {
+            swal({
+                title: 'No tienes permiso para eliminar un usuario',
+                icon: 'warning',
+            })
+            return
+        }
+
         setModalDeleteUser({show: true, user})
     }
 
@@ -164,12 +161,12 @@ const UserManagement: FC<any> = ({show}) => {
             ],
         }
 
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             AWS.config.update({
                 accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-                secretAccessKey: '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'
+                secretAccessKey: 'rvCszAWqn5wblHF84gVngauqQo8rSerzyzqW1jc2',
             })
-            let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
+            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.listUsers(params, (err, data) => {
                 if (err) {
                     console.log(err)
@@ -185,13 +182,13 @@ const UserManagement: FC<any> = ({show}) => {
         })
     }
 
-    const updateUsuarios = async () => { 
+    const updateUsuarios = async () => {
         AWS.config.update({
             accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-            secretAccessKey: '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'
+            secretAccessKey: 'rvCszAWqn5wblHF84gVngauqQo8rSerzyzqW1jc2',
         })
-        let cognito = new AWS.CognitoIdentityServiceProvider({ region: awsconfig.region })
-        console.log("cognito: ", cognito);
+        let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+        console.log('cognito: ', cognito)
         try {
             cognito.adminUpdateUserAttributes(
                 {
@@ -231,9 +228,40 @@ const UserManagement: FC<any> = ({show}) => {
     }
 
     useEffect(() => {
+        getRoles()
         getUsers()
     }, [])
 
+    let navigate = useNavigate()
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateUsers, setPermissionCreateUsers] = useState(true)
+    const [permissionEditUsers, setPermissionEditUsers] = useState(true)
+    const [permissionDeleteUsers, setPermissionDeleteUsers] = useState(true)
+    const [permissionSearchUsers, setPermissionSearchUsers] = useState(true)
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_usuarios === false) {
+                navigate('/errors/404', {replace: true})
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
+    const rolesOptions = roles.map((role) => ({
+        value: role.nombre,
+        label: role.nombre,
+    }))
+    
     return (
         <Container fluid>
             <div
@@ -281,10 +309,20 @@ const UserManagement: FC<any> = ({show}) => {
                                 />
                                 <input
                                     type='text'
+                                    value={searchInput}
                                     data-kt-user-table-filter='search'
                                     className='form-control form-control-solid w-250px ps-14'
                                     placeholder='Buscar'
-                                    onChange={(event) => searchItems(event.target.value)}
+                                    onChange={(event) => {
+                                        if (!permissionSearchUsers) {
+                                            swal({
+                                                title: 'No tienes permiso para buscar usuario',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
+                                        searchItems(event.target.value)
+                                    }}
                                 />
                                 <div className='d-flex justify-content-end'>
                                     <Button
@@ -308,13 +346,21 @@ const UserManagement: FC<any> = ({show}) => {
                                         <th>Foto</th>
                                         <th>Usuario</th>
                                         <th>Teléfono</th>
-                                        <th>Rol</th>
+                                        <th
+                                            style={
+                                                permissionEditUsers
+                                                    ? {display: 'block'}
+                                                    : {display: 'none'}
+                                            }
+                                        >
+                                            Rol
+                                        </th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {existUsers == true ? (
-                                        searchInput.length > 1 ?
+                                        searchInput.length > 1 ? (
                                             filteredResults?.map((item: any) => (
                                                 <tr key={item.Username}>
                                                     <td>
@@ -335,7 +381,6 @@ const UserManagement: FC<any> = ({show}) => {
                                                                     borderRadius: '50%',
                                                                 }}
                                                             ></img>
-
                                                         </div>
                                                     </td>
                                                     <td>
@@ -347,7 +392,13 @@ const UserManagement: FC<any> = ({show}) => {
                                                     <td className='text-muted'>
                                                         {item.Attributes[0].Value}
                                                     </td>
-                                                    <td className='d-flex'>
+                                                    <td
+                                                        style={
+                                                            permissionEditUsers
+                                                                ? {display: 'flex'}
+                                                                : {display: 'none'}
+                                                        }
+                                                    >
                                                         {existUsers ? (
                                                             <div className='d-flex align-items-center'>
                                                                 <Select
@@ -364,8 +415,6 @@ const UserManagement: FC<any> = ({show}) => {
                                                                             role: event.value,
                                                                         })
                                                                     }}
-                                                                    // value={item?.Attributes[2]?.Value ? item.Attributes[2].Value : '' }
-
                                                                     defaultValue={{
                                                                         label:
                                                                             item?.Attributes[3]
@@ -379,7 +428,8 @@ const UserManagement: FC<any> = ({show}) => {
                                                         ) : (
                                                             <></>
                                                         )}
-                                                        {buttonAcept === true && item === banderID ? (
+                                                        {buttonAcept === true &&
+                                                        item === banderID ? (
                                                             <div className='d-flex align-items-center'>
                                                                 {/* cheque */}
                                                                 <Button
@@ -402,16 +452,22 @@ const UserManagement: FC<any> = ({show}) => {
                                                     <td>
                                                         <label
                                                             className='btn btn-light btn-active-light-danger btn-sm'
-                                                            onClick={() => showModalDeleteUser(item)}
+                                                            onClick={() =>
+                                                                showModalDeleteUser(item)
+                                                            }
                                                         >
                                                             {'Eliminar '}
                                                             <span className='menu-icon me-0'>
-                                                                <i className={`bi bi-trash-fill`}></i>
+                                                                <i
+                                                                    className={`bi bi-trash-fill`}
+                                                                ></i>
                                                             </span>
                                                         </label>
                                                     </td>
                                                 </tr>
-                                            )) : users?.map((item: any) => (
+                                            ))
+                                        ) : (
+                                            users?.map((item: any) => (
                                                 <tr key={item.Username}>
                                                     <td>
                                                         <div
@@ -431,7 +487,6 @@ const UserManagement: FC<any> = ({show}) => {
                                                                     borderRadius: '50%',
                                                                 }}
                                                             ></img>
-
                                                         </div>
                                                     </td>
                                                     <td>
@@ -443,7 +498,13 @@ const UserManagement: FC<any> = ({show}) => {
                                                     <td className='text-muted'>
                                                         {item.Attributes[0].Value}
                                                     </td>
-                                                    <td className='d-flex'>
+                                                    <td
+                                                        style={
+                                                            permissionEditUsers
+                                                                ? {display: 'flex'}
+                                                                : {display: 'none'}
+                                                        }
+                                                    >
                                                         {existUsers ? (
                                                             <div className='d-flex align-items-center'>
                                                                 <Select
@@ -475,7 +536,8 @@ const UserManagement: FC<any> = ({show}) => {
                                                         ) : (
                                                             <></>
                                                         )}
-                                                        {buttonAcept === true && item === banderID ? (
+                                                        {buttonAcept === true &&
+                                                        item === banderID ? (
                                                             <div className='d-flex align-items-center'>
                                                                 {/* cheque */}
                                                                 <Button
@@ -498,16 +560,21 @@ const UserManagement: FC<any> = ({show}) => {
                                                     <td>
                                                         <label
                                                             className='btn btn-light btn-active-light-danger btn-sm'
-                                                            onClick={() => showModalDeleteUser(item)}
+                                                            onClick={() =>
+                                                                showModalDeleteUser(item)
+                                                            }
                                                         >
                                                             {'Eliminar '}
                                                             <span className='menu-icon me-0'>
-                                                                <i className={`bi bi-trash-fill`}></i>
+                                                                <i
+                                                                    className={`bi bi-trash-fill`}
+                                                                ></i>
                                                             </span>
                                                         </label>
                                                     </td>
                                                 </tr>
                                             ))
+                                        )
                                     ) : (
                                         <></>
                                     )}

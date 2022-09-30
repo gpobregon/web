@@ -3,6 +3,7 @@ import {Button, Modal, Form, Card} from 'react-bootstrap'
 import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 import {KTSVG} from '../../../../_metronic/helpers'
 import UpJson from './UpJson'
+import swal from 'sweetalert'
 
 const UpdateLanguage: FC<any> = ({
     show,
@@ -13,6 +14,7 @@ const UpdateLanguage: FC<any> = ({
     updateIdioma,
     deleteIdioma,
     setShow,
+    permissionDeleteLanguage,
 }) => {
     
     const [showJson, setShowJson] = useState(false)
@@ -191,18 +193,25 @@ const UpdateLanguage: FC<any> = ({
                     <Button
                         variant='secondary'
                         onClick={() => {
-                            setIdioma({
-                                id_lenguaje: 1,
-                                nombre: '',
-                                descripcion: '',
-                                estado: 1,
-                                json_web: '',
-                                json_movil: '',
-                            })
-                            deleteIdioma({
-                                id_lenguaje: language?.id_lenguaje,
-                                estado: 0,
-                            })
+                            if (permissionDeleteLanguage) {
+                                setIdioma({
+                                    id_lenguaje: 1,
+                                    nombre: '',
+                                    descripcion: '',
+                                    estado: 1,
+                                    json_web: '',
+                                    json_movil: '',
+                                })
+                                deleteIdioma({
+                                    id_lenguaje: language?.id_lenguaje,
+                                    estado: 0,
+                                })
+                            } else {
+                                swal({
+                                    title: 'No tienes permiso para eliminar un lenguaje',
+                                    icon: 'warning',
+                                })
+                            }
                         }}
                     >
                         <i className={`bi-trash text-white fs-3`}></i>
