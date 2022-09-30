@@ -15,44 +15,9 @@ import {
     updateNotificationMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
-import { useNavigate } from 'react-router-dom'
-import { roleManager } from '../../models/roleManager'
-import { Auth } from 'aws-amplify'
-
-// // Import the functions you need from the SDKs you need
-// import {initializeApp, credential, messaging} from 'firebase-admin'
-
-// // TODO: Add SDKs for Firebase products that you want to use
-// // https://firebase.google.com/docs/web/setup#available-libraries
-// // Initialize Firebase
-
-// const initFirebase = () => {
-//     const serviceAccount = require('../../../cultura-guate-app-firebase-adminsdk-1fwan-5cdd5e4cf6.json')
-//     initializeApp({
-//         credential: credential.cert(serviceAccount),
-//     })
-// }
-
-// initFirebase()
-
-// const sendPushNotification = () => {
-//     const message = {
-//         notification: {
-//             body: 'Prueba desde el back office',
-//             title: 'Prueba desde el back office',
-//         },
-//         topic: 'general',
-//     }
-
-//     messaging()
-//         .send(message)
-//         .then((response) => {
-//             console.log('Successfully sent message:', response)
-//         })
-//         .catch((error) => {
-//             console.log('Error sending message:', error)
-//         })
-// }
+import {useNavigate} from 'react-router-dom'
+import {roleManager} from '../../models/roleManager'
+import {Auth} from 'aws-amplify'
 
 const PushNotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([])
@@ -132,13 +97,36 @@ const PushNotificationsPage = () => {
     })
 
     const toggleCardAddNotification = (value: any) => {
-        setShowCardAddNotification(value)
-        if (value === true) {
-            setCardUpdateNotification({show: false, notification: {}})
+        if (permissionCreateNotification) {
+            setShowCardAddNotification(value)
+            if (value === true) {
+                setCardUpdateNotification({show: false, notification: {}})
+            }
+        } else {
+            swal({
+                title: 'No tienes permiso para crear una notificación',
+                icon: 'warning',
+            })
         }
     }
 
     const showCardUpdateNotification = (notification: any) => {
+        if (!permissionEditNotificationProgrammed && optionGetNotifications === 'programadas') {
+            swal({
+                title: 'No tienes permiso para editar una notificación programada',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (!permissionEditNotificationHistory && optionGetNotifications === 'historial') {
+            swal({
+                title: 'No tienes permiso para editar una notificación en el historial',
+                icon: 'warning',
+            })
+            return
+        }
+
         setCardUpdateNotification({show: true, notification})
         setNotification({
             id_notificacion: notification?.id_notificacion,
@@ -250,6 +238,22 @@ const PushNotificationsPage = () => {
     }
 
     const deleteNotification = async (tag: any) => {
+        if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
+            swal({
+                title: 'No tienes permiso para eliminar una notificación programada',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (!permissionDeleteNotificationHistory && optionGetNotifications === 'historial') {
+            swal({
+                title: 'No tienes permiso para eliminar una notificación en el historial',
+                icon: 'warning',
+            })
+            return
+        }
+
         await swal({
             title: '¿Estás seguro de eliminar esta notificación?',
             icon: 'warning',
@@ -370,6 +374,16 @@ const PushNotificationsPage = () => {
     let navigate = useNavigate()
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateNotification, setPermissionCreateNotification] = useState(true)
+    const [permissionEditNotificationProgrammed, setPermissionEditNotificationProgrammed] =
+        useState(true)
+    const [permissionEditNotificationHistory, setPermissionEditNotificationHistory] =
+        useState(true)
+    const [permissionDeleteNotificationProgrammed, setPermissionDeleteNotificationProgrammed] =
+        useState(true)
+    const [permissionDeleteNotificationHistory, setPermissionDeleteNotificationHistory] =
+        useState(true)
 
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)

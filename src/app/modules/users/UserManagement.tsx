@@ -17,6 +17,7 @@ import {
 } from 'aws-sdk/clients/cognitoidentityserviceprovider'
 import {roleManager} from '../../models/roleManager'
 import {getData, postData, getRolesMethod, updateUserMethod} from '../../services/api'
+import swal from 'sweetalert'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -63,12 +64,6 @@ const customStyles = {
         borderRadius: 6.175,
     }),
 }
-
-const options = [
-    {value: 'Admnistrador', label: 'Administrador'},
-    {value: 'Editor', label: 'Editor'},
-    {value: 'Gestor', label: 'Gestor'},
-]
 
 const animatedComponents = makeAnimated()
 
@@ -130,16 +125,27 @@ const UserManagement: FC<any> = ({show}) => {
         setRoles(role.data as roleManager[])
     }
 
-    const rolesOptions = roles.map((role) => ({
-        value: role.nombre,
-        label: role.nombre,
-    }))
-
     const showModalAddUser = () => {
+        if (!permissionCreateUsers) {
+            swal({
+                title: 'No tienes permiso para crear usuarios',
+                icon: 'warning',
+            })
+            return
+        }
+
         setModalAddUser(true)
     }
 
     const showModalDeleteUser = (user: any) => {
+        if (!permissionDeleteUsers) {
+            swal({
+                title: 'No tienes permiso para eliminar un usuario',
+                icon: 'warning',
+            })
+            return
+        }
+
         setModalDeleteUser({show: true, user})
     }
 
@@ -229,7 +235,10 @@ const UserManagement: FC<any> = ({show}) => {
     let navigate = useNavigate()
     const [existRoles, setExistRoles] = useState(false)
 
-    
+    const [permissionCreateUsers, setPermissionCreateUsers] = useState(true)
+    const [permissionEditUsers, setPermissionEditUsers] = useState(true)
+    const [permissionDeleteUsers, setPermissionDeleteUsers] = useState(true)
+    const [permissionSearchUsers, setPermissionSearchUsers] = useState(true)
 
     const validateRole = async () => {
         Auth.currentUserInfo().then((user) => {
@@ -248,6 +257,11 @@ const UserManagement: FC<any> = ({show}) => {
         validateRole()
     }, [existRoles])
 
+    const rolesOptions = roles.map((role) => ({
+        value: role.nombre,
+        label: role.nombre,
+    }))
+    
     return (
         <Container fluid>
             <div
@@ -295,10 +309,20 @@ const UserManagement: FC<any> = ({show}) => {
                                 />
                                 <input
                                     type='text'
+                                    value={searchInput}
                                     data-kt-user-table-filter='search'
                                     className='form-control form-control-solid w-250px ps-14'
                                     placeholder='Buscar'
-                                    onChange={(event) => searchItems(event.target.value)}
+                                    onChange={(event) => {
+                                        if (!permissionSearchUsers) {
+                                            swal({
+                                                title: 'No tienes permiso para buscar usuario',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
+                                        searchItems(event.target.value)
+                                    }}
                                 />
                                 <div className='d-flex justify-content-end'>
                                     <Button
@@ -322,7 +346,15 @@ const UserManagement: FC<any> = ({show}) => {
                                         <th>Foto</th>
                                         <th>Usuario</th>
                                         <th>Teléfono</th>
-                                        <th>Rol</th>
+                                        <th
+                                            style={
+                                                permissionEditUsers
+                                                    ? {display: 'block'}
+                                                    : {display: 'none'}
+                                            }
+                                        >
+                                            Rol
+                                        </th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -360,7 +392,13 @@ const UserManagement: FC<any> = ({show}) => {
                                                     <td className='text-muted'>
                                                         {item.Attributes[0].Value}
                                                     </td>
-                                                    <td className='d-flex'>
+                                                    <td
+                                                        style={
+                                                            permissionEditUsers
+                                                                ? {display: 'flex'}
+                                                                : {display: 'none'}
+                                                        }
+                                                    >
                                                         {existUsers ? (
                                                             <div className='d-flex align-items-center'>
                                                                 <Select
@@ -377,8 +415,6 @@ const UserManagement: FC<any> = ({show}) => {
                                                                             role: event.value,
                                                                         })
                                                                     }}
-                                                                    // value={item?.Attributes[2]?.Value ? item.Attributes[2].Value : '' }
-
                                                                     defaultValue={{
                                                                         label:
                                                                             item?.Attributes[3]
@@ -462,7 +498,13 @@ const UserManagement: FC<any> = ({show}) => {
                                                     <td className='text-muted'>
                                                         {item.Attributes[0].Value}
                                                     </td>
-                                                    <td className='d-flex'>
+                                                    <td
+                                                        style={
+                                                            permissionEditUsers
+                                                                ? {display: 'flex'}
+                                                                : {display: 'none'}
+                                                        }
+                                                    >
                                                         {existUsers ? (
                                                             <div className='d-flex align-items-center'>
                                                                 <Select

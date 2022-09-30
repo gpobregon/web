@@ -4,8 +4,9 @@ import {Button, Col, Form, Row, Table, Card} from 'react-bootstrap'
 import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
 import {getData, getRolesMethod, postData} from '../../services/api'
 import {OfflinePartWithContent} from '../../models/offline-config'
-import { roleManager } from '../../models/roleManager'
-import { Auth } from 'aws-amplify'
+import {roleManager} from '../../models/roleManager'
+import {Auth} from 'aws-amplify'
+import swal from 'sweetalert'
 
 const OfflineManagement: FC<any> = ({show}) => {
     const {state} = useLocation()
@@ -41,6 +42,7 @@ const OfflineManagement: FC<any> = ({show}) => {
                 tipos_contenido: contenidos,
             })
         })
+
         listParts.map((m: OfflinePartWithContent, index) => {
             // let el = <div key={index} id={m.id_part.toString()} className='col-md-6 col-xs-12' style={{marginTop:'10px',marginBottom:'10px' }}  >
             //         <h2>{m.nombre}</h2>
@@ -63,6 +65,22 @@ const OfflineManagement: FC<any> = ({show}) => {
                             label={t.nombre}
                             checked={t.checked}
                             onChange={async (e: any) => {
+                                if (m.nombre === 'Sitios' && !permissionOfflineSites) {
+                                    swal({
+                                        title: 'No tienes los permisos para cambiar el contenido descargable de los sitios',
+                                        icon: 'warning',
+                                    })
+                                    return
+                                }
+
+                                if (m.nombre === 'Puntos de interés' && !permissionOfflinePoints) {
+                                    swal({
+                                        title: 'No tienes los permisos para cambiar el contenido descargable de los puntos de interés',
+                                        icon: 'warning',
+                                    })
+                                    return
+                                }
+
                                 e.target.checked = !e.target.checked
                                 // for(var i=0;i<listParts.length;i++){
                                 //     for(var j=0;j<listParts.at(i)!.tipos_contenido.length;j++){
@@ -130,6 +148,9 @@ const OfflineManagement: FC<any> = ({show}) => {
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
+    const [permissionOfflineSites, setPermissionOfflineSites] = useState(true)
+    const [permissionOfflinePoints, setPermissionOfflinePoints] = useState(true)
+
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
@@ -152,7 +173,6 @@ const OfflineManagement: FC<any> = ({show}) => {
         getRoles()
         validateRole()
     }, [existRoles])
-
 
     useEffect(() => {
         listParts = []

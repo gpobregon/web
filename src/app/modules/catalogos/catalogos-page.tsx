@@ -352,6 +352,7 @@ const CatalogosPage = () => {
             })
         }
     }
+    
     const showModalLanguage = () => {
         if (permissionCreateLanguage) {
             setModalAddLanguage({show: true, language: {}})
@@ -431,11 +432,11 @@ const CatalogosPage = () => {
 
     const [permissionCreateLanguage, setPermissionCreateLanguage] = useState(true)
     const [permissionEditLanguage, setPermissionEditLanguage] = useState(true)
-    const [permissionDeleteLanguage, setPermissionDeleteLanguage] = useState(false)
+    const [permissionDeleteLanguage, setPermissionDeleteLanguage] = useState(true)
 
     const [permissionCreateTag, setPermissionCreateTag] = useState(true)
     const [permissionEditTag, setPermissionEditTag] = useState(true)
-    const [permissionDeleteTag, setPermissionDeleteTag] = useState(false)
+    const [permissionDeleteTag, setPermissionDeleteTag] = useState(true)
 
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
