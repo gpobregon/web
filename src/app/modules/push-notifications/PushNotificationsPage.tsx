@@ -41,7 +41,7 @@ const PushNotificationsPage = () => {
         fecha_hora_programada: dateNow,
         tipo: 0,
         estado: 1,
-    })   
+    })
 
     const [optionGetNotifications, setOptionGetNotifications] = useState('programadas')
 
@@ -310,6 +310,22 @@ const PushNotificationsPage = () => {
     }
 
     const deleteSelectedNotification = async () => {
+        if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
+            swal({
+                title: 'No tienes permiso para eliminar notificaciones programadas',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (!permissionDeleteNotificationHistory && optionGetNotifications === 'historial') {
+            swal({
+                title: 'No tienes permiso para eliminar notificaciones en el historial',
+                icon: 'warning',
+            })
+            return
+        }
+
         if (arrayDeleteNotifications.length === 0) {
             swal({
                 title: 'Selecciona notificaciones para eliminar',
@@ -374,9 +390,11 @@ const PushNotificationsPage = () => {
     const [existRoles, setExistRoles] = useState(false)
 
     const [permissionCreateNotification, setPermissionCreateNotification] = useState(true)
+
     const [permissionEditNotificationProgrammed, setPermissionEditNotificationProgrammed] =
         useState(true)
     const [permissionEditNotificationHistory, setPermissionEditNotificationHistory] = useState(true)
+
     const [permissionDeleteNotificationProgrammed, setPermissionDeleteNotificationProgrammed] =
         useState(true)
     const [permissionDeleteNotificationHistory, setPermissionDeleteNotificationHistory] =
@@ -396,6 +414,16 @@ const PushNotificationsPage = () => {
 
             if (filter[0]?.gestor_notificaciones === false) {
                 navigate('/errors/404', {replace: true})
+            } else {
+                setPermissionCreateNotification(filter[0]?.notificacion_crear)
+
+                setPermissionEditNotificationProgrammed(filter[0]?.notificacion_programada_editar)
+                setPermissionEditNotificationHistory(filter[0]?.notificacion_historial_editar)
+
+                setPermissionDeleteNotificationProgrammed(
+                    filter[0]?.notificacion_programada_eliminar
+                )
+                setPermissionDeleteNotificationHistory(filter[0]?.notificacion_historial_eliminar)
             }
         })
     }
@@ -559,7 +587,9 @@ const PushNotificationsPage = () => {
                                                 className='ms-5'
                                                 type='checkbox'
                                                 id={notification.id_notificacion.toString()}
-                                                onChange={(e) => handleChangeCheckbox(e)}
+                                                onChange={(e) => {
+                                                    handleChangeCheckbox(e)
+                                                }}
                                             />
                                         </td>
                                         <td className='text-muted' style={{width: '200px'}}>

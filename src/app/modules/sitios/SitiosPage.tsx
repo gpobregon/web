@@ -162,6 +162,10 @@ const SitiosPage = () => {
 
             if (filter[0]?.gestor_sitios === false) {
                 navigate('/errors/404', {replace: true})
+            } else {
+                setPermissionCreateSite(filter[0]?.sitio_crear)
+                setPermissionEditSite(filter[0]?.sitio_editar)
+                setPermissionDeleteSite(filter[0]?.sitio_eliminar)
             }
         })
     }
@@ -189,7 +193,7 @@ const SitiosPage = () => {
                         <div className='col-md-4 col-xs-12 searchDash  py-5 px-9'>
                             <h3 className=''>Gestor de Sitios</h3>
                             <h5 className='' style={{color: '#565674', fontSize: '10px'}}>
-                                 {cantidadSite} en total
+                                {cantidadSite} en total
                             </h5>
                         </div>
 
@@ -207,40 +211,39 @@ const SitiosPage = () => {
                         </div>
 
                         <div className='col-md-3 col-xs-2  py-6  '>
-                          
                             <div className='d-flex'>
-                            <Button
-                                variant='outline-secondary'
-                                className='text-center'
-                                title='Página anterior'
-                                disabled={toggleButtonsPagination.previous}
-                                onClick={() => handlePrevPage()}
-                            >
-                                <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
-                            </Button>
+                                <Button
+                                    variant='outline-secondary'
+                                    className='text-center'
+                                    title='Página anterior'
+                                    disabled={toggleButtonsPagination.previous}
+                                    onClick={() => handlePrevPage()}
+                                >
+                                    <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
+                                </Button>
 
-                            <div
-                                className='d-flex align-items-center justify-content-center px-4'
-                                style={{
-                                    height: '50px',
-                                    backgroundColor: '#2B2B40',
-                                    borderRadius: '5px',
-                                }}
-                            >
-                                <h5  style={{ fontSize: '13px'}}>Página {pageNumber} de {totalPages}</h5>
-                            
-                            </div>
+                                <div
+                                    className='d-flex align-items-center justify-content-center px-4'
+                                    style={{
+                                        height: '50px',
+                                        backgroundColor: '#2B2B40',
+                                        borderRadius: '5px',
+                                    }}
+                                >
+                                    <h5 style={{fontSize: '13px'}}>
+                                        Página {pageNumber} de {totalPages}
+                                    </h5>
+                                </div>
 
-                            <Button
-                                variant='outline-secondary'
-                                className='text-center'
-                                title='Página siguiente'
-                                disabled={toggleButtonsPagination.next}
-                                onClick={() => handleNextPage()}
-                            >
-                                <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
-                            </Button>
-                        
+                                <Button
+                                    variant='outline-secondary'
+                                    className='text-center'
+                                    title='Página siguiente'
+                                    disabled={toggleButtonsPagination.next}
+                                    onClick={() => handleNextPage()}
+                                >
+                                    <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -261,14 +264,14 @@ const SitiosPage = () => {
                 <Button
                     className='btn btn-primary'
                     onClick={() => {
-                        if (permissionCreateSite) {
-                            navigate('/sitios/create', {replace: true})
-                        } else {
+                        if (!permissionCreateSite) {
                             swal({
                                 title: 'No tienes permiso para crear un sitio',
                                 icon: 'warning',
                             })
+                            return
                         }
+                        navigate('/sitios/create', {replace: true})
                     }}
                 >
                     <i className='bi bi-file-earmark-plus'></i>
@@ -306,14 +309,14 @@ const SitiosPage = () => {
                                 textAlign: 'center',
                             }}
                             onClick={() => {
-                                if (permissionCreateSite) {
-                                    navigate('/sitios/create', {replace: true})
-                                } else {
+                                if (!permissionCreateSite) {
                                     swal({
                                         title: 'No tienes permiso para crear un sitio',
                                         icon: 'warning',
                                     })
+                                    return
                                 }
+                                navigate('/sitios/create', {replace: true})
                             }}
                         >
                             <svg
