@@ -1,5 +1,4 @@
-import { lang } from 'moment'
-import {FC, useEffect, useState} from 'react'
+import {FC, useState} from 'react'
 import {Button, Modal, Form, Card} from 'react-bootstrap'
 import {KTSVG} from '../../../../_metronic/helpers'
 import {URLAWS} from '../../../services/api'
@@ -16,22 +15,22 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
     const uploadJson = (json: string) => {
         if (url === 'idiomasWeb') {
             setNameWeb(json)
-        
+
             setLanguage({
                 id_lenguaje: language.id_lenguaje,
-                nombre:language.nombre,
+                nombre: language.nombre,
                 descripcion: language.descripcion,
                 estado: language.estado,
                 json_web: `${URLAWS}idiomasWeb/${json}`,
                 json_movil: language.json_movil,
             })
             setShowJson(false)
-        } else  {
+        } else {
             setNameMovil(json)
-          
+
             setLanguage({
                 id_lenguaje: language.id_lenguaje,
-                nombre:language.nombre,
+                nombre: language.nombre,
                 descripcion: language.descripcion,
                 estado: language.estado,
                 json_web: language.json_web,
@@ -39,7 +38,6 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
             })
             setShowJson(false)
         }
-      
     }
 
     return (
@@ -64,7 +62,7 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                         descripcion: language.descripcion,
                                         estado: language.estado,
                                         json_web: language.json_web,
-                                        json_movil:language.json_movil,
+                                        json_movil: language.json_movil,
                                     })
                                 }
                             }}
@@ -86,7 +84,7 @@ const AddLanguaje: FC<any> = ({show, setShow, onClose, language, setLanguage, ad
                                         descripcion: e.target.value,
                                         estado: language.estado,
                                         json_web: language.json_web,
-                                        json_movil:language.json_movil,
+                                        json_movil: language.json_movil,
                                     })
                                 }
                             }}
