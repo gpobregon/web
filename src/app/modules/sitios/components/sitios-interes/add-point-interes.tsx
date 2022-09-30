@@ -138,13 +138,12 @@ const AddPoint = () => {
         })
     }
     //petitions----------------------------------------------------------------------------
-    const addNewPoint = async () => {
+    const addNewPoint = async (tipo:string) => {
         // console.log(sitio)
         if (sitio.nombre != '' && sitio.id_lenguaje != 0 && sitio.portada_path != '') {
-            await postData(addNewPointInteres, sitio)
-            navigate('/sitios/edit', {
-                state: sitios,
-            })
+           const res:any= await postData(addNewPointInteres, sitio)
+            navigate(`/template/punto/${tipo}/${res.point.id_punto}`)
+          
         } else {
             alertNotNullInputs()
         }
@@ -557,7 +556,7 @@ const AddPoint = () => {
                                            
                                                 <Button
                                                     onClick={() => {
-                                                        addNewPoint()
+                                                        addNewPoint('movil')
                                                         // console.log(sitio)
                                                         // window.location.href = "../sitios";
 
@@ -597,7 +596,7 @@ const AddPoint = () => {
                                         <div className='row'>
                                             <Button
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
-                                                onClick={() => {}}
+                                                onClick={() => { addNewPoint('web') }}
                                             >
                                                 <i className='fa-solid fa-pencil '></i> Crear
                                             </Button>
