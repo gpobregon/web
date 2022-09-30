@@ -4,11 +4,11 @@ import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validad
 import {KTSVG} from '../../../../_metronic/helpers'
 import UpJson from './UpJson'
 import swal from 'sweetalert'
+import {URLAWS} from '../../../services/api'
 
 const UpdateLanguage: FC<any> = ({
     show,
     onClose,
-    language,
     idioma,
     setIdioma,
     updateIdioma,
@@ -16,19 +16,34 @@ const UpdateLanguage: FC<any> = ({
     setShow,
     permissionDeleteLanguage,
 }) => {
-    
     const [showJson, setShowJson] = useState(false)
     const [url, setUrl] = useState('')
     const [nameMovil, setNameMovil] = useState('')
     const [nameWeb, setNameWeb] = useState('')
-
     const uploadJson = (json: string) => {
         if (url === 'idiomasWeb') {
             setNameWeb(json)
-        } else if (url === 'idiomasMovil') {
+
+            setIdioma({
+                id_lenguaje: idioma?.id_lenguaje,
+                nombre: idioma?.nombre,
+                descripcion: idioma?.descripcion,
+                estado: idioma?.estado,
+                json_web: `${URLAWS}idiomasWeb/${json}`,
+                json_movil: idioma?.json_movil,
+            })
+            setShowJson(false)
+        } else {
             setNameMovil(json)
-        }
-        if (json !== '') {
+
+            setIdioma({
+                id_lenguaje: idioma?.id_lenguaje,
+                nombre: idioma?.nombre,
+                descripcion: idioma?.descripcion,
+                estado: idioma?.estado,
+                json_web: idioma?.json_web,
+                json_movil: `${URLAWS}idiomasMovil/${json}`,
+            })
             setShowJson(false)
         }
     }
@@ -50,7 +65,7 @@ const UpdateLanguage: FC<any> = ({
                             onChange={(e) => {
                                 if (validateStringSinCaracteresEspeciales(e.target.value)) {
                                     setIdioma({
-                                        id_lenguaje: language?.id_lenguaje,
+                                        id_lenguaje: idioma?.id_lenguaje,
                                         nombre: e.target.value,
                                         descripcion: idioma?.descripcion,
                                         estado: idioma?.estado,
@@ -72,7 +87,7 @@ const UpdateLanguage: FC<any> = ({
                             onChange={(e) => {
                                 if (validateStringSinCaracteresEspeciales(e.target.value)) {
                                     setIdioma({
-                                        id_lenguaje: language?.id_lenguaje,
+                                        id_lenguaje: idioma?.id_lenguaje,
                                         nombre: idioma?.nombre,
                                         descripcion: e.target.value,
                                         estado: idioma?.estado,
@@ -93,6 +108,11 @@ const UpdateLanguage: FC<any> = ({
                                 display: 'flex',
                                 alignItems: 'flex-start',
                                 justifyContent: 'center',
+                            }}
+                            onClick={() => {
+                                setShow(false)
+                                setShowJson(true)
+                                setUrl('idiomasMovil')
                             }}
                         >
                             <div
@@ -118,18 +138,11 @@ const UpdateLanguage: FC<any> = ({
                                             : idioma?.json_movil?.split('/').pop()}
                                     </div>
                                 </div>
-                                <div
-                                    onClick={() => {
-                                        setShow(false)
-                                        setShowJson(true)
-                                        setUrl('idiomasMovil')
-                                    }}
-                                >
-                                    <KTSVG
-                                        path='/media/icons/duotune/general/gen035.svg'
-                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
-                                    />
-                                </div>
+
+                                <KTSVG
+                                    path='/media/icons/duotune/general/gen035.svg'
+                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                />
                             </div>
                         </Card>
                     </Form.Group>
@@ -143,6 +156,11 @@ const UpdateLanguage: FC<any> = ({
                                 display: 'flex',
                                 alignItems: 'flex-start',
                                 justifyContent: 'center',
+                            }}
+                            onClick={() => {
+                                setShow(false)
+                                setShowJson(true)
+                                setUrl('idiomasWeb')
                             }}
                         >
                             <div
@@ -170,18 +188,10 @@ const UpdateLanguage: FC<any> = ({
                                     </div>
                                 </div>
 
-                                <div
-                                    onClick={() => {
-                                        setShow(false)
-                                        setShowJson(true)
-                                        setUrl('idiomasWeb')
-                                    }}
-                                >
-                                    <KTSVG
-                                        path='/media/icons/duotune/general/gen035.svg'
-                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
-                                    />
-                                </div>
+                                <KTSVG
+                                    path='/media/icons/duotune/general/gen035.svg'
+                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                />
                             </div>
                         </Card>
                         <div style={{textAlign: 'center', color: 'gray'}}>
@@ -203,7 +213,7 @@ const UpdateLanguage: FC<any> = ({
                                     json_movil: '',
                                 })
                                 deleteIdioma({
-                                    id_lenguaje: language?.id_lenguaje,
+                                    id_lenguaje: idioma?.id_lenguaje,
                                     estado: 0,
                                 })
                             } else {
@@ -227,6 +237,8 @@ const UpdateLanguage: FC<any> = ({
                                 json_web: '',
                                 json_movil: '',
                             })
+                            setNameMovil('')
+                            setNameWeb('')
                             setUrl('')
                             onClose()
                         }}
@@ -238,6 +250,8 @@ const UpdateLanguage: FC<any> = ({
                         variant='primary'
                         onClick={() => {
                             updateIdioma(idioma)
+                            setNameMovil('')
+                            setNameWeb('')
                             setUrl('')
                         }}
                     >

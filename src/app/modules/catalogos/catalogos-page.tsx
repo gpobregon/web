@@ -654,13 +654,13 @@ const CatalogosPage = () => {
                     show={modalUpdateIdioma.show}
                     setShow={setModalUpdateIdioma}
                     onClose={() => setModalUpdateIdioma({show: false, language: {}})}
-                    language={modalUpdateIdioma.language}
+                    // language={modalUpdateIdioma.language}
                     idioma={idioma}
                     setIdioma={setIdioma}
                     updateIdioma={updateIdioma}
                     deleteIdioma={deleteIdioma}
                     permissionDeleteLanguage={permissionDeleteLanguage}
-                />
+                 />
             </Container>
         </>
     )
