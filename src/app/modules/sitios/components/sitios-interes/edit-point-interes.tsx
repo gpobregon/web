@@ -119,11 +119,10 @@ const EditPoint = () => {
         estado: datospuntoInteres.estado,
         es_visible: datospuntoInteres.es_visible,
         id_lenguaje_anterior: 0,
-        publicado: true,
+        publicado: datospuntoInteres.publicado,
     })
-
-    const changeOculto = (oculto: boolean) => {
-        postData(statePointInteres, {id_punto: datospuntoInteres.id_punto, es_visible: oculto})
+    const changeOculto = async (oculto: boolean) => {
+      await  postData(statePointInteres, {id_punto: datospuntoInteres.id_punto, es_visible: oculto})
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
@@ -142,11 +141,13 @@ const EditPoint = () => {
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
         })
     }
-    const changePublicado = (publicado: boolean) => {
-        postData(statePointInteresPublished, {
+    const changePublicado = async (publicado1: boolean) => {
+      await postData(statePointInteresPublished, {
             id_punto: datospuntoInteres.id_punto,
-            publicado: publicado,
+            publicado: publicado1,
         })
+       
+       
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
@@ -161,7 +162,7 @@ const EditPoint = () => {
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
             es_visible: sitio.es_visible,
-            publicado: publicado,
+            publicado: publicado1,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
         })
     }

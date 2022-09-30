@@ -41,29 +41,42 @@ const NewCol: FC<Model> = ({ section, data, moveCard, setEditItem, updateElement
         setEditChildrenItem(item)
         const elements = (section === 0 ? data.section1 : data.section2 )
         const response = updateData(elements, item)
-        const newItem = {
-            ...data,
-            section1: (section === 0 ? response : [...data.section1]),
-            section2: (section === 1 ? response : [...data.section2])
+        updateElement(EditSeccionChildren(response, 1))
+    }
+
+    const EditSeccionChildren = (children: any, type: number) => {
+        let newElement = {}
+        if (section === 0) {
+            newElement = {
+                ...data,
+                section1: type === 0 ? [...data.section1, children] : children
+            }
         }
-        updateElement(newItem)
+        if (section === 1) {
+            newElement = {
+                ...data,
+                section2: type === 0 ? [...data.section2, children] : children
+            }
+        }
+        if (section === 2) {
+            newElement = {
+                ...data,
+                section3: type === 0 ? [...data.section3, children] : children
+            }
+        }
+        return newElement
     }
 
     useEffect(() => {
         if (count === 1) {
-            const newItem = {
-                ...data,
-                section1: (section === 0 ? [...data.section1, items] : [...data.section1]),
-                section2: (section === 1 ? [...data.section2, items] : [...data.section2])
-            }
-            updateElement(newItem)
+            updateElement(EditSeccionChildren(items, 0))
             setCount((count) => count = 0)
         }
     }, [count])
     return (
         <Col className="border border-opacity-10" style={{ minHeight: '100px' }} ref={drop}>
             {
-                (section === 0 ? data.section1 : data.section2).map((item: any, index: number) => {
+                (section === 0 ? data.section1 : section === 1 ? data.section2 : data.section3).map((item: any, index: number) => {
                     return (
                         <div key={index}>
                             <ItemEditable

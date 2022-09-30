@@ -38,34 +38,43 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
                 <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
               </Item>
             </Menu>
-            <Row className="w-100">
-              <Col className="border">
-                <Row>
+            <div className="w-100 me-3">
+              <Row>
+                <Col className="border">
+                  <Row>
+                      <NewCol 
+                        section={0}
+                        data={data}
+                        moveCard={moveCard}
+                        removeItem={removeItem}
+                        setEditItem={setEditItem}
+                        updateElement={updateElement}
+                        saveResourceElement={saveResourceElement}
+                      />
+                  </Row>
+                  <Row>
                     <NewCol 
-                      section={0}
-                      data={data}
-                      moveCard={moveCard}
-                      removeItem={removeItem}
-                      setEditItem={setEditItem}
-                      updateElement={updateElement}
-                      saveResourceElement={saveResourceElement}
-                    />
-                </Row>
-                <Row>
-                  <Col className="border">
-                    Col 1
-                  </Col>
-                </Row>
-                <Row>
-                  <Col className="border">
-                    Col 1
-                  </Col>
-                </Row>
-              </Col>
-              <Col className="border">
-              
-              </Col>
-            </Row>
+                        section={1}
+                        data={data}
+                        moveCard={moveCard}
+                        removeItem={removeItem}
+                        setEditItem={setEditItem}
+                        updateElement={updateElement}
+                        saveResourceElement={saveResourceElement}
+                      />
+                  </Row>
+                </Col>
+                <NewCol 
+                  section={2}
+                  data={data}
+                  moveCard={moveCard}
+                  removeItem={removeItem}
+                  setEditItem={setEditItem}
+                  updateElement={updateElement}
+                  saveResourceElement={saveResourceElement}
+                />
+              </Row>
+            </div>
           </div>
     )
 }
