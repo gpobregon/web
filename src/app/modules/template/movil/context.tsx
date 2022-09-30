@@ -39,7 +39,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     let [count, setCount] = useState(0)
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
-    const { id } = useParams()
+    const { id, tipo } = useParams()
     // Agregar elemento
     const addElement = (data: any) => {
         const response = validElement(data.type)
@@ -122,7 +122,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         setChangeTypeEdit(type)
         oneData(changeLaguage, type === 1 ? true : false)
     }
-
+    
     // get all data
     const getLenguate = async () => {
         const response: any = await getData('language/select')
@@ -134,8 +134,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     // obtenermos el template 
     const oneData = async (item: any, type: boolean) => {
         const data = {
-            "id_punto": -1,
-            "id_sitio": id,
+            "id_punto": tipo === 'punto' ? id  : -1,
+            "id_sitio": tipo === 'sitio' ? id  : -1,
             "id_lenguaje": item.value,
             "es_movil": type
         }
