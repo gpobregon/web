@@ -173,7 +173,8 @@ const Element = [
             icon: 'Hero2.svg',
             typeElement: 'hero',
             section1: [],
-            section2: []
+            section2: [],
+            section3: []
           }
         ]
       },
@@ -193,7 +194,8 @@ const Element = [
             type: "contenido2",
             typeIcon: 'svg',
             icon: 'Contenido2.svg',
-            typeElement: 'contenido'
+            typeElement: 'contenido',
+            textAling: "text-center"
           }
         ]
       },
