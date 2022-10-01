@@ -228,7 +228,7 @@ const SalaRutas: FC<id_punto_a> = (props) => {
             })
 
             if (filter[0]?.sitio_editar === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionCreateRoutePoint(filter[0]?.sitio_punto_ruta_crear)
                 setPermissionEditRoutePoint(filter[0]?.sitio_punto_ruta_editar)

@@ -465,7 +465,7 @@ const CatalogosPage = () => {
             })
 
             if (filter[0]?.gestor_categorias_idiomas === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionCreateLanguage(filter[0]?.idioma_crear)
                 setPermissionEditLanguage(filter[0]?.idioma_editar)

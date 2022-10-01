@@ -161,7 +161,7 @@ const SitiosPage = () => {
             })
 
             if (filter[0]?.gestor_sitios === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionCreateSite(filter[0]?.sitio_crear)
                 setPermissionEditSite(filter[0]?.sitio_editar)

@@ -266,7 +266,7 @@ const Interes: FC<id_sitio> = (props) => {
             })
 
             if (filter[0]?.sitio_editar === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionCreateRoom(filter[0]?.sitio_sala_crear)
                 setPermissionSetPrincipalImage(filter[0]?.sitio_establecer_imagen_principal)

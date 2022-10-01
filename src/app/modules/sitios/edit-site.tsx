@@ -360,7 +360,7 @@ const EditSite = () => {
             })
 
             if (filter[0]?.sitio_editar === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionFavoriteSite(filter[0]?.sitio_favorito)
                 setPermissionPostSite(filter[0]?.sitio_publicar)
