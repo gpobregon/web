@@ -393,7 +393,7 @@ const EditPoint = () => {
             })
 
             if (filter[0]?.sitio_editar === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionPostPoint(filter[0]?.sitio_punto_publicar)
                 setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)

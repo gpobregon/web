@@ -161,7 +161,7 @@ const OfflineManagement: FC<any> = ({show}) => {
             })
 
             if (filter[0]?.gestor_offline === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionOfflineSites(filter[0]?.offline_sitios)
                 setPermissionOfflinePoints(filter[0]?.offline_puntos)

@@ -413,7 +413,7 @@ const PushNotificationsPage = () => {
             })
 
             if (filter[0]?.gestor_notificaciones === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionCreateNotification(filter[0]?.notificacion_crear)
 

@@ -247,7 +247,7 @@ const RoleManagement: FC<any> = ({show}) => {
             })
 
             if (filter[0]?.gestor_usuarios === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionCreateRole(filter[0]?.rol_crear)
                 setPermissionEditRole(filter[0]?.rol_editar)
