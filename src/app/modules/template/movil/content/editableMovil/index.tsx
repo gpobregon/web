@@ -3,6 +3,7 @@ import { Card, Col } from 'react-bootstrap'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import AttrItems from '../../../../../utility/component/template/attrib/index'
 import ItemEditable from '../../../../../utility/component/template/itemEditable/index'
+import MenuContext from '../../../../../utility/component/menu/contextMenu'
 import { ContentContext } from '../../context'
 
 const EditableMovil = () => {
@@ -33,6 +34,7 @@ const EditableMovil = () => {
                                 )
                             })
                         }
+                        <MenuContext />
                     </PerfectScrollbar>
                 </div>
             </Col>

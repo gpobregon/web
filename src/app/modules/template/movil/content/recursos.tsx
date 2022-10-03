@@ -5,10 +5,11 @@ import {useDropzone} from 'react-dropzone';
 import AudioResource from '../../../../utility/component/resource/audio';
 import Image from '../../../../utility/component/resource/image'
 import { ContentContext } from '../context'
+import Masonry from 'react-masonry-css'
 
 const Recursos = () => {
     const { uploadResource, allResources, destroyOneResource } = useContext(ContentContext)
-
+    const breakpointColumnsObj = { default: 1, 1100: 2, 700: 2, 500: 2 }
     const {getRootProps, getInputProps} = useDropzone({
       accept: { 'image/*': [], 'video/*': [], 'audio/*': [] },
       onDrop: (acceptedFiles : any) => {
@@ -20,9 +21,7 @@ const Recursos = () => {
     });
     const thumbs = allResources.map((file : any, index : number) => {
         return (
-            <Col key={index} lg={6}>
-                { file.tipo.includes('image/') ? <Image item={file}  destroyOneResource={destroyOneResource}/> : <AudioResource item={file}  destroyOneResource={destroyOneResource} /> }
-            </Col>
+            file.tipo.includes('image/') ? <Image item={file}  destroyOneResource={destroyOneResource}/> : <AudioResource item={file}  destroyOneResource={destroyOneResource} /> 
         )
     })
 
@@ -47,9 +46,9 @@ const Recursos = () => {
             </Row>
             
             <PerfectScrollbar style={{ height: '310px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
-                <Row>
+                <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
                     {thumbs}
-                </Row>
+                </Masonry>
             </PerfectScrollbar>
             
             <Row className="pt-5">

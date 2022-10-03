@@ -20,7 +20,7 @@ const ImageItem: FC<Model> = ({ item, destroyOneResource }) => {
       }));
     return (
         <Fragment>
-            <div style={{ border: isDragging ? "1px dashed #009EF7" : "0px" }} className="bkg-dark content-icon rounded my-2" ref={drag}>
+            <div style={{ border: isDragging ? "1px dashed #009EF7" : "0px" }} className="bkg-dark content-icon rounded p-2 w-50 d-inline-block" ref={drag}>
                 <div className="icon-wrapper">
                 <Image
                     alt="Logo"

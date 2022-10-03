@@ -45,6 +45,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
                       <NewCol 
                         section={0}
                         data={data}
+                        sectionData={data.section1}
                         moveCard={moveCard}
                         removeItem={removeItem}
                         setEditItem={setEditItem}
@@ -56,6 +57,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
                     <NewCol 
                         section={1}
                         data={data}
+                        sectionData={data.section2}
                         moveCard={moveCard}
                         removeItem={removeItem}
                         setEditItem={setEditItem}
@@ -67,6 +69,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
                 <NewCol 
                   section={2}
                   data={data}
+                  sectionData={data.section3}
                   moveCard={moveCard}
                   removeItem={removeItem}
                   setEditItem={setEditItem}

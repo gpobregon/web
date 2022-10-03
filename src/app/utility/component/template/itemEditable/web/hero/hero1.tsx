@@ -47,19 +47,21 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
           <NewCol
             section={0}
             data={data}
-            moveCard={moveCard}
-            removeItem={removeItem}
+            sectionData={data.section1}
             setEditItem={setEditItem}
             updateElement={updateElement}
+            moveCard={moveCard}
+            removeItem={removeItem}
             saveResourceElement={saveResourceElement}
           />
           <NewCol
             section={1}
             data={data}
+            sectionData={data.section2}
             moveCard={moveCard}
             removeItem={removeItem}
-            setEditItem={setEditItem}
             updateElement={updateElement}
+            setEditItem={setEditItem}
             saveResourceElement={saveResourceElement}
           />
         </Row>
