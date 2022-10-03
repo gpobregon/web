@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC } from "react";
+import { FC, useState } from "react";
 import ContentEditable from "react-contenteditable";
 import { stripHtml } from '../../../../../utility/global/index';
 import { Menu, Item, useContextMenu } from "react-contexify";
@@ -16,8 +16,9 @@ type Model = {
 }
 const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem, saveResourceElement }) => {
 
-  const { show } = useContextMenu({ id: "menu-id" });
-
+  const { show } = useContextMenu({ id: `menu-${data.id}` });
+  const [dataSelect, setDataSelect] = useState<any>([])
+  
   const changeText = (e: any) => {
     const edit = {
       ...data,
@@ -27,11 +28,17 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   }
 
   const destroyItem = (e: any) => {
-    removeItem(e.triggerEvent.target.id);
+    removeItem(dataSelect.id);
     setEditItem([])
   }
+
   const saveElement = (e: any) => {
     saveResourceElement(e.triggerEvent.target.id)
+  }
+
+  const OpenMenu = (e: any, data: any) => {
+    setDataSelect(data)
+    show(e)
   }
 
   return (
@@ -44,10 +51,11 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       <div
         className="p-1 py-1 d-flex align-items-center"
         id={data.id}
-        onContextMenu={show} >
+        onContextMenu={(e: any) => OpenMenu(e, data)}
+      >
         <i className="bi bi-grip-vertical fa-2x" id={data.id} />
       </div>
-      <Menu id={"menu-id"} theme="dark" data-test={data}>
+      <Menu id={`menu-${data.id}`} theme="dark" data-test={data}>
         <Item onClick={(e: any) => destroyItem(e)}>
           <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
         </Item>

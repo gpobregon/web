@@ -118,6 +118,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     const ChangeMode = (type: number) => {
+        setBoard([])
         setChangeTypeEdit(type)
         oneData(changeLaguage, type === 1 ? true : false)
     }

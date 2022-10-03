@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC } from "react";
+import { FC, useState } from "react";
 import { stripHtml } from '../../../../../utility/global/index'
 import ContentEditable from "react-contenteditable";
 import { Menu, Item, useContextMenu } from "react-contexify";
@@ -12,10 +12,12 @@ type Model = {
   setEditItem: (data: any) => void
   updateElement: (data: any) => void
   removeItem: (data: any) => void
+  saveResourceElement: (data: string) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResourceElement, setEditItem, updateElement, removeItem }) => {
 
   const { show } = useContextMenu({ id: "menu-id" });
+  const [dataSelect, setDataSelect] = useState<any>([])
 
   const changeText = (e: any) => {
     const edit = {
@@ -26,24 +28,30 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   }
 
   const destroyItem = (e: any) => {
-    removeItem(e.triggerEvent.target.id);
+    removeItem(dataSelect.id);
     setEditItem([])
   }
-
   const saveElement = (e: any) => {
-    // saveResourceElement(e.triggerEvent.target.id)
+    saveResourceElement(e.triggerEvent.target.id)
   }
-  
+
+  const OpenMenu = (e: any, data: any) => {
+    setDataSelect(data)
+    show(e)
+  }
+
   return (
     <div
       ref={referencia}
       data-handler-id={handlerId}
+      onClick={() => setEditItem(data)}
       className="d-flex cursor-grabbing"
     >
       <div
         className="p-1 py-1 d-flex align-items-center"
         id={data.id}
-        onContextMenu={show} >
+        onContextMenu={(e: any) => OpenMenu(e, data)}
+      >
         <i className="bi bi-grip-vertical fa-2x" id={data.id} />
       </div>
       <Menu id={"menu-id"} theme="dark" data-test={data}>
