@@ -43,6 +43,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
       <div className="w-100 me-3">
         <Row>
           <NewCol
+            lg={6}
             section={0}
             data={data}
             sectionData={data.section1}
@@ -53,6 +54,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
             saveResourceElement={saveResourceElement}
           />
           <NewCol
+            lg={6}
             section={1}
             data={data}
             sectionData={data.section2}

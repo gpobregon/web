@@ -8,6 +8,7 @@ import { useDrop } from "react-dnd"
 
 type Model = {
     data: any
+    lg: number
     sectionData: any
     section: number
     setEditItem: (data: any) => void
@@ -17,7 +18,7 @@ type Model = {
     moveCard: (dragIndex: number, hoverIndex: number) => void
 }
 
-const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, updateElement, removeItem, saveResourceElement }) => {
+const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, updateElement, removeItem, saveResourceElement, lg }) => {
     const [items, setItems] = useState<any>([])
     const [count, setCount] = useState<number>(0)
     const [editChildrenItem, setEditChildrenItem] = useState<any>([])
@@ -82,7 +83,7 @@ const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, 
         }
     }, [count])
     return (
-        <Col className="border border-opacity-10" style={{ minHeight: '100px' }} ref={drop}>
+        <Col className="border border-opacity-10" lg={lg} style={{ minHeight: '100px' }} ref={drop}>
             {
                 sectionData.map((item: any, index: number) => {
                     return (

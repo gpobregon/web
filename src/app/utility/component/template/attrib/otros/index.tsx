@@ -14,11 +14,10 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
        if(titulo.current) {
         const item = {
             ...editItem,
-            text: titulo.current.value
+            text: titulo.current.value.replace('width="600"', 'width="100%"').replace('height="450"', 'height="300px"')
         }
         updateElement(item)
-       }
-        
+       }        
     }
 
     return (

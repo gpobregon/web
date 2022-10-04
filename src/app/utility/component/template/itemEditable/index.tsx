@@ -127,7 +127,7 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, saveResourceEleme
       { data.type === 'contenido1' && <Content1 saveResourceElement={saveResourceElement} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'contenido2' && <Content2 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
 
-      { data.type === 'galeria1' && <Galeria removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'galeria1' && <Galeria saveResourceElement={saveResourceElement} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId} moveCard={moveCard} />}
     </Fragment>
   )
 }

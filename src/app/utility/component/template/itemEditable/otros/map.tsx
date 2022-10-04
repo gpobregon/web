@@ -28,6 +28,11 @@ const Url: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElemen
         // saveResourceElement(e.triggerEvent.target.id)
     }
 
+    function interpretHTML(data : any) {
+        return {
+          __html: data && data
+        };
+      };
     return (
         <div
             ref={referencia}
@@ -50,7 +55,7 @@ const Url: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElemen
                     <i className="fa fa-save text-success pe-4" />Guardar Recurso
                 </Item>
             </Menu>
-            <div className="w-100 text-center">
+            <div className="w-100 text-center pe-5">
                 {
                     !data.text ? 
                     <Image
@@ -60,7 +65,7 @@ const Url: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElemen
                         className={`max-h-100px cursor-pointer text-center`}
                         src={toAbsoluteUrl(`/media/svg/iconsFigma/FakeMap.svg`)}
                     />
-                    : data.text
+                    : data.text && <div dangerouslySetInnerHTML={interpretHTML(data.text)}/>
                 }
             </div>
         </div>

@@ -153,8 +153,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const storeTemplate = async () => {
         setShowLoad(true)
         const dataTemplate = {
-            "id_punto": -1,
-            "id_sitio": id,
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : -1,
             "id_lenguaje": changeLaguage.value,
             "nombre": "Nombre editado3 sitio movil 1",
             "descripcion": "descripcion2 editado sitio movil 1",
@@ -199,8 +199,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         const url = `${process.env.REACT_APP_URLAWS}resource-${changeTypeEdit === 1 ? 'mobile' : 'web'}-${id}-${file.name}`;
         const fileResource =
         {
-            "id_punto": -1,
-            "id_sitio": id,
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : -1,
             "nombre": file.name,
             "url": url,
             "tipo": file.type,
@@ -245,8 +245,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     // Se obienen todos los recursos
     const getAllResources = async () => {
         const jsonData = {
-            "id_punto": -1,
-            "id_sitio": id
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : -1,
         }
         const response: any = await postData('site/mobile/resource', jsonData)
         if (response.data.length > 0) {
