@@ -207,14 +207,18 @@ const Element = [
             type: "galeria1",
             typeIcon: 'svg',
             icon: 'Galeria1.svg',
-            typeElement: 'galeria'
+            typeElement: 'galeria',
+            section1: [],
+            section2: []
           },
           {
             text: 'Galeria 2',
             type: "galeria2",
             typeIcon: 'svg',
             icon: 'Galeria2.svg',
-            typeElement: 'galeria'
+            typeElement: 'galeria',
+            section1: [],
+            section2: []
           }
         ]
       },

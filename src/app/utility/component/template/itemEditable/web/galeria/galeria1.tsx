@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
-import { Row } from 'react-bootstrap'
+import { Row, Col } from 'react-bootstrap'
 import NewCol from '../hero/col'
 import { Menu, Item, useContextMenu } from "react-contexify";
 
@@ -43,7 +43,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
       <div className="w-100 me-3">
         <Row>
           <NewCol
-            lg={6}
+            lg={4}
             section={0}
             data={data}
             sectionData={data.section1}
@@ -53,17 +53,24 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
             removeItem={removeItem}
             saveResourceElement={saveResourceElement}
           />
-          <NewCol
-            lg={6}
-            section={1}
-            data={data}
-            sectionData={data.section2}
-            moveCard={moveCard}
-            removeItem={removeItem}
-            updateElement={updateElement}
-            setEditItem={setEditItem}
-            saveResourceElement={saveResourceElement}
-          />
+          <Col className="border border-opacity-10" tyle={{ minHeight: '100px' }}>
+          
+            <Row>
+              <Col lg={12}>
+                <div className="resource-element size-resource-video rounded d-flex justify-content-center align-items-center" style={{ height: '150px'}}>
+                    <span className="text-center">
+                        <p><i className="bi bi-arrow-90deg-down text-white" /></p>
+                        <p>Arrasta multimedia de los recursos</p>
+                    </span>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={12}>
+                Imagenes
+              </Col>
+            </Row>
+          </Col>
         </Row>
       </div>
     </div>
