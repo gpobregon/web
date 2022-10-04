@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/iframe-has-title */
+/* eslint-disable react/style-prop-object */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
 import { Image } from 'react-bootstrap';
@@ -49,13 +51,17 @@ const Url: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElemen
                 </Item>
             </Menu>
             <div className="w-100 text-center">
-                <Image
-                    ref={referencia}
-                    data-handler-id={handlerId}
-                    alt="Logo"
-                    className={`max-h-100px cursor-pointer text-center`}
-                    src={toAbsoluteUrl(`/media/svg/iconsFigma/FakeMap.svg`)}
-                />
+                {
+                    !data.text ? 
+                    <Image
+                        ref={referencia}
+                        data-handler-id={handlerId}
+                        alt="Logo"
+                        className={`max-h-100px cursor-pointer text-center`}
+                        src={toAbsoluteUrl(`/media/svg/iconsFigma/FakeMap.svg`)}
+                    />
+                    : data.text
+                }
             </div>
         </div>
     )

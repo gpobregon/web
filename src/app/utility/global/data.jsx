@@ -147,7 +147,7 @@ const Element = [
             typeIcon: 'bi',
             icon: 'map',
             type: "map",
-            text: 'Mapa',
+            text: '',
             typeElement: 'others'
           },
         ]
