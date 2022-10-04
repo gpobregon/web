@@ -2,27 +2,32 @@ import { FC } from 'react'
 import { Row, Col, Button, ButtonGroup } from 'react-bootstrap'
 
 type Model = {
-    editItem: { 
-        id: Number,
-        type: String,
-        text: String,
-        size: String,
-        textAling: String,
-        fontWeight: String,
-        fontFamily: String,
-        textDecoration: String
-    },
+    editItem: any
     updateElement: (data : any) => void
 }
 
 const AttrText: FC<Model> = ({ editItem, updateElement }) => {
 
-    const changeSizeTitle = (data : {}) => {
-        const item = {
-            ...editItem,
-            ...data
-        }
-        updateElement(item)
+    const changeSizeTitle = (data : any) => {
+        let edit = {}
+
+        if (data.typeList === '') {
+         edit = { 
+             content: editItem.content.replace('list-group list-group-bg list-group-numbered', 'add-class1').replace('list-group-item', 'add-item')
+          }
+        } else if (data.typeList === 'list-group-numbered' ) {
+         edit = { 
+             content: editItem.content.replace('add-class1', 'list-group list-group-bg list-group-numbered').replace('add-item', 'list-group-item')
+          } 
+         } else {
+             edit = { ...data }
+         }
+ 
+         const item = {
+             ...editItem,
+             ...edit
+         }
+         updateElement(item)
     }
 
     return (
@@ -68,6 +73,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
                             <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ textAling: 'text-start' })} ><i className="bi bi-justify-left"/></Button>
                             <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ textAling: 'text-center' })} ><i className="bi bi-text-center"/></Button>
                             <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ textAling: 'text-end' })} ><i className="bi bi-justify-right"/></Button>
+                            <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ textAling: 'text-justify' })} ><i className="bi bi-justify"/></Button>
                             <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ fontWeight: editItem.fontWeight === 'fw-normal' ? 'fw-bolder' : 'fw-normal' })} ><i className="bi bi-type-bold"/></Button>
                             <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ fontFamily: editItem.fontFamily === 'fw-normal' ? 'fst-italic' : 'fw-normal' })} ><i className="bi bi-type-italic"/></Button>
                             <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ textDecoration: editItem.textDecoration ? '' : 'text-decoration-underline' })} ><i className="bi bi-type-underline"/></Button>

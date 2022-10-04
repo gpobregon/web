@@ -1,23 +1,24 @@
-import { FC, useContext } from "react";
+import { FC } from "react";
 import { Menu, Item } from "react-contexify";
-import { ContentContext } from '../../../modules/template/movil/context'
 
-const MenuContext = () => {
-    const { ChangeMode, changeTypeEdit, setChangeModeEditor, changeModeEditor } = useContext(ContentContext)
+type Model = {
+  idMenu: string
+  destroyItem: (data: any) => void
+  saveElement: (data: any) => void
+}
 
-    const destroyItem = (e: any) => {
-        console.log(e.triggerEvent.target.id)
-    }
-    return (
-        <Menu id={"menu-id"} theme="dark">
-        <Item onClick={destroyItem}>
-          <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
-        </Item>
-        <Item >
-          <i className="fa fa-save text-success pe-4" />Guardar Recurso
-        </Item>
-      </Menu>
-    )
+const MenuContext: FC<Model> = ({ destroyItem, saveElement, idMenu }) => {
+
+  return (
+    <Menu id={idMenu} theme="dark">
+      <Item onClick={(e: any) => destroyItem(e)}>
+        <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
+      </Item>
+      <Item onClick={(e: any) => saveElement(e)}>
+        <i className="fa fa-save text-success pe-4" />Guardar Recurso
+      </Item>
+    </Menu>
+  )
 }
 
 export default MenuContext

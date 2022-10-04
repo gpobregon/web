@@ -38,7 +38,7 @@ const Element = [
             icon: 'list-ul',
             type: "list",
             text: 'Element',
-            content: '<ul><li>Elemento 1</li></ul>',
+            content: '<ul class="list-group list-group-bg list-group-numbered"><li class="list-group-item">Elemento 1</li></ul>',
             textAling: "text-star",
             fontWeight: "fw-normal",
             fontFamily: "fw-normal",

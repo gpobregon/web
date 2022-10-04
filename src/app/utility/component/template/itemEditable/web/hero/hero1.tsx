@@ -3,7 +3,6 @@ import { FC } from "react";
 import { Row } from 'react-bootstrap'
 import NewCol from './col'
 import { Menu, Item, useContextMenu } from "react-contexify";
-import MenuDoubleClick from '../../../../menu/doubleClick'
 
 type Model = {
   data: any
@@ -41,7 +40,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
           <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
         </Item>
       </Menu>
-      <MenuDoubleClick />
       <div className="w-100 me-3">
         <Row>
           <NewCol

@@ -41,13 +41,13 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const navigate = useNavigate()
     // Agregar elemento
     const addElement = (data: any) => {
-        const response = validElement(data.type)
-        const result = response.filter((item: any) => data.type === item.type);
+        // // const response = validElement(data.type)
+        // // const result = response.filter((item: any) => data.type === item.type);
         if (data.typeElement === 'multimedia') {
             setChangeModeEditor(2)
         }
         setCount((count: number) => 1)
-        const item = result[0]
+        const item = data
         setBoard((board: []) =>
             [
                 ...board,
