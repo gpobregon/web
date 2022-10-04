@@ -1,8 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Row, Col } from 'react-bootstrap'
 import ContentEditable from "react-contenteditable";
-import { Menu, Item, useContextMenu } from "react-contexify";
+import { useContextMenu } from "react-contexify";
+import { stripHtml } from '../../../../../global/index'
+import MenuDoubleClick from '../../../../menu/doubleClick'
+import ContextMenu from '../../../../menu/contextMenu'
 
 type Model = {
     data: any
@@ -12,38 +15,65 @@ type Model = {
     setEditItem: (data : any) => void
     updateElement: (data : any) => void
     removeItem: (data : any) => void
+    saveResourceElement: (data: string) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem, saveResourceElement }) => { 
   
-  const { show } = useContextMenu({ id: "menu-id" });  
+  const idMenu = `menu-${data.id}`
+  const nameMenu = `custom-${data.id}`
+
+  const { show } = useContextMenu({ id: idMenu });
+
+  const { show: showMenu2 } = useContextMenu({ id:  nameMenu }); 
+
+  const [dataSelect, setDataSelect] = useState<any>([])
     
-    const destroyItem = ( e : any) => {
-      removeItem(e.triggerEvent.target.id);
-      setEditItem([])
+  const changeText = (e: any) => {
+    const edit = {
+      ...data,
+      ...e
     }
-    
-    const changeText = (item : any) => {
-      const edit = {
-        ...data,
-        ...item
-      }
-      updateElement(edit)
-    }
+    updateElement(edit)
+  }
+
+  const destroyItem = (e: any) => {
+    removeItem(dataSelect.id);
+    setEditItem([])
+  }
+  const saveElement = (e: any) => {
+    saveResourceElement(e.triggerEvent.target.id)
+  }
+
+  const OpenMenu = (e: any, data: any) => {
+    setDataSelect(data)
+    show(e)
+  }
 
     return ( 
           <div
             ref={referencia}
             data-handler-id={handlerId}
+            onClick={() => setEditItem(data)}
             className="d-flex cursor-grabbing"
           >
-            <div onContextMenu={show} className="p-1 py-1 d-flex align-items-center">
+            <div
+              className="p-1 py-1 d-flex align-items-center"
+              onContextMenu={(e: any) => OpenMenu(e, data)}
+              onDoubleClick={showMenu2}
+              id={data.id}
+            >
               <i id={data.id} className="bi bi-grip-vertical fa-2x"/>
             </div>
-            <Menu id="menu-id" theme="dark">
-              <Item id="delete" onClick={(e : any) => destroyItem(e)}>
-                <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
-              </Item>
-            </Menu>
+            <ContextMenu 
+              destroyItem={destroyItem}
+              saveElement={saveElement}
+              idMenu={idMenu}
+            />
+            <MenuDoubleClick 
+              updateElement={updateElement}
+              nameMenu={nameMenu}
+              editItem={data}
+            />
             <Row className="w-100">
               <Col>
                 <ContentEditable
@@ -51,7 +81,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
                   className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
                   html={ `${data.text}` } // innerHTML of the editable div
                   disabled={isDragging} // use true to disable edition
-                  onChange={(e : any) => changeText({text: e.target.value})} // handle innerHTML change
+                  onChange={(e : any) => changeText({text: stripHtml(e.target.value)})} // handle innerHTML change
                   onClick={() => setEditItem(data)}
                 />
               </Col>
@@ -61,7 +91,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
                   className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
                   html={ `${data.text2}` } // innerHTML of the editable div
                   disabled={isDragging} // use true to disable edition
-                  onChange={(e : any) => changeText({text2: e.target.value})} // handle innerHTML change
+                  onChange={(e : any) => changeText({text2: stripHtml(e.target.value)})} // handle innerHTML change
                   onClick={() => setEditItem(data)}
                 />
               </Col>

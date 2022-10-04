@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
 import { Row, Col } from 'react-bootstrap'
+import ContentEditable from "react-contenteditable";
+import { stripHtml } from '../../../../../global/index'
 import { Menu, Item, useContextMenu } from "react-contexify";
 
 type Model = {
@@ -16,6 +18,14 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   
   const { show } = useContextMenu({ id: "menu-id" });  
     
+  const changeText = (e: any) => {
+    const edit = {
+      ...data,
+      ...e
+    }
+    updateElement(edit)
+  }
+  
     const destroyItem = ( e : any) => {
       removeItem(e.triggerEvent.target.id);
       setEditItem([])
@@ -35,10 +45,21 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
                 <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
               </Item>
             </Menu>
-            <Row className="w-100">
-              <Col></Col>
-              <Col></Col>
-            </Row>
+            <div className="w-100 me-3">
+              <Row className="w-100">
+                <Col lg={4} className="border border-opacity-10" style={{ minHeight: '100px' }}>
+                  <ContentEditable
+                    id={data.id}
+                    className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
+                    html={ `${data.text}` } // innerHTML of the editable div
+                    disabled={isDragging} // use true to disable edition
+                    onChange={(e : any) => changeText({text: stripHtml(e.target.value)})} // handle innerHTML change
+                    onClick={() => setEditItem(data)}
+                  />
+                </Col>
+                <Col></Col>
+              </Row>
+            </div>
           </div>
     )
 }
