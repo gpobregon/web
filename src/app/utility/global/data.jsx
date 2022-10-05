@@ -38,7 +38,7 @@ const Element = [
             icon: 'list-ul',
             type: "list",
             text: 'Element',
-            content: '<ul><li>Elemento 1</li></ul>',
+            content: '<ul class="list-group list-group-bg list-group-numbered"><li class="list-group-item">Elemento 1</li></ul>',
             textAling: "text-star",
             fontWeight: "fw-normal",
             fontFamily: "fw-normal",
@@ -147,7 +147,7 @@ const Element = [
             typeIcon: 'bi',
             icon: 'map',
             type: "map",
-            text: 'Mapa',
+            text: '',
             typeElement: 'others'
           },
         ]
@@ -207,14 +207,18 @@ const Element = [
             type: "galeria1",
             typeIcon: 'svg',
             icon: 'Galeria1.svg',
-            typeElement: 'galeria'
+            typeElement: 'galeria',
+            section1: [],
+            section2: []
           },
           {
             text: 'Galeria 2',
             type: "galeria2",
             typeIcon: 'svg',
             icon: 'Galeria2.svg',
-            typeElement: 'galeria'
+            typeElement: 'galeria',
+            section1: [],
+            section2: []
           }
         ]
       },

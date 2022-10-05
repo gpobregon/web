@@ -26,6 +26,7 @@ import {
     statesMethod,
     updateSiteMethod,
     URLAWS,
+    getRolesMethod,
 } from '../../services/api'
 import {Tag} from '../../models/tag'
 import {status} from '../../models/status'
@@ -36,13 +37,15 @@ import {Category} from '../../models/category'
 import Interes from './components/sitios-interes/sala-interes'
 import {QRCodeCanvas} from 'qrcode.react'
 import logo from './upload-image_03.jpg'
-import UpImage from '../uploadFile/upload-image';
+import UpImage from '../uploadFile/upload-image'
 import {ModelOperation} from '@aws-amplify/datastore'
 import {
     validateStringSinCaracteresEspeciales,
     validateStringSoloNumeros,
 } from '../validarCadena/validadorCadena'
-import { KTSVG } from '../../../_metronic/helpers'
+import {KTSVG} from '../../../_metronic/helpers'
+import {Auth} from 'aws-amplify'
+import {roleManager} from '../../models/roleManager'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -108,16 +111,15 @@ const EditSite = () => {
     const navigate = useNavigate()
     const [nombreJson, setNombreJson] = useState('')
     const [unbicacionBucket, setUbicacionBucket] = useState('')
-  const [ArchivoPermitido, setArchivoPermitido] = useState('')
+    const [ArchivoPermitido, setArchivoPermitido] = useState('')
     useEffect(() => {
         // console.log(state)
-        let aux=site.geo_json
-       let auxSplit=aux.split('/')
-        setNombreJson(auxSplit[auxSplit.length-1])
+        let aux = site.geo_json
+        let auxSplit = aux.split('/')
+        setNombreJson(auxSplit[auxSplit.length - 1])
         getCategorys()
 
         setearStatus()
-       
     }, [])
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
@@ -179,16 +181,23 @@ const EditSite = () => {
         }
     }
 
-      //methods to post data to api------------------------------------------------------
+    //methods to post data to api------------------------------------------------------
 
-  async function postSiteMaquetar(sitee: any,tipo:string) {
-    if (site.nombre != '' && site.geoX != '' && site.geoY != '' && site.ubicacion != ''&& site.portada_path != ''&& site.geo_json != '') {
-      const sit: any = await postData(updateSiteMethod, sitee)
-      navigate(`/template/sitio/${tipo}/${sit.id_sitio}`)
-    } else {
-      alertNotNullInputs()
+    async function postSiteMaquetar(sitee: any, tipo: string) {
+        if (
+            site.nombre != '' &&
+            site.geoX != '' &&
+            site.geoY != '' &&
+            site.ubicacion != '' &&
+            site.portada_path != '' &&
+            site.geo_json != ''
+        ) {
+            const sit: any = await postData(updateSiteMethod, sitee)
+            navigate(`/template/sitio/${tipo}/${sit.id_sitio}`)
+        } else {
+            alertNotNullInputs()
+        }
     }
-  }
 
     async function postDefault(route: string, object: any) {
         const sit: any = await postData(route, object)
@@ -246,13 +255,13 @@ const EditSite = () => {
     }
     const saveChanges = async () => {
         swal({
-            title: '¿Quiere Seguir Editando ?',
+            title: '¿Quiere Seguir Editando?',
             icon: 'warning',
             buttons: ['Sí', 'No'],
         }).then((res) => {
             if (res) {
                 swal({
-                    text: 'Descartado Correctamente',
+                    text: 'Cambios guardados',
                     icon: 'success',
                     timer: 2000,
                 })
@@ -305,20 +314,16 @@ const EditSite = () => {
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
     const uploadImage = async (imagen: string) => {
-        if(ArchivoPermitido =='.json'){
-         
-            site.geo_json= URLAWS +"sitePages/GeoJSON/"+ imagen
+        if (ArchivoPermitido == '.json') {
+            site.geo_json = URLAWS + 'sitePages/GeoJSON/' + imagen
             setNombreJson(imagen)
+        } else {
+            site.portada_path = URLAWS + 'sitePages/' + imagen
         }
-        else{
-       
-          site.portada_path= URLAWS +"sitePages/"+ imagen
-        
-      }
         if (imagen != '') {
-          setModalupIMG(false)
+            setModalupIMG(false)
         }
-      };
+    }
     const [modalupimg, setModalupIMG] = useState(false)
 
     //DONWLOAD QR-------------------------------------------------------------------------
@@ -332,6 +337,46 @@ const EditSite = () => {
         downloadLink.click()
         document.body.removeChild(downloadLink)
     }
+
+    // * Restricción por rol
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionFavoriteSite, setPermissionFavoriteSite] = useState(true)
+    const [permissionPostSite, setPermissionPostSite] = useState(true)
+    const [permissionChangeVisibilitySite, setPermissionChangeVisibilitySite] = useState(true)
+    const [permissionMockSite, setPermissionMockSite] = useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.sitio_editar === false) {
+                navigate('/error/401', {replace: true})
+            } else {
+                setPermissionFavoriteSite(filter[0]?.sitio_favorito)
+                setPermissionPostSite(filter[0]?.sitio_publicar)
+                setPermissionChangeVisibilitySite(filter[0]?.sitio_visible)
+                setPermissionMockSite(filter[0]?.sitio_maquetar)
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
+    // * Fin restricción por rol
+
     return (
         <>
             <div className=' '>
@@ -346,7 +391,7 @@ const EditSite = () => {
                     <div className='col-xs-12 col-md-5 col-lg-7 d-flex py-5 px-9'>
                         <div id='center'>
                             <Button
-                                className='btn-secondary fa-solid fa-less-than background-button '
+                                className='btn-secondary fa-solid fa-chevron-left background-button'
                                 id='center2'
                                 style={{display: 'flex', marginRight: '6px', color: '#FFFFFF'}}
                                 onClick={() => {
@@ -384,6 +429,13 @@ const EditSite = () => {
                                         }
                                         id='center2'
                                         onClick={() => {
+                                            if (!permissionFavoriteSite) {
+                                                swal({
+                                                    title: 'No tienes permiso para marcar como destacado un sitio',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
                                             // status.favorito == false
                                             status.favorito = !status.favorito
                                             changeStatus(
@@ -443,6 +495,13 @@ const EditSite = () => {
                                     }
                                     id='center2'
                                     onClick={() => {
+                                        if (!permissionChangeVisibilitySite) {
+                                            swal({
+                                                title: 'No tienes permiso para cambiar la visibilidad de un sitio',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
                                         // status.oculto == false
                                         //   ? changeStatus(status.favorito, status.publicado, true)
                                         //   : changeStatus(status.favorito, status.publicado, false)
@@ -473,11 +532,14 @@ const EditSite = () => {
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
                                     onClick={() => {
-                                        // console.log('site')
+                                        if (!permissionPostSite) {
+                                            swal({
+                                                title: 'No tienes permiso para publicar cambios de un sitio',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
                                         postSite(site)
-
-                                        // console.log(site)
-                                        // navigate('/site')
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
                                 ></Button>
@@ -529,9 +591,9 @@ const EditSite = () => {
                                     onClick={
                                         site.portada_path == ''
                                             ? (e) => {
-                                                setArchivoPermitido("image/*")
-                                                setUbicacionBucket("sitePages")
-                                                setModalupIMG(true)
+                                                  setArchivoPermitido('image/*')
+                                                  setUbicacionBucket('sitePages')
+                                                  setModalupIMG(true)
                                               }
                                             : (e) => {}
                                     }
@@ -548,9 +610,8 @@ const EditSite = () => {
                                                     className='bi bi-arrow-left-right background-button text-info'
                                                     to={''}
                                                     onClick={() => {
-                                                        
-                                                        setArchivoPermitido("image/*")
-                                                        setUbicacionBucket("sitePages")
+                                                        setArchivoPermitido('image/*')
+                                                        setUbicacionBucket('sitePages')
                                                         setModalupIMG(true)
                                                     }}
                                                 ></Link>
@@ -753,9 +814,9 @@ const EditSite = () => {
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
-                               
+
                                     <label>Etiquetas</label>
-                                    
+
                                     <div className='form-control'>
                                         <Select
                                             closeMenuOnSelect={false}
@@ -769,59 +830,61 @@ const EditSite = () => {
                                         ></Select>
                                     </div>
                                     <br></br>
-                    <Form.Group>
-                        <Form.Label>Adjuntar GeoJSON</Form.Label>
-                        <Card
-                            className='mb-4'
-                            style={{
-                                backgroundColor: '#151521',
-                                height: '50px',
-                                display: 'flex',
-                                alignItems: 'flex-start',
-                                justifyContent: 'center',
-                            }}
-                            onClick={() => {
-                                setArchivoPermitido(".json")
-                                setUbicacionBucket("sitePages/GeoJSON")
-                                setModalupIMG(true)
-                            }}
-                        >
-                            <div
-                                style={{
-                                    width: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
+                                    <Form.Group>
+                                        <Form.Label>Adjuntar GeoJSON</Form.Label>
+                                        <Card
+                                            className='mb-4'
+                                            style={{
+                                                backgroundColor: '#151521',
+                                                height: '50px',
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                justifyContent: 'center',
+                                            }}
+                                            onClick={() => {
+                                                setArchivoPermitido('.json')
+                                                setUbicacionBucket('sitePages/GeoJSON')
+                                                setModalupIMG(true)
+                                            }}
+                                        >
+                                            <div
+                                                style={{
+                                                    width: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
 
-                                    <div>{ site.geo_json==='' ? 'Subir GeoJSON' : nombreJson}</div>
-                                </div>
+                                                    <div>
+                                                        {site.geo_json === ''
+                                                            ? 'Subir GeoJSON'
+                                                            : nombreJson}
+                                                    </div>
+                                                </div>
 
-                                <div
-                                   
-                                >
-                                    <KTSVG
-                                        path='/media/icons/duotune/general/gen035.svg'
-                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
-                                    />
-                                </div>
-                            </div>
-                        </Card>
-                        <div style={{textAlign: 'center', color: 'gray'}}>
-                            Formato permitido: .json
-                        </div>
-                    </Form.Group>
-                    <br></br>
+                                                <div>
+                                                    <KTSVG
+                                                        path='/media/icons/duotune/general/gen035.svg'
+                                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Card>
+                                        <div style={{textAlign: 'center', color: 'gray'}}>
+                                            Formato permitido: .json
+                                        </div>
+                                    </Form.Group>
+                                    <br></br>
                                 </div>
                             </div>
                             <div className='col-xs-12 col-md-12 col-xl-5 mb-5'>
@@ -851,19 +914,22 @@ const EditSite = () => {
                                         </div>
                                         <br></br>
                                         <div className='row'>
-                                          
-                                                <Button className='btn btn-info col-md-12 col-sm-12 col-lg-12' 
-                                                  onClick={() => {
-                                                    //   navigate('/site')
+                                            <Button
+                                                className='btn btn-info col-md-12 col-sm-12 col-lg-12'
+                                                onClick={() => {
+                                                    if (!permissionMockSite) {
+                                                        swal({
+                                                            title: 'No tienes permiso para maquetar',
+                                                            icon: 'warning',
+                                                        })
+                                                        return
+                                                    }
                                                     postSiteMaquetar(site, 'web')
-                                                 
-                                                  
-                                                  }}
-                                                >
-                                                    {' '}
-                                                    <i className='fa-solid fa-pencil'></i> Crear
-                                                </Button>
-                                           
+                                                }}
+                                            >
+                                                {' '}
+                                                <i className='fa-solid fa-pencil'></i> Crear
+                                            </Button>
                                         </div>
                                     </div>
                                     <div className=' col-md-6 col-xs-12 col-lg-6'>
@@ -888,19 +954,21 @@ const EditSite = () => {
                                         </div>
                                         <br></br>
                                         <div className='row'>
-                                         
-                                                <Button
-                                                    className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
-                                                    onClick={() => {
-                                                        //   navigate('/site')
-                                                        postSiteMaquetar(site, 'web')
-                                                     
-                                                      
-                                                      }}
-                                                >
-                                                    <i className='fa-solid fa-pencil '></i> Crear
-                                                </Button>
-                                            
+                                            <Button
+                                                className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
+                                                onClick={() => {
+                                                    if (!permissionMockSite) {
+                                                        swal({
+                                                            title: 'No tienes permiso para maquetar',
+                                                            icon: 'warning',
+                                                        })
+                                                        return
+                                                    }
+                                                    postSiteMaquetar(site, 'web')
+                                                }}
+                                            >
+                                                <i className='fa-solid fa-pencil '></i> Crear
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>
@@ -915,7 +983,11 @@ const EditSite = () => {
             <Interes id_sitio={site.id_sitio} />
             <UpImage
                 show={modalupimg}
-                onClose={() =>{setArchivoPermitido(""); setUbicacionBucket(""); setModalupIMG(false)}}
+                onClose={() => {
+                    setArchivoPermitido('')
+                    setUbicacionBucket('')
+                    setModalupIMG(false)
+                }}
                 cargarIMG={uploadImage}
                 ubicacionBucket={unbicacionBucket}
                 tipoArchivoPermitido={ArchivoPermitido}

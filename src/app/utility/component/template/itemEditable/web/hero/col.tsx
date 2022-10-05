@@ -8,7 +8,9 @@ import { useDrop } from "react-dnd"
 
 type Model = {
     data: any
-    section: number,
+    lg: number
+    sectionData: any
+    section: number
     setEditItem: (data: any) => void
     updateElement: (data: any) => void
     removeItem: (data: any) => void
@@ -16,7 +18,7 @@ type Model = {
     moveCard: (dragIndex: number, hoverIndex: number) => void
 }
 
-const NewCol: FC<Model> = ({ section, data, moveCard, setEditItem, updateElement, removeItem, saveResourceElement }) => {
+const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, updateElement, removeItem, saveResourceElement, lg }) => {
     const [items, setItems] = useState<any>([])
     const [count, setCount] = useState<number>(0)
     const [editChildrenItem, setEditChildrenItem] = useState<any>([])
@@ -31,7 +33,6 @@ const NewCol: FC<Model> = ({ section, data, moveCard, setEditItem, updateElement
 
     const addElement = (item: any) => {
         const Element = {...item, id: generateRandomString(7), index: generateRandomString(7)}
-        console.log(Element)
         setItems((items: any) => Element)
         setEditChildrenItem(Element)
         setCount((count: number) => count = 1)
@@ -39,8 +40,7 @@ const NewCol: FC<Model> = ({ section, data, moveCard, setEditItem, updateElement
 
     const updateElementChildren = (item: []) => {
         setEditChildrenItem(item)
-        const elements = (section === 0 ? data.section1 : data.section2 )
-        const response = updateData(elements, item)
+        const response = updateData(sectionData, item)
         updateElement(EditSeccionChildren(response, 1))
     }
 
@@ -67,6 +67,15 @@ const NewCol: FC<Model> = ({ section, data, moveCard, setEditItem, updateElement
         return newElement
     }
 
+    const destroyChildren = (code:any) => {
+        updateElement(EditSeccionChildren(remote(code), 1))
+    }
+
+    const remote = (element:any) => {
+        let newBoard = {}
+        newBoard = sectionData.filter((item: any) => String(item.id) !== String(element))
+        return newBoard
+    }
     useEffect(() => {
         if (count === 1) {
             updateElement(EditSeccionChildren(items, 0))
@@ -74,9 +83,9 @@ const NewCol: FC<Model> = ({ section, data, moveCard, setEditItem, updateElement
         }
     }, [count])
     return (
-        <Col className="border border-opacity-10" style={{ minHeight: '100px' }} ref={drop}>
+        <Col className="border border-opacity-10" lg={lg} style={{ minHeight: '100px' }} ref={drop}>
             {
-                (section === 0 ? data.section1 : section === 1 ? data.section2 : data.section3).map((item: any, index: number) => {
+                sectionData.map((item: any, index: number) => {
                     return (
                         <div key={index}>
                             <ItemEditable
@@ -85,7 +94,7 @@ const NewCol: FC<Model> = ({ section, data, moveCard, setEditItem, updateElement
                                 id={item.id}
                                 index={index}
                                 moveCard={moveCard}
-                                removeItem={removeItem}
+                                removeItem={destroyChildren}
                                 setEditItem={setEditChildrenItem}
                                 updateElement={updateElementChildren}
                                 saveResourceElement={saveResourceElement}

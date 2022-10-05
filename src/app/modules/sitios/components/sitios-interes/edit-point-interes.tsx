@@ -12,6 +12,7 @@ import {
     getData,
     languagesMethod,
     statePointInteresPublished,
+    getRolesMethod,
 } from '../../../../services/api'
 import swal from 'sweetalert'
 import makeAnimated from 'react-select/animated'
@@ -21,11 +22,13 @@ import {status} from '../../../../models/status'
 import {Site} from '../../../../models/site'
 import logo from '../../upload-image_03.jpg'
 import {QRCodeCanvas} from 'qrcode.react'
-import UpImage from '../../../uploadFile/upload-image';
+import UpImage from '../../../uploadFile/upload-image'
 import {CatalogLanguage} from '../../../../models/catalogLanguage'
 import SalaRutas from '../rutas-sitios-interes/sala-rutas'
 import {CostExplorer} from 'aws-sdk'
 import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
+import {Auth} from 'aws-amplify'
+import {roleManager} from '../../../../models/roleManager'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -122,7 +125,10 @@ const EditPoint = () => {
         publicado: datospuntoInteres.publicado,
     })
     const changeOculto = async (oculto: boolean) => {
-      await  postData(statePointInteres, {id_punto: datospuntoInteres.id_punto, es_visible: oculto})
+        await postData(statePointInteres, {
+            id_punto: datospuntoInteres.id_punto,
+            es_visible: oculto,
+        })
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
@@ -142,12 +148,11 @@ const EditPoint = () => {
         })
     }
     const changePublicado = async (publicado1: boolean) => {
-      await postData(statePointInteresPublished, {
+        await postData(statePointInteresPublished, {
             id_punto: datospuntoInteres.id_punto,
             publicado: publicado1,
         })
-       
-       
+
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
@@ -186,11 +191,10 @@ const EditPoint = () => {
             }
         })
     }
-    async function postSiteMaquetar(tipo:string) {
+    async function postSiteMaquetar(tipo: string) {
         await updatePoint()
-          navigate(`/template/punto/${tipo}/${sitio.id_punto}`)
-        
-      }
+        navigate(`/template/punto/${tipo}/${sitio.id_punto}`)
+    }
 
     const saveChanges = async () => {
         swal({
@@ -221,7 +225,7 @@ const EditPoint = () => {
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
-         console.log(updatePoint)
+        console.log(updatePoint)
     }
 
     const getSites = async () => {
@@ -369,6 +373,41 @@ const EditPoint = () => {
         getLanguages()
     }, [descripcion])
 
+    // * Restricción por rol
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionPostPoint, setPermissionPostPoint] = useState(true)
+    const [permissionMockPoint, setPermissionMockPoint] = useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.sitio_editar === false) {
+                navigate('/error/401', {replace: true})
+            } else {
+                setPermissionPostPoint(filter[0]?.sitio_punto_publicar)
+                setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
+    // * Fin restricción por rol
+
     return (
         <>
             <div className=' '>
@@ -379,7 +418,7 @@ const EditPoint = () => {
                     <div className='col-xs-12 col-md-5 col-lg-6 d-flex  py-5 px-9'>
                         <div id='center'>
                             <Button
-                                className='btn-secondary fa-solid fa-less-than background-button '
+                                className='btn-secondary fa-solid fa-chevron-left background-button '
                                 id='center2'
                                 style={{display: 'flex', marginRight: '6px'}}
                                 onClick={(event) => {
@@ -485,6 +524,13 @@ const EditPoint = () => {
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
                                     onClick={() => {
+                                        if (!permissionPostPoint) {
+                                            swal({
+                                                title: 'No tienes permiso para publicar cambios de un punto de interés',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
                                         saveChanges()
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
@@ -751,6 +797,13 @@ const EditPoint = () => {
                                         <div className='row'>
                                             <Button
                                                 onClick={() => {
+                                                    if (!permissionMockPoint) {
+                                                        swal({
+                                                            title: 'No tienes permiso para maquetar un punto de interés',
+                                                            icon: 'warning',
+                                                        })
+                                                        return
+                                                    }
                                                     // addNewPoint();
                                                     // window.location.href = "../sitios";
 
@@ -789,6 +842,13 @@ const EditPoint = () => {
                                             <Button
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                                                 onClick={() => {
+                                                    if (!permissionMockPoint) {
+                                                        swal({
+                                                            title: 'No tienes permiso para maquetar un punto de interés',
+                                                            icon: 'warning',
+                                                        })
+                                                        return
+                                                    }
                                                     postSiteMaquetar('web')
                                                 }}
                                             >
@@ -796,11 +856,11 @@ const EditPoint = () => {
                                             </Button>
                                         </div>
                                         <UpImage
-                                             show={modalupimg}
-                                             onClose={() => setModalupIMG(false)}
-                                             cargarIMG={uploadImage}
-                                             ubicacionBucket={'sitePages'}
-                                             tipoArchivoPermitido={'image/*'}
+                                            show={modalupimg}
+                                            onClose={() => setModalupIMG(false)}
+                                            cargarIMG={uploadImage}
+                                            ubicacionBucket={'sitePages'}
+                                            tipoArchivoPermitido={'image/*'}
                                         />
                                     </div>
                                 </div>

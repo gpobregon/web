@@ -142,6 +142,11 @@
   list-style-type : square;
 }
 
+.list-group-bg {
+  --bs-list-group-bg: none !important;
+  --bs-list-group-border-color: none !important;
+}
+
 .min-tumbnail.ps__thumb-x {
   overflow-y: hidden;
 }
@@ -279,4 +284,53 @@ input[type=number]::-webkit-outer-spin-button {
 
 .menu-icon {
   min-width: 50px !important;
+}
+
+
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -30px; /* gutter size offset */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 30px; /* gutter size */
+  background-clip: padding-box;
+}
+
+/* Style your items */
+.my-masonry-grid_column > div { /* change div to reference your elements you put in <Masonry> */
+  background: grey;
+  margin-bottom: 30px;
+}
+
+.custom-menu-double {
+  background: none !important;
+  box-shadow: none !important;
+  /* top: 420px !important; */
+}
+
+.react-contexify__item__content {
+  background: none !important;
+  scrollbar-color: none !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.text-justify {
+  text-align: justify !important;
+}
+
+/* Optional, different gutter size on mobile */
+@media (max-width: 800px) {
+  .my-masonry-grid {
+    margin-left: -15px; /* gutter size offset */
+  }
+  .my-masonry-grid_column {
+    padding-left: 15px; /* gutter size offset */
+  }
+  .my-masonry-grid_column > div {
+    margin-bottom: 15px; /* space between items */
+  }
 }

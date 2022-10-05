@@ -22,6 +22,8 @@ import Hero2 from "./web/hero/hero2"
 import Content1 from "./web/contenido/contenido1"
 import Content2 from "./web/contenido/contenido2"
 
+import Galeria from "./web/galeria/galeria1"
+
 export interface CardProps {
   id: any
   data : any
@@ -106,8 +108,8 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, saveResourceEleme
   return (
     <Fragment>
       { data.type === 'title' && <Text saveResourceElement={saveResourceElement} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'paragraph' && <Paragraph removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
-      { data.type === 'list' && <List removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'paragraph' && <Paragraph saveResourceElement={saveResourceElement} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'list' && <List saveResourceElement={saveResourceElement} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'schedule' && <Schedule removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'url' && <Url removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'map' && <Map removeItem={removeItem} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
@@ -122,8 +124,10 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, saveResourceEleme
       { data.type === '1-hero' && <Hero1 saveResourceElement={saveResourceElement} moveCard={moveCard} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === '2-hero' && <Hero2 saveResourceElement={saveResourceElement} moveCard={moveCard} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
 
-      { data.type === 'contenido1' && <Content1 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+      { data.type === 'contenido1' && <Content1 saveResourceElement={saveResourceElement} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
       { data.type === 'contenido2' && <Content2 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
+
+      { data.type === 'galeria1' && <Galeria saveResourceElement={saveResourceElement} removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId} moveCard={moveCard} />}
     </Fragment>
   )
 }
