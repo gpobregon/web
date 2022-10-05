@@ -31,6 +31,7 @@ type sitio = {
     permissionEditSite: boolean
     permissionDeleteSite: boolean
     geo_json: string
+    cercania_activa: boolean
 }
 
 const Sitio: FC<sitio> = (props) => {
@@ -135,6 +136,7 @@ const Sitio: FC<sitio> = (props) => {
                                         publicado: props.publicado,
                                         oculto: props.oculto, 
                                         geo_json: props.geo_json,
+                                        cercania_activa:props.cercania_activa,
                                     },
                                 })
                             } else {

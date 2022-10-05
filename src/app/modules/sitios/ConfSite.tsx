@@ -139,12 +139,14 @@ const ConfSite = () => {
         publicado: false,
         oculto: false,
         geo_json: '',
+        cercania_activa:false,
     })
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
         favorito: site.favorito,
         publicado: site.favorito,
         oculto: site.oculto,
+        cercania_activa: site.cercania_activa,
     })
 
     async function getCategorys() {
@@ -192,6 +194,7 @@ const ConfSite = () => {
             publicado: status.publicado,
             oculto: status.oculto,
             geo_json: site.geo_json,
+            cercania_activa: site.cercania_activa,
         })
 
         // console.log(site);
@@ -222,6 +225,7 @@ const ConfSite = () => {
             favorito: favorito,
             publicado: publicado,
             oculto: oculto,
+            cercania_activa: site.cercania_activa,
         })
         // console.log(status)
         postDefault(statesMethod, status)
@@ -463,6 +467,7 @@ const ConfSite = () => {
                                                             publicado: site.publicado,
                                                             oculto: site.oculto,
                                                             geo_json: site.geo_json,
+                                                            cercania_activa: site.cercania_activa,
                                                         })
                                                     }
                                                 ></Link>
@@ -508,6 +513,7 @@ const ConfSite = () => {
                                                     publicado: site.publicado,
                                                     oculto: site.oculto,
                                                     geo_json: site.geo_json,
+                                                    cercania_activa: site.cercania_activa,
                                                 })
                                             }
                                         }}
@@ -547,6 +553,7 @@ const ConfSite = () => {
                                                             publicado: site.publicado,
                                                             oculto: site.oculto,
                                                             geo_json: site.geo_json,
+                                                            cercania_activa: site.cercania_activa,
                                                         })
                                                     }
                                                 }}
@@ -585,6 +592,7 @@ const ConfSite = () => {
                                                             publicado: site.publicado,
                                                             oculto: site.oculto,
                                                             geo_json: site.geo_json,
+                                                            cercania_activa: site.cercania_activa,
                                                         })
                                                     }
                                                 }}
@@ -625,6 +633,7 @@ const ConfSite = () => {
                                                     publicado: site.publicado,
                                                     oculto: site.oculto,
                                                     geo_json: site.geo_json,
+                                                    cercania_activa: site.cercania_activa,
                                                 })
                                             }
                                         }}

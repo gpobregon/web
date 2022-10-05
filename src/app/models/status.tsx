@@ -3,5 +3,6 @@ export interface status {
     favorito: boolean
     publicado: boolean
     oculto: boolean
+    cercania_activa: boolean
   }
   

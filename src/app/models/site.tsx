@@ -23,5 +23,6 @@ export interface Site {
   publicado: boolean
   oculto: boolean
   geo_json: string
+  cercania_activa: boolean
 }
 

@@ -126,6 +126,7 @@ const EditSite = () => {
         favorito: site.favorito,
         publicado: site.favorito,
         oculto: site.oculto,
+        cercania_activa: site.cercania_activa,
     })
 
     const setearStatus = () => {
@@ -134,7 +135,9 @@ const EditSite = () => {
             favorito: site.favorito,
             publicado: site.favorito,
             oculto: site.oculto,
+            cercania_activa: site.cercania_activa,
         })
+        // console.log(status)
     }
     async function getCategorys() {
         const category: any = await getData(categorysMethod)
@@ -193,7 +196,7 @@ const EditSite = () => {
             site.geo_json != ''
         ) {
             const sit: any = await postData(updateSiteMethod, sitee)
-            navigate(`/template/sitio/${tipo}/${sit.id_sitio}`)
+            navigate(`/template/sitio/${tipo}/${sitee.id_sitio}`)
         } else {
             alertNotNullInputs()
         }
@@ -202,12 +205,13 @@ const EditSite = () => {
     async function postDefault(route: string, object: any) {
         const sit: any = await postData(route, object)
     }
-    const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
+    const changeStatus = async (favorito: boolean, publicado: boolean, oculto: boolean,cercania:boolean) => {
         setStatus({
             id_sitio: site.id_sitio,
             favorito: favorito,
             publicado: publicado,
             oculto: oculto,
+            cercania_activa: cercania,
         })
         setSite({
             id_sitio: site.id_sitio,
@@ -226,10 +230,11 @@ const EditSite = () => {
             publicado: status.publicado,
             oculto: status.oculto,
             geo_json: site.geo_json,
+            cercania_activa: status.cercania_activa,
         })
         // console.log(status.favorito)
         // console.log(site)
-        postDefault(statesMethod, status)
+       await postDefault(statesMethod, status)
         const getSites = async () => {
             const site: any = await getData(sitesMethod)
             // console.log(site)
@@ -308,6 +313,7 @@ const EditSite = () => {
             publicado: status.publicado,
             oculto: status.oculto,
             geo_json: site.geo_json,
+            cercania_activa: status.cercania_activa,
         })
         console.log(site)
     }
@@ -441,7 +447,8 @@ const EditSite = () => {
                                             changeStatus(
                                                 status.favorito,
                                                 status.publicado,
-                                                status.oculto
+                                                status.oculto,
+                                                status.cercania_activa,
                                             )
                                             // : changeStatus(false, status.publicado, status.oculto)
                                         }}
@@ -490,8 +497,8 @@ const EditSite = () => {
                                 <Button
                                     className={
                                         status.oculto == false
-                                            ? 'btn-secondary fa-solid fa-eye-slash background-button'
-                                            : 'btn-secondary fa-solid fa-eye background-button'
+                                            ? 'btn-secondary fa-solid fa-eye background-button'
+                                            : 'btn-secondary fa-solid fa-eye-slash background-button'
                                     }
                                     id='center2'
                                     onClick={() => {
@@ -509,7 +516,8 @@ const EditSite = () => {
                                         changeStatus(
                                             status.favorito,
                                             status.publicado,
-                                            status.oculto
+                                            status.oculto,
+                                            status.cercania_activa
                                         )
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
@@ -553,13 +561,36 @@ const EditSite = () => {
                                         changeStatus(
                                             status.favorito,
                                             status.publicado,
-                                            status.oculto
+                                            status.oculto,
+                                            status.cercania_activa
                                         )
                                     }}
                                     className={
                                         status.publicado == false
                                             ? 'btn-secondary fa-solid fa-download background-button'
                                             : 'btn-secondary fa-solid fa-upload background-button'
+                                    }
+                                    id='center2'
+                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
+                                ></Button>
+                                
+                                <Button
+                                    onClick={() => {
+                                        // status.publicado == false
+                                        //   ? changeStatus(status.favorito, true, status.oculto)
+                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                        status.cercania_activa = !status.cercania_activa
+                                        changeStatus(
+                                            status.favorito,
+                                            status.publicado,
+                                            status.oculto,
+                                            status.cercania_activa,
+                                        )
+                                    }}
+                                    className={
+                                        status.cercania_activa == false
+                                            ? 'btn-secondary fa-solid bi-cursor background-button'
+                                            : 'btn-secondary fa-solid bi-cursor-fill background-button'
                                     }
                                     id='center2'
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
@@ -644,6 +675,7 @@ const EditSite = () => {
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
+                                                            cercania_activa:  status.cercania_activa,
                                                         })
                                                     }
                                                 ></Link>
@@ -689,6 +721,7 @@ const EditSite = () => {
                                                     publicado: status.publicado,
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
+                                                    cercania_activa:  status.cercania_activa,
                                                 })
                                             }
                                         }}
@@ -729,6 +762,7 @@ const EditSite = () => {
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
+                                                            cercania_activa: status.cercania_activa,
                                                         })
                                                     }
                                                 }}
@@ -768,6 +802,7 @@ const EditSite = () => {
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
+                                                            cercania_activa:  status.cercania_activa,
                                                         })
                                                     }
                                                 }}
@@ -809,6 +844,7 @@ const EditSite = () => {
                                                     publicado: status.publicado,
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
+                                                    cercania_activa:  status.cercania_activa,
                                                 })
                                             }
                                         }}
