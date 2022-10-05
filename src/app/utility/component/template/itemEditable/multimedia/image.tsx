@@ -1,7 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC } from "react";
+import { FC, useContext, useRef  } from "react";
+import Masonry from 'react-masonry-css'
+import Image from '../../../resource/image'
+import PerfectScrollbar from 'react-perfect-scrollbar'
+import { Popover, OverlayTrigger } from 'react-bootstrap'
 import { Menu, Item, useContextMenu } from "react-contexify";
 import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
+import { ContentContext } from '../../../../../modules/template/movil/context'
 
 type Model = {
   data: any
@@ -14,6 +19,10 @@ type Model = {
 }
 const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
+  const { allResources, destroyOneResource } = useContext(ContentContext)
+
+  const breakpointColumnsObj = { default: 2, 1100: 2, 700: 2, 500: 2 }
+
   const { show } = useContextMenu({ id: "menu-id" });
 
   const destroyItem = (e: any) => {
@@ -24,7 +33,26 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
   const saveElement = (e: any) => {
     // saveResourceElement(e.triggerEvent.target.id)
   }
-  
+
+  const popoverClick = (
+    <Popover id="popover-basic" style={{ transform: 'translate(-366px, 317px)', maxWidth: '358px'}}>
+      <Popover.Header as="h3">Imágenes</Popover.Header>
+      <Popover.Body>
+        <PerfectScrollbar style={{ height: '310px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
+          <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
+            {
+              allResources.map((file: any, index: number) => {
+                return (
+                  file.tipo.includes('image/') && <Image key={index} item={file} destroyOneResource={destroyOneResource} />
+                )
+              })
+            }
+          </Masonry>
+        </PerfectScrollbar>
+      </Popover.Body>
+    </Popover>
+  );
+
   return (
     <div
       onClick={() => setEditItem(data)}
@@ -46,10 +74,16 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
         </Item>
       </Menu>
       <div className={`editable ${data.textAling} w-100`}>
+        <OverlayTrigger 
+          trigger="click" 
+          placement="left" 
+          overlay={popoverClick} 
+        >
         <img src={!data.url ? toAbsoluteUrl("/media/png/picture.png") : data.url} alt="" className="w-75 rounded" />
-      </div>
-
+      </OverlayTrigger>
     </div>
+
+    </div >
   )
 }
 

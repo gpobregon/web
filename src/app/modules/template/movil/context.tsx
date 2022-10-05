@@ -26,6 +26,7 @@ const myBucket = new AWS.S3({
 
 export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [board, setBoard] = useState<any>([])
+    const [show, handleClose] = useState<boolean>(false)
     const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
     const [changeModeEditor, setChangeModeEditor] = useState<Number>(1)
@@ -205,7 +206,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             "url": url,
             "tipo": file.type,
             "contenido": '',
-            "tipo_elemento": '',
+            "tipo_elemento": 'multimedia',
             "es_movil": changeTypeEdit === 1 ? true : false,
             "estado": 1
         }
@@ -242,14 +243,38 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             })
     }
 
+    const uploadElement = async (data: any) => {
+        const item =
+        {
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : -1,
+            "nombre": data.nombre,
+            "url": '',
+            "tipo": data.typeElement,
+            "contenido": JSON.stringify(data),
+            "tipo_elemento": 'element',
+            "es_movil": changeTypeEdit === 1 ? true : false,
+            "estado": 1
+        }
+        const response: any = await postData('site/mobile/resource/add', item)
+        response &&
+        swal(
+            {
+                text: 'Recurso almacenado con exito',
+                icon: 'success',
+            }
+        )
+    }
+
     // Se obienen todos los recursos
     const getAllResources = async () => {
         const jsonData = {
             "id_punto": tipo === 'punto' ? id : -1,
             "id_sitio": tipo === 'sitio' ? id : -1,
+            "es_movil": changeTypeEdit === 1 ? true : false
         }
         const response: any = await postData('site/mobile/resource', jsonData)
-        if (response.data.length > 0) {
+        if (response.data) {
             setAllResource(response.data)
         }
     }
@@ -302,6 +327,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     const value = {
         drop,
+        show,
         drop2,
         board,
         oneData,
@@ -311,8 +337,10 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         ChangeMode,
         removeItem,
         setEditItem,
+        handleClose,
         oneDataSite,
         allResources,
+        uploadElement,
         discardChange,
         updateElement,
         storeTemplate,
