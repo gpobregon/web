@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useState } from "react";
+import { FC, useState, useContext } from "react";
 import ContentEditable from "react-contenteditable";
 import { stripHtml } from '../../../../../utility/global/index';
 import { useContextMenu } from "react-contexify";
 import MenuDoubleClick from '../../../menu/doubleClick'
 import ContextMenu from '../../../menu/contextMenu'
+import { ContentContext } from '../../../../../modules/template/movil/context'
 
 type Model = {
   data: any
@@ -21,9 +22,11 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const idMenu = `menu-${data.id}`
   const nameMenu = `custom-${data.id}`
 
-  const { show } = useContextMenu({ id: idMenu });
+  const { show } = useContextMenu({ id: idMenu })
   
-  const { show: showMenu2 } = useContextMenu({ id:  nameMenu });
+  const { show: showMenu2 } = useContextMenu({ id:  nameMenu })
+
+  const { uploadElement } = useContext(ContentContext)
 
   const [dataSelect, setDataSelect] = useState<any>([])
   
@@ -40,11 +43,12 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     setEditItem([])
   }
 
-  const saveElement = (e: any) => {
-    saveResourceElement(e.triggerEvent.target.id)
+  const saveElement = () => {
+    uploadElement(dataSelect)
   }
 
   const OpenMenu = (e: any, data: any) => {
+    setEditItem(data)
     setDataSelect(data)
     show(e)
   }
