@@ -9,7 +9,7 @@ type FormData = {
 
 const Index = () => {
     const { handleClose, show, editItem, uploadElement } = useContext(ContentContext)
-    const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm<FormData>()
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>()
     const storeElement = (data: any) => {
         const item = {
             ...editItem,
@@ -17,6 +17,7 @@ const Index = () => {
 
         }
         uploadElement(item)
+        reset()
     }
     return (
         <Modal

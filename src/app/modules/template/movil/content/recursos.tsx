@@ -1,14 +1,16 @@
 import { Fragment, useEffect, useContext } from 'react'
 import { Row, Col, InputGroup, Form } from 'react-bootstrap'
-import PerfectScrollbar from 'react-perfect-scrollbar'
-import { useDropzone } from 'react-dropzone';
-import AudioResource from '../../../../utility/component/resource/audio';
+import ElementDrag from "../../../../utility/component/Element/elementDragResource";
+import AudioResource from '../../../../utility/component/resource/audio'
 import Image from '../../../../utility/component/resource/image'
+import PerfectScrollbar from 'react-perfect-scrollbar'
+import { useDropzone } from 'react-dropzone'
 import { ContentContext } from '../context'
 import Masonry from 'react-masonry-css'
+import CustomCollapse from './collapse'
 
 const Recursos = () => {
-    const { uploadResource, allResources, destroyOneResource } = useContext(ContentContext)
+    const { uploadResource, allResources, allResourcesElement, destroyOneResource } = useContext(ContentContext)
     const breakpointColumnsObj = { default: 2, 1100: 2, 700: 2, 500: 2 }
     const { getRootProps, getInputProps } = useDropzone({
         accept: { 'image/*': [], 'video/*': [], 'audio/*': [] },
@@ -19,9 +21,23 @@ const Recursos = () => {
             uploadResource(item[0], 1)
         }
     });
+
     const thumbs = allResources.map((file: any, index: number) => {
         return (
             file.tipo.includes('image/') ? <Image key={index} item={file} destroyOneResource={destroyOneResource} /> : <AudioResource item={file} destroyOneResource={destroyOneResource} />
+        )
+    })
+
+    const ResourceElement = allResourcesElement.map((file: any, index: number) => {
+        return (
+            <Col lg={6} key={index}>
+                <ElementDrag
+                    key={index}
+                    item={file}
+                    data={JSON.parse(file.contenido)}
+                    destroyOneResource={destroyOneResource}
+                />
+            </Col>
         )
     })
 
@@ -46,9 +62,16 @@ const Recursos = () => {
             </Row>
 
             <PerfectScrollbar style={{ height: '310px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
-                <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
-                    { thumbs }
-                </Masonry>
+                <CustomCollapse title='Multimedia'>
+                    <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
+                        {thumbs}
+                    </Masonry>
+                </CustomCollapse>
+                <CustomCollapse title='Elementos'>
+                    <Row>
+                        {ResourceElement}
+                    </Row>
+                </CustomCollapse>
             </PerfectScrollbar>
 
             <Row className="pt-5">

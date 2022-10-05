@@ -22,10 +22,6 @@ const Schedule: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditI
     setEditItem([])
   }
 
-  const saveElement = (e: any) => {
-    // saveResourceElement(e.triggerEvent.target.id)
-  }
-
   return (
     <div
       ref={referencia}
@@ -40,7 +36,7 @@ const Schedule: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditI
         <Item onClick={(e: any) => destroyItem(e)}>
           <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
         </Item>
-        <Item onClick={(e: any) => saveElement(e)}>
+        <Item >
           <i className="fa fa-save text-success pe-4" />Guardar Recurso
         </Item>
       </Menu>

@@ -42,11 +42,12 @@ export const dataURLtoFile = (dataurl, filename) => {
 const textElement = ["title", "paragraph", "list"]
 const informationElement = ["curious-fact", "regulation", "schedule", "calendar", "event"]
 const MultimediaElement = ["image", "video", "audio", "carousel", "image-360"]
-const OthersElement = ["url", "document", "transportation", "map", "climate", "ticket"]
+const OthersElement = ["url", "map"]
 const Hero = ["1-hero", "2-hero"]
 const Contenido = ["contenido1", "contenido2"]
 const Galeria = ["galeria1", "galeria2"]
 const Footer = ['footer1', 'footer2']
+export const elementData = [...textElement, ...informationElement, ...MultimediaElement, ...OthersElement]
 
 export const validElement = (type) => {
     let Array = []
@@ -90,6 +91,7 @@ export default {
     stripHtml,
     appendData,
     updateData,
+    elementData,
     setDataList,
     validElement,
     dataURLtoFile,

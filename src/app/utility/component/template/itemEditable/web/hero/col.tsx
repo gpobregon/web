@@ -14,11 +14,10 @@ type Model = {
     setEditItem: (data: any) => void
     updateElement: (data: any) => void
     removeItem: (data: any) => void
-    saveResourceElement: (data: string) => void
     moveCard: (dragIndex: number, hoverIndex: number) => void
 }
 
-const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, updateElement, removeItem, saveResourceElement, lg }) => {
+const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, updateElement, removeItem, lg }) => {
     const [items, setItems] = useState<any>([])
     const [count, setCount] = useState<number>(0)
     const [editChildrenItem, setEditChildrenItem] = useState<any>([])
@@ -97,7 +96,6 @@ const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, 
                                 removeItem={destroyChildren}
                                 setEditItem={setEditChildrenItem}
                                 updateElement={updateElementChildren}
-                                saveResourceElement={saveResourceElement}
                             />
                         </div>
                     )

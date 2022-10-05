@@ -12,10 +12,9 @@ type Model = {
     setEditItem: (data : any) => void
     updateElement: (data : any) => void
     removeItem: (data : any) => void
-    saveResourceElement: (data: string) => void
     moveCard: (dragIndex: number, hoverIndex: number) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResourceElement, moveCard, setEditItem, updateElement, removeItem }) => { 
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, setEditItem, updateElement, removeItem }) => { 
   
   const { show } = useContextMenu({ id: "menu-id" });  
     
@@ -51,7 +50,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
                         removeItem={removeItem}
                         setEditItem={setEditItem}
                         updateElement={updateElement}
-                        saveResourceElement={saveResourceElement}
                       />
                   </Row>
                   <Row>
@@ -64,7 +62,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
                         removeItem={removeItem}
                         setEditItem={setEditItem}
                         updateElement={updateElement}
-                        saveResourceElement={saveResourceElement}
                       />
                   </Row>
                 </Col>
@@ -77,7 +74,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
                   removeItem={removeItem}
                   setEditItem={setEditItem}
                   updateElement={updateElement}
-                  saveResourceElement={saveResourceElement}
                 />
               </Row>
             </div>

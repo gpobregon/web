@@ -5,7 +5,6 @@ import { stripHtml } from '../../../../../utility/global/index';
 import { useContextMenu } from "react-contexify";
 import MenuDoubleClick from '../../../menu/doubleClick'
 import ContextMenu from '../../../menu/contextMenu'
-import { ContentContext } from '../../../../../modules/template/movil/context'
 
 type Model = {
   data: any
@@ -15,9 +14,8 @@ type Model = {
   setEditItem: (data: any) => void
   updateElement: (data: any) => void
   removeItem: (data: any) => void
-  saveResourceElement: (data: string) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem, saveResourceElement }) => {
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
   
   const idMenu = `menu-${data.id}`
   const nameMenu = `custom-${data.id}`
@@ -25,8 +23,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const { show } = useContextMenu({ id: idMenu })
   
   const { show: showMenu2 } = useContextMenu({ id:  nameMenu })
-
-  const { uploadElement } = useContext(ContentContext)
 
   const [dataSelect, setDataSelect] = useState<any>([])
   
@@ -42,11 +38,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     removeItem(dataSelect.id);
     setEditItem([])
   }
-
-  const saveElement = () => {
-    uploadElement(dataSelect)
-  }
-
+  
   const OpenMenu = (e: any, data: any) => {
     setEditItem(data)
     setDataSelect(data)
@@ -70,7 +62,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       </div>
       <ContextMenu 
         destroyItem={destroyItem}
-        saveElement={saveElement}
         idMenu={idMenu}
       />
       <MenuDoubleClick 

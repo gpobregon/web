@@ -35,10 +35,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     return response;
   }
 
-  const saveElement = (e: any) => {
-    // saveResourceElement(e.triggerEvent.target.id)
-  }
-
   return (
     <div
       ref={referencia}
@@ -53,7 +49,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
         <Item onClick={(e: any) => destroyItem(e)}>
           <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
         </Item>
-        <Item onClick={(e: any) => saveElement(e)}>
+        <Item>
           <i className="fa fa-save text-success pe-4" />Guardar Recurso
         </Item>
       </Menu>

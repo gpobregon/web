@@ -19,10 +19,6 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
     removeItem(e.triggerEvent.target.id);
     setEditItem([])
   }
-
-  const saveElement = (e: any) => {
-    // saveResourceElement(e.triggerEvent.target.id)
-  }
   
   return (
     <div
@@ -43,7 +39,7 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
             <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
           </div>
         </Item>
-        <Item onClick={(e: any) => saveElement(e)}>
+        <Item >
           <i className="fa fa-save text-success pe-4" />Guardar Recurso
         </Item>
       </Menu>

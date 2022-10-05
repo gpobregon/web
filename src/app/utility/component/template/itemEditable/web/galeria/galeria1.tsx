@@ -12,11 +12,10 @@ type Model = {
   removeItem: (data: any) => void
   setEditItem: (data: any) => void
   updateElement: (data: any) => void
-  saveResourceElement: (data: string) => void
   moveCard: (dragIndex: number, hoverIndex: number) => void
 }
 
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResourceElement, moveCard, setEditItem, updateElement, removeItem }) => {
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, setEditItem, updateElement, removeItem }) => {
 
   const { show } = useContextMenu({ id: "menu-id" });
   const { show: showMenu2 } = useContextMenu({ id: "menu-custom" });
@@ -51,7 +50,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
             updateElement={updateElement}
             moveCard={moveCard}
             removeItem={removeItem}
-            saveResourceElement={saveResourceElement}
           />
           <Col className="border border-opacity-10" tyle={{ minHeight: '100px' }}>
           
