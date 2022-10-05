@@ -193,7 +193,7 @@ const EditPoint = () => {
     }
     async function postSiteMaquetar(tipo: string) {
         await updatePoint()
-        navigate(`/template/punto/${tipo}/${sitio.id_punto}`)
+        navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${sitio.id_punto}`)
     }
 
     const saveChanges = async () => {
@@ -225,7 +225,7 @@ const EditPoint = () => {
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
-        console.log(updatePoint)
+        // console.log(updatePoint)
     }
 
     const getSites = async () => {

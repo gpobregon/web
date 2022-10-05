@@ -830,17 +830,14 @@ const AddRoute = () => {
                                                     <div className='card-header row'>
                                                         <h5 className='card-title'>
                                                             Imagenes de Referencia
-                                                        </h5>
-
-                                                        {getimg.length === 0 ? (
-                                                            <>
+                                                        </h5>                                                      
                                                                 <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6 '>
                                                                     <Card.Img
                                                                         src={
-                                                                            imgtempomodal.imagen1 ==
+                                                                            getimg[0]?.img_path ==
                                                                             ''
                                                                                 ? logo
-                                                                                : imgtempomodal.imagen1
+                                                                                : getimg[0]?.img_path
                                                                         }
                                                                         alt='Card image cap'
                                                                         style={{
@@ -848,7 +845,7 @@ const AddRoute = () => {
                                                                             borderRadius: '10px',
                                                                         }}
                                                                         onClick={
-                                                                            imgtempomodal.imagen1 ==
+                                                                            getimg[0]?.img_path ==
                                                                             ''
                                                                                 ? (e) => {
                                                                                       if (
@@ -893,6 +890,10 @@ const AddRoute = () => {
                                                                                         }
                                                                                         setModalupIMG(
                                                                                             true
+                                                                                        )
+                                                                                        setId(-1)
+                                                                                        setnumeroImg(
+                                                                                            1
                                                                                         )
                                                                                     }}
                                                                                 ></Link>
@@ -968,6 +969,10 @@ const AddRoute = () => {
                                                                                         setModalupIMG(
                                                                                             true
                                                                                         )
+                                                                                        setId(-1)
+                                                                                        setnumeroImg(
+                                                                                            2
+                                                                                        )
                                                                                     }}
                                                                                 ></Link>
                                                                             </Col>
@@ -1033,6 +1038,10 @@ const AddRoute = () => {
                                                                                         setModalupIMG(
                                                                                             true
                                                                                         )
+                                                                                        setId(-1)
+                                                                                        setnumeroImg(
+                                                                                            3
+                                                                                        )
                                                                                     }}
                                                                                 ></Link>
                                                                             </Col>
@@ -1055,89 +1064,8 @@ const AddRoute = () => {
                                                                         </Row>
                                                                     </div>
                                                                 </div>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                {getimg?.map((img, index) => (
-                                                                    <div
-                                                                        className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6'
-                                                                        key={index}
-                                                                    >
-                                                                        <Card.Img
-                                                                            src={
-                                                                                img.img_path == ''
-                                                                                    ? logo
-                                                                                    : img.img_path
-                                                                            }
-                                                                            alt='Card image cap'
-                                                                            style={{
-                                                                                height: '248px',
-                                                                                borderRadius:
-                                                                                    '10px',
-                                                                            }}
-                                                                            onClick={
-                                                                                img.img_path == ''
-                                                                                    ? (e) => {
-                                                                                          setModalupIMG(
-                                                                                              true
-                                                                                          )
-                                                                                          setId(
-                                                                                              img.id_image
-                                                                                          )
-                                                                                          setnumeroImg(
-                                                                                              index
-                                                                                          )
-                                                                                      }
-                                                                                    : (e) => {}
-                                                                            }
-                                                                        />
-                                                                        <div className='card-body '>
-                                                                            <Row>
-                                                                                <Col>
-                                                                                    {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                                </Col>
-
-                                                                                <Col>
-                                                                                    <Link
-                                                                                        className='bi bi-arrow-left-right background-button text-info'
-                                                                                        to={''}
-                                                                                        onClick={() => {
-                                                                                            setModalupIMG(
-                                                                                                true
-                                                                                            )
-                                                                                            setId(
-                                                                                                img.id_image
-                                                                                            )
-                                                                                            setnumeroImg(
-                                                                                                index
-                                                                                            )
-                                                                                        }}
-                                                                                    ></Link>
-                                                                                </Col>
-                                                                                <Col>
-                                                                                    {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                                </Col>
-                                                                                <Col>
-                                                                                    {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                                </Col>
-                                                                                <Col>
-                                                                                    <Link
-                                                                                        className='bi bi-trash background-button text-danger'
-                                                                                        to={''}
-                                                                                        onClick={() => {
-                                                                                            getimg[
-                                                                                                index
-                                                                                            ].img_path =
-                                                                                                ''
-                                                                                        }}
-                                                                                    ></Link>
-                                                                                </Col>
-                                                                            </Row>
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
-                                                            </>
-                                                        )}
+                                                           
+                                                        
                                                     </div>
                                                 </div>
                                             </>
