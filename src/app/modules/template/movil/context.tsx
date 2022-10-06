@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-pattern */
 // context/todoContext.tsx
-import { updateData, appendData, validElement, generateRandomString } from '../../../utility/global/index'
+import { updateData, appendData, generateRandomString } from '../../../utility/global/index'
 import { createContext, FC, useState, useCallback, useEffect, useContext } from 'react'
 import { WithChildren } from '../../../utility/models/childrenContext'
 import { LoadingContext } from '../../../utility/component/loading/context'
@@ -91,6 +91,21 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             isOver: !!monitor.isOver(),
         }),
     }));
+
+    const addResourceGaleria = (item: any) => {
+        console.log(item)
+    }
+
+    const [{ }, dropGraleria] = useDrop(() => ({
+        accept: "image",
+        drop: (item: any) => addResourceGaleria(item),
+        collect: (monitor) => ({
+            isOver: !!monitor.isOver(),
+        }),
+    }));
+
+
+
 
     // Arrastrar elemento 
     const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
@@ -191,7 +206,14 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     const oneSite = async () => {
-        const response: any = await getData(`site/${id}`)
+        let response: any
+        if(tipo === 'punto') {
+            response = await postData(`site/rooms`, {"id_sitio": idSitio })
+            // response =  response.salas.filter((item: any) => String(item.id) !== String(id))
+        } else {
+            response = await getData(`site/${id}`)
+        }
+        
         setOneDataSite(response.site ? response.site : [])
     }
 
@@ -346,6 +368,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         handleClose,
         oneDataSite,
         allResources,
+        dropGraleria,
         uploadElement,
         discardChange,
         updateElement,

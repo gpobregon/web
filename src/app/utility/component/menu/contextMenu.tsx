@@ -10,8 +10,6 @@ type Model = {
 
 const MenuContext: FC<Model> = ({ destroyItem, idMenu }) => {
 
-  // const elements = ["title", "paragraph", "list", "curious-fact", "regulation", "schedule", "calendar", "event", "image", "video", "audio", "carousel", "image-360", "url", "map"]
-
   const { handleClose, editItem } = useContext(ContentContext)
 
   const preventHide = ({ event }: any) => {
