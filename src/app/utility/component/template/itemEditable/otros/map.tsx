@@ -4,6 +4,7 @@
 import { FC, useState } from "react";
 import { Image } from 'react-bootstrap';
 import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
+import { interpretHTML } from '../../../../../utility/global/index';
 import { useContextMenu } from "react-contexify";
 import MenuDoubleClick from '../../../menu/doubleClick'
 import ContextMenu from '../../../menu/contextMenu'
@@ -29,15 +30,9 @@ const Url: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElemen
     const [dataSelect, setDataSelect] = useState<any>([])
 
     const destroyItem = (e: any) => {
-        removeItem(e.triggerEvent.target.id);
+        removeItem(dataSelect.id);
         setEditItem([])
     }
-
-    function interpretHTML(data: any) {
-        return {
-            __html: data && data
-        };
-    };
 
     const OpenMenu = (e: any, data: any) => {
         setEditItem(data)
@@ -50,7 +45,7 @@ const Url: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElemen
             ref={referencia}
             data-handler-id={handlerId}
             onClick={() => setEditItem(data)}
-            className="d-flex cursor-grabbing"
+            className="d-flex cursor-grabbing my-3"
         >
             <div
                 className="p-1 py-1 d-flex align-items-center"

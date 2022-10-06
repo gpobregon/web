@@ -38,6 +38,11 @@ export const dataURLtoFile = (dataurl, filename) => {
     return new File([u8arr], filename, {type:mime});
 }
 
+export function interpretHTML(data) {
+    return {
+        __html: data && data
+    };
+};
 
 const textElement = ["title", "paragraph", "list"]
 const informationElement = ["curious-fact", "regulation", "schedule", "calendar", "event"]
@@ -95,5 +100,6 @@ export default {
     setDataList,
     validElement,
     dataURLtoFile,
+    interpretHTML,
     generateRandomString
 }

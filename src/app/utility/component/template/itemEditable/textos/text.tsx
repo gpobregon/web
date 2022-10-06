@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useState, useContext } from "react";
+import { FC, useState } from "react";
 import ContentEditable from "react-contenteditable";
 import { stripHtml } from '../../../../../utility/global/index';
 import { useContextMenu } from "react-contexify";
@@ -16,16 +16,16 @@ type Model = {
   removeItem: (data: any) => void
 }
 const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
-  
+
   const idMenu = `menu-${data.id}`
   const nameMenu = `custom-${data.id}`
 
   const { show } = useContextMenu({ id: idMenu })
-  
-  const { show: showMenu2 } = useContextMenu({ id:  nameMenu })
+
+  const { show: showMenu2 } = useContextMenu({ id: nameMenu })
 
   const [dataSelect, setDataSelect] = useState<any>([])
-  
+
   const changeText = (e: any) => {
     const edit = {
       ...data,
@@ -38,7 +38,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     removeItem(dataSelect.id);
     setEditItem([])
   }
-  
+
   const OpenMenu = (e: any, data: any) => {
     setEditItem(data)
     setDataSelect(data)
@@ -60,11 +60,11 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       >
         <i className="bi bi-grip-vertical fa-2x" id={data.id} />
       </div>
-      <ContextMenu 
+      <ContextMenu
         destroyItem={destroyItem}
         idMenu={idMenu}
       />
-      <MenuDoubleClick 
+      <MenuDoubleClick
         updateElement={updateElement}
         nameMenu={nameMenu}
         editItem={data}

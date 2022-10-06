@@ -1,7 +1,10 @@
+/* eslint-disable no-self-compare */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, Fragment } from "react";
+import { FC, Fragment, useState } from "react";
 import { Row, Col } from 'react-bootstrap'
-import { Menu, Item, useContextMenu } from "react-contexify";
+import { useContextMenu } from "react-contexify";
+import MenuDoubleClick from '../../../menu/doubleClick'
+import ContextMenu from '../../../menu/contextMenu'
 import { meses } from '../../../../../utility/global/data'
 
 type Model = {
@@ -15,12 +18,14 @@ type Model = {
 }
 const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
-  const { show } = useContextMenu({ id: "menu-id" });
+  const idMenu = `menu-${data.id}`
+  const nameMenu = `custom-${data.id}`
 
-  const destroyItem = (e: any) => {
-    removeItem(e.triggerEvent.target.id);
-    setEditItem([])
-  }
+  const { show } = useContextMenu({ id: idMenu })
+
+  const { show: showMenu2 } = useContextMenu({ id: nameMenu })
+
+  const [dataSelect, setDataSelect] = useState<any>([])
 
   const getSplitDate = (date: any, type: number) => {
 
@@ -35,6 +40,17 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     return response;
   }
 
+  const destroyItem = (e: any) => {
+    removeItem(dataSelect.id);
+    setEditItem([])
+  }
+
+  const OpenMenu = (e: any, data: any) => {
+    setEditItem(data)
+    setDataSelect(data)
+    show(e)
+  }
+
   return (
     <div
       ref={referencia}
@@ -42,21 +58,29 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       onClick={() => setEditItem(data)}
       className="d-flex cursor-grabbing"
     >
-      <div className="p-1 py-1 d-flex align-items-center" onContextMenu={show} id={data.id}>
+      <div
+        className="p-1 py-1 d-flex align-items-center"
+        id={data.id}
+        onContextMenu={(e: any) => OpenMenu(e, data)}
+        onDoubleClick={showMenu2}
+      >
         <i className="bi bi-grip-vertical fa-2x" id={data.id} />
       </div>
-      <Menu id={"menu-id"} theme="dark" data-test={data}>
-        <Item onClick={(e: any) => destroyItem(e)}>
-          <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
-        </Item>
-        <Item>
-          <i className="fa fa-save text-success pe-4" />Guardar Recurso
-        </Item>
-      </Menu>
+      <ContextMenu
+        destroyItem={destroyItem}
+        idMenu={idMenu}
+      />
+      <MenuDoubleClick
+        updateElement={updateElement}
+        nameMenu={nameMenu}
+        editItem={data}
+      />
+
       <Row className={`py-2 flex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
-        <Col lg={3} sm={4} xs={5}>
+        <Col lg={4} sm={4} xs={5}>
           <div className="d-flex flex-column text-center border rounded">
-            <div className="p-2 border-bottom">{getSplitDate(data.startDate, 2) || 'Mes'}</div>
+            <div className="p-2 small">{(getSplitDate(data.startDate, 3) === getSplitDate(data.finalDate, 3)) ? getSplitDate(data.startDate, 3) : `${getSplitDate(data.startDate, 3)} - ${getSplitDate(data.finalDate, 3)}`}</div>
+            <div className="p-2 border-bottom small">{getSplitDate(data.startDate, 2)  || 'Mes'} { getSplitDate(data.finalDate, 2) !== getSplitDate(data.startDate, 2) ? `- ${getSplitDate(data.finalDate, 2)}` : '' }</div>
             <div className="p-2">
               {
                 (data.finalDate === data.startDate || data.finalDate === '0000-00-00' || data.finalDate === '') ? getSplitDate(data.startDate, 1) : <Fragment>{getSplitDate(data.startDate, 1)} - {getSplitDate(data.finalDate, 1)}</Fragment>
@@ -64,7 +88,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
             </div>
           </div>
         </Col>
-        <Col lg={9} sm={8} xs={8}>
+        <Col lg={8} sm={8} xs={8}>
           {data.text}
         </Col>
       </Row>
