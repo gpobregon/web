@@ -60,23 +60,19 @@ const AddRoute = () => {
     const {state} = useLocation()
     const [puntos, setpuntos] = useState(state as datosPuntoInteres)
     const [ruta, setruta] = useState<Route>()
-    const [catidadpasos, setCatidadpasos] = useState<number>(0)
-    const [arraypasos, setArraypasos] = useState<Paso[]>([])
-    const [getimg, setGetimg] = useState<Imagen[]>([])
+  
+    const [getimg, setGetimg] = useState<Imagen>({
+        id_punto_a: 0,
+        id_punto_b: 0,
+        imagen_ref1: '',
+        imagen_ref2: '',
+        imagen_ref3: '',
+    })
     const [modalupimg, setModalupIMG] = useState(false)
     const [agregrarPaso, setagregrarPaso] = useState<any>([])
 
-    const [pasoss, setPasos] = useState({
-        id_punto_a: puntos.id_punto_a,
-        id_punto_b: puntos.id_punto_b,
-        paso: arraypasos,
-    })
-    const [arrayimagenes, setArrayimagenes] = useState<any[]>([])
-    const [imganes, setImagenes] = useState({
-        id_punto_a: puntos.id_punto_a,
-        id_punto_b: puntos.id_punto_b,
-        imagenes: arrayimagenes,
-    })
+   
+    
     const [imgprincipal, setImgprincipal] = useState({
         id_punto_a: puntos.id_punto_a,
         id_punto_b: puntos.id_punto_b,
@@ -93,13 +89,17 @@ const AddRoute = () => {
         })
         setruta(route)
         setagregrarPaso(route.pasos)
-        if (
-            (imgtempomodal.imagen1 == '' &&
-                imgtempomodal.imagen2 == '' &&
-                imgtempomodal.imagen3 == '') ||
-            (getimg[0]?.img_path == '' && getimg[1]?.img_path == '' && getimg[2]?.img_path == '')
-        ) {
-            setGetimg(route.imagenes as Imagen[])
+        // console.log(route)
+       
+        // console.log(getimg)
+        if (getimg.imagen_ref1==="" && getimg.imagen_ref2==="" && getimg.imagen_ref3==="") {
+            setGetimg({
+                id_punto_a: puntos.id_punto_a,
+                id_punto_b: puntos.id_punto_b,
+                imagen_ref1: route.imagen_ref1,
+                imagen_ref2: route.imagen_ref2,
+                imagen_ref3: route.imagen_ref3,
+            })
             imgprincipal.img_principal = route.img_principal
         }
     }
@@ -112,19 +112,25 @@ const AddRoute = () => {
         // addImagePrincipal
         // addImages
         if (lenguajes.id_lenguaje != 0) {
-            if (imgprincipal.img_principal != '') {
+            // if (imgprincipal.img_principal != '') {
+                if(getimg.imagen_ref1===null){
+                    getimg.imagen_ref1=""
+                }
+                if(getimg.imagen_ref2===null){
+                    getimg.imagen_ref2=""
+                }
+                if(getimg.imagen_ref3===null){
+                    getimg.imagen_ref3=""
+                }
+                // console.log(getimg)
                 await postData(addImagePrincipal, imgprincipal)
-            } else {
-                swal('Error', 'Falta agregar alguna imagen', 'error')
-                return
-            }
-            if (
-                (imgtempomodal.imagen1 != '' &&
-                    imgtempomodal.imagen2 != '' &&
-                    imgtempomodal.imagen3 != '') ||
-                getimg.length == 3
-            ) {
-                await postData(addImages, imganes)
+                await postData(addImages, getimg)
+            // } else {
+            //     swal('Error', 'Falta agregar alguna imagen', 'error')
+            //     return
+            // }
+       
+               
                 await postData(addPasos, {
                     id_punto_a: ruta?.id_punto_a,
                     id_punto_b: ruta?.id_punto_b,
@@ -162,9 +168,7 @@ const AddRoute = () => {
                         timer: 2000,
                     })
                 })
-            } else {
-                swal('Error', 'Falta agregar alguna imagen', 'error')
-            }
+            
         } else {
             swal('Error', 'Falta seleccionar el lenguaje', 'error')
         }
@@ -183,79 +187,20 @@ const AddRoute = () => {
     const [contador, setContador] = useState<number>(0)
     const navigate = useNavigate()
 
-    const imagenesReferencias = async (url: string) => {
-        if (id === -1) {
-            //agregar iamgen de referencia por primera vez
-            console.log(imgtempomodal)
-            // arrayimagenes.push({
-            //     id_image: -1,
-            //     descripcion: '',
-            //     posicion_en_lista: 1,
-            //     img_path: URLAWS +"sitePages/"+ url,
-            //     estado: 1
-            // })
-            setImagenes({
-                id_punto_a: puntos.id_punto_a,
-                id_punto_b: puntos.id_punto_b,
-                imagenes: [
-                    {
-                        id_image: -1,
-                        descripcion: '',
-                        posicion_en_lista: 1,
-                        img_path: imgtempomodal.imagen1,
-                        estado: 1,
-                    },
-                    {
-                        id_image: -1,
-                        descripcion: '',
-                        posicion_en_lista: 2,
-                        img_path: imgtempomodal.imagen2,
-                        estado: 1,
-                    },
-                    {
-                        id_image: -1,
-                        descripcion: '',
-                        posicion_en_lista: 3,
-                        img_path: imgtempomodal.imagen3,
-                        estado: 1,
-                    },
-                ],
-            })
-        } else if (id === 0) {
-            //  agregar imagenPrincipal;
-
-            imgprincipal.img_principal = URLAWS + 'sitePages/' + url
-            ruta!.img_principal = URLAWS + 'sitePages/' + url
-        } else {
-            //editar imagen de referencia
-            getimg[numeroImg].img_path = URLAWS + 'sitePages/' + url //mostrar la imagen en el modal
-            // arrayimagenes.push({
-            //     id_image: id,
-            //     descripcion: '',
-            //     posicion_en_lista: numeroImg,
-            //     img_path: URLAWS + url,
-            //     estado: 1
-            // })
-            setImagenes({
-                id_punto_a: puntos.id_punto_a,
-                id_punto_b: puntos.id_punto_b,
-                imagenes: getimg,
-            })
-        }
-    }
     const uploadImage = async (imagen: string) => {
         if (imagen != '') {
-            if (id != 0) {
+          
                 if (numeroImg === 1) {
-                    imgtempomodal.imagen1 = URLAWS + 'sitePages/' + imagen
+                    getimg.imagen_ref1 = URLAWS + 'sitePages/' + imagen
                 } else if (numeroImg === 2) {
-                    imgtempomodal.imagen2 = URLAWS + 'sitePages/' + imagen
+                    getimg.imagen_ref2 = URLAWS + 'sitePages/' + imagen
                 } else if (numeroImg === 3) {
-                    imgtempomodal.imagen3 = URLAWS + 'sitePages/' + imagen
+                    getimg.imagen_ref3 = URLAWS + 'sitePages/' + imagen
+                }else if(numeroImg===0){
+                    imgprincipal.img_principal = URLAWS + 'sitePages/' + imagen
                 }
-            }
+            
             setModalupIMG(false)
-            imagenesReferencias(imagen)
         }
     }
     //Selecciona idoma de la guia
@@ -356,7 +301,14 @@ const AddRoute = () => {
         await obtenerRuta()
     }
     const addNewPaso = async () => {
-        await postData(addPasos, {
+       const a:any= await postData(addPasos, {
+            id_punto_a: puntos.id_punto_a,
+            id_punto_b: puntos.id_punto_b,
+            pasos: agregrarPaso,
+            id_lenguaje: lenguajes.id_lenguaje,
+        })
+        console.log(a)
+        console.log({
             id_punto_a: puntos.id_punto_a,
             id_punto_b: puntos.id_punto_b,
             pasos: agregrarPaso,
@@ -759,7 +711,7 @@ const AddRoute = () => {
                                                                           return
                                                                       }
                                                                       setModalupIMG(true)
-                                                                      setId(0)
+                                                                      setnumeroImg(0)
                                                                   }
                                                                 : (e) => {}
                                                         }
@@ -790,7 +742,7 @@ const AddRoute = () => {
                                                                         }
 
                                                                         setModalupIMG(true)
-                                                                        setId(0)
+                                                                        setnumeroImg(0)
                                                                     }}
                                                                 ></Link>
                                                             </Col>
@@ -834,10 +786,9 @@ const AddRoute = () => {
                                                                 <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6 '>
                                                                     <Card.Img
                                                                         src={
-                                                                            getimg[0]?.img_path ==
-                                                                            ''
+                                                                            getimg.imagen_ref1 =='' || getimg.imagen_ref1 == null
                                                                                 ? logo
-                                                                                : getimg[0]?.img_path
+                                                                                : getimg.imagen_ref1
                                                                         }
                                                                         alt='Card image cap'
                                                                         style={{
@@ -845,8 +796,7 @@ const AddRoute = () => {
                                                                             borderRadius: '10px',
                                                                         }}
                                                                         onClick={
-                                                                            getimg[0]?.img_path ==
-                                                                            ''
+                                                                            getimg.imagen_ref1 =='' || getimg.imagen_ref1 == null
                                                                                 ? (e) => {
                                                                                       if (
                                                                                           !permissionEditRouteImage
@@ -860,7 +810,7 @@ const AddRoute = () => {
                                                                                       setModalupIMG(
                                                                                           true
                                                                                       )
-                                                                                      setId(-1)
+                                                                                    
                                                                                       setnumeroImg(
                                                                                           1
                                                                                       )
@@ -891,7 +841,7 @@ const AddRoute = () => {
                                                                                         setModalupIMG(
                                                                                             true
                                                                                         )
-                                                                                        setId(-1)
+                                                                                        
                                                                                         setnumeroImg(
                                                                                             1
                                                                                         )
@@ -918,7 +868,7 @@ const AddRoute = () => {
                                                                                             })
                                                                                             return
                                                                                         }
-                                                                                        imgtempomodal.imagen1 =
+                                                                                        getimg.imagen_ref1=
                                                                                             ''
                                                                                     }}
                                                                                 ></Link>
@@ -930,10 +880,9 @@ const AddRoute = () => {
                                                                 <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6'>
                                                                     <Card.Img
                                                                         src={
-                                                                            imgtempomodal.imagen2 ==
-                                                                            ''
+                                                                            getimg.imagen_ref2 =='' || getimg.imagen_ref2 == null  
                                                                                 ? logo
-                                                                                : imgtempomodal.imagen2
+                                                                                : getimg.imagen_ref2
                                                                         }
                                                                         alt='Card image cap'
                                                                         style={{
@@ -941,13 +890,12 @@ const AddRoute = () => {
                                                                             borderRadius: '10px',
                                                                         }}
                                                                         onClick={
-                                                                            imgtempomodal.imagen2 ==
-                                                                            ''
+                                                                            getimg.imagen_ref2 =='' || getimg.imagen_ref2 == null  
                                                                                 ? (e) => {
                                                                                       setModalupIMG(
                                                                                           true
                                                                                       )
-                                                                                      setId(-1)
+                                                                                     
                                                                                       setnumeroImg(
                                                                                           2
                                                                                       )
@@ -969,7 +917,7 @@ const AddRoute = () => {
                                                                                         setModalupIMG(
                                                                                             true
                                                                                         )
-                                                                                        setId(-1)
+                                                                                        
                                                                                         setnumeroImg(
                                                                                             2
                                                                                         )
@@ -987,7 +935,7 @@ const AddRoute = () => {
                                                                                     className='bi bi-trash background-button text-danger'
                                                                                     to={''}
                                                                                     onClick={() => {
-                                                                                        imgtempomodal.imagen2 =
+                                                                                        getimg.imagen_ref2 =
                                                                                             ''
                                                                                     }}
                                                                                 ></Link>
@@ -999,10 +947,9 @@ const AddRoute = () => {
                                                                 <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6'>
                                                                     <Card.Img
                                                                         src={
-                                                                            imgtempomodal.imagen3 ==
-                                                                            ''
+                                                                            getimg.imagen_ref3 =='' || getimg.imagen_ref3 == null
                                                                                 ? logo
-                                                                                : imgtempomodal.imagen3
+                                                                                : getimg.imagen_ref3
                                                                         }
                                                                         alt='Card image cap'
                                                                         style={{
@@ -1010,13 +957,12 @@ const AddRoute = () => {
                                                                             borderRadius: '10px',
                                                                         }}
                                                                         onClick={
-                                                                            imgtempomodal.imagen3 ==
-                                                                            ''
+                                                                            getimg.imagen_ref3 =='' || getimg.imagen_ref3 == null
                                                                                 ? (e) => {
                                                                                       setModalupIMG(
                                                                                           true
                                                                                       )
-                                                                                      setId(-1)
+                                                                                     
                                                                                       setnumeroImg(
                                                                                           3
                                                                                       )
@@ -1038,7 +984,7 @@ const AddRoute = () => {
                                                                                         setModalupIMG(
                                                                                             true
                                                                                         )
-                                                                                        setId(-1)
+                                                                                        
                                                                                         setnumeroImg(
                                                                                             3
                                                                                         )
@@ -1056,7 +1002,7 @@ const AddRoute = () => {
                                                                                     className='bi bi-trash background-button text-danger'
                                                                                     to={''}
                                                                                     onClick={() => {
-                                                                                        imgtempomodal.imagen1 =
+                                                                                        getimg.imagen_ref3 =
                                                                                             ''
                                                                                     }}
                                                                                 ></Link>
