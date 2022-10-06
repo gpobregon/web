@@ -64,7 +64,7 @@ const SitiosPage = () => {
        
         
         let pagesLength = Math.ceil(coutsite.count / 8)
-        console.log(pagesLength)
+        // console.log(pagesLength)
         setTotalPages(pagesLength)
     }
 

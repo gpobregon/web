@@ -99,6 +99,7 @@ const AddPoint = () => {
         favorito: true,
         publicado: true,
         oculto: false,
+        cercania_activa: false,
     })
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
