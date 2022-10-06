@@ -16,15 +16,13 @@ type Model = {
 
 const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
-    const { show } = useContextMenu({ id: "menu-id" });
+    const idMenu = `menu-${data.id}`
+
+    const { show } = useContextMenu({ id: idMenu })
 
     const destroyItem = (e: any) => {
         removeItem(e.triggerEvent.target.id);
         setEditItem([])
-    }
-
-    const saveElement = (e: any) => {
-        // saveResourceElement(e.triggerEvent.target.id)
     }
 
     return (
@@ -40,12 +38,9 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
                 onContextMenu={show} >
                 <i className="bi bi-grip-vertical fa-2x" id={data.id} />
             </div>
-            <Menu id={"menu-id"} theme="dark" data-test={data}>
+            <Menu id={idMenu} theme="dark" data-test={data}>
                 <Item onClick={(e: any) => destroyItem(e)}>
                     <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
-                </Item>
-                <Item onClick={(e: any) => saveElement(e)}>
-                    <i className="fa fa-save text-success pe-4" />Guardar Recurso
                 </Item>
             </Menu>
             <div id={data.id} className={`editable ${data.textAling} w-100 text-center`}>

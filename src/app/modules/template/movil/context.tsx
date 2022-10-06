@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-pattern */
 // context/todoContext.tsx
-import { updateData, appendData, validElement, generateRandomString } from '../../../utility/global/index'
+import { updateData, appendData, generateRandomString } from '../../../utility/global/index'
 import { createContext, FC, useState, useCallback, useEffect, useContext } from 'react'
 import { WithChildren } from '../../../utility/models/childrenContext'
 import { LoadingContext } from '../../../utility/component/loading/context'
@@ -32,13 +32,14 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [changeModeEditor, setChangeModeEditor] = useState<Number>(1)
     const { setShowLoad } = useContext(LoadingContext)
     const [allResources, setAllResource] = useState<any>([])
+    const [allResourcesElement, setAllResourceElement] = useState<any>([])
     const [oneDataSite, setOneDataSite] = useState<any>([])
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<Number>(1)
     let [count, setCount] = useState(0)
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
-    const { id, tipo } = useParams()
+    const { id, tipo, idSitio } = useParams()
     const navigate = useNavigate()
     // Agregar elemento
     const addElement = (data: any) => {
@@ -55,7 +56,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                 {
                     ...item,
                     id: generateRandomString(7),
-                    text: `${item.text} ${(board.length + 1)}`,
+                    // text: `${item.text} ${(board.length + 1)}`,
+                    text: `${item.text}`,
                     index: (board.length + 1)
                 }
             ]
@@ -89,6 +91,21 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             isOver: !!monitor.isOver(),
         }),
     }));
+
+    const addResourceGaleria = (item: any) => {
+        console.log(item)
+    }
+
+    const [{ }, dropGraleria] = useDrop(() => ({
+        accept: "image",
+        drop: (item: any) => addResourceGaleria(item),
+        collect: (monitor) => ({
+            isOver: !!monitor.isOver(),
+        }),
+    }));
+
+
+
 
     // Arrastrar elemento 
     const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
@@ -132,11 +149,11 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         oneData(response.data.length > 0 ? response.data[0] : [], changeTypeEdit === 1 ? true : false)
     }
 
-    // obtenermos el template 
+    // obtenemos el template 
     const oneData = async (item: any, type: boolean) => {
         const data = {
             "id_punto": tipo === 'punto' ? id : -1,
-            "id_sitio": tipo === 'sitio' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
             "id_lenguaje": item.value,
             "es_movil": type
         }
@@ -155,7 +172,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         setShowLoad(true)
         const dataTemplate = {
             "id_punto": tipo === 'punto' ? id : -1,
-            "id_sitio": tipo === 'sitio' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
             "id_lenguaje": changeLaguage.value,
             "nombre": "Nombre editado3 sitio movil 1",
             "descripcion": "descripcion2 editado sitio movil 1",
@@ -189,7 +206,14 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     const oneSite = async () => {
-        const response: any = await getData(`site/${id}`)
+        let response: any
+        if(tipo === 'punto') {
+            response = await postData(`site/rooms`, {"id_sitio": idSitio })
+            // response =  response.salas.filter((item: any) => String(item.id) !== String(id))
+        } else {
+            response = await getData(`site/${id}`)
+        }
+        
         setOneDataSite(response.site ? response.site : [])
     }
 
@@ -201,7 +225,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         const fileResource =
         {
             "id_punto": tipo === 'punto' ? id : -1,
-            "id_sitio": tipo === 'sitio' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
             "nombre": file.name,
             "url": url,
             "tipo": file.type,
@@ -244,10 +268,11 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     const uploadElement = async (data: any) => {
+        setShowLoad(true)
         const item =
         {
             "id_punto": tipo === 'punto' ? id : -1,
-            "id_sitio": tipo === 'sitio' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
             "nombre": data.nombre,
             "url": '',
             "tipo": data.typeElement,
@@ -256,6 +281,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             "es_movil": changeTypeEdit === 1 ? true : false,
             "estado": 1
         }
+
         const response: any = await postData('site/mobile/resource/add', item)
         response &&
         swal(
@@ -264,26 +290,33 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                 icon: 'success',
             }
         )
+        setAllResourceElement(appendData(allResourcesElement, { ...item, id_recurso: response.data.id_recurso }))
+        handleClose(false)
+        setShowLoad(false)
     }
 
     // Se obienen todos los recursos
     const getAllResources = async () => {
         const jsonData = {
             "id_punto": tipo === 'punto' ? id : -1,
-            "id_sitio": tipo === 'sitio' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
             "es_movil": changeTypeEdit === 1 ? true : false
         }
-        const response: any = await postData('site/mobile/resource', jsonData)
+        const response: any = await postData('site/mobile/resource', { ...jsonData, "tipo_elemento": 'multimedia', })
+        const response2: any = await postData('site/mobile/resource', { ...jsonData, "tipo_elemento": 'element', })
         if (response.data) {
             setAllResource(response.data)
         }
+        if (response2.data) {
+            setAllResourceElement(response2.data)
+        }
     }
     // Eliminacion de un recurso
-    const destroyOneResource = async (id: number) => {
+    const destroyOneResource = async (id: number, tipo: number) => {
         setShowLoad(true)
         const response: any = await postData('site/mobile/resource/delete', { "id_recurso": id })
-        const items = allResources.filter((item: any) => String(item.id_recurso) !== String(id))
-        setAllResource(items)
+        
+        const items = (tipo === 1? allResources : allResourcesElement).filter((item: any) => String(item.id_recurso) !== String(id))
         response &&
             swal(
                 {
@@ -291,14 +324,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                     icon: 'success',
                 }
             )
+        tipo === 1 ? setAllResource(items) : setAllResourceElement(items)
         setShowLoad(false)
-    }
-
-    // Guardar recurso individual de tipo elemento
-
-    const saveResourceElement = (id: string) => {
-        const item = board.filter((item: any) => String(item.id) === String(id))
-        console.log(item)
     }
 
     // ------------------------------------------------------
@@ -328,6 +355,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const value = {
         drop,
         show,
+        tipo,
         drop2,
         board,
         oneData,
@@ -340,6 +368,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         handleClose,
         oneDataSite,
         allResources,
+        dropGraleria,
         uploadElement,
         discardChange,
         updateElement,
@@ -354,7 +383,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         changeLangegeSelect,
         setEditItemResource,
         setChangeModeEditor,
-        saveResourceElement
+        allResourcesElement
     }
 
     return (

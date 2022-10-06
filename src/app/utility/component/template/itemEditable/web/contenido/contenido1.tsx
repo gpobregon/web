@@ -15,9 +15,8 @@ type Model = {
     setEditItem: (data : any) => void
     updateElement: (data : any) => void
     removeItem: (data : any) => void
-    saveResourceElement: (data: string) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem, saveResourceElement }) => { 
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
   
   const idMenu = `menu-${data.id}`
   const nameMenu = `custom-${data.id}`
@@ -39,9 +38,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const destroyItem = (e: any) => {
     removeItem(dataSelect.id);
     setEditItem([])
-  }
-  const saveElement = (e: any) => {
-    saveResourceElement(e.triggerEvent.target.id)
   }
 
   const OpenMenu = (e: any, data: any) => {
@@ -66,7 +62,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
             </div>
             <ContextMenu 
               destroyItem={destroyItem}
-              saveElement={saveElement}
               idMenu={idMenu}
             />
             <MenuDoubleClick 

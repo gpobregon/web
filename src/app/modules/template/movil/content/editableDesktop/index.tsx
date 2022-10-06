@@ -5,7 +5,7 @@ import { ContentContext } from '../../context'
 import { Col } from 'react-bootstrap'
 
 const EditableDesktop = () => {
-    const { drop, board, saveResourceElement, updateElement, moveCard, setEditItem, removeItem } = useContext(ContentContext)
+    const { drop, board, updateElement, moveCard, setEditItem, removeItem } = useContext(ContentContext)
     return (
         <Fragment>
             <Col lg={12}>
@@ -25,7 +25,6 @@ const EditableDesktop = () => {
                                             removeItem={removeItem}
                                             setEditItem={setEditItem}
                                             updateElement={updateElement}
-                                            saveResourceElement={saveResourceElement}
                                         />
                                     </div>
                                 )

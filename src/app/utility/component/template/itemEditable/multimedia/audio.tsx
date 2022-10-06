@@ -13,15 +13,13 @@ type Model = {
 }
 const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
-  const { show } = useContextMenu({ id: "menu-id" });
+  const idMenu = `menu-${data.id}`
+
+  const { show } = useContextMenu({ id: idMenu })
 
   const destroyItem = (e: any) => {
     removeItem(e.triggerEvent.target.id);
     setEditItem([])
-  }
-
-  const saveElement = (e: any) => {
-    // saveResourceElement(e.triggerEvent.target.id)
   }
   
   return (
@@ -37,14 +35,11 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
         onContextMenu={show} >
         <i className="bi bi-grip-vertical fa-2x" id={data.id} />
       </div>
-      <Menu id={"menu-id"} theme="dark" data-test={data}>
+      <Menu id={idMenu} theme="dark" data-test={data}>
         <Item onClick={(e: any) => destroyItem(e)}>
           <div>
             <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
           </div>
-        </Item>
-        <Item onClick={(e: any) => saveElement(e)}>
-          <i className="fa fa-save text-success pe-4" />Guardar Recurso
         </Item>
       </Menu>
       <div className={`editable ${data.textAling} w-100`}>
@@ -62,13 +57,6 @@ const Audio: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem
             </audio>)
         }
       </div>
-      <Menu id={"menu-id"} theme="dark" data-test={data}>
-        <Item onClick={(e: any) => destroyItem(e)}>
-          <div>
-            <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
-          </div>
-        </Item>
-      </Menu>
     </div>
   )
 }

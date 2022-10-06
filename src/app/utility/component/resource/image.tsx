@@ -5,7 +5,7 @@ import { useDrag } from "react-dnd"
 
 type Model = {
     item: any
-    destroyOneResource: (id : number) => void
+    destroyOneResource: (id : number, tipo: number) => void
 }
 
 const ImageItem: FC<Model> = ({ item, destroyOneResource }) => { 
@@ -30,7 +30,7 @@ const ImageItem: FC<Model> = ({ item, destroyOneResource }) => {
                 </div> 
                 <div className="d-flex">
                     <div className="p-2 w-100 icon-name text-truncate mb-0 mt-1 small">{ item.nombre }</div>
-                    <div className="p-2 flex-shrink-1"><i className="fa fa-trash text-danger position-relative" onClick={() => destroyOneResource(item.id_recurso)} /></div>
+                    <div className="p-2 flex-shrink-1"><i className="fa fa-trash text-danger position-relative" onClick={() => destroyOneResource(item.id_recurso, 1)} /></div>
                 </div>
             </div>
         </Fragment>

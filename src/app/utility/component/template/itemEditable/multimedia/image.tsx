@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useContext, useRef  } from "react";
+import { FC, useContext, useRef } from "react";
 import Masonry from 'react-masonry-css'
 import Image from '../../../resource/image'
 import PerfectScrollbar from 'react-perfect-scrollbar'
@@ -19,23 +19,21 @@ type Model = {
 }
 const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
-  const { allResources, destroyOneResource } = useContext(ContentContext)
+  const { allResources, destroyOneResource, changeTypeEdit } = useContext(ContentContext)
 
   const breakpointColumnsObj = { default: 2, 1100: 2, 700: 2, 500: 2 }
 
-  const { show } = useContextMenu({ id: "menu-id" });
+  const idMenu = `menu-${data.id}`
+
+  const { show } = useContextMenu({ id: idMenu })
 
   const destroyItem = (e: any) => {
     removeItem(e.triggerEvent.target.id);
     setEditItem([])
   }
 
-  const saveElement = (e: any) => {
-    // saveResourceElement(e.triggerEvent.target.id)
-  }
-
   const popoverClick = (
-    <Popover id="popover-basic" style={{ transform: 'translate(-366px, 317px)', maxWidth: '358px'}}>
+    <Popover id="popover-basic" style={{ transform: 'translate(-366px, 317px)', maxWidth: '358px' }}>
       <Popover.Header as="h3">Imágenes</Popover.Header>
       <Popover.Body>
         <PerfectScrollbar style={{ height: '310px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
@@ -63,25 +61,28 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
       <div className="p-1 py-1 d-flex align-items-center" id={data.id} onContextMenu={show}>
         <i className="bi bi-grip-vertical fa-2x" id={data.id} />
       </div>
-      <Menu id={"menu-id"} theme="dark" data-test={data}>
+      <Menu id={idMenu} theme="dark" data-test={data}>
         <Item onClick={(e: any) => destroyItem(e)}>
           <div>
             <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
           </div>
         </Item>
-        <Item onClick={(e: any) => saveElement(e)}>
-          <i className="fa fa-save text-success pe-4" />Guardar Recurso
-        </Item>
       </Menu>
+
       <div className={`editable ${data.textAling} w-100`}>
-        <OverlayTrigger 
-          trigger="click" 
-          placement="left" 
-          overlay={popoverClick} 
-        >
-        <img src={!data.url ? toAbsoluteUrl("/media/png/picture.png") : data.url} alt="" className="w-75 rounded" />
-      </OverlayTrigger>
-    </div>
+        {changeTypeEdit === 1 ?
+          (<img src={!data.url ? toAbsoluteUrl("/media/png/picture.png") : data.url} alt="" className="w-75 rounded" />)
+          :
+          (<OverlayTrigger
+            trigger="click"
+            placement="left"
+            overlay={popoverClick}
+          >
+            <img src={!data.url ? toAbsoluteUrl("/media/png/picture.png") : data.url} alt="" className="w-75 rounded" />
+          </OverlayTrigger>)
+        }
+
+      </div>
 
     </div >
   )

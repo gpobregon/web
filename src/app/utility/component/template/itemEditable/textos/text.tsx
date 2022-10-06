@@ -1,11 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useState, useContext } from "react";
+import { FC, useState } from "react";
 import ContentEditable from "react-contenteditable";
 import { stripHtml } from '../../../../../utility/global/index';
 import { useContextMenu } from "react-contexify";
 import MenuDoubleClick from '../../../menu/doubleClick'
 import ContextMenu from '../../../menu/contextMenu'
-import { ContentContext } from '../../../../../modules/template/movil/context'
 
 type Model = {
   data: any
@@ -15,21 +14,18 @@ type Model = {
   setEditItem: (data: any) => void
   updateElement: (data: any) => void
   removeItem: (data: any) => void
-  saveResourceElement: (data: string) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem, saveResourceElement }) => {
-  
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
+
   const idMenu = `menu-${data.id}`
   const nameMenu = `custom-${data.id}`
 
   const { show } = useContextMenu({ id: idMenu })
-  
-  const { show: showMenu2 } = useContextMenu({ id:  nameMenu })
 
-  const { uploadElement } = useContext(ContentContext)
+  const { show: showMenu2 } = useContextMenu({ id: nameMenu })
 
   const [dataSelect, setDataSelect] = useState<any>([])
-  
+
   const changeText = (e: any) => {
     const edit = {
       ...data,
@@ -41,10 +37,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const destroyItem = (e: any) => {
     removeItem(dataSelect.id);
     setEditItem([])
-  }
-
-  const saveElement = () => {
-    uploadElement(dataSelect)
   }
 
   const OpenMenu = (e: any, data: any) => {
@@ -68,12 +60,11 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       >
         <i className="bi bi-grip-vertical fa-2x" id={data.id} />
       </div>
-      <ContextMenu 
+      <ContextMenu
         destroyItem={destroyItem}
-        saveElement={saveElement}
         idMenu={idMenu}
       />
-      <MenuDoubleClick 
+      <MenuDoubleClick
         updateElement={updateElement}
         nameMenu={nameMenu}
         editItem={data}
