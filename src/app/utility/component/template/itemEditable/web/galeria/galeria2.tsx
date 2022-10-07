@@ -44,11 +44,10 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, se
 
   const addResourceGaleria = (item: any) => {
     const data = item.item
-    console.log(data.tipo)
-    if(data.tipo.includes('image')) {
+    // if(['image'].includes(data.tipo)) {
     setAddResource((addResource: []) => [...addResource, { ...data, id: generateRandomString(7) }])
     setCount((count: number) => count = 1)
-    }
+    // }
   }
 
   const [{ }, dropGraleria] = useDrop(() => ({
@@ -107,15 +106,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, se
       </Menu>
       <div className="w-100 me-3">
         <Row>
-        <NewCol
-            lg={4}
-            section={0}
-            data={data}
-            sectionData={data.section1}
-            setEditItem={setEditItem}
-            updateElement={updateElement}
-            removeItem={removeItem}
-          />
           <Col lg={8} className="border border-opacity-10" tyle={{ minHeight: '100px' }}>
 
             <Row>
@@ -136,6 +126,15 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, se
               </Col>
             </Row>
           </Col>
+          <NewCol
+            lg={4}
+            section={0}
+            data={data}
+            sectionData={data.section1}
+            setEditItem={setEditItem}
+            updateElement={updateElement}
+            removeItem={removeItem}
+          />
         </Row>
       </div>
     </div>

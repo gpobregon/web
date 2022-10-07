@@ -92,21 +92,6 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         }),
     }));
 
-    const addResourceGaleria = (item: any) => {
-        console.log(item)
-    }
-
-    const [{ }, dropGraleria] = useDrop(() => ({
-        accept: "image",
-        drop: (item: any) => addResourceGaleria(item),
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-        }),
-    }));
-
-
-
-
     // Arrastrar elemento 
     const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
         setBoard((prevCards: any[]) =>
@@ -134,11 +119,12 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         setChangeLaguage(data)
         oneData(data, changeTypeEdit === 1 ? true : false)
     }
-
+    // cambiar modalidad de edición
     const ChangeMode = (type: number) => {
         setBoard([])
         setChangeTypeEdit(type)
         oneData(changeLaguage, type === 1 ? true : false)
+        getAllResources(type)
     }
 
     // get all data
@@ -204,21 +190,21 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const discardChange = () => {
         setBoard(oldBoard)
     }
-
+    // obtenemos el nombre del sitio que estamos editando
     const oneSite = async () => {
         let response: any
-        if(tipo === 'punto') {
-            response = await postData(`site/rooms`, {"id_sitio": idSitio })
+        if (tipo === 'punto') {
+            response = await postData(`site/rooms`, { "id_sitio": idSitio })
             // response =  response.salas.filter((item: any) => String(item.id) !== String(id))
         } else {
             response = await getData(`site/${id}`)
         }
-        
+
         setOneDataSite(response.site ? response.site : [])
     }
 
     // Recursos
-
+    // guardar elementos multimedia
     const uploadResource = async (file: any, option: number) => {
         setShowLoad(true)
         const url = `${process.env.REACT_APP_URLAWS}resource-${changeTypeEdit === 1 ? 'mobile' : 'web'}-${id}-${file.name}`;
@@ -244,7 +230,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         // URLAWS
         myBucket.putObject(params)
             .on('httpUploadProgress', async (evt) => {
-                if(evt.loaded/evt.total === 1){ 
+                if (evt.loaded / evt.total === 1) {
                     const response: any = await postData('site/mobile/resource/add', fileResource)
                     setAllResource(appendData(allResources, response.data))
                     if (option === 1) {
@@ -266,7 +252,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                 if (err) console.log(err)
             })
     }
-
+    // guardar elemento editable
     const uploadElement = async (data: any) => {
         setShowLoad(true)
         const item =
@@ -284,23 +270,23 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
         const response: any = await postData('site/mobile/resource/add', item)
         response &&
-        swal(
-            {
-                text: 'Recurso almacenado con exito',
-                icon: 'success',
-            }
-        )
+            swal(
+                {
+                    text: 'Recurso almacenado con exito',
+                    icon: 'success',
+                }
+            )
         setAllResourceElement(appendData(allResourcesElement, { ...item, id_recurso: response.data.id_recurso }))
         handleClose(false)
         setShowLoad(false)
     }
 
     // Se obienen todos los recursos
-    const getAllResources = async () => {
+    const getAllResources = async (type: number) => {
         const jsonData = {
             "id_punto": tipo === 'punto' ? id : -1,
             "id_sitio": tipo === 'sitio' ? id : idSitio,
-            "es_movil": changeTypeEdit === 1 ? true : false
+            "es_movil": type === 1 ? true : false
         }
         const response: any = await postData('site/mobile/resource', { ...jsonData, "tipo_elemento": 'multimedia', })
         const response2: any = await postData('site/mobile/resource', { ...jsonData, "tipo_elemento": 'element', })
@@ -315,8 +301,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const destroyOneResource = async (id: number, tipo: number) => {
         setShowLoad(true)
         const response: any = await postData('site/mobile/resource/delete', { "id_recurso": id })
-        
-        const items = (tipo === 1? allResources : allResourcesElement).filter((item: any) => String(item.id_recurso) !== String(id))
+
+        const items = (tipo === 1 ? allResources : allResourcesElement).filter((item: any) => String(item.id_recurso) !== String(id))
         response &&
             swal(
                 {
@@ -342,7 +328,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     useEffect(() => {
 
         if (tipo === 'sitio' || tipo === 'punto') {
-            getAllResources()
+            getAllResources(1)
             getLenguate()
             oneSite()
         } else {
@@ -368,7 +354,6 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         handleClose,
         oneDataSite,
         allResources,
-        dropGraleria,
         uploadElement,
         discardChange,
         updateElement,

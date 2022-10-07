@@ -23,6 +23,10 @@ import Content1 from "./web/contenido/contenido1"
 import Content2 from "./web/contenido/contenido2"
 
 import Galeria from "./web/galeria/galeria1"
+import Galeria2 from "./web/galeria/galeria2"
+
+import Footer1 from './web/footer/footer1'
+import Footer2 from './web/footer/footer2'
 
 export interface CardProps {
   id: any
@@ -127,6 +131,10 @@ export const ItemEditable: FC<CardProps> = ({ id, data, index, moveCard, updateE
       { data.type === 'contenido2' && <Content2 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId}/>}
 
       { data.type === 'galeria1' && <Galeria removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId} moveCard={moveCard} />}
+      { data.type === 'galeria2' && <Galeria2 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId} moveCard={moveCard} />}
+
+      { data.type === 'footer1' && <Footer1 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId} />}
+      { data.type === 'footer2' && <Footer2 removeItem={removeItem} isDragging={isDragging} referencia={ref} data={data} updateElement={updateElement} setEditItem={setEditItem} handlerId={handlerId} />}
     </Fragment>
   )
 }
