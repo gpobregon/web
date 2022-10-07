@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, FC } from 'react'
+import { useState, useEffect, FC, useCallback } from 'react'
 import { generateRandomString, updateData } from '../../../../../../utility/global/index'
+import update from 'immutability-helper'
 import ItemEditable from '../../index'
 import { Col } from 'react-bootstrap'
 import { useDrop } from "react-dnd"
@@ -14,10 +15,9 @@ type Model = {
     setEditItem: (data: any) => void
     updateElement: (data: any) => void
     removeItem: (data: any) => void
-    moveCard: (dragIndex: number, hoverIndex: number) => void
 }
 
-const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, updateElement, removeItem, lg }) => {
+const NewCol: FC<Model> = ({ section, data, sectionData, setEditItem, updateElement, removeItem, lg }) => {
     const [items, setItems] = useState<any>([])
     const [count, setCount] = useState<number>(0)
     const [editChildrenItem, setEditChildrenItem] = useState<any>([])
@@ -30,8 +30,21 @@ const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, 
         }),
     }));
 
+    // // Arrastrar elemento 
+    const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
+        // setItems((prevCards: any[]) =>
+        //     update(prevCards, {
+        //         $splice: [
+        //             [dragIndex, 1],
+        //             [hoverIndex, 0, prevCards[dragIndex] as any],
+        //         ],
+        //     }),
+        // )
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+    // console.log(items)
     const addElement = (item: any) => {
-        const Element = {...item, id: generateRandomString(7), index: generateRandomString(7)}
+        const Element = { ...item, id: generateRandomString(7), index: generateRandomString(7) }
         setItems((items: any) => Element)
         setEditChildrenItem(Element)
         setCount((count: number) => count = 1)
@@ -65,12 +78,12 @@ const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, 
         }
         return newElement
     }
-
-    const destroyChildren = (code:any) => {
+    
+    const destroyChildren = (code: any) => {
         updateElement(EditSeccionChildren(remote(code), 1))
     }
 
-    const remote = (element:any) => {
+    const remote = (element: any) => {
         let newBoard = {}
         newBoard = sectionData.filter((item: any) => String(item.id) !== String(element))
         return newBoard
@@ -81,6 +94,7 @@ const NewCol: FC<Model> = ({ section, data, sectionData, moveCard, setEditItem, 
             setCount((count) => count = 0)
         }
     }, [count])
+
     return (
         <Col className="border border-opacity-10" lg={lg} style={{ minHeight: '100px' }} ref={drop}>
             {

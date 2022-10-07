@@ -48,7 +48,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, se
             sectionData={data.section1}
             setEditItem={setEditItem}
             updateElement={updateElement}
-            moveCard={moveCard}
             removeItem={removeItem}
           />
           <NewCol
@@ -56,7 +55,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, se
             section={1}
             data={data}
             sectionData={data.section2}
-            moveCard={moveCard}
             removeItem={removeItem}
             updateElement={updateElement}
             setEditItem={setEditItem}
