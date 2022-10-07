@@ -113,7 +113,7 @@ const EditSite = () => {
     const [unbicacionBucket, setUbicacionBucket] = useState('')
     const [ArchivoPermitido, setArchivoPermitido] = useState('')
     useEffect(() => {
-        // console.log(state)
+         console.log(state)
         let aux = site.geo_json
         let auxSplit = aux.split('/')
         setNombreJson(auxSplit[auxSplit.length - 1])
@@ -124,7 +124,7 @@ const EditSite = () => {
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
         favorito: site.favorito,
-        publicado: site.favorito,
+        publicado: site.publicado,
         oculto: site.oculto,
         cercania_activa: site.cercania_activa,
     })
@@ -133,7 +133,7 @@ const EditSite = () => {
         setStatus({
             id_sitio: site.id_sitio,
             favorito: site.favorito,
-            publicado: site.favorito,
+            publicado: site.publicado,
             oculto: site.oculto,
             cercania_activa: site.cercania_activa,
         })
@@ -234,6 +234,7 @@ const EditSite = () => {
         })
         // console.log(status.favorito)
         // console.log(site)
+       
        await postDefault(statesMethod, status)
         const getSites = async () => {
             const site: any = await getData(sitesMethod)
