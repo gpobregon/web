@@ -105,7 +105,8 @@
     "format": "prettier --write .",
     "rtl": "webpack --config webpack-rtl.config.js",
     "aws-configure": "aws configure --profile mcd-demo",
-    "deploy": "aws s3 sync build/ s3://mcd-demo-cg --profile mcd-demo"
+    "deploy": "aws s3 sync build/ s3://mcd-demo-cg --profile mcd-demo",
+    "deploy-qa": "aws s3 sync build/ s3://mcd-qa-cg --profile mcd-demo"
   },
   "eslintConfig": {
     "extends": [
