@@ -113,7 +113,7 @@ const EditSite = () => {
     const [unbicacionBucket, setUbicacionBucket] = useState('')
     const [ArchivoPermitido, setArchivoPermitido] = useState('')
     useEffect(() => {
-         console.log(state)
+        //  console.log(state)
         let aux = site.geo_json
         let auxSplit = aux.split('/')
         setNombreJson(auxSplit[auxSplit.length - 1])
@@ -206,36 +206,50 @@ const EditSite = () => {
         const sit: any = await postData(route, object)
     }
     const changeStatus = async (favorito: boolean, publicado: boolean, oculto: boolean,cercania:boolean) => {
-        setStatus({
+       const respuesta3:any= await postData(statesMethod, {
             id_sitio: site.id_sitio,
             favorito: favorito,
             publicado: publicado,
             oculto: oculto,
             cercania_activa: cercania,
-        })
-        setSite({
-            id_sitio: site.id_sitio,
-            nombre: site.nombre,
-            descripcion: site.descripcion,
-            ubicacion: site.ubicacion,
-            geoX: site.geoX,
-            geoY: site.geoY,
-            portada_path: site.portada_path,
-            estado: site.estado,
-            creado: site.creado,
-            editado: site.editado,
-            categorias: site.categorias,
-            id_municipio: site.id_municipio,
-            favorito: status.favorito,
-            publicado: status.publicado,
-            oculto: status.oculto,
-            geo_json: site.geo_json,
-            cercania_activa: status.cercania_activa,
-        })
+            })
+            if(!respuesta3.hasOwnProperty('titulo') ){
+                    setStatus({
+                        id_sitio: site.id_sitio,
+                        favorito: favorito,
+                        publicado: publicado,
+                        oculto: oculto,
+                        cercania_activa: cercania,
+                    })
+                    setSite({
+                        id_sitio: site.id_sitio,
+                        nombre: site.nombre,
+                        descripcion: site.descripcion,
+                        ubicacion: site.ubicacion,
+                        geoX: site.geoX,
+                        geoY: site.geoY,
+                        portada_path: site.portada_path,
+                        estado: site.estado,
+                        creado: site.creado,
+                        editado: site.editado,
+                        categorias: site.categorias,
+                        id_municipio: site.id_municipio,
+                        favorito: status.favorito,
+                        publicado: status.publicado,
+                        oculto: status.oculto,
+                        geo_json: site.geo_json,
+                        cercania_activa: status.cercania_activa,
+                    })
+                }else{
+                    swal({
+                        text: `¡${respuesta3.titulo}!`,
+                        icon: 'error',
+                    })
+                }
+       
         // console.log(status.favorito)
         // console.log(site)
        
-       await postDefault(statesMethod, status)
         const getSites = async () => {
             const site: any = await getData(sitesMethod)
             // console.log(site)
@@ -444,6 +458,7 @@ const EditSite = () => {
                                                 return
                                             }
                                             // status.favorito == false
+                                            if(!status.favorito){
                                             status.favorito = !status.favorito
                                             changeStatus(
                                                 status.favorito,
@@ -451,6 +466,7 @@ const EditSite = () => {
                                                 status.oculto,
                                                 status.cercania_activa,
                                             )
+                                            }
                                             // : changeStatus(false, status.publicado, status.oculto)
                                         }}
                                         style={{display: 'flex', marginRight: '4px'}}
