@@ -49,7 +49,7 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
   const Listo = () => {
     selected.url && changeText({url: selected.url})
   }
-console.log(selected)
+
   const popoverClick = (
     <Popover id="popover-basic" style={{ transform: 'translate(-366px, 317px)', maxWidth: '358px' }}>
       <Popover.Header as="h3">Imágenes</Popover.Header>

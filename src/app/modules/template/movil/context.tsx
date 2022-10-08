@@ -230,6 +230,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         // URLAWS
         myBucket.putObject(params)
             .on('httpUploadProgress', async (evt) => {
+                console.log(Math.round( (evt.loaded / evt.total)*100))
                 if (evt.loaded / evt.total === 1) {
                     const response: any = await postData('site/mobile/resource/add', fileResource)
                     setAllResource(appendData(allResources, response.data))
@@ -241,6 +242,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                                     icon: 'success',
                                 }
                             )
+                            setShowLoad(false)
                     } else {
                         setShowLoad(false)
                         return url
@@ -249,7 +251,16 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                 }
             })
             .send((err) => {
-                if (err) console.log(err)
+                if (err) {
+                    swal(
+                        {
+                            text: 'El recurso no fue almacenado',
+                            icon: 'danger',
+                        }
+                    )
+                    console.log(err)
+                    setShowLoad(false)
+                } 
             })
     }
     // guardar elemento editable
@@ -315,6 +326,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     // ------------------------------------------------------
+    
     useEffect(
         () => {
             if (board.length > 0 && count === 1) {
