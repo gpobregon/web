@@ -19,7 +19,7 @@ type Model = {
 }
 const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
-  const { allResources, destroyOneResource, changeTypeEdit } = useContext(ContentContext)
+  const { allResources, changeTypeEdit } = useContext(ContentContext)
   const [selected, setSelected] = useState<any>([])
 
   const breakpointColumnsObj = { default: 2, 1100: 2, 700: 2, 500: 2 }
@@ -42,12 +42,12 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
   }
 
   const removeImage = () => {
-    changeText({url: ''})
+    changeText({ url: '' })
     setSelected([])
   }
 
   const Listo = () => {
-    selected.url && changeText({url: selected.url})
+    selected.url && changeText({ url: selected.url })
   }
 
   const popoverClick = (
@@ -59,7 +59,7 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
             {
               allResources.map((file: any, index: number) => {
                 return (
-                  file.tipo.includes('image/') && <Image key={index} item={file} selected={selected} setSelected={setSelected}/>
+                  file.tipo.includes('image/') && <Image key={index} item={file} selected={selected} setSelected={setSelected} />
                 )
               })
             }
@@ -70,10 +70,10 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
       <Popover.Header>
         <div className="d-flex">
           <div className="flex-shrink-1 px-4 d-flex justify-content-center align-items-center">
-            <i className="bi bi-trash text-danger fs-2" onClick={() =>removeImage()}/>
+            <i className="bi bi-trash text-danger fs-2" onClick={() => removeImage()} />
           </div>
           <div className="w-100 d-grid gap-2">
-            <Button size="sm" onClick={() =>Listo()}>Listo</Button>
+            <Button size="sm" onClick={() => Listo()}>Listo</Button>
           </div>
         </div>
       </Popover.Header>
@@ -107,7 +107,7 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
             placement="left"
             overlay={popoverClick}
           >
-            <img src={!data.url ? toAbsoluteUrl("/media/png/picture.png") : data.url} alt="" className={`${!data.url? 'w-25': 'w-50'} rounded`} />
+            <img src={!data.url ? toAbsoluteUrl("/media/png/picture.png") : data.url} alt="" className={`${!data.url ? 'w-25' : 'w-50'} rounded`} />
           </OverlayTrigger>)
         }
 

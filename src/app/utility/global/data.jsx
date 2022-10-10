@@ -127,7 +127,8 @@ const Element = [
             icon: 'Panorama.svg',
             type: "image-360",
             text: 'Imagen 360°',
-            typeElement: 'multimedia'
+            typeElement: 'multimedia',
+            url:''
           },
         ]
       },
