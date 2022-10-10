@@ -462,9 +462,9 @@ const EditSite = () => {
                                             status.favorito = !status.favorito
                                             changeStatus(
                                                 status.favorito,
-                                                status.publicado,
-                                                status.oculto,
-                                                status.cercania_activa,
+                                                true,
+                                                false,
+                                                true,
                                             )
                                             }
                                             // : changeStatus(false, status.publicado, status.oculto)
