@@ -7,7 +7,7 @@
 }
 
 .height-section {
-  height: 650px;
+  min-height: 650px;
 }
 
 .height-section-editable {
@@ -211,6 +211,7 @@ button.tooltip-trigger:hover + .tooltip-one {
     background: #009cf72c;
     cursor: grabbing;
 }
+
 .size-resource-img {
   height: 300px;
 }
