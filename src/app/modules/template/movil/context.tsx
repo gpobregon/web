@@ -37,6 +37,10 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<Number>(1)
     let [count, setCount] = useState(0)
+    const [searchValue, setSearchValue] = useState<any>([])
+    const [filteredData, setFilteredData] = useState<any>([])
+    const [searchValueElement, setSearchValueElement] = useState<any>([])
+    const [filteredDataElement, setFilteredDataElement] = useState<any>([])
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
     const { id, tipo, idSitio } = useParams()
@@ -230,7 +234,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         // URLAWS
         myBucket.putObject(params)
             .on('httpUploadProgress', async (evt) => {
-                console.log(Math.round( (evt.loaded / evt.total)*100))
+                console.log(Math.round((evt.loaded / evt.total) * 100))
                 if (evt.loaded / evt.total === 1) {
                     const response: any = await postData('site/mobile/resource/add', fileResource)
                     setAllResource(appendData(allResources, response.data))
@@ -242,7 +246,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                                     icon: 'success',
                                 }
                             )
-                            setShowLoad(false)
+                        setShowLoad(false)
                     } else {
                         setShowLoad(false)
                         return url
@@ -260,7 +264,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                     )
                     console.log(err)
                     setShowLoad(false)
-                } 
+                }
             })
     }
     // guardar elemento editable
@@ -325,8 +329,38 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         setShowLoad(false)
     }
 
+    const handleFilter = (e: any, allElement: any, tipo: number) => {
+        const value = String(e.target.value)
+        let updatedData = []
+        tipo === 1 ? setSearchValue(value) : setFilteredDataElement(value)
+
+        if (value.length) {
+            updatedData = allElement.filter((item: any) => {
+                const startsWith =
+                    item.nombre.toLowerCase().startsWith(value.toLowerCase())
+
+                const includes =
+                    item.nombre.toLowerCase().includes(value.toLowerCase())
+
+                if (startsWith) {
+                    return startsWith
+                } else if (!startsWith && includes) {
+                    return includes
+                } else return null
+            })
+            if (tipo === 1) {
+                setFilteredData(updatedData)
+                setSearchValue(value)
+            } else {
+                setFilteredDataElement(updatedData)
+                setSearchValueElement(value)
+                
+            }
+        }
+    }
+
     // ------------------------------------------------------
-    
+
     useEffect(
         () => {
             if (board.length > 0 && count === 1) {
@@ -364,8 +398,11 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         removeItem,
         setEditItem,
         handleClose,
+        searchValue,
         oneDataSite,
         allResources,
+        filteredData,
+        handleFilter,
         uploadElement,
         discardChange,
         updateElement,
@@ -376,7 +413,9 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         setChangeLaguage,
         editItemResource,
         changeModeEditor,
+        searchValueElement,
         destroyOneResource,
+        filteredDataElement,
         changeLangegeSelect,
         setEditItemResource,
         setChangeModeEditor,

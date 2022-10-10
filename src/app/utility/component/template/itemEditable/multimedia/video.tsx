@@ -5,7 +5,6 @@ import Videos from '../../../resource/video'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { Popover, OverlayTrigger, Button } from 'react-bootstrap'
 import { Menu, Item, useContextMenu } from "react-contexify";
-import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
 import { ContentContext } from '../../../../../modules/template/movil/context'
 
 type Model = {
@@ -50,7 +49,7 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
   }
 
   const popoverClick = (
-    <Popover id="popover-basic" style={{ transform: 'translate(-366px, 317px)', maxWidth: '358px' }}>
+    <Popover id="popover-basic" style={{ transform: 'translate(-366px, 317px)', width: '358px' }}>
       <Popover.Header as="h3">Videos</Popover.Header>
       <Popover.Body>
         <PerfectScrollbar style={{ height: '250px', maxWidth: '400px', width: '100%' }} className="min-tumnail px-4">
@@ -58,7 +57,7 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
             {
               allResources.map((file: any, index: number) => {
                 return (
-                  file.tipo.includes('image/') && <Videos key={index} item={file} selected={selected} setSelected={setSelected} />
+                  file.tipo.includes('video/') && <Videos key={index} item={file} selected={selected} setSelected={setSelected} />
                 )
               })
             }
@@ -69,7 +68,7 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
       <Popover.Header>
         <div className="d-flex">
           <div className="flex-shrink-1 px-4 d-flex justify-content-center align-items-center">
-            <i className="bi bi-trash text-danger fs-2" onClick={() => removeImage()} />
+            <i className="bi bi-trash text-danger fs-2 cursor-pointer" onClick={() => removeImage()} />
           </div>
           <div className="w-100 d-grid gap-2">
             <Button size="sm" onClick={() => Listo()}>Listo</Button>
@@ -97,29 +96,56 @@ const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
           <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
         </Item>
       </Menu>
-      <div id={data.id} className={`editable ${data.textAling} w-100`}>
+      <div id={data.id} className={`editable d-flex justify-content-center ${data.textAling} w-100`}>
         {
-          data.url ? (
+          !data.url && changeTypeEdit === 1 &&
+          (
+            <div className="bkg-dark content-icon rounded my-2 text-center" >
+              <div className="icon-wrapper">
+                <i className={`bi bi-film fa-4x text-white`}></i>
+              </div>
+            </div>
+          )
+        }
+
+        {
+          data.url && changeTypeEdit === 1 && (
             <video width="100%" height="240" controls className={`rounded ${data.borderRadius} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
               <source src={data.url} type="video/mp4" />
               <source src={data.url} type="video/ogg" />
               Your browser does not support the video tag.
             </video>
-          ) :
-            (
-              <OverlayTrigger
-                trigger="click"
-                placement="left"
-                overlay={popoverClick}
-              >
-                <div className="bkg-dark content-icon rounded my-2 text-center" >
-                  <div className="icon-wrapper">
-                    <i className={`bi bi-film fa-4x text-white`}></i>
-                  </div>
-                </div>
-              </OverlayTrigger>
-            )
+          )
         }
+
+        {
+          changeTypeEdit === 2 &&
+          (
+            <OverlayTrigger
+              trigger="click"
+              placement="left"
+              overlay={popoverClick}
+            >
+              {
+                !data.url ?
+                  (
+                    <div className="bkg-dark content-icon rounded my-2 text-center" >
+                      <div className="icon-wrapper">
+                        <i className={`bi bi-film fa-4x text-white`}></i>
+                      </div>
+                    </div>
+                  ) : (
+                    <video width="90%" height="240" controls className={`rounded ${data.borderRadius} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
+                      <source src={data.url} type="video/mp4" />
+                      <source src={data.url} type="video/ogg" />
+                      Your browser does not support the video tag.
+                    </video>
+                  )
+              }
+            </OverlayTrigger>
+          )
+        }
+
       </div>
     </div>
   )
