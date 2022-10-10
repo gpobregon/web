@@ -17,7 +17,7 @@ type Model = {
 }
 const Video: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
-  const { allResources, destroyOneResource, changeTypeEdit } = useContext(ContentContext)
+  const { allResources, changeTypeEdit } = useContext(ContentContext)
   const [selected, setSelected] = useState<any>([])
 
   const breakpointColumnsObj = { default: 2, 1100: 2, 700: 2, 500: 2 }

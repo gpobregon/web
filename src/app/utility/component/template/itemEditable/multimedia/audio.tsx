@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useContext, useState } from "react";
 import Masonry from 'react-masonry-css'
-import Videos from '../../../resource/video'
+import Audios from '../../../resource/audios'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { Popover, OverlayTrigger, Button } from 'react-bootstrap'
 import { Menu, Item, useContextMenu } from "react-contexify";
@@ -17,7 +17,7 @@ type Model = {
 }
 const Audio: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
-  const { allResources, destroyOneResource, changeTypeEdit } = useContext(ContentContext)
+  const { allResources, changeTypeEdit } = useContext(ContentContext)
   const [selected, setSelected] = useState<any>([])
 
   const breakpointColumnsObj = { default: 2, 1100: 2, 700: 2, 500: 2 }
@@ -50,14 +50,15 @@ const Audio: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
 
   const popoverClick = (
     <Popover id="popover-basic" style={{ transform: 'translate(-366px, 317px)', width: '358px' }}>
-      <Popover.Header as="h3">Videos</Popover.Header>
+      <Popover.Header as="h3">Audios</Popover.Header>
       <Popover.Body>
         <PerfectScrollbar style={{ height: '250px', maxWidth: '400px', width: '100%' }} className="min-tumnail px-4">
           <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
             {
               allResources.map((file: any, index: number) => {
+                console.log(file.tipo)
                 return (
-                  file.tipo.includes('audio/') && <Videos key={index} item={file} selected={selected} setSelected={setSelected} />
+                  file.tipo.includes('audio/') && <Audios key={index} item={file} selected={selected} setSelected={setSelected} />
                 )
               })
             }

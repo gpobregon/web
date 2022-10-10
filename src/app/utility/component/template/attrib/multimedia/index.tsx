@@ -145,7 +145,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                                     />
                                 </Button>
                                 <div className="tooltip-one">
-                                    Eliminar Image
+                                    Eliminar Imagen
                                 </div>
                             </div>
                         </div>

@@ -381,3 +381,7 @@ input[type=number]::-webkit-outer-spin-button {
   background:#009EF7 !important;
   color:white;
 }
+
+.bg-danger {
+  background: #F00 !important;
+}
