@@ -59,7 +59,7 @@ const Carousel: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateE
     }
 
     const appendItem = (data: any) => {
-        if(!selectedItem.includes(selected.id_recurso) && selected.id_recurso) {
+        if (!selectedItem.includes(selected.id_recurso) && selected.id_recurso) {
             setSelectedItem([...selectedItem, selected.id_recurso])
             setItemsList([...itemsList, { ...selected, ...data }])
             reset()
@@ -69,7 +69,7 @@ const Carousel: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateE
     }
 
     const selectionData = (item: any) => {
-       (item.id_recurso && !selected.id_recurso) ? setSelected(item) : setSelected([])
+        (item.id_recurso && !selected.id_recurso) ? setSelected(item) : setSelected([])
     }
     useEffect(() => {
         if (count === 1) {
@@ -98,12 +98,12 @@ const Carousel: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateE
             <Popover.Header>
                 <div className="d-flex">
                     <div className="flex-shrink-1 px-4 d-flex justify-content-center align-items-center">
-                        <i className={`bi bi-trash ${ selectedItem.includes(selected.id_recurso) ? 'text-danger' : 'text-muted' } fs-2 cursor-pointer`} onClick={() => selectedItem.includes(selected.id_recurso) ? removeImage() : null } />
+                        <i className={`bi bi-trash ${selectedItem.includes(selected.id_recurso) ? 'text-danger' : 'text-muted'} fs-2 cursor-pointer`} onClick={() => selectedItem.includes(selected.id_recurso) ? removeImage() : null} />
                     </div>
                     <div>
                         <Form onSubmit={handleSubmit(appendItem)}>
                             <Row>
-                                <p className="text-primary text-center w-100">{ selected.id_recurso ? selected.nombre : 'Seleccione una imagen' }</p>
+                                <p className="text-primary text-center w-100">{selected.id_recurso ? selected.nombre : 'Seleccione una imagen'}</p>
                                 <Col lg={12} className="py-3">
                                     <Form.Label>Título</Form.Label>
                                     <Form.Control
@@ -167,7 +167,7 @@ const Carousel: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateE
                 </Item>
             </Menu>
 
-            <div className={`editable ${data.textAling} w-100 d-flex justify-content-center`}>
+            <div className={`my-1 py-2 editable ${data.textAling} w-100 d-flex justify-content-center`}>
                 {changeTypeEdit === 1 ?
                     data.list.length > 0 ? (<CustomCarusel list={data.list} />) : (<i className={`bi bi-images display-2 text-white`} />)
                     :

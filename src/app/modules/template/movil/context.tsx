@@ -5,7 +5,7 @@ import { createContext, FC, useState, useCallback, useEffect, useContext } from 
 import { WithChildren } from '../../../utility/models/childrenContext'
 import { LoadingContext } from '../../../utility/component/loading/context'
 import { getData, postData } from '../../../services/api'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import update from 'immutability-helper'
 import { useDrop } from "react-dnd"
 import swal from 'sweetalert'
@@ -27,6 +27,7 @@ const myBucket = new AWS.S3({
 export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [board, setBoard] = useState<any>([])
     const [show, handleClose] = useState<boolean>(false)
+    const [pointInteres, setPointInteres] = useState<any>([])
     const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
     const [changeModeEditor, setChangeModeEditor] = useState<Number>(1)
@@ -44,6 +45,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
     const { id, tipo, idSitio } = useParams()
+    const { state } = useLocation()
     const navigate = useNavigate()
     // Agregar elemento
     const addElement = (data: any) => {
@@ -355,10 +357,26 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             } else {
                 setFilteredDataElement(updatedData)
                 setSearchValueElement(value)
-                
+
             }
         }
     }
+
+    const ReturnView = () => {
+        if (tipo === 'sitio') {
+            navigate(`/sitios/edit`, {state: oneDataSite })
+        } else {
+            navigate(`/sitios/edit-point-interes`, {state: pointInteres })
+        }
+       
+    }
+    // -------------------------------------------
+
+    useEffect(() => {
+        if(state) {
+            setPointInteres(state)   
+        }
+    },[state])
 
     // ------------------------------------------------------
 
@@ -395,6 +413,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         language,
         editItem,
         moveCard,
+        ReturnView,
         ChangeMode,
         removeItem,
         setEditItem,
