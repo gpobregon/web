@@ -376,6 +376,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         if(state) {
             setPointInteres(state)   
         }
+        console.log(state)
     },[state])
 
     // ------------------------------------------------------
