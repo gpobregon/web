@@ -368,16 +368,14 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         } else {
             navigate(`/sitios/edit-point-interes`, {state: pointInteres })
         }
-       
     }
     // -------------------------------------------
 
     useEffect(() => {
-        if(state) {
+        if(state && tipo === 'punto') {
             setPointInteres(state)   
         }
-        console.log(state)
-    },[state])
+    },[state, tipo])
 
     // ------------------------------------------------------
 
@@ -423,6 +421,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         oneDataSite,
         allResources,
         filteredData,
+        pointInteres,
         handleFilter,
         uploadElement,
         discardChange,
