@@ -26,7 +26,10 @@ const myBucket = new AWS.S3({
 
 export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [board, setBoard] = useState<any>([])
+    const [oneDataTemplate, setOneDataTemplate] = useState<any>([])
+    const [templateToClone, setTemplateToClone] = useState<any>('')
     const [show, handleClose] = useState<boolean>(false)
+    const [showSave, handleCloseSave] = useState<boolean>(false)
     const [pointInteres, setPointInteres] = useState<any>([])
     const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
@@ -38,10 +41,13 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<Number>(1)
     let [count, setCount] = useState(0)
+
     const [searchValue, setSearchValue] = useState<any>([])
     const [filteredData, setFilteredData] = useState<any>([])
+
     const [searchValueElement, setSearchValueElement] = useState<any>([])
     const [filteredDataElement, setFilteredDataElement] = useState<any>([])
+
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
     const { id, tipo, idSitio } = useParams()
@@ -142,8 +148,34 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         oneData(response.data.length > 0 ? response.data[0] : [], changeTypeEdit === 1 ? true : false)
     }
 
-    // obtenemos el template 
+    // obtenemos el template para modificar
     const oneData = async (item: any, type: boolean) => {
+        const response = await getTemplate(item, type)
+        if (response.data.length > 0) {
+            setOneDataTemplate(response.data[0])
+            setBoard(JSON.parse(response.data[0].contenido))
+            setOldBoard(JSON.parse(response.data[0].contenido))
+        } else {
+            setBoard([])
+            setOldBoard([])
+            setOneDataTemplate([])
+        }
+    }
+    // funcion que setea template para clonar
+    const getTemplateClone = async (item: any, type: boolean) => {
+        const response = await getTemplate(item, type)
+        if (response.data.length > 0) {
+            if (response.data[0].contenido !== "" && response.data[0].contenido !== "[]") {
+                setTemplateToClone(response.data[0])
+            } else {
+                setTemplateToClone('')
+            }
+        } else {
+            setTemplateToClone('')
+        }
+    }
+    //  funcion que obtiene un template
+    const getTemplate = async (item: any, type: boolean) => {
         const data = {
             "id_punto": tipo === 'punto' ? id : -1,
             "id_sitio": tipo === 'sitio' ? id : idSitio,
@@ -151,25 +183,20 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             "es_movil": type
         }
         const response: any = await postData('site/mobile/getone', data)
-        if (response.data.length > 0) {
-            setBoard(JSON.parse(response.data[0].contenido))
-            setOldBoard(JSON.parse(response.data[0].contenido))
-        } else {
-            setBoard([])
-            setOldBoard([])
-        }
+
+        return response
     }
 
     // guardamos el template
-    const storeTemplate = async () => {
+    const storeTemplate = async (data: any) => {
         setShowLoad(true)
         const dataTemplate = {
             "id_punto": tipo === 'punto' ? id : -1,
             "id_sitio": tipo === 'sitio' ? id : idSitio,
             "id_lenguaje": changeLaguage.value,
-            "nombre": "Nombre editado3 sitio movil 1",
-            "descripcion": "descripcion2 editado sitio movil 1",
-            "contenido": JSON.stringify(board),
+            "nombre": data.nombre,
+            "descripcion": data.descripcion,
+            "contenido": data.clonar ? templateToClone.contenido : JSON.stringify(board),
             "version": "version sitio movil 1",
             "es_movil": changeTypeEdit === 1 ? true : false,
             "estado": 1
@@ -178,11 +205,27 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         response &&
             swal(
                 {
-                    text: '¡Configuración almacenada exitosamente!',
+                    text: data.clonar ? '¡Maquetación clonada exitosamente!' : '¡Maquetación almacenada exitosamente!',
                     icon: 'success',
                 }
             )
+        if(data.clonar) {
+            setOneDataTemplate(dataTemplate)
+            setBoard(JSON.parse(templateToClone.contenido))
+            setOldBoard(JSON.parse(templateToClone.contenido))
+        }
         setShowLoad(false)
+    }
+
+    // abrir modal guardar maqueta
+    const toogleSave = () => {
+        handleCloseSave(true)
+    }
+
+    // guardar maqueta
+    const saveTemplate = (data: any) => {
+        storeTemplate(data)
+        handleCloseSave(false);
     }
 
     // elimina items dragados en el editor
@@ -335,7 +378,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const handleFilter = (e: any, allElement: any, tipo: number) => {
         const value = String(e.target.value)
         let updatedData = []
-        tipo === 1 ? setSearchValue(value) : setFilteredDataElement(value)
+        tipo === 1 ? setSearchValue(value) : setSearchValueElement(value)
 
         if (value.length) {
             updatedData = allElement.filter((item: any) => {
@@ -364,18 +407,18 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     const ReturnView = () => {
         if (tipo === 'sitio') {
-            navigate(`/sitios/edit`, {state: oneDataSite })
+            navigate(`/sitios/edit`, { state: oneDataSite })
         } else {
-            navigate(`/sitios/edit-point-interes`, {state: pointInteres })
+            navigate(`/sitios/edit-point-interes`, { state: pointInteres })
         }
     }
     // -------------------------------------------
 
     useEffect(() => {
-        if(state && tipo === 'punto') {
-            setPointInteres(state)   
+        if (state && tipo === 'punto') {
+            setPointInteres(state)
         }
-    },[state, tipo])
+    }, [state, tipo])
 
     // ------------------------------------------------------
 
@@ -412,6 +455,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         language,
         editItem,
         moveCard,
+        showSave,
+        toogleSave,
         ReturnView,
         ChangeMode,
         removeItem,
@@ -423,6 +468,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         filteredData,
         pointInteres,
         handleFilter,
+        saveTemplate,
         uploadElement,
         discardChange,
         updateElement,
@@ -430,9 +476,14 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         changeLaguage,
         changeTypeEdit,
         uploadResource,
+        oneDataTemplate,
+        handleCloseSave,
+        templateToClone,
         setChangeLaguage,
         editItemResource,
         changeModeEditor,
+        getTemplateClone,
+        setTemplateToClone,
         searchValueElement,
         destroyOneResource,
         filteredDataElement,
