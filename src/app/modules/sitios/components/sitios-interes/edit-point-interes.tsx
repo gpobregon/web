@@ -124,6 +124,7 @@ const EditPoint = () => {
         id_lenguaje_anterior: 0,
         publicado: datospuntoInteres.publicado,
     })
+    console.log('sitio', sitio)
     const changeOculto = async (oculto: boolean) => {
         await postData(statePointInteres, {
             id_punto: datospuntoInteres.id_punto,
@@ -185,9 +186,7 @@ const EditPoint = () => {
                     timer: 2000,
                 })
                 // console.log(sitios)
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${datospuntoInteres.id_sitio}`)
             }
         })
     }
@@ -209,9 +208,7 @@ const EditPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${datospuntoInteres.id_sitio}`)
             }
             await updatePoint()
         })

@@ -73,8 +73,9 @@ const Interes: FC<id_sitio> = (props) => {
             timer: 2000,
         })
     }
-    const changeImagePrincipal = async (idpunto: number, idsitio: number) => {
-        await postData(changePointOfInterestFront, {id_punto: idpunto, id_sitio: idsitio})
+    const changeImagePrincipal = async (idpunto: number, idsitio: number,idsala:number) => {
+       const res:any= await postData(changePointOfInterestFront, {id_punto: idpunto, id_sitio: idsitio,id_sala:idsala})
+       console.log({id_punto: idpunto, id_sitio: idsitio,id_sala:idsala})
         setPuntoInteres([])
         setRooms([])
         swal({
@@ -489,11 +490,11 @@ const Interes: FC<id_sitio> = (props) => {
                                         onDragOver={(e) => e.preventDefault()}
                                     >
                                         <div className='row'>
-                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-start'>
+                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-start '>
                                                 <Card
                                                     style={{
                                                         display: 'flex',
-                                                        padding: 12,
+                                                        padding:' 0px 12px 0px 12px',
                                                         height: '100%',
                                                         justifyContent: 'center',
                                                         flexDirection: 'column',
@@ -501,7 +502,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                 >
                                                     <Card.Title
                                                         className='text-center'
-                                                        style={{flexDirection: 'row'}}
+                                                        style={{flexDirection: 'row',}}
                                                     ></Card.Title>
                                                     <Card.Subtitle
                                                         className='text-white'
@@ -520,6 +521,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                             paddingLeft: 20,
                                                             paddingTop: 5,
                                                             marginLeft: '75px',
+                                                         
                                                         }}
                                                     >
                                                         {punto.descripcion}
@@ -553,7 +555,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                 </Card>
                                             </div>
                                             <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-end'>
-                                                <div id='center2'>
+                                               
                                                     <ul className='nav justify-content-end'>
                                                         <li className='nav-item '>
                                                             <Button
@@ -636,7 +638,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                                             !punto.es_portada_de_sitio
                                                                         changeImagePrincipal(
                                                                             punto.id_punto,
-                                                                            punto.id_sitio
+                                                                            punto.id_sitio,
+                                                                            Number(idsala),
                                                                         )
                                                                     }}
                                                                     style={{
@@ -796,7 +799,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                         style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
                                                     ></i> */}
                                                     </ul>
-                                                </div>
+                                               
                                             </div>
                                         </div>
                                     </div>

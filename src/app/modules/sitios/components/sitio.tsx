@@ -118,27 +118,7 @@ const Sitio: FC<sitio> = (props) => {
                         style={{width: '47%'}}
                         onClick={(event) => {
                             if (props.permissionEditSite) {
-                                navigate('/sitios/edit', {
-                                    state: {
-                                        id_sitio: props.id_sitio,
-                                        nombre: props.nombre,
-                                        descripcion: props.descripcion,
-                                        ubicacion: props.ubicacion,
-                                        geoX: props.geoX,
-                                        geoY: props.geoY,
-                                        portada_path: props.portada_path,
-                                        estado: props.estado,
-                                        creado: props.creado,
-                                        editado: props.editado,
-                                        categorias: props.categorias,
-                                        id_municipio: props.id_municipio,
-                                        favorito: props.favorito,
-                                        publicado: props.publicado,
-                                        oculto: props.oculto, 
-                                        geo_json: props.geo_json,
-                                        cercania_activa:props.cercania_activa,
-                                    },
-                                })
+                                navigate(`/sitios/editSite/${props.id_sitio}`)
                             } else {
                                 swal({
                                     title: 'No tienes permiso para editar un sitio',

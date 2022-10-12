@@ -44,8 +44,8 @@ const PrivateRoutes = () => {
 
         {/* Pages */}
         <Route path='dashboard' element={<DashboardWrapper />} />
-        <Route path='/sitios/create' element={<ConfSite />} />
-        <Route path='/sitios/edit' element={<EditSite />} />
+        <Route path='/sitios/createSite' element={<ConfSite />} />
+        <Route path='/sitios/editSite/:id' element={<EditSite />} />
         <Route path='builder' element={<BuilderPageWrapper />} />
         <Route path='menu-test' element={<MenuTestPage />} />
         <Route path='catalogos' element={<CatalogosPage />} />
