@@ -27,7 +27,7 @@ const Recursos = () => {
             file.tipo.includes('image/') ? <Image key={index} item={file} destroyOneResource={destroyOneResource} /> : <AudioResource key={index} item={file} destroyOneResource={destroyOneResource} />
         )
     })
-
+    
     const ResourceElement = (searchValueElement.length ? filteredDataElement : allResourcesElement).map((file: any, index: number) => {
         return (
             <Col xl={6} lg={12} md={12} sm={6} key={`element-${index}`}>
