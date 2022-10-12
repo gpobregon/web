@@ -127,7 +127,8 @@ const Element = [
             icon: 'Panorama.svg',
             type: "image-360",
             text: 'Imagen 360°',
-            typeElement: 'multimedia'
+            typeElement: 'multimedia',
+            url:''
           },
         ]
       },
@@ -226,15 +227,22 @@ const Element = [
         title: 'Pie de Página',
         items: [
           {
-            text: 'Footer 1',
+            text: `© ${new Date().getFullYear()} Copyright:`,
             type: "footer1",
             typeIcon: 'svg',
+            icon: 'footer1.svg',
             typeElement: 'footer'
           },
           {
-            text: 'Footer 2',
+            text: `© ${new Date().getFullYear()} Copyright:`,
             type: "footer2",
+            facebook: '',
+            twitter: '',
+            instagram: '',
+            youtube: '',
+            linkedin: '',
             typeIcon: 'svg',
+            icon: 'footer2.svg',
             typeElement: 'footer'
           }
         ]

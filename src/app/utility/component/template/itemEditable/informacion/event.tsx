@@ -76,7 +76,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
         editItem={data}
       />
 
-      <Row className={`py-2 flex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
+      <Row className={`my-2 flex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
         <Col lg={4} sm={4} xs={5}>
           <div className="d-flex flex-column text-center border rounded">
             <div className="p-2 small">{(getSplitDate(data.startDate, 3) === getSplitDate(data.finalDate, 3)) ? getSplitDate(data.startDate, 3) : `${getSplitDate(data.startDate, 3)} - ${getSplitDate(data.finalDate, 3)}`}</div>

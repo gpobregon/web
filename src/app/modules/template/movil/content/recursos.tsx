@@ -10,8 +10,8 @@ import Masonry from 'react-masonry-css'
 import CustomCollapse from './collapse'
 
 const Recursos = () => {
-    const { uploadResource, allResources, allResourcesElement, destroyOneResource } = useContext(ContentContext)
-    const breakpointColumnsObj = { default: 2, 1100: 2, 700: 2, 500: 2 }
+    const { uploadResource, allResources, allResourcesElement, destroyOneResource, filteredData, filteredDataElement, searchValue, searchValueElement, handleFilter } = useContext(ContentContext)
+    const breakpointColumnsObj = { default: 2, 1100: 1, 700: 2, 500: 1 }
     const { getRootProps, getInputProps } = useDropzone({
         accept: { 'image/*': [], 'video/*': [], 'audio/*': [] },
         onDrop: (acceptedFiles: any) => {
@@ -22,15 +22,15 @@ const Recursos = () => {
         }
     });
 
-    const thumbs = allResources.map((file: any, index: number) => {
+    const thumbs = (searchValue.length ? filteredData : allResources).map((file: any, index: number) => {
         return (
-            file.tipo.includes('image/') ? <Image key={index} item={file} destroyOneResource={destroyOneResource} /> : <AudioResource item={file} destroyOneResource={destroyOneResource} />
+            file.tipo.includes('image/') ? <Image key={index} item={file} destroyOneResource={destroyOneResource} /> : <AudioResource key={index} item={file} destroyOneResource={destroyOneResource} />
         )
     })
-
-    const ResourceElement = allResourcesElement.map((file: any, index: number) => {
+    
+    const ResourceElement = (searchValueElement.length ? filteredDataElement : allResourcesElement).map((file: any, index: number) => {
         return (
-            <Col lg={6} key={index}>
+            <Col xl={6} lg={12} md={12} sm={6} key={`element-${index}`}>
                 <ElementDrag
                     key={index}
                     item={file}
@@ -48,26 +48,43 @@ const Recursos = () => {
 
     return (
         <Fragment>
-            <Row>
-                <Col>
-                    <InputGroup className="mb-3">
-                        <InputGroup.Text id="basic-addon1"><i className="fa fa-search" /></InputGroup.Text>
-                        <Form.Control
-                            placeholder="Buscar"
-                            aria-label="Username"
-                            aria-describedby="basic-addon1"
-                        />
-                    </InputGroup>
-                </Col>
-            </Row>
-
             <PerfectScrollbar style={{ height: '310px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
                 <CustomCollapse title='Multimedia'>
+                    <Row>
+                        <Col>
+                            <InputGroup className="mb-3">
+                                <InputGroup.Text id="search-resource"><i className="fa fa-search" /></InputGroup.Text>
+                                <Form.Control
+                                    placeholder="Buscar"
+                                    aria-label="Username"
+                                    aria-describedby="basic-addon1"
+                                    value={searchValue}
+                                    onChange={(e: any) => handleFilter(e, allResources, 1)}
+                                />
+                            </InputGroup>
+                        </Col>
+                    </Row>
+
                     <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
                         {thumbs}
                     </Masonry>
                 </CustomCollapse>
                 <CustomCollapse title='Elementos'>
+                    <Row>
+                        <Col>
+                            <InputGroup className="mb-3">
+                                <InputGroup.Text id="search-element"><i className="fa fa-search" /></InputGroup.Text>
+                                <Form.Control
+                                    placeholder="Buscar"
+                                    aria-label="Username"
+                                    aria-describedby="basic-addon1"
+                                    value={searchValueElement}
+                                    onChange={(e: any) => handleFilter(e, allResourcesElement, 2)}
+                                />
+                            </InputGroup>
+                        </Col>
+                    </Row>
+
                     <Row>
                         {ResourceElement}
                     </Row>

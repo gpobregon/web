@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useContext, useRef } from "react";
+import { FC, useContext, useState } from "react";
 import Masonry from 'react-masonry-css'
-import Image from '../../../resource/image'
+import Image from '../../../resource/image2'
 import PerfectScrollbar from 'react-perfect-scrollbar'
-import { Popover, OverlayTrigger } from 'react-bootstrap'
+import { Popover, OverlayTrigger, Button } from 'react-bootstrap'
 import { Menu, Item, useContextMenu } from "react-contexify";
 import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
 import { ContentContext } from '../../../../../modules/template/movil/context'
@@ -19,7 +19,8 @@ type Model = {
 }
 const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
-  const { allResources, destroyOneResource, changeTypeEdit } = useContext(ContentContext)
+  const { allResources, changeTypeEdit } = useContext(ContentContext)
+  const [selected, setSelected] = useState<any>([])
 
   const breakpointColumnsObj = { default: 2, 1100: 2, 700: 2, 500: 2 }
 
@@ -32,22 +33,50 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
     setEditItem([])
   }
 
+  const changeText = (e: any) => {
+    const edit = {
+      ...data,
+      ...e
+    }
+    updateElement(edit)
+  }
+
+  const removeImage = () => {
+    changeText({ url: '' })
+    setSelected([])
+  }
+
+  const Listo = () => {
+    selected.url && changeText({ url: selected.url })
+  }
+
   const popoverClick = (
     <Popover id="popover-basic" style={{ transform: 'translate(-366px, 317px)', maxWidth: '358px' }}>
       <Popover.Header as="h3">Imágenes</Popover.Header>
       <Popover.Body>
-        <PerfectScrollbar style={{ height: '310px', maxWidth: '485.px', width: '100%' }} className="min-tumnail px-4">
+        <PerfectScrollbar style={{ height: '250px', maxWidth: '400px', width: '100%' }} className="min-tumnail px-4">
           <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
             {
               allResources.map((file: any, index: number) => {
                 return (
-                  file.tipo.includes('image/') && <Image key={index} item={file} destroyOneResource={destroyOneResource} />
+                  file.tipo.includes('image/') && <Image key={index} item={file} selected={selected} setSelected={setSelected} />
                 )
               })
             }
           </Masonry>
         </PerfectScrollbar>
       </Popover.Body>
+      <hr />
+      <Popover.Header>
+        <div className="d-flex">
+          <div className="flex-shrink-1 px-4 d-flex justify-content-center align-items-center">
+            <i className="bi bi-trash text-danger fs-2" onClick={() => removeImage()} />
+          </div>
+          <div className="w-100 d-grid gap-2">
+            <Button size="sm" onClick={() => Listo()}>Listo</Button>
+          </div>
+        </div>
+      </Popover.Header>
     </Popover>
   );
 
@@ -78,7 +107,7 @@ const Picture: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditIt
             placement="left"
             overlay={popoverClick}
           >
-            <img src={!data.url ? toAbsoluteUrl("/media/png/picture.png") : data.url} alt="" className="w-75 rounded" />
+            <img src={!data.url ? toAbsoluteUrl("/media/png/picture.png") : data.url} alt="" className={`${!data.url ? 'w-25' : 'w-50'} rounded`} />
           </OverlayTrigger>)
         }
 
