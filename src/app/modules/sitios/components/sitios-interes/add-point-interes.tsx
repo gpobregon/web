@@ -99,6 +99,7 @@ const AddPoint = () => {
         favorito: true,
         publicado: true,
         oculto: false,
+        cercania_activa: false,
     })
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
@@ -142,7 +143,8 @@ const AddPoint = () => {
         // console.log(sitio)
         if (sitio.nombre != '' && sitio.id_lenguaje != 0 && sitio.portada_path != '') {
            const res:any= await postData(addNewPointInteres, sitio)
-            navigate(`/template/punto/${tipo}/${res.point.id_punto}`)
+           
+            navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${res.point.id_punto}`)
           
         } else {
             alertNotNullInputs()

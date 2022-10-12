@@ -247,7 +247,7 @@ const UserManagement: FC<any> = ({show}) => {
             })
 
             if (filter[0]?.gestor_usuarios === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionCreateUsers(filter[0]?.usuarios_crear)
                 setPermissionEditUsers(filter[0]?.usuarios_editar)

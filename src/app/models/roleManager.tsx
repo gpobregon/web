@@ -33,12 +33,15 @@ export interface roleManager {
     sitio_punto_ruta_crear: boolean
     sitio_punto_ruta_editar: boolean
     sitio_punto_ruta_eliminar: boolean
+
     sitio_punto_ruta_pasos_crear: boolean
     sitio_punto_ruta_pasos_editar: boolean
     sitio_punto_ruta_pasos_eliminar: boolean
+
     sitio_punto_ruta_imagen_crear: boolean
     sitio_punto_ruta_imagen_editar: boolean
     sitio_punto_ruta_imagen_eliminar: boolean
+    
     sitio_punto_ruta_mapa_crear: boolean
     sitio_punto_ruta_mapa_editar: boolean
     sitio_punto_ruta_mapa_eliminar: boolean

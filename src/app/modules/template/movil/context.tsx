@@ -1,11 +1,11 @@
 /* eslint-disable no-empty-pattern */
 // context/todoContext.tsx
-import { updateData, appendData, validElement, generateRandomString } from '../../../utility/global/index'
+import { updateData, appendData, generateRandomString } from '../../../utility/global/index'
 import { createContext, FC, useState, useCallback, useEffect, useContext } from 'react'
 import { WithChildren } from '../../../utility/models/childrenContext'
 import { LoadingContext } from '../../../utility/component/loading/context'
 import { getData, postData } from '../../../services/api'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import update from 'immutability-helper'
 import { useDrop } from "react-dnd"
 import swal from 'sweetalert'
@@ -26,35 +26,50 @@ const myBucket = new AWS.S3({
 
 export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [board, setBoard] = useState<any>([])
+    const [oneDataTemplate, setOneDataTemplate] = useState<any>([])
+    const [templateToClone, setTemplateToClone] = useState<any>('')
+    const [show, handleClose] = useState<boolean>(false)
+    const [showSave, handleCloseSave] = useState<boolean>(false)
+    const [pointInteres, setPointInteres] = useState<any>([])
     const [oldBoard, setOldBoard] = useState<any>([])
     const [language, setLanguage] = useState<any>([])
     const [changeModeEditor, setChangeModeEditor] = useState<Number>(1)
     const { setShowLoad } = useContext(LoadingContext)
     const [allResources, setAllResource] = useState<any>([])
+    const [allResourcesElement, setAllResourceElement] = useState<any>([])
     const [oneDataSite, setOneDataSite] = useState<any>([])
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<Number>(1)
     let [count, setCount] = useState(0)
+
+    const [searchValue, setSearchValue] = useState<any>([])
+    const [filteredData, setFilteredData] = useState<any>([])
+
+    const [searchValueElement, setSearchValueElement] = useState<any>([])
+    const [filteredDataElement, setFilteredDataElement] = useState<any>([])
+
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
-    const { id, tipo } = useParams()
+    const { id, tipo, idSitio } = useParams()
+    const { state } = useLocation()
     const navigate = useNavigate()
     // Agregar elemento
     const addElement = (data: any) => {
-        const response = validElement(data.type)
-        const result = response.filter((item: any) => data.type === item.type);
+        // // const response = validElement(data.type)
+        // // const result = response.filter((item: any) => data.type === item.type);
         if (data.typeElement === 'multimedia') {
             setChangeModeEditor(2)
         }
         setCount((count: number) => 1)
-        const item = result[0]
+        const item = data
         setBoard((board: []) =>
             [
                 ...board,
                 {
                     ...item,
                     id: generateRandomString(7),
-                    text: `${item.text} ${(board.length + 1)}`,
+                    // text: `${item.text} ${(board.length + 1)}`,
+                    text: `${item.text}`,
                     index: (board.length + 1)
                 }
             ]
@@ -116,10 +131,13 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         setChangeLaguage(data)
         oneData(data, changeTypeEdit === 1 ? true : false)
     }
-
+    // cambiar modalidad de edición
     const ChangeMode = (type: number) => {
+        setBoard([])
         setChangeTypeEdit(type)
+        setEditItem([])
         oneData(changeLaguage, type === 1 ? true : false)
+        getAllResources(type)
     }
 
     // get all data
@@ -130,34 +148,55 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         oneData(response.data.length > 0 ? response.data[0] : [], changeTypeEdit === 1 ? true : false)
     }
 
-    // obtenermos el template 
+    // obtenemos el template para modificar
     const oneData = async (item: any, type: boolean) => {
-        const data = {
-            "id_punto": tipo === 'punto' ? id : -1,
-            "id_sitio": tipo === 'sitio' ? id : -1,
-            "id_lenguaje": item.value,
-            "es_movil": type
-        }
-        const response: any = await postData('site/mobile/getone', data)
+        const response = await getTemplate(item, type)
         if (response.data.length > 0) {
+            setOneDataTemplate(response.data[0])
             setBoard(JSON.parse(response.data[0].contenido))
             setOldBoard(JSON.parse(response.data[0].contenido))
         } else {
             setBoard([])
             setOldBoard([])
+            setOneDataTemplate([])
         }
+    }
+    // funcion que setea template para clonar
+    const getTemplateClone = async (item: any, type: boolean) => {
+        const response = await getTemplate(item, type)
+        if (response.data.length > 0) {
+            if (response.data[0].contenido !== "" && response.data[0].contenido !== "[]") {
+                setTemplateToClone(response.data[0])
+            } else {
+                setTemplateToClone('')
+            }
+        } else {
+            setTemplateToClone('')
+        }
+    }
+    //  funcion que obtiene un template
+    const getTemplate = async (item: any, type: boolean) => {
+        const data = {
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
+            "id_lenguaje": item.value,
+            "es_movil": type
+        }
+        const response: any = await postData('site/mobile/getone', data)
+
+        return response
     }
 
     // guardamos el template
-    const storeTemplate = async () => {
+    const storeTemplate = async (data: any) => {
         setShowLoad(true)
         const dataTemplate = {
-            "id_punto": -1,
-            "id_sitio": id,
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
             "id_lenguaje": changeLaguage.value,
-            "nombre": "Nombre editado3 sitio movil 1",
-            "descripcion": "descripcion2 editado sitio movil 1",
-            "contenido": JSON.stringify(board),
+            "nombre": data.nombre,
+            "descripcion": data.descripcion,
+            "contenido": data.clonar ? templateToClone.contenido : JSON.stringify(board),
             "version": "version sitio movil 1",
             "es_movil": changeTypeEdit === 1 ? true : false,
             "estado": 1
@@ -166,11 +205,27 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         response &&
             swal(
                 {
-                    text: '¡Configuración almacenada exitosamente!',
+                    text: data.clonar ? '¡Maquetación clonada exitosamente!' : '¡Maquetación almacenada exitosamente!',
                     icon: 'success',
                 }
             )
+        if(data.clonar) {
+            setOneDataTemplate(dataTemplate)
+            setBoard(JSON.parse(templateToClone.contenido))
+            setOldBoard(JSON.parse(templateToClone.contenido))
+        }
         setShowLoad(false)
+    }
+
+    // abrir modal guardar maqueta
+    const toogleSave = () => {
+        handleCloseSave(true)
+    }
+
+    // guardar maqueta
+    const saveTemplate = (data: any) => {
+        storeTemplate(data)
+        handleCloseSave(false);
     }
 
     // elimina items dragados en el editor
@@ -185,26 +240,33 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const discardChange = () => {
         setBoard(oldBoard)
     }
-
+    // obtenemos el nombre del sitio que estamos editando
     const oneSite = async () => {
-        const response: any = await getData(`site/${id}`)
+        let response: any
+        if (tipo === 'punto') {
+            response = await postData(`site/rooms`, { "id_sitio": idSitio })
+            // response =  response.salas.filter((item: any) => String(item.id) !== String(id))
+        } else {
+            response = await getData(`site/${id}`)
+        }
+
         setOneDataSite(response.site ? response.site : [])
     }
 
     // Recursos
-
+    // guardar elementos multimedia
     const uploadResource = async (file: any, option: number) => {
         setShowLoad(true)
         const url = `${process.env.REACT_APP_URLAWS}resource-${changeTypeEdit === 1 ? 'mobile' : 'web'}-${id}-${file.name}`;
         const fileResource =
         {
-            "id_punto": -1,
-            "id_sitio": id,
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
             "nombre": file.name,
             "url": url,
             "tipo": file.type,
             "contenido": '',
-            "tipo_elemento": '',
+            "tipo_elemento": 'multimedia',
             "es_movil": changeTypeEdit === 1 ? true : false,
             "estado": 1
         }
@@ -218,7 +280,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         // URLAWS
         myBucket.putObject(params)
             .on('httpUploadProgress', async (evt) => {
-                if(evt.loaded/evt.total === 1){ 
+                console.log(Math.round((evt.loaded / evt.total) * 100))
+                if (evt.loaded / evt.total === 1) {
                     const response: any = await postData('site/mobile/resource/add', fileResource)
                     setAllResource(appendData(allResources, response.data))
                     if (option === 1) {
@@ -229,6 +292,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                                     icon: 'success',
                                 }
                             )
+                        setShowLoad(false)
                     } else {
                         setShowLoad(false)
                         return url
@@ -237,27 +301,69 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                 }
             })
             .send((err) => {
-                if (err) console.log(err)
+                if (err) {
+                    swal(
+                        {
+                            text: 'El recurso no fue almacenado',
+                            icon: 'danger',
+                        }
+                    )
+                    console.log(err)
+                    setShowLoad(false)
+                }
             })
+    }
+    // guardar elemento editable
+    const uploadElement = async (data: any) => {
+        setShowLoad(true)
+        const item =
+        {
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
+            "nombre": data.nombre,
+            "url": '',
+            "tipo": data.typeElement,
+            "contenido": JSON.stringify(data),
+            "tipo_elemento": 'element',
+            "es_movil": changeTypeEdit === 1 ? true : false,
+            "estado": 1
+        }
+
+        const response: any = await postData('site/mobile/resource/add', item)
+        response &&
+            swal(
+                {
+                    text: 'Recurso almacenado con exito',
+                    icon: 'success',
+                }
+            )
+        setAllResourceElement(appendData(allResourcesElement, { ...item, id_recurso: response.data.id_recurso }))
+        handleClose(false)
+        setShowLoad(false)
     }
 
     // Se obienen todos los recursos
-    const getAllResources = async () => {
+    const getAllResources = async (type: number) => {
         const jsonData = {
-            "id_punto": -1,
-            "id_sitio": id
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
+            "es_movil": type === 1 ? true : false
         }
-        const response: any = await postData('site/mobile/resource', jsonData)
-        if (response.data.length > 0) {
+        const response: any = await postData('site/mobile/resource', { ...jsonData, "tipo_elemento": 'multimedia', })
+        const response2: any = await postData('site/mobile/resource', { ...jsonData, "tipo_elemento": 'element', })
+        if (response.data) {
             setAllResource(response.data)
+        }
+        if (response2.data) {
+            setAllResourceElement(response2.data)
         }
     }
     // Eliminacion de un recurso
-    const destroyOneResource = async (id: number) => {
+    const destroyOneResource = async (id: number, tipo: number) => {
         setShowLoad(true)
         const response: any = await postData('site/mobile/resource/delete', { "id_recurso": id })
-        const items = allResources.filter((item: any) => String(item.id_recurso) !== String(id))
-        setAllResource(items)
+
+        const items = (tipo === 1 ? allResources : allResourcesElement).filter((item: any) => String(item.id_recurso) !== String(id))
         response &&
             swal(
                 {
@@ -265,17 +371,57 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                     icon: 'success',
                 }
             )
+        tipo === 1 ? setAllResource(items) : setAllResourceElement(items)
         setShowLoad(false)
     }
 
-    // Guardar recurso individual de tipo elemento
+    const handleFilter = (e: any, allElement: any, tipo: number) => {
+        const value = String(e.target.value)
+        let updatedData = []
+        tipo === 1 ? setSearchValue(value) : setSearchValueElement(value)
 
-    const saveResourceElement = (id: string) => {
-        const item = board.filter((item: any) => String(item.id) === String(id))
-        console.log(item)
+        if (value.length) {
+            updatedData = allElement.filter((item: any) => {
+                const startsWith =
+                    item.nombre.toLowerCase().startsWith(value.toLowerCase())
+
+                const includes =
+                    item.nombre.toLowerCase().includes(value.toLowerCase())
+
+                if (startsWith) {
+                    return startsWith
+                } else if (!startsWith && includes) {
+                    return includes
+                } else return null
+            })
+            if (tipo === 1) {
+                setFilteredData(updatedData)
+                setSearchValue(value)
+            } else {
+                setFilteredDataElement(updatedData)
+                setSearchValueElement(value)
+
+            }
+        }
     }
 
+    const ReturnView = () => {
+        if (tipo === 'sitio') {
+            navigate(`/sitios/edit`, { state: oneDataSite })
+        } else {
+            navigate(`/sitios/edit-point-interes`, { state: pointInteres })
+        }
+    }
+    // -------------------------------------------
+
+    useEffect(() => {
+        if (state && tipo === 'punto') {
+            setPointInteres(state)
+        }
+    }, [state, tipo])
+
     // ------------------------------------------------------
+
     useEffect(
         () => {
             if (board.length > 0 && count === 1) {
@@ -289,7 +435,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     useEffect(() => {
 
         if (tipo === 'sitio' || tipo === 'punto') {
-            getAllResources()
+            getAllResources(1)
             getLenguate()
             oneSite()
         } else {
@@ -301,31 +447,50 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     const value = {
         drop,
+        show,
+        tipo,
         drop2,
         board,
         oneData,
         language,
         editItem,
         moveCard,
+        showSave,
+        toogleSave,
+        ReturnView,
         ChangeMode,
         removeItem,
         setEditItem,
+        handleClose,
+        searchValue,
         oneDataSite,
         allResources,
+        filteredData,
+        pointInteres,
+        handleFilter,
+        saveTemplate,
+        uploadElement,
         discardChange,
         updateElement,
         storeTemplate,
         changeLaguage,
         changeTypeEdit,
         uploadResource,
+        oneDataTemplate,
+        handleCloseSave,
+        templateToClone,
         setChangeLaguage,
         editItemResource,
         changeModeEditor,
+        getTemplateClone,
+        setTemplateToClone,
+        searchValueElement,
         destroyOneResource,
+        filteredDataElement,
         changeLangegeSelect,
         setEditItemResource,
         setChangeModeEditor,
-        saveResourceElement
+        allResourcesElement
     }
 
     return (

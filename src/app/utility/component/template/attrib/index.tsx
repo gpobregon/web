@@ -2,6 +2,7 @@ import { Fragment, FC } from 'react'
 import Textos from './textos/textos'
 import Informacion from './informacion/information'
 import MultimediaAttr from './multimedia/index'
+import Otros from './otros/index'
 
 type Model = {
     editItem: any
@@ -30,7 +31,7 @@ const Index: FC<Model> = ({ editItem, updateElement, drop2, editItemResource, up
                 Multimedia.includes(editItem.type) && <MultimediaAttr setEditItemResource={setEditItemResource} editItem={editItem} updateElement={updateElement} drop2={drop2} editItemResource={editItemResource} uploadResource={uploadResource}/>
             }
             { 
-                Others.includes(editItem.type) && <Textos editItem={editItem} updateElement={updateElement} />
+                Others.includes(editItem.type) && <Otros editItem={editItem} updateElement={updateElement} />
             }
         </Fragment>   
     )

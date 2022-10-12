@@ -23,7 +23,7 @@ const ReportsPage = () => {
             })
 
             if (filter[0]?.gestor_reportes === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             }
         })
     }

@@ -29,7 +29,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     }
     updateElement(edit)
   }
-
+ 
   return (
     <div
       ref={referencia}

@@ -3,7 +3,6 @@ import { FC } from "react";
 import { Row } from 'react-bootstrap'
 import NewCol from './col'
 import { Menu, Item, useContextMenu } from "react-contexify";
-import MenuDoubleClick from '../../../../menu/doubleClick'
 
 type Model = {
   data: any
@@ -13,11 +12,10 @@ type Model = {
   removeItem: (data: any) => void
   setEditItem: (data: any) => void
   updateElement: (data: any) => void
-  saveResourceElement: (data: string) => void
   moveCard: (dragIndex: number, hoverIndex: number) => void
 }
 
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResourceElement, moveCard, setEditItem, updateElement, removeItem }) => {
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, setEditItem, updateElement, removeItem }) => {
 
   const { show } = useContextMenu({ id: "menu-id" });
   const { show: showMenu2 } = useContextMenu({ id: "menu-custom" });
@@ -41,26 +39,25 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, saveResource
           <i className="bi bi-x-circle-fill text-danger pe-4" />Quitar Elemento
         </Item>
       </Menu>
-      <MenuDoubleClick />
       <div className="w-100 me-3">
         <Row>
           <NewCol
+            lg={6}
             section={0}
             data={data}
-            moveCard={moveCard}
-            removeItem={removeItem}
+            sectionData={data.section1}
             setEditItem={setEditItem}
             updateElement={updateElement}
-            saveResourceElement={saveResourceElement}
+            removeItem={removeItem}
           />
           <NewCol
+            lg={6}
             section={1}
             data={data}
-            moveCard={moveCard}
+            sectionData={data.section2}
             removeItem={removeItem}
-            setEditItem={setEditItem}
             updateElement={updateElement}
-            saveResourceElement={saveResourceElement}
+            setEditItem={setEditItem}
           />
         </Row>
       </div>
