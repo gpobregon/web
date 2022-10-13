@@ -107,6 +107,7 @@ const EditPoint = () => {
     //get sitio-------------------------------------------------------------------------------------
     const {state} = useLocation()
     const{id_punto,id_sitio}=useParams()
+    const [nombreSalas, setNombreSalas] = useState('')
     // const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
         id_punto: 0,
@@ -128,6 +129,7 @@ const EditPoint = () => {
 
     const ObtenerPuntoInteres = async () => {
         const punto: any = await postData(getPuntoInteres, {id_punto:Number(id_punto)})
+        setNombreSalas(punto.sala_nombre)
         setSitio({
             id_punto: Number(id_punto),
             id_sitio:Number( id_sitio),
@@ -145,7 +147,7 @@ const EditPoint = () => {
             id_lenguaje_anterior: 0,
             publicado: punto.publicado,
         })
-        console.log(punto)
+        // console.log(punto)
     }
     // console.log('sitio', sitio)
     const changeOculto = async (oculto: boolean) => {
@@ -215,7 +217,7 @@ const EditPoint = () => {
     }
     async function postSiteMaquetar(tipo: string) {
         await updatePoint()
-        navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${sitio.id_punto}`)
+        navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${sitio.id_punto}`,{state:sitio})
     }
 
     const saveChanges = async () => {
@@ -245,8 +247,8 @@ const EditPoint = () => {
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
-        console.log(updatePoint)
-        console.log(sitio)
+        // console.log(updatePoint)
+        // console.log(sitio)
     }
 
     // const getSites = async () => {
@@ -293,13 +295,13 @@ const EditPoint = () => {
             (language) => language.id_lenguaje === event.value
         )
         if (result[0]?.descripcion) {
-            console.log(event.value)
+            // console.log(event.value)
             setDescripcion(result[0]?.descripcion)
             setMostrarDescripcion(true)
             sitio.descripcion = descripcion
             sitio.id_lenguaje = event.value
             sitio.id_lenguaje_anterior = event.value
-            console.log(sitio)
+            // console.log(sitio)
         } else {
             setDescripcion('')
             swal({
@@ -438,15 +440,20 @@ const EditPoint = () => {
                             ></Button>
                         </div>
                         <div id='center'>
-                            {/* {site.nombre != '' ? (
+                            {/* {sitio.nombre != '' ? (
                 <span className='font-size: 10rem; '>
-            <h1 style={{marginTop:'10px',marginRight:'5px'}} >{   site.nombre }</h1> 
+            <h1 style={{marginTop:'10px',marginRight:'5px'}} >{   sitio.nombre }</h1> 
                
                   
                 </span>
               ) : (
                 <p></p>
               )} */}
+                <span className='font-size: 10rem; '>
+                                <h3 style={{marginTop: '10px', marginRight: '20px'}}>
+                                    {sitio.nombre}
+                                </h3>
+                            </span>
                         </div>
                         <div id='center'>
                             {/* <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY hh:mm') + ' '} por{' '}</p>  */}
@@ -659,7 +666,7 @@ const EditPoint = () => {
                                         className='form-control'
                                         disabled
                                         style={{border: '0', fontSize: '14px', color: '#92929F'}}
-                                        // value={sitio.nombreSala}
+                                        value={nombreSalas}
                                     ></input>
 
                                     <br></br>
