@@ -6,6 +6,7 @@ import {awsconfig} from '../../../../aws-exports'
 import {useAuth} from '../core/Auth'
 import swal from 'sweetalert'
 import {validateStringEmail, validateStringPassword} from '../../validarCadena/validadorCadena'
+
 Amplify.configure(awsconfig)
 Amplify.configure(awsconfig)
 
@@ -137,6 +138,29 @@ export function Login() {
         }
     }
 
+    const [passwordShown, setPasswordShown] = useState(false)
+
+    // Password toggle handler
+    const togglePasswordOriginal = (event: any) => {
+        // When the handler is invoked
+        // inverse the boolean state of passwordShown
+        event.preventDefault()
+        setPasswordShown(!passwordShown)
+    }
+
+    const [passwordType, setPasswordType] = useState('password')
+    const [passwordInput, setPasswordInput] = useState('')
+    const handlePasswordChange = (event: any) => {
+        setPasswordInput(event.target.value)
+    }
+    const togglePassword = () => {
+        if (passwordType === 'text') {
+            setPasswordType('text')
+            return
+        }
+        setPasswordType('password')
+    }
+
     return (
         <Form style={{width: '50%'}}>
             {
@@ -178,8 +202,9 @@ export function Login() {
 
                         <Form.Group className='mb-3'>
                             <Form.Label>{'Contraseña'}</Form.Label>
-                            <Form.Control
-                                type='password'
+                            <Form.Control 
+                                style={{display: 'none !important'}}
+                                type={passwordShown ? 'text' : 'password'}
                                 onChange={(event) => {
                                     setTouchedPasswordInput(true)
 
@@ -191,6 +216,43 @@ export function Login() {
                                 }}
                                 placeholder='Introduce tu contraseña'
                             />
+                            {/* <input 
+                                className='-ms-clear display-none' 
+                               
+                                type={passwordShown ? 'text' : 'password'}
+                                onChange={(event) => {
+                                    setTouchedPasswordInput(true)
+
+                                    if (validateStringPassword(event.target.value)) {
+                                        setPassword(event.target.value)
+                                    }
+
+                                    setValidPassword(validateStringPassword(event.target.value))
+                                }}
+                                placeholder='Introduce tu contraseña'
+                            /> */}
+                            <button onClick={(event) => togglePasswordOriginal(event)}>Show Password</button>
+
+                            {/* <input
+                                type={passwordType}
+                                onChange={handlePasswordChange}
+                                value={passwordInput}
+                                name='password'
+                                className='form-control'
+                                placeholder='Password'
+                            />
+                            <div className='input-group-btn'>
+                                <button
+                                    className='btn btn-outline-primary'
+                                    onClick={togglePassword}
+                                >
+                                    {passwordType === 'password' ? (
+                                        <i className='bi bi-eye-slash'></i>
+                                    ) : (
+                                        <i className='bi bi-eye'></i>
+                                    )}
+                                </button>
+                            </div> */}
                             {validPassword && touchedPasswordInput ? (
                                 <Form.Label className='mt-2 text-primary'>
                                     Contraseña válida
@@ -208,7 +270,11 @@ export function Login() {
                             </Link>
                         </div>
 
-                        <Button variant='primary w-100' onClick={emailValidation} disabled={!validPassword || !validEmail}>
+                        <Button
+                            variant='primary w-100'
+                            onClick={emailValidation}
+                            disabled={!validPassword || !validEmail}
+                        >
                             {'Iniciar sesión'}
                         </Button>
                     </>

@@ -259,7 +259,7 @@ const EditSite = () => {
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
         swal({
-            title: '¿Estas seguro de Descartar Los Cambios ?',
+            title: '¿Estas seguro de descartar los cambios ?',
             icon: 'warning',
             buttons: ['No', 'Sí'],
         }).then((res) => {
@@ -275,9 +275,9 @@ const EditSite = () => {
     }
     const saveChanges = async () => {
         swal({
-            title: '¿Quiere Seguir Editando?',
+            title: '¿Quiere guardar los cambios?',
             icon: 'warning',
-            buttons: ['Sí', 'No'],
+            buttons: ['No', 'Sí'],
         }).then((res) => {
             if (res) {
                 swal({

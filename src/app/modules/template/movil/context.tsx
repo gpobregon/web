@@ -218,8 +218,17 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     // abrir modal guardar maqueta
-    const toogleSave = () => {
-        handleCloseSave(true)
+    const toogleSave = () => { 
+        swal({
+            title: '¿Quiere guardar los cambios?',
+            icon: 'warning',
+            buttons: ['No', 'Sí'],
+        }).then((res) => {
+            if (res) {
+                handleCloseSave(true)
+            }
+        })
+        
     }
 
     // guardar maqueta
@@ -237,8 +246,22 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     // descarta los cambios realizados dentro del editor
-    const discardChange = () => {
-        setBoard(oldBoard)
+    const discardChange = () => { 
+        swal({
+            title: '¿Estas seguro de descartar los cambios?',
+            icon: 'warning',
+            buttons: ['No', 'Sí'],
+        }).then((res) => {
+            if (res) {
+                swal({
+                    text: 'Descartado Correctamente',
+                    icon: 'success',
+                    timer: 2000,
+                })
+                setBoard(oldBoard)
+            }
+        })
+        
     }
     // obtenemos el nombre del sitio que estamos editando
     const oneSite = async () => {
