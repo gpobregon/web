@@ -60,7 +60,7 @@ const AddRoute = () => {
     const {state} = useLocation()
     const [puntos, setpuntos] = useState(state as datosPuntoInteres)
     const [ruta, setruta] = useState<Route>()
-  
+ 
     const [getimg, setGetimg] = useState<Imagen>({
         id_punto_a: 0,
         id_punto_b: 0,

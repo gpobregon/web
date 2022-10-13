@@ -460,7 +460,10 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                             props.id_punto_a,
                                                                                         id_punto_b:
                                                                                             punto.id_punto,
+                                                                                       id_sitio: props.id_sitio,
                                                                                        
+                                                                        
+                                                                                            nombre_punto_a:props.nombrepunto_a,
                                                                                         nombre_punto_b:
                                                                                             punto.nombre,
                                                                                     },
