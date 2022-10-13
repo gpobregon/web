@@ -23,7 +23,7 @@ const AudioResource: FC<Props> = ({ item, destroyOneResource }) => {
             Icono = 'film'
         }
     return (
-        <div style={{ border: isDragging ? "1px dashed #009EF7" : "0px" }} className="bkg-dark content-icon rounded my-2 text-center"  ref={drag}>
+        <div style={{ border: isDragging ? "1px dashed #009EF7" : "0px" }} className="bkg-dark content-icon rounded p-2 text-center w-100 d-inline-block"  ref={drag}>
             <div className="icon-wrapper">
                 <i className={`bi bi-${Icono} fa-4x text-white`}></i>
             </div>

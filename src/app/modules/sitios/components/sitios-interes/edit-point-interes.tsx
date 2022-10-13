@@ -12,20 +12,24 @@ import {
     getData,
     languagesMethod,
     statePointInteresPublished,
+    getRolesMethod,
+    getPuntoInteres,
 } from '../../../../services/api'
 import swal from 'sweetalert'
 import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
-import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
+import {Link, Navigate, useLocation, useNavigate, useParams} from 'react-router-dom'
 import {status} from '../../../../models/status'
-import {Site} from '../../../../models/site'
+
 import logo from '../../upload-image_03.jpg'
 import {QRCodeCanvas} from 'qrcode.react'
-import UpImage from '../upload-image'
+import UpImage from '../../../uploadFile/upload-image'
 import {CatalogLanguage} from '../../../../models/catalogLanguage'
 import SalaRutas from '../rutas-sitios-interes/sala-rutas'
 import {CostExplorer} from 'aws-sdk'
 import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
+import {Auth} from 'aws-amplify'
+import {roleManager} from '../../../../models/roleManager'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -101,33 +105,60 @@ const EditPoint = () => {
     const handleShow = () => setShow(true) //modal open qr
     const [show, setShow] = useState(false) //modal show qr
     //get sitio-------------------------------------------------------------------------------------
-    const [sitios, setSitios] = useState()
     const {state} = useLocation()
-    const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
+    const{id_punto,id_sitio}=useParams()
+    const [nombreSalas, setNombreSalas] = useState('')
+    // const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
-        id_punto: datospuntoInteres.id_punto,
-        id_sitio: datospuntoInteres.id_sitio,
-        id_guia: datospuntoInteres.id_guia,
+        id_punto: 0,
+        id_sitio: 0,
         descripcion: '',
-        id_lenguaje: datospuntoInteres.lenguajes,
-        nombre: datospuntoInteres.nombre,
-        geoX: datospuntoInteres.geoX,
-        geoY: datospuntoInteres.geoY,
-        portada_path: datospuntoInteres.portada_path,
-        qr_path: datospuntoInteres.qr_path,
-        es_portada_de_sitio: datospuntoInteres.es_portada_de_sitio,
-        estado: datospuntoInteres.estado,
-        es_visible: datospuntoInteres.es_visible,
+        id_lenguaje: 0,
+        lenguajes:[{id_punto:0,id_lenguaje:0,descripcion:''}],
+        nombre: '',
+        geoX: 0,
+        geoY: 0,
+        portada_path: '',
+        qr_path: '',
+        es_portada_de_sitio: '',
+        estado: false,
+        es_visible:     false,
         id_lenguaje_anterior: 0,
-        publicado: true,
+        publicado:   false,
     })
 
-    const changeOculto = (oculto: boolean) => {
-        postData(statePointInteres, {id_punto: datospuntoInteres.id_punto, es_visible: oculto})
+    const ObtenerPuntoInteres = async () => {
+        const punto: any = await postData(getPuntoInteres, {id_punto:Number(id_punto)})
+        setNombreSalas(punto.sala_nombre)
+        setSitio({
+            id_punto: Number(id_punto),
+            id_sitio:Number( id_sitio),
+            descripcion: '',
+            id_lenguaje: 0,
+            lenguajes:punto.lenguajes,
+            nombre: punto.nombre,
+            geoX: punto.geoX,
+            geoY: punto.geoY,
+            portada_path: punto.portada_path,
+            qr_path: punto.qr_path,
+            es_portada_de_sitio: punto.es_portada_de_sitio,
+            estado: punto.estado,
+            es_visible: punto.es_visible,
+            id_lenguaje_anterior: 0,
+            publicado: punto.publicado,
+        })
+        // console.log(punto)
+    }
+    // console.log('sitio', sitio)
+    const changeOculto = async (oculto: boolean) => {
+        await postData(statePointInteres, {
+            id_punto: id_punto,
+            es_visible: oculto,
+        })
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
-            id_guia: sitio.id_guia,
+           lenguajes:sitio.lenguajes,
             descripcion: sitio.descripcion,
             id_lenguaje: sitio.id_lenguaje,
             nombre: sitio.nombre,
@@ -142,15 +173,16 @@ const EditPoint = () => {
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
         })
     }
-    const changePublicado = (publicado: boolean) => {
-        postData(statePointInteresPublished, {
-            id_punto: datospuntoInteres.id_punto,
-            publicado: publicado,
+    const changePublicado = async (publicado1: boolean) => {
+        await postData(statePointInteresPublished, {
+            id_punto: id_punto,
+            publicado: publicado1,
         })
+
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
-            id_guia: sitio.id_guia,
+            lenguajes:sitio.lenguajes,
             descripcion: sitio.descripcion,
             id_lenguaje: sitio.id_lenguaje,
             nombre: sitio.nombre,
@@ -161,7 +193,7 @@ const EditPoint = () => {
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
             es_visible: sitio.es_visible,
-            publicado: publicado,
+            publicado: publicado1,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
         })
     }
@@ -179,15 +211,18 @@ const EditPoint = () => {
                     timer: 2000,
                 })
                 // console.log(sitios)
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${id_sitio}`)
             }
         })
     }
+    async function postSiteMaquetar(tipo: string) {
+        await updatePoint()
+        navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${sitio.id_punto}`,{state:sitio})
+    }
+
     const saveChanges = async () => {
         swal({
-            title: '¿Quiere Seguir Editando ?',
+            title: '¿Quiere seguir editando ?',
             icon: 'warning',
             buttons: ['Sí', 'No'],
         }).then(async (res) => {
@@ -198,9 +233,7 @@ const EditPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${id_sitio}`)
             }
             await updatePoint()
         })
@@ -208,34 +241,36 @@ const EditPoint = () => {
     //petitions----------------------------------------------------------------------------
     const addNewPoint = async () => {
         await postData(addNewPointInteres, sitio)
-        // console.log(sitio)
+
+        //  console.log(sitio)
     }
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
-        console.log(sitio)
+        // console.log(updatePoint)
+        // console.log(sitio)
     }
 
-    const getSites = async () => {
-        const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
-        setSitios(site.site)
-    }
+    // const getSites = async () => {
+    //     const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
+    //     setSitios(site.site)
+    // }
     //obtener lenguajes-------------------------------------------------------------------------------------
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
-    let lenaguajeDefault = ''
-    for (let i = 0; i < languages.length; i++) {
-        if (languages[i].id_lenguaje === datospuntoInteres.lenguajes[0].value) {
-            // setLenaguajeDefault(languages[i].descripcion)
+    // let lenaguajeDefault = ''
+    // for (let i = 0; i < languages.length; i++) {
+    //     if (languages[i].id_lenguaje === sitio.id_lenguaje[0].value) {
+    //         // setLenaguajeDefault(languages[i].descripcion)
 
-            lenaguajeDefault = languages[i].nombre
-        }
-    }
+    //         lenaguajeDefault = languages[i].nombre
+    //     }
+    // }
 
-    const languageEscogido = datospuntoInteres.lenguajes?.map((language) => ({
-        value: language.value,
-        label: lenaguajeDefault,
-    }))
+    // const languageEscogido = sitio.id_lenguaje?.map((language) => ({
+    //     value: language.value,
+    //     label: lenaguajeDefault,
+    // }))
 
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
@@ -253,29 +288,20 @@ const EditPoint = () => {
     // si son iguales se muestra el lenguaje la descripcion del punto de interes
     //si el lengauje no existe en el punto de interes se muestra un mensaje para asocarlo
     const [descripcion, setDescripcion] = useState('')
+    const [mostrarDescripcion, setMostrarDescripcion] = useState(false)
     const handleChangeLanguage = async (event: any) => {
-        const result = datospuntoInteres.lenguajes?.filter(
+      
+        const result = sitio.lenguajes?.filter(
             (language) => language.id_lenguaje === event.value
         )
         if (result[0]?.descripcion) {
+            // console.log(event.value)
             setDescripcion(result[0]?.descripcion)
-            setSitio({
-                id_punto: datospuntoInteres.id_punto,
-                id_sitio: datospuntoInteres.id_sitio,
-                id_guia: datospuntoInteres.id_guia,
-                descripcion: descripcion,
-                id_lenguaje: event.value,
-                nombre: sitio.nombre,
-                geoX: sitio.geoX,
-                geoY: sitio.geoY,
-                portada_path: sitio.portada_path,
-                qr_path: sitio.qr_path,
-                es_portada_de_sitio: sitio.es_portada_de_sitio,
-                estado: sitio.estado,
-                es_visible: sitio.es_visible,
-                publicado: true,
-                id_lenguaje_anterior: event.value,
-            })
+            setMostrarDescripcion(true)
+            sitio.descripcion = descripcion
+            sitio.id_lenguaje = event.value
+            sitio.id_lenguaje_anterior = event.value
+            // console.log(sitio)
         } else {
             setDescripcion('')
             swal({
@@ -283,11 +309,13 @@ const EditPoint = () => {
                 icon: 'warning',
                 buttons: ['No', 'Sí'],
             }).then((res) => {
+                setMostrarDescripcion(false)
                 if (res) {
+                    setMostrarDescripcion(true)
                     setSitio({
-                        id_punto: datospuntoInteres.id_punto,
-                        id_sitio: datospuntoInteres.id_sitio,
-                        id_guia: datospuntoInteres.id_guia,
+                        id_punto:sitio.id_punto,
+                        id_sitio: sitio.id_sitio,
+                        lenguajes:sitio.lenguajes,
                         descripcion: descripcion,
                         id_lenguaje: event.value,
                         nombre: sitio.nombre,
@@ -305,18 +333,18 @@ const EditPoint = () => {
             })
         }
 
-        console.log(descripcion)
+        // console.log(descripcion)
     }
 
     // UPLOAD IMAGE-------------------------------------------------------------------------
     const [modalupimg, setModalupIMG] = useState(false)
     const uploadImage = async (imagen: string) => {
         setSitio({
-            id_punto: datospuntoInteres.id_punto,
-            id_sitio: datospuntoInteres.id_sitio,
-            id_guia: datospuntoInteres.id_guia,
-            descripcion: datospuntoInteres.descripcion,
+            id_punto: Number(id_punto),
+            id_sitio: Number(id_sitio),
+            descripcion: sitio.descripcion,
             id_lenguaje: sitio.id_lenguaje,
+            lenguajes:sitio.lenguajes,
             nombre: sitio.nombre,
             geoX: sitio.geoX,
             geoY: sitio.geoY,
@@ -353,9 +381,45 @@ const EditPoint = () => {
     }
 
     useEffect(() => {
-        getSites()
+        // getSites()
         getLanguages()
-    }, [descripcion])
+        ObtenerPuntoInteres()
+    }, [])
+
+    // * Restricción por rol
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionPostPoint, setPermissionPostPoint] = useState(true)
+    const [permissionMockPoint, setPermissionMockPoint] = useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.sitio_editar === false) {
+                navigate('/error/401', {replace: true})
+            } else {
+                setPermissionPostPoint(filter[0]?.sitio_punto_publicar)
+                setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
+    // * Fin restricción por rol
 
     return (
         <>
@@ -367,7 +431,7 @@ const EditPoint = () => {
                     <div className='col-xs-12 col-md-5 col-lg-6 d-flex  py-5 px-9'>
                         <div id='center'>
                             <Button
-                                className='btn-secondary fa-solid fa-less-than background-button '
+                                className='btn-secondary fa-solid fa-chevron-left background-button '
                                 id='center2'
                                 style={{display: 'flex', marginRight: '6px'}}
                                 onClick={(event) => {
@@ -376,15 +440,20 @@ const EditPoint = () => {
                             ></Button>
                         </div>
                         <div id='center'>
-                            {/* {site.nombre != '' ? (
+                            {/* {sitio.nombre != '' ? (
                 <span className='font-size: 10rem; '>
-            <h1 style={{marginTop:'10px',marginRight:'5px'}} >{   site.nombre }</h1> 
+            <h1 style={{marginTop:'10px',marginRight:'5px'}} >{   sitio.nombre }</h1> 
                
                   
                 </span>
               ) : (
                 <p></p>
               )} */}
+                <span className='font-size: 10rem; '>
+                                <h3 style={{marginTop: '10px', marginRight: '20px'}}>
+                                    {sitio.nombre}
+                                </h3>
+                            </span>
                         </div>
                         <div id='center'>
                             {/* <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY hh:mm') + ' '} por{' '}</p>  */}
@@ -430,7 +499,7 @@ const EditPoint = () => {
                                         <Modal.Dialog>Sitio: {sitio.nombre}</Modal.Dialog>
                                         <QRCodeCanvas
                                             id='qrCode'
-                                            value={datospuntoInteres.qr_path}
+                                            value={sitio.qr_path}
                                             size={300}
                                             level={'H'}
                                         />
@@ -473,6 +542,13 @@ const EditPoint = () => {
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
                                     onClick={() => {
+                                        if (!permissionPostPoint) {
+                                            swal({
+                                                title: 'No tienes permiso para publicar cambios de un punto de interés',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
                                         saveChanges()
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
@@ -551,11 +627,11 @@ const EditPoint = () => {
                                                     to={''}
                                                     onClick={() =>
                                                         setSitio({
-                                                            id_punto: datospuntoInteres.id_punto,
-                                                            id_sitio: datospuntoInteres.id_sitio,
-                                                            id_guia: datospuntoInteres.id_guia,
+                                                            id_punto: sitio.id_punto,
+                                                            id_sitio: sitio.id_sitio,
+                                                            lenguajes: sitio.lenguajes,
                                                             descripcion:
-                                                                datospuntoInteres.descripcion,
+                                                                sitio.descripcion,
                                                             id_lenguaje: sitio.id_lenguaje,
                                                             nombre: sitio.nombre,
                                                             geoX: sitio.geoX,
@@ -590,7 +666,7 @@ const EditPoint = () => {
                                         className='form-control'
                                         disabled
                                         style={{border: '0', fontSize: '14px', color: '#92929F'}}
-                                        value={datospuntoInteres.nombreSala}
+                                        value={nombreSalas}
                                     ></input>
 
                                     <br></br>
@@ -616,9 +692,9 @@ const EditPoint = () => {
                                                 )
                                             ) {
                                                 setSitio({
-                                                    id_punto: datospuntoInteres.id_punto,
-                                                    id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
+                                                    id_punto: sitio.id_punto,
+                                                    id_sitio: sitio.id_sitio,
+                                                   lenguajes: sitio.lenguajes,
                                                     descripcion: sitio.descripcion,
                                                     id_lenguaje: sitio.id_lenguaje,
                                                     nombre: e.target.value,
@@ -653,44 +729,30 @@ const EditPoint = () => {
                                         placeholder={'Seleccione un lenguaje'}
                                     />
                                     <br />
-
-                                    <label style={{fontSize: '14px', color: '#FFFFFF'}}>
-                                        Descripcion
-                                    </label>
-                                    <Form.Control
-                                        as='textarea'
-                                        placeholder='Escribe una descripcion aqui'
-                                        style={{height: '100px'}}
-                                        value={descripcion}
-                                        onBlur={handleBlur}
-                                        onChange={(e) => {
-                                            if (
-                                                validateStringSinCaracteresEspeciales(
-                                                    e.target.value
-                                                )
-                                            ) {
-                                                setDescripcion(e.target.value)
-                                                setSitio({
-                                                    id_punto: datospuntoInteres.id_punto,
-                                                    id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
-                                                    descripcion: e.target.value,
-                                                    id_lenguaje: sitio.id_lenguaje,
-                                                    nombre: datospuntoInteres.nombre,
-                                                    geoX: sitio.geoX,
-                                                    geoY: sitio.geoY,
-                                                    portada_path: sitio.portada_path,
-                                                    qr_path: sitio.qr_path,
-                                                    es_portada_de_sitio: sitio.es_portada_de_sitio,
-                                                    estado: sitio.estado,
-                                                    es_visible: sitio.es_visible,
-                                                    publicado: true,
-                                                    id_lenguaje_anterior:
-                                                        sitio.id_lenguaje_anterior,
-                                                })
-                                            }
-                                        }}
-                                    />
+                                    {mostrarDescripcion == true && (
+                                        <>
+                                            <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                                Descripcion
+                                            </label>
+                                            <Form.Control
+                                                as='textarea'
+                                                placeholder='Escribe una descripcion aqui'
+                                                style={{height: '100px'}}
+                                                value={descripcion}
+                                                onBlur={handleBlur}
+                                                onChange={(e) => {
+                                                    if (
+                                                        validateStringSinCaracteresEspeciales(
+                                                            e.target.value
+                                                        )
+                                                    ) {
+                                                        setDescripcion(e.target.value)
+                                                       sitio.descripcion = e.target.value
+                                                    }
+                                                }}
+                                            />
+                                        </>
+                                    )}
 
                                     <br></br>
                                     {/* <label>Etiquetas</label>
@@ -735,12 +797,17 @@ const EditPoint = () => {
                                         <div className='row'>
                                             <Button
                                                 onClick={() => {
+                                                    if (!permissionMockPoint) {
+                                                        swal({
+                                                            title: 'No tienes permiso para maquetar un punto de interés',
+                                                            icon: 'warning',
+                                                        })
+                                                        return
+                                                    }
                                                     // addNewPoint();
                                                     // window.location.href = "../sitios";
 
-                                                    console.log(
-                                                        'creado con el boton de sitio mobil'
-                                                    )
+                                                    postSiteMaquetar('movil')
                                                 }}
                                                 className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                                             >
@@ -775,10 +842,14 @@ const EditPoint = () => {
                                             <Button
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                                                 onClick={() => {
-                                                    //   navigate('/site')
-                                                    //   postSite(site)
-                                                    window.location.href = '../sitios'
-                                                    console.log('creado con el boton de sitio web')
+                                                    if (!permissionMockPoint) {
+                                                        swal({
+                                                            title: 'No tienes permiso para maquetar un punto de interés',
+                                                            icon: 'warning',
+                                                        })
+                                                        return
+                                                    }
+                                                    postSiteMaquetar('web')
                                                 }}
                                             >
                                                 <i className='fa-solid fa-pencil '></i> Crear
@@ -788,6 +859,8 @@ const EditPoint = () => {
                                             show={modalupimg}
                                             onClose={() => setModalupIMG(false)}
                                             cargarIMG={uploadImage}
+                                            ubicacionBucket={'sitePages'}
+                                            tipoArchivoPermitido={'image/*'}
                                         />
                                     </div>
                                 </div>
@@ -800,9 +873,10 @@ const EditPoint = () => {
             <br />
             <h3>Creación de rutas entre puntos de interés</h3>
             <SalaRutas
-                id_punto_a={sitio.id_punto}
-                id_sitio={sitio.id_sitio}
-                puntosIteres={datospuntoInteres}
+                id_punto_a={Number(id_punto)}
+                id_sitio={Number(id_sitio)}
+                // puntosIteres={sitio}
+                nombrepunto_a={sitio.nombre}
             />
         </>
     )

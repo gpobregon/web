@@ -7,6 +7,8 @@ import SerctionLeftToolbar from './toolbar/sectionLeftToolbar'
 import SerctionRightToolbar from './toolbar/sectionRightToolbar'
 import SectionHeader from './sectionHeader/index'
 import ContentMovil from './content/index'
+import Formulario from './form'
+import FormularioSave from './formSave'
 
 const Index = () => {
     return (
@@ -16,6 +18,8 @@ const Index = () => {
                     <ToolbarTemplate sectionLeft={<SerctionLeftToolbar/>} sectionRight={<SerctionRightToolbar/>}/>
                     <SectionHeader/>
                     <ContentMovil/>
+                    <Formulario />
+                    <FormularioSave />
                 </ContentProvider>
             </DndProvider>
         </Fragment>

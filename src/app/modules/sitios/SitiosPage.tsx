@@ -1,12 +1,15 @@
 import React, {useState, useEffect} from 'react'
 import {Container, Row, Col, Button, Card} from 'react-bootstrap'
-import {getData, sitesMethod, deleteData, postData} from '../../services/api'
+import {getData, sitesMethod, deleteData, postData, getRolesMethod} from '../../services/api'
 import Sitio from './components/sitio'
 import {Site} from '../../models/site'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import moment from 'moment'
 import logo from './upload-image_03.jpg'
 import QRCode from 'qrcode.react'
+import {roleManager} from '../../models/roleManager'
+import {Auth} from 'aws-amplify'
+import swal from 'sweetalert'
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -15,6 +18,9 @@ const SitiosPage = () => {
     const [estado, setEstado] = useState(true)
     const [up, setUp] = useState(true)
     const [cantidadSite, setCantidadSite] = useState(0)
+    const [totalPages, setTotalPages] = useState(1)
+    const [optionSort, setOptionSort] = useState('Agregado recientemente')
+    const [resultIcon, setResultIcon] = useState('bi-sort-up')
     const search = (search: string) => {
         if (!search) {
             setFilterSites(sites)
@@ -34,10 +40,32 @@ const SitiosPage = () => {
 
     const getSites = async () => {
         const site: any = await postData(sitesMethod, {page: pageNumber, quantity: '8'})
-        console.log(site)
-        setCantidadSite(site.count)
+        const coutsite: any = await getData(`${sitesMethod}/count`)
+        // console.log(site)
+        
+        setCantidadSite(coutsite.count)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
+        const countNextResults: any = await postData(sitesMethod, {
+            page: pageNumber + 1,
+            quantity: '8',
+        })
+        if (countNextResults.site.length == 0) {
+            setToggleButtonsPagination({
+                previous: false,
+                next: true,
+            })
+        } else if (countNextResults.site.length > 0) {
+            setToggleButtonsPagination({
+                previous: toggleButtonsPagination.previous,
+                next: false,
+            })
+        }
+       
+        
+        let pagesLength = Math.ceil(coutsite.count / 8)
+        // console.log(pagesLength)
+        setTotalPages(pagesLength)
     }
 
     const ordernarAsc = () => {
@@ -56,6 +84,22 @@ const SitiosPage = () => {
         console.log(numDescending)
         setEstado(true)
         setUp(true)
+    }
+
+    const toggleOptionSort = () => {
+        if (optionSort == 'Agregado recientemente') {
+            const numAscending = [...sites].sort((a, b) => moment(a.creado).diff(b.creado))
+            setSites(numAscending)
+            setFilterSites(numAscending)
+            setOptionSort('Agregado anteriormente')
+            setResultIcon('bi-sort-down')
+        } else if (optionSort == 'Agregado anteriormente') {
+            const numDescending = [...sites].sort((a, b) => moment(b.creado).diff(a.creado))
+            setSites(numDescending)
+            setFilterSites(numDescending)
+            setOptionSort('Agregado recientemente')
+            setResultIcon('bi-sort-up')
+        }
     }
 
     const downloadQR = () => {
@@ -96,6 +140,41 @@ const SitiosPage = () => {
         })
     }
 
+    let navigate = useNavigate()
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateSite, setPermissionCreateSite] = useState(true)
+    const [permissionEditSite, setPermissionEditSite] = useState(true)
+    const [permissionDeleteSite, setPermissionDeleteSite] = useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_sitios === false) {
+                navigate('/error/401', {replace: true})
+            } else {
+                setPermissionCreateSite(filter[0]?.sitio_crear)
+                setPermissionEditSite(filter[0]?.sitio_editar)
+                setPermissionDeleteSite(filter[0]?.sitio_eliminar)
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
     //UseEffect para obtener los sitios --------------------------------------------------------------
     useEffect(() => {
         getSites()
@@ -114,7 +193,7 @@ const SitiosPage = () => {
                         <div className='col-md-4 col-xs-12 searchDash  py-5 px-9'>
                             <h3 className=''>Gestor de Sitios</h3>
                             <h5 className='' style={{color: '#565674', fontSize: '10px'}}>
-                                | {cantidadSite} en total
+                                {cantidadSite} en total
                             </h5>
                         </div>
 
@@ -131,41 +210,40 @@ const SitiosPage = () => {
                             </div>
                         </div>
 
-                        <div className='col-md-3 col-xs-2  py-6 px-10 '>
-                            <div className='d-flex align-items-center position-relative '>
-                                <div className='d-flex'>
-                                    <Button
-                                        variant='outline-secondary'
-                                        className='text-center'
-                                        title='Página anterior'
-                                        disabled={toggleButtonsPagination.previous}
-                                        onClick={() => handlePrevPage()}
-                                    >
-                                        <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
-                                    </Button>
+                        <div className='col-md-3 col-xs-2  py-6  '>
+                            <div className='d-flex'>
+                                <Button
+                                    variant='outline-secondary'
+                                    className='text-center'
+                                    title='Página anterior'
+                                    disabled={toggleButtonsPagination.previous}
+                                    onClick={() => handlePrevPage()}
+                                >
+                                    <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
+                                </Button>
 
-                                    <div
-                                        className='d-flex align-items-center justify-content-center'
-                                        style={{
-                                            width: '46px',
-                                            height: '46px',
-                                            backgroundColor: '#2B2B40',
-                                            borderRadius: '5px',
-                                        }}
-                                    >
-                                        {`${pageNumber}`}
-                                    </div>
-
-                                    <Button
-                                        variant='outline-secondary'
-                                        className='text-center'
-                                        title='Página siguiente'
-                                        disabled={toggleButtonsPagination.next}
-                                        onClick={() => handleNextPage()}
-                                    >
-                                        <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
-                                    </Button>
+                                <div
+                                    className='d-flex align-items-center justify-content-center px-4'
+                                    style={{
+                                        height: '50px',
+                                        backgroundColor: '#2B2B40',
+                                        borderRadius: '5px',
+                                    }}
+                                >
+                                    <h5 style={{fontSize: '13px'}}>
+                                        Página {pageNumber} de {totalPages}
+                                    </h5>
                                 </div>
+
+                                <Button
+                                    variant='outline-secondary'
+                                    className='text-center'
+                                    title='Página siguiente'
+                                    disabled={toggleButtonsPagination.next}
+                                    onClick={() => handleNextPage()}
+                                >
+                                    <i className='fs-2 bi-chevron-right px-0 fw-bolder'></i>
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -174,30 +252,43 @@ const SitiosPage = () => {
 
             <br></br>
             <br></br>
-            <Row className='pb-10'>
-                <Col md={4} className='pb-10'>
-                    <span
-                        className={up == false ? 'bi bi-sort-down' : 'bi bi-sort-up'}
-                        onClick={estado == true ? ordernarAsc : ordenarDesc}
-                    >
-                        Agregados recientemente
-                    </span>
-                </Col>
-                <Col md={{span: 2, offset: 6}}>
-                    <Link to={'create'}>
-                        <Button className='btn btn-primary'>
-                            <i className='bi bi-file-earmark-plus'></i>
-                            {'Nuevo sitio'}
-                        </Button>
-                    </Link>
-                </Col>
-            </Row>
+            <div className='d-flex justify-content-between'>
+                <div
+                    className='d-flex align-items-center fs-5 text-muted'
+                    style={{cursor: 'pointer'}}
+                    onClick={toggleOptionSort}
+                >
+                    <i className={`${resultIcon} fs-1 me-2`}></i>
+                    {`${optionSort}`}
+                </div>
+                <Button
+                    className='btn btn-primary'
+                    onClick={() => {
+                        if (!permissionCreateSite) {
+                            swal({
+                                title: 'No tienes permiso para crear un sitio',
+                                icon: 'warning',
+                            })
+                            return
+                        }
+                        navigate('/sitios/createSite', {replace: true})
+                    }}
+                >
+                    <i className='bi bi-file-earmark-plus'></i>
+                    {'Nuevo sitio'}
+                </Button>
+            </div>
             <div className='row g-4'>
                 {filterSites?.map((sitio) => (
-                    <Sitio {...sitio} key={sitio.id_sitio.toString()} />
+                    <Sitio
+                        {...sitio}
+                        key={sitio.id_sitio.toString()}
+                        permissionEditSite={permissionEditSite}
+                        permissionDeleteSite={permissionDeleteSite}
+                    />
                 ))}
 
-                <div className='col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12'>
+                <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12 col-xs-12'>
                     <Card
                         style={{
                             backgroundColor: '#1e1e2d',
@@ -208,8 +299,7 @@ const SitiosPage = () => {
                             display: 'table',
                         }}
                     >
-                        <Link
-                            to={'create'}
+                        <div
                             style={{
                                 whiteSpace: 'nowrap',
                                 textOverflow: ' ellipsis',
@@ -217,6 +307,16 @@ const SitiosPage = () => {
                                 display: 'table-cell',
                                 verticalAlign: 'middle',
                                 textAlign: 'center',
+                            }}
+                            onClick={() => {
+                                if (!permissionCreateSite) {
+                                    swal({
+                                        title: 'No tienes permiso para crear un sitio',
+                                        icon: 'warning',
+                                    })
+                                    return
+                                }
+                                navigate('/sitios/createSite', {replace: true})
                             }}
                         >
                             <svg
@@ -241,7 +341,7 @@ const SitiosPage = () => {
                             >
                                 Nuevo Sitio
                             </Card.Text>
-                        </Link>
+                        </div>
                     </Card>
                 </div>
             </div>

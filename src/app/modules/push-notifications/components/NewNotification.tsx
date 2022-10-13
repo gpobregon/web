@@ -1,12 +1,12 @@
 import React, {FC, useState} from 'react'
 import imgUpload from '../upload-image_03.jpg'
-import UploadImage from './UploadImage'
+import UpImage from '../../uploadFile/upload-image';
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
 import {URLAWS} from '../../../services/api'
-import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+import { validateStringSinCaracteresEspeciales } from '../../validarCadena/validadorCadena'
 
-import { initializeApp } from 'firebase-admin/app';
+// import { initializeApp } from 'firebase-admin/app';
 
 const NewNotification: FC<any> = ({
     showCardAddNotification,
@@ -277,10 +277,12 @@ const NewNotification: FC<any> = ({
                 </div>
             </Card>
 
-            <UploadImage
+            <UpImage
                 show={modalUploadIMG}
                 onClose={() => setModalUploadIMG(false)}
-                uploadImage={uploadImage}
+                cargarIMG={uploadImage}
+                ubicacionBucket={'notificaciones'}
+                tipoArchivoPermitido={'image/*'}
             />
         </div>
     )

@@ -1,18 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import moment from 'moment'
-import {
-    Button,
-    ButtonGroup,
-    Card,
-    Col,
-    Container,
-    Form,
-    Row,
-    Table,
-    ToggleButton,
-} from 'react-bootstrap'
-import ReactSelect from 'react-select'
-import makeAnimated from 'react-select/animated'
+import {Button, ButtonGroup, Container, Form, Table, ToggleButton} from 'react-bootstrap'
 import NewNotification from './components/NewNotification'
 import UpdateNotification from './components/UpdateNotification'
 import {Notification} from '../../models/notification'
@@ -21,11 +9,15 @@ import {
     deleteData,
     deleteNotificationMethod,
     getData,
+    getRolesMethod,
     notificationMethod,
     postData,
     updateNotificationMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
+import {useNavigate} from 'react-router-dom'
+import {roleManager} from '../../models/roleManager'
+import {Auth} from 'aws-amplify'
 
 const PushNotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([])
@@ -54,7 +46,7 @@ const PushNotificationsPage = () => {
     const [optionGetNotifications, setOptionGetNotifications] = useState('programadas')
 
     const chooseGetNotifications = async () => {
-        if (optionGetNotifications == 'historial') {
+        if (optionGetNotifications === 'historial') {
             getNotificationsHistory()
         } else {
             getNotificationsProgrammed()
@@ -62,9 +54,7 @@ const PushNotificationsPage = () => {
     }
 
     const getNotificationsProgrammed = async () => {
-        const notificationsData: any = await postData(`${notificationMethod}/programmed`, {
-            id_usuario: 'lenguaje 1',
-        })
+        const notificationsData: any = await getData(`${notificationMethod}/programmed`)
         setNotifications(notificationsData.data as Notification[])
         setOptionGetNotifications('programadas')
     }
@@ -82,7 +72,7 @@ const PushNotificationsPage = () => {
             quantity: '12',
         })
 
-        if (countNextResults.data.length == 0) {
+        if (countNextResults.data.length === 0) {
             setToggleButtonsPagination({
                 previous: false,
                 next: true,
@@ -105,13 +95,36 @@ const PushNotificationsPage = () => {
     })
 
     const toggleCardAddNotification = (value: any) => {
-        setShowCardAddNotification(value)
-        if (value == true) {
-            setCardUpdateNotification({show: false, notification: {}})
+        if (permissionCreateNotification) {
+            setShowCardAddNotification(value)
+            if (value === true) {
+                setCardUpdateNotification({show: false, notification: {}})
+            }
+        } else {
+            swal({
+                title: 'No tienes permiso para crear una notificación',
+                icon: 'warning',
+            })
         }
     }
 
     const showCardUpdateNotification = (notification: any) => {
+        if (!permissionEditNotificationProgrammed && optionGetNotifications === 'programadas') {
+            swal({
+                title: 'No tienes permiso para editar una notificación programada',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (!permissionEditNotificationHistory && optionGetNotifications === 'historial') {
+            swal({
+                title: 'No tienes permiso para editar una notificación en el historial',
+                icon: 'warning',
+            })
+            return
+        }
+
         setCardUpdateNotification({show: true, notification})
         setNotification({
             id_notificacion: notification?.id_notificacion,
@@ -155,9 +168,9 @@ const PushNotificationsPage = () => {
 
     const addNotification = async (notification: any) => {
         if (
-            notification.nombre != '' &&
-            notification.descripcion != '' &&
-            notification.imagen_path != ''
+            notification.nombre !== '' &&
+            notification.descripcion !== '' &&
+            notification.imagen_path !== ''
         ) {
             notification.fecha_hora_programada = moment(
                 notification.fecha_hora_programada
@@ -180,6 +193,8 @@ const PushNotificationsPage = () => {
                 icon: 'success',
             })
 
+            // sendPushNotification()
+
             setTimeout(chooseGetNotifications, 500)
             setTimeout(chooseGetNotifications, 1000)
             setTimeout(chooseGetNotifications, 2000)
@@ -197,9 +212,9 @@ const PushNotificationsPage = () => {
 
     const updateNotification = async (notification: any) => {
         if (
-            notification.nombre != '' &&
-            notification.descripcion != '' &&
-            notification.imagen_path != ''
+            notification.nombre !== '' &&
+            notification.descripcion !== '' &&
+            notification.imagen_path !== ''
         ) {
             notification.fecha_hora_programada = moment(
                 notification.fecha_hora_programada
@@ -221,6 +236,22 @@ const PushNotificationsPage = () => {
     }
 
     const deleteNotification = async (tag: any) => {
+        if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
+            swal({
+                title: 'No tienes permiso para eliminar una notificación programada',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (!permissionDeleteNotificationHistory && optionGetNotifications === 'historial') {
+            swal({
+                title: 'No tienes permiso para eliminar una notificación en el historial',
+                icon: 'warning',
+            })
+            return
+        }
+
         await swal({
             title: '¿Estás seguro de eliminar esta notificación?',
             icon: 'warning',
@@ -245,7 +276,7 @@ const PushNotificationsPage = () => {
     }
 
     const toggleOptionSort = () => {
-        if (optionSort == 'Orden descendente') {
+        if (optionSort === 'Orden descendente') {
             const sortAscending = [...notifications].sort((a, b) =>
                 moment(b.fecha_hora_programada).diff(a.fecha_hora_programada)
             )
@@ -253,7 +284,7 @@ const PushNotificationsPage = () => {
 
             setOptionSort('Orden ascendente')
             setResultIcon('bi-sort-up')
-        } else if (optionSort == 'Orden ascendente') {
+        } else if (optionSort === 'Orden ascendente') {
             const sortDescending = [...notifications].sort((a, b) =>
                 moment(a.fecha_hora_programada).diff(b.fecha_hora_programada)
             )
@@ -269,17 +300,33 @@ const PushNotificationsPage = () => {
     const handleChangeCheckbox = (e: any) => {
         let isChecked = e.target.checked
 
-        if (isChecked == true) {
+        if (isChecked === true) {
             arrayDeleteNotifications.push(e.target.id)
         } else {
             arrayDeleteNotifications = arrayDeleteNotifications.filter(
-                (data) => data != e.target.id
+                (data) => data !== e.target.id
             )
         }
     }
 
     const deleteSelectedNotification = async () => {
-        if (arrayDeleteNotifications.length == 0) {
+        if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
+            swal({
+                title: 'No tienes permiso para eliminar notificaciones programadas',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (!permissionDeleteNotificationHistory && optionGetNotifications === 'historial') {
+            swal({
+                title: 'No tienes permiso para eliminar notificaciones en el historial',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (arrayDeleteNotifications.length === 0) {
             swal({
                 title: 'Selecciona notificaciones para eliminar',
                 icon: 'warning',
@@ -320,7 +367,7 @@ const PushNotificationsPage = () => {
     })
 
     const handlePrevPage = () => {
-        if (pageNumber == 1) {
+        if (pageNumber === 1) {
             setToggleButtonsPagination({
                 previous: true,
                 next: toggleButtonsPagination.next,
@@ -337,6 +384,54 @@ const PushNotificationsPage = () => {
             next: false,
         })
     }
+
+    let navigate = useNavigate()
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateNotification, setPermissionCreateNotification] = useState(true)
+
+    const [permissionEditNotificationProgrammed, setPermissionEditNotificationProgrammed] =
+        useState(true)
+    const [permissionEditNotificationHistory, setPermissionEditNotificationHistory] = useState(true)
+
+    const [permissionDeleteNotificationProgrammed, setPermissionDeleteNotificationProgrammed] =
+        useState(true)
+    const [permissionDeleteNotificationHistory, setPermissionDeleteNotificationHistory] =
+        useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_notificaciones === false) {
+                navigate('/error/401', {replace: true})
+            } else {
+                setPermissionCreateNotification(filter[0]?.notificacion_crear)
+
+                setPermissionEditNotificationProgrammed(filter[0]?.notificacion_programada_editar)
+                setPermissionEditNotificationHistory(filter[0]?.notificacion_historial_editar)
+
+                setPermissionDeleteNotificationProgrammed(
+                    filter[0]?.notificacion_programada_eliminar
+                )
+                setPermissionDeleteNotificationHistory(filter[0]?.notificacion_historial_eliminar)
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
 
     useEffect(() => {
         chooseGetNotifications()
@@ -412,7 +507,7 @@ const PushNotificationsPage = () => {
 
                     <div
                         style={
-                            optionGetNotifications != 'historial'
+                            optionGetNotifications !== 'historial'
                                 ? {display: 'none'}
                                 : {display: 'flex', justifyContent: 'end'}
                         }
@@ -492,7 +587,9 @@ const PushNotificationsPage = () => {
                                                 className='ms-5'
                                                 type='checkbox'
                                                 id={notification.id_notificacion.toString()}
-                                                onChange={(e) => handleChangeCheckbox(e)}
+                                                onChange={(e) => {
+                                                    handleChangeCheckbox(e)
+                                                }}
                                             />
                                         </td>
                                         <td className='text-muted' style={{width: '200px'}}>
@@ -509,6 +606,7 @@ const PushNotificationsPage = () => {
                                                     borderRadius: '10px',
                                                 }}
                                                 src={notification.imagen_path}
+                                                alt='Imagen notificación'
                                             />
                                         </td>
                                         <td>

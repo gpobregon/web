@@ -7,7 +7,7 @@
 }
 
 .height-section {
-  height: 650px;
+  min-height: 650px;
 }
 
 .height-section-editable {
@@ -142,6 +142,11 @@
   list-style-type : square;
 }
 
+.list-group-bg {
+  --bs-list-group-bg: none !important;
+  --bs-list-group-border-color: none !important;
+}
+
 .min-tumbnail.ps__thumb-x {
   overflow-y: hidden;
 }
@@ -206,6 +211,7 @@ button.tooltip-trigger:hover + .tooltip-one {
     background: #009cf72c;
     cursor: grabbing;
 }
+
 .size-resource-img {
   height: 300px;
 }
@@ -275,4 +281,111 @@ input[type=number]::-webkit-outer-spin-button {
 
 .bg-transparent {
   background: none !important;
+}
+
+.menu-icon {
+  min-width: 50px !important;
+}
+
+
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -30px; /* gutter size offset */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 30px; /* gutter size */
+  background-clip: padding-box;
+}
+
+/* Style your items */
+.my-masonry-grid_column > div { /* change div to reference your elements you put in <Masonry> */
+  background: grey;
+  margin-bottom: 15px;
+}
+
+.custom-menu-double {
+  background: none !important;
+  box-shadow: none !important;
+  /* top: 420px !important; */
+}
+
+.react-contexify__item__content {
+  background: none !important;
+  scrollbar-color: none !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.text-justify {
+  text-align: justify !important;
+}
+
+/* Optional, different gutter size on mobile */
+@media (max-width: 800px) {
+  .my-masonry-grid {
+    margin-left: -15px; /* gutter size offset */
+  }
+  .my-masonry-grid_column {
+    padding-left: 15px; /* gutter size offset */
+  }
+  .my-masonry-grid_column > div {
+    margin-bottom: 15px; /* space between items */
+  }
+}
+
+/* popover form */
+.popover__wrapper {
+  position: relative;
+  /* margin-top: 1.5rem; */
+  display: inline-block;
+}
+.popover__content {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  left: -150px;
+  transform: translate(0, 10px);
+  /* background-color: #bfbfbf;
+  padding: 1.5rem; */
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  width: auto;
+}
+.popover__content:before {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  right: calc(50% - 10px);
+  top: -8px;
+  border-style: solid;
+  border-width: 0 10px 10px 10px;
+  border-color: transparent transparent #2B2B40 transparent;
+  transition-duration: 0.3s;
+  transition-property: transform;
+}
+.popover__wrapper:hover .popover__content {
+  z-index: 10;
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(75px);
+  /* transform: translateY(10px); */
+  transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
+}
+.popover__message {
+  text-align: center;
+}
+
+.active-element {
+  background:#009EF7 !important;
+  color:white;
+}
+
+.bg-danger {
+  background: #F00 !important;
+}
+
+.css-306hrz-option {
+  background-color: #12121B !important;
 }

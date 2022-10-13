@@ -2,7 +2,7 @@ import {useState, FC} from 'react'
 import {Button, Modal, Form} from 'react-bootstrap'
 import * as AWS from 'aws-sdk'
 
-const UpJson: FC<any> = ({show, onClose, uploadJson, url}) => {
+const UpJson: FC<any> = ({show, onClose, uploadJson, url, setShow}) => {
     const [progress, setProgress] = useState(0)
     const [selectedFile, setSelectedFile] = useState(null)
     const [porcentajeCargado, setPorcetajeCargado] = useState(0)
@@ -40,6 +40,7 @@ const UpJson: FC<any> = ({show, onClose, uploadJson, url}) => {
                     await delay(3000)
                     setProgress(0)
                     uploadJson(json) // return the name of the file to the parent component
+                    setShow({show: true, language: {}})
                 } else {
                     setPorcetajeCargado(Math.round((evt.loaded / evt.total) * 100))
                     setProgress(1)
@@ -69,7 +70,13 @@ const UpJson: FC<any> = ({show, onClose, uploadJson, url}) => {
                     <Form.Control type='file' onChange={handleFileInput} accept='.json' />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={onClose}>
+                    <Button
+                        variant='secondary'
+                        onClick={() => {
+                            onClose()
+                            setShow({show: true, language: {}})
+                        }}
+                    >
                         {'Cancelar '}
                         <i className={`bi-x text-white fs-3`}></i>
                     </Button>

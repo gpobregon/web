@@ -1,6 +1,6 @@
 import React, {FC, useState} from 'react'
 import imgUpload from '../upload-image_03.jpg'
-import UploadImage from './UploadImage'
+import UpImage from '../../uploadFile/upload-image';
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
 import {URLAWS} from '../../../services/api'
@@ -14,13 +14,15 @@ const UpdateNotification: FC<any> = ({
     updateNotification,
 }) => {
     const [scheduleNotification, setScheduleNotification] = useState(false)
+    const [switchValue, setSwitchValue] = useState(notification?.tipo === 1 ? true : false)
 
     let dateNow = moment().toJSON()
     let today = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(':'))
 
     const toggleScheduleInputs = () => {
+        setSwitchValue(!switchValue)
         setScheduleNotification(!scheduleNotification)
-        if (scheduleNotification == true) {
+        if (scheduleNotification === true) {
             setNotification({
                 id_notificacion: notification.id_notificacion,
                 nombre: notification.nombre,
@@ -43,7 +45,7 @@ const UpdateNotification: FC<any> = ({
             tipo: notification.tipo,
             estado: 1,
         })
-        if (image != '') {
+        if (image !== '') {
             setModalUploadIMG(false)
         }
     }
@@ -63,16 +65,20 @@ const UpdateNotification: FC<any> = ({
     }
 
     return (
-        <div style={cardUpdateNotification == false ? {display: 'none'} : {display: 'block'}}>
+        <div
+            style={cardUpdateNotification === false ? {display: 'none'} : {display: 'block'}}
+            onLoad={() => setSwitchValue(notification.tipo === 1 ? true : false)}
+        >
             <Card className='py-9 px-9 mb-9 ms-xl-9' style={{maxWidth: '445px'}}>
                 <h2>Editar notificación</h2>
                 <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
                 <p>Imagen de notificación</p>
                 <div className='d-xl-flex mb-5'>
                     <img
-                        src={notification.imagen_path == '' ? imgUpload : notification.imagen_path}
+                        src={notification.imagen_path === '' ? imgUpload : notification.imagen_path}
+                        alt='Imagen de notificación'
                         onClick={
-                            notification.imagen_path == ''
+                            notification.imagen_path === ''
                                 ? () => {
                                       setModalUploadIMG(true)
                                   }
@@ -106,7 +112,7 @@ const UpdateNotification: FC<any> = ({
                                 variant='outline-primary'
                                 className='text-center'
                                 onClick={
-                                    notification.imagen_path == ''
+                                    notification.imagen_path === ''
                                         ? (e) => {
                                               setModalUploadIMG(true)
                                           }
@@ -183,29 +189,23 @@ const UpdateNotification: FC<any> = ({
                         />
                     </Form.Group>
 
-                    <div>
-                        <Form.Check
-                            defaultChecked={notification.tipo}
-                            type='switch'
-                            id='custom-switch'
-                            label='Notificación programada'
-                            className='fs-6'
-                            onClick={() => toggleScheduleInputs()}
-                        />
-                    </div>
+                    <Form.Check
+                        checked={switchValue}
+                        type='switch'
+                        label='Notificación programada'
+                        className='fs-6'
+                        onClick={() => toggleScheduleInputs()}
+                    />
                 </div>
 
-                <div
-                    style={
-                        !scheduleNotification && !notification.tipo
-                            ? {display: 'none'}
-                            : {display: 'block'}
-                    }
-                >
+                <div style={!switchValue ? {display: 'none'} : {display: 'block'}}>
                     <Col>
                         <Form.Group className='mt-9'>
                             <Form.Label>Fecha</Form.Label>
                             <Form.Control
+                                value={moment(notification.fecha_hora_programada).format(
+                                    'yyyy-MM-DDTHH:mm'
+                                )}
                                 min={today}
                                 type='datetime-local'
                                 name='scheduleNotification'
@@ -242,7 +242,7 @@ const UpdateNotification: FC<any> = ({
                         {' Cancelar'}
                     </Button>
 
-                    {scheduleNotification == false ? (
+                    {!scheduleNotification && !notification.tipo ? (
                         <Button
                             variant='primary'
                             className='flex-grow-1 m-2'
@@ -292,10 +292,12 @@ const UpdateNotification: FC<any> = ({
                 </div>
             </Card>
 
-            <UploadImage
+            <UpImage
                 show={modalUploadIMG}
                 onClose={() => setModalUploadIMG(false)}
-                uploadImage={uploadImage}
+                cargarIMG={uploadImage}
+                ubicacionBucket={'notificaciones'}
+                tipoArchivoPermitido={'image/*'}
             />
         </div>
     )

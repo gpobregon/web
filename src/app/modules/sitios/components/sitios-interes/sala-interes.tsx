@@ -14,6 +14,7 @@ import {
     OrderPointOfInterest,
     getData,
     languagesMethod,
+    getRolesMethod,
 } from '../../../../services/api'
 import {Room} from '../../../../models/rooms'
 import swal from 'sweetalert'
@@ -29,6 +30,8 @@ import domtoimage from 'dom-to-image'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import SalaRutas from '../rutas-sitios-interes/sala-rutas'
 import {CatalogLanguage} from '../../../../models/catalogLanguage'
+import {Auth} from 'aws-amplify'
+import {roleManager} from '../../../../models/roleManager'
 
 type id_sitio = {
     id_sitio: number
@@ -70,8 +73,8 @@ const Interes: FC<id_sitio> = (props) => {
             timer: 2000,
         })
     }
-    const changeImagePrincipal = async (idpunto: number, idsitio: number) => {
-        await postData(changePointOfInterestFront, {id_punto: idpunto, id_sitio: idsitio})
+    const changeImagePrincipal = async (idpunto: number, idsitio: number,idsala:number) => {
+       const res:any= await postData(changePointOfInterestFront, {id_punto: idpunto, id_sitio: idsitio,id_sala:idsala})
         setPuntoInteres([])
         setRooms([])
         swal({
@@ -96,7 +99,7 @@ const Interes: FC<id_sitio> = (props) => {
         const rooms: any = await postData(RoomsMethod, props)
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
-        console.log(rooms.salas)
+        // console.log(rooms.salas)
     }
 
     const seteatPuntoInteres = (interes: any) => {
@@ -185,12 +188,12 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     //descargar QR------------------------------------------------------
-    const downloadQRCode = () => {
+    const downloadQRCode = (nombreArchivo:string) => {
         const canvas = document.getElementById('qrCode') as HTMLCanvasElement
         const pngUrl = canvas!.toDataURL('image/png').replace('image/png', 'image/octet-stream')
         let downloadLink = document.createElement('a')
         downloadLink.href = pngUrl
-        downloadLink.download = 'qr.png'
+        downloadLink.download = `${nombreArchivo}.png`
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)
@@ -235,24 +238,62 @@ const Interes: FC<id_sitio> = (props) => {
     // 	setPuntoInteres(_fruitItems)
     // }
 
+    // * Restricción por rol
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateRoom, setPermissionCreateRoom] = useState(true)
+    const [permissionSetPrincipalImage, setPermissionSetPrincipalImage] = useState(true)
+
+    const [permissionCreatePoint, setPermissionCreatePoint] = useState(true)
+    const [permissionEditPoint, setPermissionEditPoint] = useState(true)
+    const [permissionDeletePoint, setPermissionDeletePoint] = useState(true)
+    const [permissionSortPoint, setPermissionSortPoint] = useState(true)
+    const [permissionChangeVisibilityPoint, setPermissionChangeVisibilityPoint] = useState(true)
+    const [permissionPostPoint, setPermissionPostPoint] = useState(true)
+    const [permissionMockPoint, setPermissionMockPoint] = useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.sitio_editar === false) {
+                navigate('/error/401', {replace: true})
+            } else {
+                setPermissionCreateRoom(filter[0]?.sitio_sala_crear)
+                setPermissionSetPrincipalImage(filter[0]?.sitio_establecer_imagen_principal)
+
+                setPermissionCreatePoint(filter[0]?.sitio_punto_crear)
+                setPermissionEditPoint(filter[0]?.sitio_punto_editar)
+                setPermissionDeletePoint(filter[0]?.sitio_punto_eliminar)
+                setPermissionSortPoint(filter[0]?.sitio_punto_ordenar)
+                setPermissionChangeVisibilityPoint(filter[0]?.sitio_punto_visible)
+                setPermissionPostPoint(filter[0]?.sitio_punto_publicar)
+                setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
+            }
+        })
+    }
+
+    useEffect(() => {
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
+    // * Fin restricción por rol
+
     return (
         <>
             <div className=' '>
                 <div className='row'>
                     <div className='col-9'>
-                        {/* <div className='card'>
-                            <br></br>
-                            <div>
-                                <Button variant="secondary" size="sm">
-                                    Sitio 01
-                                </Button>{' '}
-                                <Button variant="secondary" size="sm">
-                                    Nueva Sala
-                                </Button>
-                            </div>
-                            <br></br>
-                        </div> */}
-
                         <div className='card'>
                             <br></br>
                             <div style={{marginLeft: '15px'}}>
@@ -260,8 +301,9 @@ const Interes: FC<id_sitio> = (props) => {
                                 room?.map(sala => <Rooms {...sala} key={sala.id_sala.toString()} />)
                                 }  */}
 
-                                {room?.map((sala) => (
-                                    <>
+                                {room?.map((sala,index) => (
+                                    <div className="btn-group" role="group" aria-label="Basic example" key={index}>
+                                    
                                         <Button
                                             variant='outline-dark'
                                             size='sm'
@@ -276,6 +318,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         >
                                             {sala.nombre}
                                         </Button>
+                                        
                                         <Button
                                             variant='outline-dark'
                                             size='sm'
@@ -324,13 +367,23 @@ const Interes: FC<id_sitio> = (props) => {
                                                 }}
                                             ></i>
                                         </Button>
-                                    </>
+                                        </div>
                                 ))}
+                                       
 
                                 <Button
                                     variant='outline-dark'
                                     size='sm'
-                                    onClick={() => setModalAddRoom(true)}
+                                    onClick={() => {
+                                        if (!permissionCreateRoom) {
+                                            swal({
+                                                title: 'No tienes permiso para crear salas',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
+                                        setModalAddRoom(true)
+                                    }}
                                 >
                                     Nueva Sala
                                     <i
@@ -424,31 +477,40 @@ const Interes: FC<id_sitio> = (props) => {
                                         key={index}
                                         className='list-item'
                                         draggable
-                                        onDragStart={(e) => (dragItem.current = index)}
+                                        onDragStart={(e) => {
+                                            if (!permissionSortPoint) {
+                                                swal({
+                                                    title: 'No tienes permiso para ordenar puntos de interés',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
+                                            dragItem.current = index
+                                        }}
                                         onDragEnter={(e) => (dragOverItem.current = index)}
                                         onDragEnd={handleSort}
                                         onDragOver={(e) => e.preventDefault()}
                                     >
                                         <div className='row'>
-                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-start'>
+                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-start '>
                                                 <Card
                                                     style={{
                                                         display: 'flex',
-                                                        padding: 30,
-                                                        height: 15,
+                                                        padding:' 0px 12px 0px 12px',
+                                                        height: '100%',
                                                         justifyContent: 'center',
                                                         flexDirection: 'column',
                                                     }}
                                                 >
                                                     <Card.Title
                                                         className='text-center'
-                                                        style={{flexDirection: 'row'}}
+                                                        style={{flexDirection: 'row',}}
                                                     ></Card.Title>
                                                     <Card.Subtitle
                                                         className='text-white'
                                                         style={{
                                                             alignItems: 'flex-start',
-                                                            paddingLeft: 10,
+                                                            paddingLeft: 20,
                                                             marginLeft: '75px',
                                                         }}
                                                     >
@@ -458,9 +520,10 @@ const Interes: FC<id_sitio> = (props) => {
                                                         className='text-muted'
                                                         style={{
                                                             alignItems: 'flex-start',
-                                                            paddingLeft: 10,
+                                                            paddingLeft: 20,
                                                             paddingTop: 5,
                                                             marginLeft: '75px',
+                                                         
                                                         }}
                                                     >
                                                         {punto.descripcion}
@@ -494,7 +557,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                 </Card>
                                             </div>
                                             <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-end'>
-                                                <div id='center2'>
+                                               
                                                     <ul className='nav justify-content-end'>
                                                         <li className='nav-item '>
                                                             <Button
@@ -540,7 +603,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 </Button>
                                                                 <Button
                                                                     variant='primary'
-                                                                    onClick={downloadQRCode}
+                                                                    onClick={()=>{downloadQRCode(name)}}
                                                                 >
                                                                     Descargar
                                                                 </Button>
@@ -563,11 +626,22 @@ const Interes: FC<id_sitio> = (props) => {
                                                                             : 'bi bi-record-circle'
                                                                     }
                                                                     onClick={() => {
+                                                                        if (
+                                                                            !permissionSetPrincipalImage
+                                                                        ) {
+                                                                            swal({
+                                                                                title: 'No tienes permiso para establecer una imagen principal',
+                                                                                icon: 'warning',
+                                                                            })
+                                                                            return
+                                                                        }
+
                                                                         punto.es_portada_de_sitio =
                                                                             !punto.es_portada_de_sitio
                                                                         changeImagePrincipal(
                                                                             punto.id_punto,
-                                                                            punto.id_sitio
+                                                                            punto.id_sitio,
+                                                                            Number(idsala),
                                                                         )
                                                                     }}
                                                                     style={{
@@ -590,6 +664,13 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 }
                                                                 id='center2'
                                                                 onClick={() => {
+                                                                    if (!permissionChangeVisibilityPoint) {
+                                                                        swal({
+                                                                            title: 'No tienes permiso para cambiar la visibilidad de los puntos de interés',
+                                                                            icon: 'warning',
+                                                                        })
+                                                                        return
+                                                                    }
                                                                     punto.es_visible =
                                                                         !punto.es_visible
                                                                     changeStatus(
@@ -612,42 +693,49 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 marginRight: '4px',
                                                             }}
                                                             onClick={(event) => {
-                                                                let lenaguajeDefault = ''
-                                                                for (
-                                                                    let i = 0;
-                                                                    i < languages.length;
-                                                                    i++
-                                                                ) {
-                                                                    for (
-                                                                        let j = 0;
-                                                                        j < punto.lenguajes.length;
-                                                                        j++
-                                                                    ) {
-                                                                        if (
-                                                                            languages[i]
-                                                                                .id_lenguaje ===
-                                                                            punto.lenguajes[j]
-                                                                                .id_lenguaje
-                                                                        ) {
-                                                                            // setLenaguajeDefault(languages[i].descripcion)
-
-                                                                            lenaguajeDefault =
-                                                                                languages[i].nombre
-                                                                        }
-                                                                    }
+                                                                if (!permissionEditPoint) {
+                                                                    swal({
+                                                                        title: 'No tienes permiso para editar un punto de interés',
+                                                                        icon: 'warning',
+                                                                    })
+                                                                    return
                                                                 }
-                                                                console.log(punto.lenguajes)
-                                                                console.log(lenaguajeDefault)
-                                                                const languageEscogido =
-                                                                    punto.lenguajes.map(
-                                                                        (language) => ({
-                                                                            value: language.id_lenguaje,
-                                                                            label: lenaguajeDefault,
-                                                                        })
-                                                                    )
-                                                                console.log(languageEscogido)
+                                                                // let lenaguajeDefault = ''
+                                                                // for (
+                                                                //     let i = 0;
+                                                                //     i < languages.length;
+                                                                //     i++
+                                                                // ) {
+                                                                //     for (
+                                                                //         let j = 0;
+                                                                //         j < punto.lenguajes.length;
+                                                                //         j++
+                                                                //     ) {
+                                                                //         if (
+                                                                //             languages[i]
+                                                                //                 .id_lenguaje ===
+                                                                //             punto.lenguajes[j]
+                                                                //                 .id_lenguaje
+                                                                //         ) {
+                                                                // setLenaguajeDefault(languages[i].descripcion)
+
+                                                                //             lenaguajeDefault =
+                                                                //                 languages[i].nombre
+                                                                //         }
+                                                                //     }
+                                                                // }
+                                                                // console.log(punto.lenguajes)
+                                                                // console.log(lenaguajeDefault)
+                                                                // const languageEscogido =
+                                                                //     punto.lenguajes.map(
+                                                                //         (language) => ({
+                                                                //             value: language.id_lenguaje,
+                                                                //             label: lenaguajeDefault,
+                                                                //         })
+                                                                //     )
+                                                                // console.log(languageEscogido)
                                                                 navigate(
-                                                                    '/sitios/edit-point-interes',
+                                                                    `/sitios/edit-point-interes/${punto.id_sitio}/${punto.id_punto}`,
                                                                     {
                                                                         state: {
                                                                             id_punto:
@@ -671,6 +759,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                                             es_visible:
                                                                                 punto.es_visible,
                                                                             nombreSala: nombresala,
+                                                                            publicado:
+                                                                                punto.publicado,
                                                                         },
                                                                     }
                                                                 )
@@ -685,6 +775,13 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 marginRight: '20px',
                                                             }}
                                                             onClick={() => {
+                                                                if (!permissionDeletePoint) {
+                                                                    swal({
+                                                                        title: 'No tienes permiso para eliminar un punto de interés',
+                                                                        icon: 'warning',
+                                                                    })
+                                                                    return
+                                                                }
                                                                 // console.log(punto.es_portada_de_sitio)
                                                                 deletePointInteres(
                                                                     punto.id_punto,
@@ -704,7 +801,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                         style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
                                                     ></i> */}
                                                     </ul>
-                                                </div>
+                                               
                                             </div>
                                         </div>
                                     </div>
@@ -729,6 +826,14 @@ const Interes: FC<id_sitio> = (props) => {
                                                 borderColor: '#009EF7',
                                             }}
                                             onClick={(event) => {
+                                                if (!permissionCreatePoint) {
+                                                    swal({
+                                                        title: 'No tienes permiso para crear un nuevo punto de interés',
+                                                        icon: 'warning',
+                                                    })
+                                                    return
+                                                }
+
                                                 if (idsala != undefined) {
                                                     navigate('/sitios/create-point-interes', {
                                                         state: {

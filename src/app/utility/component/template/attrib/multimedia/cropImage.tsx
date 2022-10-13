@@ -44,14 +44,15 @@ const CropDemo: FC<Model> = ({ editItemResource, setDataResource }) => {
             src={editItemResource.url ? editItemResource.url : ''}
             crossOrigin="anonymous"
           />
-          {Boolean(completedCrop) && (
+        </ReactCrop>
+        {Boolean(completedCrop) && (
             <canvas
               ref={previewCanvasRef}
               id="canvas"
-              width="300" 
+              width="100%" 
               height="250"
               style={{
-                display: 'none',
+                display: "none",
                 border: '1px solid black',
                 objectFit: 'contain',
                 width: completedCrop && completedCrop.width,
@@ -59,7 +60,6 @@ const CropDemo: FC<Model> = ({ editItemResource, setDataResource }) => {
               }}
             />
           )}
-        </ReactCrop>
       </Fragment>
     )
   }

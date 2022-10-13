@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 const meses=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sept","Oct","Nov","Dic"];
 
 const Element = [
@@ -36,13 +37,16 @@ const Element = [
             typeIcon: 'bi',
             icon: 'list-ul',
             type: "list",
-            text: 'Elemento',
+            text: 'Element',
+            content: '<ul class="list-group list-group-bg list-group-numbered"><li class="list-group-item">Elemento 1</li></ul>',
             textAling: "text-star",
             fontWeight: "fw-normal",
             fontFamily: "fw-normal",
             textDecoration: "",
             typeList: "",
-            item: [],
+            item: [
+              {index: 0, value: 'Elemento 1'}
+            ],
             typeElement: 'texts'
           }
         ]
@@ -123,7 +127,8 @@ const Element = [
             icon: 'Panorama.svg',
             type: "image-360",
             text: 'Imagen 360°',
-            typeElement: 'multimedia'
+            typeElement: 'multimedia',
+            url:''
           },
         ]
       },
@@ -158,14 +163,19 @@ const Element = [
             type: "1-hero",
             typeIcon: 'svg',
             icon: 'Hero1.svg',
-            typeElement: 'hero'
+            typeElement: 'hero',
+            section1: [],
+            section2: []
           },
           {
             text: 'Hero 2',
             type: "2-hero",
             typeIcon: 'svg',
             icon: 'Hero2.svg',
-            typeElement: 'hero'
+            typeElement: 'hero',
+            section1: [],
+            section2: [],
+            section3: []
           }
         ]
       },
@@ -185,7 +195,8 @@ const Element = [
             type: "contenido2",
             typeIcon: 'svg',
             icon: 'Contenido2.svg',
-            typeElement: 'contenido'
+            typeElement: 'contenido',
+            textAling: "text-center"
           }
         ]
       },
@@ -197,14 +208,18 @@ const Element = [
             type: "galeria1",
             typeIcon: 'svg',
             icon: 'Galeria1.svg',
-            typeElement: 'galeria'
+            typeElement: 'galeria',
+            section1: [],
+            section2: []
           },
           {
             text: 'Galeria 2',
             type: "galeria2",
             typeIcon: 'svg',
             icon: 'Galeria2.svg',
-            typeElement: 'galeria'
+            typeElement: 'galeria',
+            section1: [],
+            section2: []
           }
         ]
       },
@@ -212,15 +227,22 @@ const Element = [
         title: 'Pie de Página',
         items: [
           {
-            text: 'Footer 1',
+            text: `© ${new Date().getFullYear()} Copyright:`,
             type: "footer1",
             typeIcon: 'svg',
+            icon: 'footer1.svg',
             typeElement: 'footer'
           },
           {
-            text: 'Footer 2',
+            text: `© ${new Date().getFullYear()} Copyright:`,
             type: "footer2",
+            facebook: '',
+            twitter: '',
+            instagram: '',
+            youtube: '',
+            linkedin: '',
             typeIcon: 'svg',
+            icon: 'footer2.svg',
             typeElement: 'footer'
           }
         ]
