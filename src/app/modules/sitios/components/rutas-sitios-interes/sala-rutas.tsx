@@ -49,7 +49,8 @@ type datosPuntoInteres = {
 type id_punto_a = {
     id_punto_a: number
     id_sitio: number
-    puntosIteres: datosPuntoInteres
+    // puntosIteres: datosPuntoInteres
+    nombrepunto_a: string
 }
 
 const SalaRutas: FC<id_punto_a> = (props) => {
@@ -395,12 +396,10 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                             props.id_punto_a,
                                                                                         id_punto_b:
                                                                                             punto.id_punto,
-                                                                                        interes:
-                                                                                            props.puntosIteres,
-                                                                                        nombre_punto_a:
-                                                                                            props
-                                                                                                .puntosIteres
-                                                                                                .nombre,
+                                                                                       id_sitio: props.id_sitio,
+                                                                                       
+                                                                        
+                                                                                            nombre_punto_a:props.nombrepunto_a,
                                                                                         nombre_punto_b:
                                                                                             punto.nombre,
                                                                                     },
@@ -461,12 +460,7 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                             props.id_punto_a,
                                                                                         id_punto_b:
                                                                                             punto.id_punto,
-                                                                                        interes:
-                                                                                            props.puntosIteres,
-                                                                                        nombre_punto_a:
-                                                                                            props
-                                                                                                .puntosIteres
-                                                                                                .nombre,
+                                                                                       
                                                                                         nombre_punto_b:
                                                                                             punto.nombre,
                                                                                     },

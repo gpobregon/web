@@ -78,7 +78,6 @@ const AddPoint = () => {
     const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
         id_sitio: datospuntoInteres.id_sitio,
-        id_guia: datospuntoInteres.id_guia,
         descripcion: '',
         id_lenguaje: 0,
         nombre: '',
@@ -114,9 +113,7 @@ const AddPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${datospuntoInteres.id_sitio}`)
             }
         })
     }
@@ -132,9 +129,7 @@ const AddPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${datospuntoInteres.id_sitio}`)
             }
         })
     }
@@ -173,7 +168,6 @@ const AddPoint = () => {
     const uploadImage = async (imagen: string) => {
         setSitio({
             id_sitio: datospuntoInteres.id_sitio,
-            id_guia: datospuntoInteres.id_guia,
             descripcion: sitio.descripcion,
             id_lenguaje: sitio.id_lenguaje,
             nombre: sitio.nombre,
@@ -195,7 +189,7 @@ const AddPoint = () => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        console.log(language)
+        // console.log(language)
     }
 
     const languagesOptions = languages?.map((language) => ({
@@ -206,7 +200,7 @@ const AddPoint = () => {
     const handleChangeLanguage = (event: any) => {
         setSitio({
             id_sitio: datospuntoInteres.id_sitio,
-            id_guia: datospuntoInteres.id_guia,
+        
             descripcion: sitio.descripcion,
             id_lenguaje: event.value,
             nombre: sitio.nombre,
@@ -403,7 +397,6 @@ const AddPoint = () => {
                                                     onClick={() =>
                                                         setSitio({
                                                             id_sitio: datospuntoInteres.id_sitio,
-                                                            id_guia: datospuntoInteres.id_guia,
                                                             descripcion: sitio.descripcion,
                                                             id_lenguaje: sitio.id_lenguaje,
                                                             nombre: sitio.nombre,
@@ -462,7 +455,7 @@ const AddPoint = () => {
                                             ) {
                                                 setSitio({
                                                     id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
+                                               
                                                     descripcion: sitio.descripcion,
                                                     id_lenguaje: sitio.id_lenguaje,
                                                     nombre: e.target.value,
@@ -510,7 +503,7 @@ const AddPoint = () => {
                                             ) {
                                                 setSitio({
                                                     id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
+                                                   
                                                     descripcion: e.target.value,
                                                     id_lenguaje: sitio.id_lenguaje,
                                                     nombre: sitio.nombre,

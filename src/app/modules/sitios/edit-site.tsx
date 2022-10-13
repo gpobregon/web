@@ -14,7 +14,7 @@ import {
 } from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
+import {Link, Navigate, useLocation, useNavigate,useParams} from 'react-router-dom'
 import {Site} from '../../models/site'
 import Moment from 'moment'
 import {
@@ -27,6 +27,7 @@ import {
     updateSiteMethod,
     URLAWS,
     getRolesMethod,
+    getValue,
 } from '../../services/api'
 import {Tag} from '../../models/tag'
 import {status} from '../../models/status'
@@ -100,8 +101,27 @@ const customStyles = {
 const animatedComponents = makeAnimated()
 
 const EditSite = () => {
+    const{id}=useParams()
     const {state} = useLocation()
-    const [site, setSite] = useState(state as Site)
+    const [site, setSite] = useState<Site>({
+        id_sitio: 0,
+        nombre: '',
+        descripcion: '',
+        ubicacion: '',
+        geoX: '',
+        geoY: '',
+        portada_path: '',
+        estado: 0,
+        creado: new Date(),
+        editado: new Date(),
+        categorias: [ {id_categoria: 0, nombre: '', estado: 0}],
+        id_municipio: 0,
+        favorito: false,
+        publicado: false,
+        oculto: false,
+        geo_json: '',
+        cercania_activa: false,
+    })
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
     const [show, setShow] = useState(false) //modal show qr
@@ -112,14 +132,28 @@ const EditSite = () => {
     const [nombreJson, setNombreJson] = useState('')
     const [unbicacionBucket, setUbicacionBucket] = useState('')
     const [ArchivoPermitido, setArchivoPermitido] = useState('')
-    useEffect(() => {
-        //  console.log(state)
-        let aux = site.geo_json
+    const[mostrarCategorias,setmostrarCategorias]=useState<any>()
+    const getSite = async () => {
+        const sitio: any = await getValue(sitesMethod, Number(id))
+        setSite(sitio.site)
+        let aux = sitio.site.geo_json
         let auxSplit = aux.split('/')
         setNombreJson(auxSplit[auxSplit.length - 1])
         getCategorys()
 
-        setearStatus()
+        setearStatus(sitio.site)
+
+        const mostrarCategorys = await sitio.site.categorias.map((cat:any) => ({
+            value: Number(cat.id_categoria),
+            label: cat.nombre,
+        }))
+
+        setmostrarCategorias(mostrarCategorys)
+    }
+     useEffect(() => {
+        getSite()
+        //  console.log(state)
+       
     }, [])
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
@@ -129,13 +163,13 @@ const EditSite = () => {
         cercania_activa: site.cercania_activa,
     })
 
-    const setearStatus = () => {
+    const setearStatus = (sitio:Site) => {
         setStatus({
-            id_sitio: site.id_sitio,
-            favorito: site.favorito,
-            publicado: site.publicado,
-            oculto: site.oculto,
-            cercania_activa: site.cercania_activa,
+            id_sitio: sitio.id_sitio,
+            favorito: sitio.favorito,
+            publicado: sitio.publicado,
+            oculto: sitio.oculto,
+            cercania_activa: sitio.cercania_activa,
         })
         // console.log(status)
     }
@@ -155,10 +189,7 @@ const EditSite = () => {
 
     // }
 
-    const mostrarCategorys = site.categorias.map((cat) => ({
-        value: cat.id_categoria,
-        label: cat.nombre,
-    }))
+    
 
     const alertNotNullInputs = async () => {
         swal({
@@ -299,6 +330,7 @@ const EditSite = () => {
         },
     ])
     const handleChange = (event: any) => {
+        setmostrarCategorias(event.target)
         var arrtempo: [
             {
                 id_categoria: number
@@ -311,6 +343,8 @@ const EditSite = () => {
         event.map((cat: any) => {
             arrtempo.push({id_categoria: cat.value, nombre: cat.label, estado: 1})
         })
+
+        console.log(arrtempo)
         setSite({
             id_sitio: site.id_sitio,
             nombre: site.nombre,
@@ -330,7 +364,7 @@ const EditSite = () => {
             geo_json: site.geo_json,
             cercania_activa: status.cercania_activa,
         })
-        console.log(site)
+        // console.log(site)
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
@@ -875,7 +909,7 @@ const EditSite = () => {
                                             closeMenuOnSelect={false}
                                             styles={customStyles}
                                             components={animatedComponents}
-                                            defaultValue={mostrarCategorys}
+                                            value={mostrarCategorias}
                                             isMulti
                                             options={categorys}
                                             // placeholder={categorysHolder}
@@ -1033,7 +1067,7 @@ const EditSite = () => {
             <br />
             <br />
             <h3>Puntos de interés</h3>
-            <Interes id_sitio={site.id_sitio} />
+            <Interes id_sitio={Number(id)} />
             <UpImage
                 show={modalupimg}
                 onClose={() => {

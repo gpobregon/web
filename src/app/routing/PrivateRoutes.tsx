@@ -44,8 +44,8 @@ const PrivateRoutes = () => {
 
         {/* Pages */}
         <Route path='dashboard' element={<DashboardWrapper />} />
-        <Route path='/sitios/create' element={<ConfSite />} />
-        <Route path='/sitios/edit' element={<EditSite />} />
+        <Route path='/sitios/createSite' element={<ConfSite />} />
+        <Route path='/sitios/editSite/:id' element={<EditSite />} />
         <Route path='builder' element={<BuilderPageWrapper />} />
         <Route path='menu-test' element={<MenuTestPage />} />
         <Route path='catalogos' element={<CatalogosPage />} />
@@ -68,7 +68,7 @@ const PrivateRoutes = () => {
         <Route path='/offline' element={<OfflineManagement />} />
         <Route path='notificaciones-push' element={<PushNotificationsPage />} />
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
-        <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
+        <Route path='/sitios/edit-point-interes/:id_sitio/:id_punto' element={<EditPoin />} />
         <Route path='/sitios/add-route' element={<AddRoute />} />
         <Route path='/test' element={<Container />} />
                 {/* Page Not Found */}

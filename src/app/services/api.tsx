@@ -1,5 +1,4 @@
-import axios from 'axios'
-import {Route} from 'react-router-dom'
+
 
 export const URLAWS = 'https://mcd-archivos.s3.amazonaws.com/'
 const URL = 'https://ezah7sxfbh.execute-api.us-east-1.amazonaws.com/qa'
@@ -33,6 +32,7 @@ export const statePointInteres = RoomsMethod + '/points/visibility'
 export const changePointOfInterestFront = RoomsMethod + '/points/changePointOfInterestFront'
 export const OrderPointOfInterest = RoomsMethod + '/points/changeorder'
 export const statePointInteresPublished = RoomsMethod + '/points/changepublishedpointofinterest'
+export const getPuntoInteres ='/site/rooms/points/get'
 
 export const getRoutefInterest = RoomsMethod + '/points/getpointswithroute'
 export const addRoute = RoomsMethod + '/points/route/add'
