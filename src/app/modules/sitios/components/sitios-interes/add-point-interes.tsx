@@ -87,6 +87,7 @@ const AddPoint = () => {
         qr_path: 'sitio/interes/' + datospuntoInteres.id_sitio + '/' + datospuntoInteres.id_guia,
         es_portada_de_sitio: false,
         estado: 1,
+        id_guia: datospuntoInteres.id_guia,
     })
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
     // useEffect(() => {
@@ -138,8 +139,9 @@ const AddPoint = () => {
         // console.log(sitio)
         if (sitio.nombre != '' && sitio.id_lenguaje != 0 && sitio.portada_path != '') {
            const res:any= await postData(addNewPointInteres, sitio)
-           
-            navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${res.point.id_punto}`)
+        //    console.log(res)
+          
+            navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${res.point.id_punto}`,{state:sitio})
           
         } else {
             alertNotNullInputs()
@@ -177,6 +179,7 @@ const AddPoint = () => {
             qr_path: sitio.qr_path,
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
+            id_guia: datospuntoInteres.id_guia,
         })
 
         // console.log(sitio)
@@ -198,20 +201,8 @@ const AddPoint = () => {
     }))
 
     const handleChangeLanguage = (event: any) => {
-        setSitio({
-            id_sitio: datospuntoInteres.id_sitio,
-        
-            descripcion: sitio.descripcion,
-            id_lenguaje: event.value,
-            nombre: sitio.nombre,
-            geoX: sitio.geoX,
-            geoY: sitio.geoY,
-            portada_path: sitio.portada_path,
-            qr_path: sitio.qr_path,
-            es_portada_de_sitio: sitio.es_portada_de_sitio,
-            estado: sitio.estado,
-        })
-        console.log(sitio)
+        sitio.id_lenguaje = event.value
+        // console.log(sitio)
     }
     return (
         <>
@@ -407,6 +398,7 @@ const AddPoint = () => {
                                                             es_portada_de_sitio:
                                                                 sitio.es_portada_de_sitio,
                                                             estado: sitio.estado,
+                                                            id_guia: sitio.id_guia,
                                                         })
                                                     }
                                                 ></Link>
@@ -465,6 +457,7 @@ const AddPoint = () => {
                                                     qr_path: sitio.qr_path,
                                                     es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                     estado: sitio.estado,
+                                                    id_guia: sitio.id_guia,
                                                 })
                                             }
                                         }}
@@ -513,6 +506,7 @@ const AddPoint = () => {
                                                     qr_path: sitio.qr_path,
                                                     es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                     estado: sitio.estado,
+                                                    id_guia: sitio.id_guia,
                                                 })
                                             }
                                         }}
@@ -555,9 +549,9 @@ const AddPoint = () => {
                                                         // console.log(sitio)
                                                         // window.location.href = "../sitios";
 
-                                                        console.log(
-                                                            'creado con el boton de sitio mobil'
-                                                        )
+                                                        // console.log(
+                                                        //     'creado con el boton de sitio mobil'
+                                                        // )
                                                     }}
                                                     className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                                                 >
