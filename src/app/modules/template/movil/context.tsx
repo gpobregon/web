@@ -238,7 +238,20 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     // descarta los cambios realizados dentro del editor
     const discardChange = () => {
-        setBoard(oldBoard)
+        swal({
+            title: '¿Estas seguro de Descartar Los Cambios?',
+            icon: 'warning',
+            buttons: ['No', 'Sí'],
+        }).then((res) => {
+            if (res) {
+                swal({
+                    text: 'Descartado Correctamente',
+                    icon: 'success',
+                    timer: 2000,
+                })
+                setBoard(oldBoard)
+            }
+        })
     }
     // obtenemos el nombre del sitio que estamos editando
     const oneSite = async () => {
@@ -407,9 +420,9 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     const ReturnView = () => {
         if (tipo === 'sitio') {
-            navigate(`/sitios/edit`, { state: oneDataSite })
+            navigate(`/sitios/editSite/${id}`)
         } else {
-            navigate(`/sitios/edit-point-interes`, { state: pointInteres })
+            navigate(`/sitios/edit-point-interes/${idSitio}/${id}`)
         }
     }
     // -------------------------------------------
@@ -444,6 +457,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
 
     const value = {
         drop,
