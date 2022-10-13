@@ -271,7 +271,7 @@ const SitiosPage = () => {
                             })
                             return
                         }
-                        navigate('/sitios/create', {replace: true})
+                        navigate('/sitios/createSite', {replace: true})
                     }}
                 >
                     <i className='bi bi-file-earmark-plus'></i>
@@ -316,7 +316,7 @@ const SitiosPage = () => {
                                     })
                                     return
                                 }
-                                navigate('/sitios/create', {replace: true})
+                                navigate('/sitios/createSite', {replace: true})
                             }}
                         >
                             <svg

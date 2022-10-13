@@ -75,7 +75,6 @@ const Interes: FC<id_sitio> = (props) => {
     }
     const changeImagePrincipal = async (idpunto: number, idsitio: number,idsala:number) => {
        const res:any= await postData(changePointOfInterestFront, {id_punto: idpunto, id_sitio: idsitio,id_sala:idsala})
-       console.log({id_punto: idpunto, id_sitio: idsitio,id_sala:idsala})
         setPuntoInteres([])
         setRooms([])
         swal({
@@ -733,7 +732,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 //     )
                                                                 // console.log(languageEscogido)
                                                                 navigate(
-                                                                    '/sitios/edit-point-interes',
+                                                                    `/sitios/edit-point-interes/${punto.id_sitio}/${punto.id_punto}`,
                                                                     {
                                                                         state: {
                                                                             id_punto:

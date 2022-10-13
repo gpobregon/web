@@ -35,7 +35,7 @@ type datosPuntoInteres2 = {
         }
     ]
     id_sitio: number
-    id_guia: number
+
     nombre: string
     descripcion: string
     geoX: number
@@ -52,7 +52,7 @@ type datosPuntoInteres2 = {
 type datosPuntoInteres = {
     id_punto_a: number
     id_punto_b: number
-    interes: datosPuntoInteres2
+    id_sitio: number
     nombre_punto_a: string
     nombre_punto_b: string
 }
@@ -143,24 +143,7 @@ const AddRoute = () => {
                     buttons: ['Sí', 'No'],
                 }).then(async (res) => {
                     if (res) {
-                        navigate('/sitios/edit-point-interes', {
-                            state: {
-                                id_punto: puntos.interes.id_punto,
-                                lenguajes: puntos.interes.lenguajes,
-                                id_sitio: puntos.interes.id_sitio,
-                                id_guia: puntos.interes.id_guia,
-                                nombre: puntos.interes.nombre,
-                                descripcion: puntos.interes.descripcion,
-                                geoX: puntos.interes.geoX,
-                                geoY: puntos.interes.geoY,
-                                portada_path: puntos.interes.portada_path,
-                                qr_path: puntos.interes.qr_path,
-                                es_portada_de_sitio: puntos.interes.es_portada_de_sitio,
-                                estado: puntos.interes.estado,
-                                es_visible: puntos.interes.es_visible,
-                                nombreSala: puntos.interes.nombreSala,
-                            },
-                        })
+                        navigate(`/sitios/edit-point-interes/${puntos.id_sitio}/${puntos.id_punto_a}` )
                     }
                     swal({
                         text: 'Se Guardó guía correctamente ',
@@ -343,24 +326,7 @@ const AddRoute = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit-point-interes', {
-                    state: {
-                        id_punto: puntos.interes.id_punto,
-                        lenguajes: puntos.interes.lenguajes,
-                        id_sitio: puntos.interes.id_sitio,
-                        id_guia: puntos.interes.id_guia,
-                        nombre: puntos.interes.nombre,
-                        descripcion: puntos.interes.descripcion,
-                        geoX: puntos.interes.geoX,
-                        geoY: puntos.interes.geoY,
-                        portada_path: puntos.interes.portada_path,
-                        qr_path: puntos.interes.qr_path,
-                        es_portada_de_sitio: puntos.interes.es_portada_de_sitio,
-                        estado: puntos.interes.estado,
-                        es_visible: puntos.interes.es_visible,
-                        nombreSala: puntos.interes.nombreSala,
-                    },
-                })
+                navigate(`/sitios/edit-point-interes/${puntos.id_sitio}/${puntos.id_punto_a}` )
             }
         })
     }
