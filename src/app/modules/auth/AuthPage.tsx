@@ -22,7 +22,8 @@ const AuthLayout = () => {
         <Container fluid className='root' style={{padding: 0}}>
             <Row style={{margin: 0}}>
                 <Col
-                    style={{backgroundImage: `url(${Image})`, height: '100vh'}}
+                    style={{backgroundImage: `url(${Image})`, height: '100vh', backgroundRepeat: 'no-repeat', 
+                backgroundAttachment: 'fixed', backgroundSize: 'cover'}}
                 ></Col>
                 <Col
                     style={{
