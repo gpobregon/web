@@ -188,12 +188,12 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     //descargar QR------------------------------------------------------
-    const downloadQRCode = () => {
+    const downloadQRCode = (nombreArchivo:string) => {
         const canvas = document.getElementById('qrCode') as HTMLCanvasElement
         const pngUrl = canvas!.toDataURL('image/png').replace('image/png', 'image/octet-stream')
         let downloadLink = document.createElement('a')
         downloadLink.href = pngUrl
-        downloadLink.download = 'qr.png'
+        downloadLink.download = `${nombreArchivo}.png`
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)
@@ -301,8 +301,9 @@ const Interes: FC<id_sitio> = (props) => {
                                 room?.map(sala => <Rooms {...sala} key={sala.id_sala.toString()} />)
                                 }  */}
 
-                                {room?.map((sala) => (
-                                    <>
+                                {room?.map((sala,index) => (
+                                    <div className="btn-group" role="group" aria-label="Basic example" key={index}>
+                                    
                                         <Button
                                             variant='outline-dark'
                                             size='sm'
@@ -317,6 +318,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         >
                                             {sala.nombre}
                                         </Button>
+                                        
                                         <Button
                                             variant='outline-dark'
                                             size='sm'
@@ -365,8 +367,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                 }}
                                             ></i>
                                         </Button>
-                                    </>
+                                        </div>
                                 ))}
+                                       
 
                                 <Button
                                     variant='outline-dark'
@@ -600,7 +603,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 </Button>
                                                                 <Button
                                                                     variant='primary'
-                                                                    onClick={downloadQRCode}
+                                                                    onClick={()=>{downloadQRCode(name)}}
                                                                 >
                                                                     Descargar
                                                                 </Button>
