@@ -59,7 +59,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     setDataSelect(data)
     show(e)
   }
-  console.log(data);
+  
   return (
     <div
       ref={referencia}
