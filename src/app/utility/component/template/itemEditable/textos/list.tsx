@@ -21,19 +21,34 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const nameMenu = `custom-${data.id}`
 
   const { show } = useContextMenu({ id: idMenu });
-  
-  const { show: showMenu2 } = useContextMenu({ id:  nameMenu });
-  
+
+  const { show: showMenu2 } = useContextMenu({ id: nameMenu });
+
   const [dataSelect, setDataSelect] = useState<any>([])
 
   const changeText = (e: any) => {
+    
     const edit = {
       ...data,
-      content: e.target.value
+      content: e.target.value,
+      item: Convert(e.target.value)
     }
     updateElement(edit)
   }
 
+  const Convert = (str: any) => {
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(str, 'text/html');
+    const children = doc.childNodes[0].childNodes[1].childNodes[0].childNodes;
+    let nodes = []
+    for (let i = 0; i < children.length; i++) {
+      let text = children[i].childNodes[0].nodeValue;
+      if (text) {
+        nodes.push({ text: text });
+      }
+    }
+    return (nodes)
+  }
   const destroyItem = (e: any) => {
     removeItem(dataSelect.id);
     setEditItem([])
@@ -44,7 +59,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     setDataSelect(data)
     show(e)
   }
-
+  console.log(data);
   return (
     <div
       ref={referencia}
@@ -59,11 +74,11 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       >
         <i className="bi bi-grip-vertical fa-2x" id={data.id} />
       </div>
-      <ContextMenu 
+      <ContextMenu
         destroyItem={destroyItem}
         idMenu={idMenu}
       />
-      <MenuDoubleClick 
+      <MenuDoubleClick
         updateElement={updateElement}
         nameMenu={nameMenu}
         editItem={data}
