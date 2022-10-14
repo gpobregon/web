@@ -44,9 +44,7 @@ const Element = [
             fontFamily: "fw-normal",
             textDecoration: "",
             typeList: "",
-            item: [
-              {index: 0, value: 'Elemento 1'}
-            ],
+            item: [],
             typeElement: 'texts'
           }
         ]
