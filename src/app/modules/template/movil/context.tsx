@@ -50,7 +50,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
-    const { id, tipo, idSitio } = useParams()
+    const { id, tipo, idSitio, modo } = useParams()
     const { state } = useLocation()
     const navigate = useNavigate()
     // Agregar elemento
@@ -133,6 +133,19 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
     // cambiar modalidad de edición
     const ChangeMode = (type: number) => {
+        if (type === 1) {
+            if (tipo === 'sitio') {
+                navigate(`/template/sitio/movil/${id}`)
+            } else {
+                navigate(`/template/punto/${idSitio}/movil/${id}`)
+            }
+        } else {
+            if (tipo === 'sitio') {
+                navigate(`/template/sitio/web/${id}`)
+            } else {
+                navigate(`/template/punto/${idSitio}/web/${id}`)
+            }
+        }
         setBoard([])
         setChangeTypeEdit(type)
         setEditItem([])
@@ -447,13 +460,20 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     // ------------------------------------------------------------
     useEffect(() => {
 
-        if (tipo === 'sitio' || tipo === 'punto') {
+        if ((tipo === 'sitio' || tipo === 'punto') && (modo === 'movil' || modo === 'web')) {
             getAllResources(1)
             getLenguate()
             oneSite()
+            console.log(modo)
+            if (modo !== 'web') {
+                ChangeMode(1)
+            } else {
+                ChangeMode(2)
+            }
         } else {
             navigate(`/error/404`)
         }
+
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])

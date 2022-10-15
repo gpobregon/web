@@ -1,11 +1,12 @@
 /* eslint-disable no-self-compare */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, Fragment, useState } from "react";
-import { Row, Col } from 'react-bootstrap'
+import { FC, useState, useContext, useRef, Fragment } from "react";
+import { Row, Col, Image, Popover, OverlayTrigger, Form } from 'react-bootstrap'
 import { useContextMenu } from "react-contexify";
 import MenuDoubleClick from '../../../menu/doubleClick'
 import ContextMenu from '../../../menu/contextMenu'
 import { meses } from '../../../../../utility/global/data'
+import { ContentContext } from '../../../../../modules/template/movil/context'
 
 type Model = {
   data: any
@@ -18,7 +19,10 @@ type Model = {
 }
 const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
 
+  const { changeTypeEdit } = useContext(ContentContext)
+
   const idMenu = `menu-${data.id}`
+
   const nameMenu = `custom-${data.id}`
 
   const { show } = useContextMenu({ id: idMenu })
@@ -26,6 +30,9 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const { show: showMenu2 } = useContextMenu({ id: nameMenu })
 
   const [dataSelect, setDataSelect] = useState<any>([])
+
+  const valor1 = useRef<HTMLInputElement>(null)
+  const valor2 = useRef<HTMLInputElement>(null)
 
   const getSplitDate = (date: any, type: number) => {
 
@@ -40,6 +47,36 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     return response;
   }
 
+  function ValidarFechas() {
+
+    if (valor1.current && valor2.current) {
+      if (Date.parse(valor1.current.value) <= Date.parse(valor2.current.value)) {
+        return true
+      }
+      else {
+        return false
+      }
+    }
+  }
+
+  const changeSizeTitle = (item: {}) => {
+    if (ValidarFechas()) {
+      const ele = {
+        ...data,
+        ...item
+      }
+      updateElement(ele)
+    }
+  }
+
+  const changeText = (item: {}) => {
+    const ele = {
+      ...data,
+      ...item
+    }
+    updateElement(ele)
+  }
+
   const destroyItem = (e: any) => {
     removeItem(dataSelect.id);
     setEditItem([])
@@ -50,6 +87,51 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     setDataSelect(data)
     show(e)
   }
+
+  const popoverClick = (
+    <Popover id="popover-basic" style={{ transform: 'translate(-366px, 317px)', width: '358px' }}>
+      <Popover.Header as="h3">Horario</Popover.Header>
+      <Popover.Body>
+        <Fragment>
+          <Row className="py-1 w-80">
+            <Col className="mx-1 px-0">
+              <Form.Label><small>Descripción</small></Form.Label>
+              <Form.Control
+                defaultValue={data.text}
+                placeholder="escribe un título"
+                size="sm"
+                rows={3}
+                as="textarea"
+                onChange={(e: any) => changeText({ text: e.target.value })}
+              />
+            </Col>
+          </Row>
+          <Row className="py-1 pb-3">
+            <Col className="mx-1 px-0">
+              <Form.Label><small>Fecha inicial</small></Form.Label>
+              <Form.Control
+                size="sm"
+                ref={valor1}
+                defaultValue={data.startDate}
+                type='date'
+                onChange={(e: any) => changeSizeTitle({ startDate: e.target.value })}
+              />
+            </Col>
+            <Col className="mx-1 px-0">
+              <Form.Label><small>Fecha Final</small></Form.Label>
+              <Form.Control
+                size="sm"
+                ref={valor2}
+                defaultValue={data.finalDate}
+                type='date'
+                onChange={(e: any) => changeSizeTitle({ finalDate: e.target.value })}
+              />
+            </Col>
+          </Row>
+        </Fragment>
+      </Popover.Body>
+    </Popover>
+  );
 
   return (
     <div
@@ -76,22 +158,53 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
         editItem={data}
       />
 
-      <Row className={`my-2 flex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
-        <Col lg={4} sm={4} xs={5}>
-          <div className="d-flex flex-column text-center border rounded">
-            <div className="p-2 small">{(getSplitDate(data.startDate, 3) === getSplitDate(data.finalDate, 3)) ? getSplitDate(data.startDate, 3) : `${getSplitDate(data.startDate, 3)} - ${getSplitDate(data.finalDate, 3)}`}</div>
-            <div className="p-2 border-bottom small">{getSplitDate(data.startDate, 2)  || 'Mes'} { getSplitDate(data.finalDate, 2) !== getSplitDate(data.startDate, 2) ? `- ${getSplitDate(data.finalDate, 2)}` : '' }</div>
-            <div className="p-2">
-              {
-                (data.finalDate === data.startDate || data.finalDate === '0000-00-00' || data.finalDate === '') ? getSplitDate(data.startDate, 1) : <Fragment>{getSplitDate(data.startDate, 1)} - {getSplitDate(data.finalDate, 1)}</Fragment>
-              }
-            </div>
-          </div>
-        </Col>
-        <Col lg={8} sm={8} xs={8}>
-          {data.text}
-        </Col>
-      </Row>
+      {
+        changeTypeEdit === 1 &&
+        (
+          <Row className={`my-2 flex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
+            <Col lg={4} sm={4} xs={5}>
+              <div className="d-flex flex-column text-center border rounded">
+                <div className="p-2 small">{(getSplitDate(data.startDate, 3) === getSplitDate(data.finalDate, 3)) ? getSplitDate(data.startDate, 3) : `${getSplitDate(data.startDate, 3)} - ${getSplitDate(data.finalDate, 3)}`}</div>
+                <div className="p-2 border-bottom small">{getSplitDate(data.startDate, 2) || 'Mes'} {getSplitDate(data.finalDate, 2) !== getSplitDate(data.startDate, 2) ? `- ${getSplitDate(data.finalDate, 2)}` : ''}</div>
+                <div className="p-2">
+                  {
+                    (data.finalDate === data.startDate || data.finalDate === '0000-00-00' || data.finalDate === '') ? getSplitDate(data.startDate, 1) : <Fragment>{getSplitDate(data.startDate, 1)} - {getSplitDate(data.finalDate, 1)}</Fragment>
+                  }
+                </div>
+              </div>
+            </Col>
+            <Col lg={8} sm={8} xs={8}>
+              {data.text}
+            </Col>
+          </Row>
+        )
+      }
+      {
+        changeTypeEdit === 2 && (
+          <OverlayTrigger
+            trigger="click"
+            placement="left"
+            overlay={popoverClick}
+          >
+            <Row className={`my-2 flex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}>
+              <Col lg={4} sm={4} xs={5}>
+                <div className="d-flex flex-column text-center border rounded">
+                  <div className="p-2 small">{(getSplitDate(data.startDate, 3) === getSplitDate(data.finalDate, 3)) ? getSplitDate(data.startDate, 3) : `${getSplitDate(data.startDate, 3)} - ${getSplitDate(data.finalDate, 3)}`}</div>
+                  <div className="p-2 border-bottom small">{getSplitDate(data.startDate, 2) || 'Mes'} {getSplitDate(data.finalDate, 2) !== getSplitDate(data.startDate, 2) ? `- ${getSplitDate(data.finalDate, 2)}` : ''}</div>
+                  <div className="p-2">
+                    {
+                      (data.finalDate === data.startDate || data.finalDate === '0000-00-00' || data.finalDate === '') ? getSplitDate(data.startDate, 1) : <Fragment>{getSplitDate(data.startDate, 1)} - {getSplitDate(data.finalDate, 1)}</Fragment>
+                    }
+                  </div>
+                </div>
+              </Col>
+              <Col lg={8} sm={8} xs={8}>
+                {data.text}
+              </Col>
+            </Row>
+          </OverlayTrigger>
+        )
+      }
     </div>
   )
 }

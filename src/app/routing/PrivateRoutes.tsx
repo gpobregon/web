@@ -59,10 +59,10 @@ const PrivateRoutes = () => {
         <Route path='/reportes/reporte-de-usuario' element={<UserReport />}  />
         <Route path='sitios' element={<SitiosPage />} /> 
         <Route path="/template/:tipo">
-            <Route path="movil/:id" element={<Template />} />
-            <Route path="web/:id" element={<Template />} />
-            <Route path=":idSitio/movil/:id" element={<Template />} />
-            <Route path=":idSitio/web/:id" element={<Template />} />
+            <Route path=":modo/:id" element={<Template />} />
+            <Route path=":modo/:id" element={<Template />} />
+            <Route path=":idSitio/:modo/:id" element={<Template />} />
+            <Route path=":idSitio/:modo/:id" element={<Template />} />
         </Route>
         <Route path='notificaciones-push' element={<PushNotificationsPage />} /> 
         <Route path='/offline' element={<OfflineManagement />} />
