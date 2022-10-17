@@ -488,7 +488,9 @@ const UserProfilePage = () => {
                                         <Form.Label>Teléfono</Form.Label>
                                         <Form.Control
                                             defaultValue={dataUser.phoneNumber}
-                                            type='text'
+                                            type='number'
+                                            pattern='/^-?\d+\.?\d*$/'
+                                            autoComplete='off'
                                             name='telefono'
                                             onChange={(e) => {
                                                 setDataUser({
