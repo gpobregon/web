@@ -223,7 +223,8 @@ export function Login() {
                         </div>
                         <Form.Group className='mb-3'>
                             <Form.Label>Correo electronico</Form.Label>
-                            <Form.Control
+                            <Form.Control  
+                            className='border border-2 border-primary'
                                 type='email'
                                 onChange={(event) => {
                                     setTouchedEmailInput(true)
@@ -253,11 +254,12 @@ export function Login() {
                                 
                                 <OutlinedInput   
                                 inputProps={{ style: { fontFamily: 'inherit', color: "#92929F"}}}
-                
+                                    
                                     id='outlined-adornment-password'
                                     type={values.showPassword ? 'text' : 'password'}
                                     value={values.password}
-                                    onChange={handleChange('password')} 
+                                    onChange={handleChange('password')}  
+                                    placeholder='Introduce tu contraseña'
                                     // onChange={(event) => { 
                                     //     setTouchedPasswordInput(true)
     
