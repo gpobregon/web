@@ -78,7 +78,6 @@ const AddPoint = () => {
     const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
         id_sitio: datospuntoInteres.id_sitio,
-        id_guia: datospuntoInteres.id_guia,
         descripcion: '',
         id_lenguaje: 0,
         nombre: '',
@@ -88,6 +87,7 @@ const AddPoint = () => {
         qr_path: 'sitio/interes/' + datospuntoInteres.id_sitio + '/' + datospuntoInteres.id_guia,
         es_portada_de_sitio: false,
         estado: 1,
+        id_guia: datospuntoInteres.id_guia,
     })
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
     // useEffect(() => {
@@ -114,9 +114,7 @@ const AddPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${datospuntoInteres.id_sitio}`)
             }
         })
     }
@@ -132,9 +130,7 @@ const AddPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${datospuntoInteres.id_sitio}`)
             }
         })
     }
@@ -143,8 +139,9 @@ const AddPoint = () => {
         // console.log(sitio)
         if (sitio.nombre != '' && sitio.id_lenguaje != 0 && sitio.portada_path != '') {
            const res:any= await postData(addNewPointInteres, sitio)
-           
-            navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${res.point.id_punto}`)
+        //    console.log(res)
+          
+            navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${res.point.id_punto}`,{state:sitio})
           
         } else {
             alertNotNullInputs()
@@ -173,7 +170,6 @@ const AddPoint = () => {
     const uploadImage = async (imagen: string) => {
         setSitio({
             id_sitio: datospuntoInteres.id_sitio,
-            id_guia: datospuntoInteres.id_guia,
             descripcion: sitio.descripcion,
             id_lenguaje: sitio.id_lenguaje,
             nombre: sitio.nombre,
@@ -183,6 +179,7 @@ const AddPoint = () => {
             qr_path: sitio.qr_path,
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
+            id_guia: datospuntoInteres.id_guia,
         })
 
         // console.log(sitio)
@@ -195,7 +192,7 @@ const AddPoint = () => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        console.log(language)
+        // console.log(language)
     }
 
     const languagesOptions = languages?.map((language) => ({
@@ -204,20 +201,8 @@ const AddPoint = () => {
     }))
 
     const handleChangeLanguage = (event: any) => {
-        setSitio({
-            id_sitio: datospuntoInteres.id_sitio,
-            id_guia: datospuntoInteres.id_guia,
-            descripcion: sitio.descripcion,
-            id_lenguaje: event.value,
-            nombre: sitio.nombre,
-            geoX: sitio.geoX,
-            geoY: sitio.geoY,
-            portada_path: sitio.portada_path,
-            qr_path: sitio.qr_path,
-            es_portada_de_sitio: sitio.es_portada_de_sitio,
-            estado: sitio.estado,
-        })
-        console.log(sitio)
+        sitio.id_lenguaje = event.value
+        // console.log(sitio)
     }
     return (
         <>
@@ -403,7 +388,6 @@ const AddPoint = () => {
                                                     onClick={() =>
                                                         setSitio({
                                                             id_sitio: datospuntoInteres.id_sitio,
-                                                            id_guia: datospuntoInteres.id_guia,
                                                             descripcion: sitio.descripcion,
                                                             id_lenguaje: sitio.id_lenguaje,
                                                             nombre: sitio.nombre,
@@ -414,6 +398,7 @@ const AddPoint = () => {
                                                             es_portada_de_sitio:
                                                                 sitio.es_portada_de_sitio,
                                                             estado: sitio.estado,
+                                                            id_guia: sitio.id_guia,
                                                         })
                                                     }
                                                 ></Link>
@@ -462,7 +447,7 @@ const AddPoint = () => {
                                             ) {
                                                 setSitio({
                                                     id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
+                                               
                                                     descripcion: sitio.descripcion,
                                                     id_lenguaje: sitio.id_lenguaje,
                                                     nombre: e.target.value,
@@ -472,6 +457,7 @@ const AddPoint = () => {
                                                     qr_path: sitio.qr_path,
                                                     es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                     estado: sitio.estado,
+                                                    id_guia: sitio.id_guia,
                                                 })
                                             }
                                         }}
@@ -510,7 +496,7 @@ const AddPoint = () => {
                                             ) {
                                                 setSitio({
                                                     id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
+                                                   
                                                     descripcion: e.target.value,
                                                     id_lenguaje: sitio.id_lenguaje,
                                                     nombre: sitio.nombre,
@@ -520,6 +506,7 @@ const AddPoint = () => {
                                                     qr_path: sitio.qr_path,
                                                     es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                     estado: sitio.estado,
+                                                    id_guia: sitio.id_guia,
                                                 })
                                             }
                                         }}
@@ -562,9 +549,9 @@ const AddPoint = () => {
                                                         // console.log(sitio)
                                                         // window.location.href = "../sitios";
 
-                                                        console.log(
-                                                            'creado con el boton de sitio mobil'
-                                                        )
+                                                        // console.log(
+                                                        //     'creado con el boton de sitio mobil'
+                                                        // )
                                                     }}
                                                     className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                                                 >

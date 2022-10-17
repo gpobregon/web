@@ -44,8 +44,8 @@ const PrivateRoutes = () => {
 
         {/* Pages */}
         <Route path='dashboard' element={<DashboardWrapper />} />
-        <Route path='/sitios/create' element={<ConfSite />} />
-        <Route path='/sitios/edit' element={<EditSite />} />
+        <Route path='/sitios/createSite' element={<ConfSite />} />
+        <Route path='/sitios/editSite/:id' element={<EditSite />} />
         <Route path='builder' element={<BuilderPageWrapper />} />
         <Route path='menu-test' element={<MenuTestPage />} />
         <Route path='catalogos' element={<CatalogosPage />} />
@@ -59,16 +59,16 @@ const PrivateRoutes = () => {
         <Route path='/reportes/reporte-de-usuario' element={<UserReport />}  />
         <Route path='sitios' element={<SitiosPage />} /> 
         <Route path="/template/:tipo">
-            <Route path="movil/:id" element={<Template />} />
-            <Route path="web/:id" element={<Template />} />
-            <Route path=":idSitio/movil/:id" element={<Template />} />
-            <Route path=":idSitio/web/:id" element={<Template />} />
+            <Route path=":modo/:id" element={<Template />} />
+            <Route path=":modo/:id" element={<Template />} />
+            <Route path=":idSitio/:modo/:id" element={<Template />} />
+            <Route path=":idSitio/:modo/:id" element={<Template />} />
         </Route>
         <Route path='notificaciones-push' element={<PushNotificationsPage />} /> 
         <Route path='/offline' element={<OfflineManagement />} />
         <Route path='notificaciones-push' element={<PushNotificationsPage />} />
         <Route path='/sitios/create-point-interes' element={<AddPoin />} />
-        <Route path='/sitios/edit-point-interes' element={<EditPoin />} />
+        <Route path='/sitios/edit-point-interes/:id_sitio/:id_punto' element={<EditPoin />} />
         <Route path='/sitios/add-route' element={<AddRoute />} />
         <Route path='/test' element={<Container />} />
                 {/* Page Not Found */}

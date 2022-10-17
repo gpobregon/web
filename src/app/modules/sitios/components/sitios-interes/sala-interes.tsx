@@ -73,8 +73,8 @@ const Interes: FC<id_sitio> = (props) => {
             timer: 2000,
         })
     }
-    const changeImagePrincipal = async (idpunto: number, idsitio: number) => {
-        await postData(changePointOfInterestFront, {id_punto: idpunto, id_sitio: idsitio})
+    const changeImagePrincipal = async (idpunto: number, idsitio: number,idsala:number) => {
+       const res:any= await postData(changePointOfInterestFront, {id_punto: idpunto, id_sitio: idsitio,id_sala:idsala})
         setPuntoInteres([])
         setRooms([])
         swal({
@@ -188,12 +188,12 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     //descargar QR------------------------------------------------------
-    const downloadQRCode = () => {
+    const downloadQRCode = (nombreArchivo:string) => {
         const canvas = document.getElementById('qrCode') as HTMLCanvasElement
         const pngUrl = canvas!.toDataURL('image/png').replace('image/png', 'image/octet-stream')
         let downloadLink = document.createElement('a')
         downloadLink.href = pngUrl
-        downloadLink.download = 'qr.png'
+        downloadLink.download = `${nombreArchivo}.png`
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)
@@ -301,8 +301,9 @@ const Interes: FC<id_sitio> = (props) => {
                                 room?.map(sala => <Rooms {...sala} key={sala.id_sala.toString()} />)
                                 }  */}
 
-                                {room?.map((sala) => (
-                                    <>
+                                {room?.map((sala,index) => (
+                                    <div className="btn-group" role="group" aria-label="Basic example" key={index}>
+                                    
                                         <Button
                                             variant='outline-dark'
                                             size='sm'
@@ -317,6 +318,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         >
                                             {sala.nombre}
                                         </Button>
+                                        
                                         <Button
                                             variant='outline-dark'
                                             size='sm'
@@ -365,8 +367,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                 }}
                                             ></i>
                                         </Button>
-                                    </>
+                                        </div>
                                 ))}
+                                       
 
                                 <Button
                                     variant='outline-dark'
@@ -489,11 +492,11 @@ const Interes: FC<id_sitio> = (props) => {
                                         onDragOver={(e) => e.preventDefault()}
                                     >
                                         <div className='row'>
-                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-start'>
+                                            <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-start '>
                                                 <Card
                                                     style={{
                                                         display: 'flex',
-                                                        padding: 12,
+                                                        padding:' 0px 12px 0px 12px',
                                                         height: '100%',
                                                         justifyContent: 'center',
                                                         flexDirection: 'column',
@@ -501,7 +504,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                 >
                                                     <Card.Title
                                                         className='text-center'
-                                                        style={{flexDirection: 'row'}}
+                                                        style={{flexDirection: 'row',}}
                                                     ></Card.Title>
                                                     <Card.Subtitle
                                                         className='text-white'
@@ -520,6 +523,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                             paddingLeft: 20,
                                                             paddingTop: 5,
                                                             marginLeft: '75px',
+                                                         
                                                         }}
                                                     >
                                                         {punto.descripcion}
@@ -553,7 +557,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                 </Card>
                                             </div>
                                             <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-end'>
-                                                <div id='center2'>
+                                               
                                                     <ul className='nav justify-content-end'>
                                                         <li className='nav-item '>
                                                             <Button
@@ -599,7 +603,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 </Button>
                                                                 <Button
                                                                     variant='primary'
-                                                                    onClick={downloadQRCode}
+                                                                    onClick={()=>{downloadQRCode(name)}}
                                                                 >
                                                                     Descargar
                                                                 </Button>
@@ -636,7 +640,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                                             !punto.es_portada_de_sitio
                                                                         changeImagePrincipal(
                                                                             punto.id_punto,
-                                                                            punto.id_sitio
+                                                                            punto.id_sitio,
+                                                                            Number(idsala),
                                                                         )
                                                                     }}
                                                                     style={{
@@ -730,7 +735,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 //     )
                                                                 // console.log(languageEscogido)
                                                                 navigate(
-                                                                    '/sitios/edit-point-interes',
+                                                                    `/sitios/edit-point-interes/${punto.id_sitio}/${punto.id_punto}`,
                                                                     {
                                                                         state: {
                                                                             id_punto:
@@ -796,7 +801,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                         style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
                                                     ></i> */}
                                                     </ul>
-                                                </div>
+                                               
                                             </div>
                                         </div>
                                     </div>

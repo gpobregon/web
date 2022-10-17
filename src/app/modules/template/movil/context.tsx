@@ -50,7 +50,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     const [editItem, setEditItem] = useState<any>([])
     const [editItemResource, setEditItemResource] = useState<any>([])
-    const { id, tipo, idSitio } = useParams()
+    const { id, tipo, idSitio, modo } = useParams()
     const { state } = useLocation()
     const navigate = useNavigate()
     // Agregar elemento
@@ -133,6 +133,19 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
     // cambiar modalidad de edición
     const ChangeMode = (type: number) => {
+        if (type === 1) {
+            if (tipo === 'sitio') {
+                navigate(`/template/sitio/movil/${id}`)
+            } else {
+                navigate(`/template/punto/${idSitio}/movil/${id}`)
+            }
+        } else {
+            if (tipo === 'sitio') {
+                navigate(`/template/sitio/web/${id}`)
+            } else {
+                navigate(`/template/punto/${idSitio}/web/${id}`)
+            }
+        }
         setBoard([])
         setChangeTypeEdit(type)
         setEditItem([])
@@ -246,9 +259,9 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     // descarta los cambios realizados dentro del editor
-    const discardChange = () => { 
+    const discardChange = () => {
         swal({
-            title: '¿Estas seguro de descartar los cambios?',
+            title: '¿Estas seguro de Descartar Los Cambios?',
             icon: 'warning',
             buttons: ['No', 'Sí'],
         }).then((res) => {
@@ -261,7 +274,6 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                 setBoard(oldBoard)
             }
         })
-        
     }
     // obtenemos el nombre del sitio que estamos editando
     const oneSite = async () => {
@@ -430,9 +442,9 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
     const ReturnView = () => {
         if (tipo === 'sitio') {
-            navigate(`/sitios/edit`, { state: oneDataSite })
+            navigate(`/sitios/editSite/${id}`)
         } else {
-            navigate(`/sitios/edit-point-interes`, { state: pointInteres })
+            navigate(`/sitios/edit-point-interes/${idSitio}/${id}`)
         }
     }
     // -------------------------------------------
@@ -457,16 +469,24 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     // ------------------------------------------------------------
     useEffect(() => {
 
-        if (tipo === 'sitio' || tipo === 'punto') {
+        if ((tipo === 'sitio' || tipo === 'punto') && (modo === 'movil' || modo === 'web')) {
             getAllResources(1)
             getLenguate()
             oneSite()
+            console.log(modo)
+            if (modo !== 'web') {
+                ChangeMode(1)
+            } else {
+                ChangeMode(2)
+            }
         } else {
             navigate(`/error/404`)
         }
 
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
 
     const value = {
         drop,
