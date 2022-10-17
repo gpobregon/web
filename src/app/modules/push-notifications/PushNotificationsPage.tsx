@@ -255,8 +255,7 @@ const PushNotificationsPage = () => {
         await swal({
             title: '¿Estás seguro de eliminar esta notificación?',
             icon: 'warning',
-            buttons: ['Cancelar', 'Eliminar'],
-            dangerMode: true,
+            buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {
                 deleteData(deleteNotificationMethod, tag)
@@ -335,8 +334,7 @@ const PushNotificationsPage = () => {
             await swal({
                 title: '¿Estás seguro de eliminar estas notificaciones?',
                 icon: 'warning',
-                buttons: ['Cancelar', 'Eliminar'],
-                dangerMode: true,
+                buttons: ['No', 'Sí'],
             }).then((willDelete) => {
                 if (willDelete) {
                     for (let i = 0; i < arrayDeleteNotifications.length; i++) {

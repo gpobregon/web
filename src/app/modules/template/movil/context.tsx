@@ -231,8 +231,17 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     // abrir modal guardar maqueta
-    const toogleSave = () => {
-        handleCloseSave(true)
+    const toogleSave = () => { 
+        swal({
+            title: '¿Quiere guardar los cambios?',
+            icon: 'warning',
+            buttons: ['No', 'Sí'],
+        }).then((res) => {
+            if (res) {
+                handleCloseSave(true)
+            }
+        })
+        
     }
 
     // guardar maqueta

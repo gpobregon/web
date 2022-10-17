@@ -7,13 +7,17 @@ import {Amplify, Auth} from 'aws-amplify'
 import {URLAWS, postData, updateUserMethod, getData, getRolesMethod} from '../../services/api'
 import {roleManager} from '../../models/roleManager'
 import * as AWS from 'aws-sdk'
-import UpImage from '../uploadFile/upload-image';
+import UpImage from '../uploadFile/upload-image'
+import ChangePassword from './change-password'
 import {
     ListUsersResponse,
     UsersListType,
     UserType,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider'
 import {json} from 'node:stream/consumers'
+import {NewPassword} from '../auth/components/NewPassoword'
+import swal from 'sweetalert'
+import {validateStringEmail, validateStringPassword} from '../validarCadena/validadorCadena'
 
 interface Profile {
     fileImage: any
@@ -23,7 +27,19 @@ interface Profile {
     email: string
 }
 
+interface State {
+    amount: string
+    password: string
+    weight: string
+    weightRange: string
+    showPassword: boolean
+}
+
 const UserProfilePage = () => {
+    const [modalChangePassword, setModalChangePassword] = useState({
+        show: false,
+        stateChangePassword: {},
+    })
     const [showUpdateButton, setShowUpdateButton] = useState(true)
     const [users, setUsers] = useState<UserType[]>([])
     // console.log("users: ", users);
@@ -86,7 +102,7 @@ const UserProfilePage = () => {
         })
     }
 
-    console.log('dataUser: ', dataUser)
+    //console.log('dataUser: ', dataUser)
 
     useEffect(() => {
         getRoles()
@@ -167,6 +183,98 @@ const UserProfilePage = () => {
     }
     const [modalupimg, setModalupIMG] = useState(false)
 
+    const changePasswordDone = async () => {
+        swal({
+            text: 'Contraseña modificada',
+            icon: 'success',
+        })
+    }
+
+    const alertNotNullInputsObj = async (data: any) => {
+        let keys = Object.keys(data),
+            msg = ''
+
+        for (let key of keys) {
+            if (
+                data[key] !== null &&
+                data[key] !== undefined &&
+                data[key] !== 0 &&
+                data[key] !== ''
+            )
+                continue
+            msg += `El campo ${key} es obligatorio\n`
+        }
+
+        msg.trim()
+
+        swal({
+            text: msg,
+            icon: 'warning',
+        })
+    }
+
+    const [data, setData] = useState({oldPassword: '', newPassword: '', confirmPassword: ''})
+    const changePasswordMethod = async () => {
+        if (data.oldPassword != '' && data.newPassword != '') {
+            if (data.newPassword == data.confirmPassword) {
+                const user = await Auth.currentAuthenticatedUser()
+                console.log('user: ', user)
+                try {
+                    Auth.currentAuthenticatedUser()
+                        .then((user) => {
+                            return Auth.changePassword(user, data.oldPassword, data.newPassword)
+                        })
+                        .then((data) => changePasswordDone())
+                        .catch((err) => console.log(err))
+                } catch (error) {
+                    console.log(error)
+                }
+            } else { 
+                swal('Las contraseñas no son iguales', 'Intentalo de nuevo', 'warning')
+            }
+        } else {
+            alertNotNullInputsObj({
+                Contraseña_Antigua: data.oldPassword,
+                Contraseña_Nueva: data.newPassword, 
+                Confirmar_Contraseña: data.confirmPassword
+            })
+        }
+    }
+
+    const showModalPassword = () => {
+        setModalChangePassword({show: true, stateChangePassword: {}})
+    }
+
+    const [password, setPassword] = useState('')
+    const [validPassword, setValidPassword] = useState(false)
+    const [touchedPasswordInput, setTouchedPasswordInput] = useState(false)
+
+    const [values, setValues] = useState({
+        amount: '',
+        password: '',
+        weight: '',
+        weightRange: '',
+        showPassword: false,
+    })
+
+    const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({...values, [prop]: event.target.value})
+        setTouchedPasswordInput(true)
+
+        if (validateStringPassword(event.target.value)) {
+            setPassword(event.target.value)
+        }
+
+        setValidPassword(validateStringPassword(event.target.value))
+    }
+
+    const handleClickShowPassword = () => {
+        setValues({
+            ...values,
+            showPassword: !values.showPassword,
+        })
+    }
+
     return (
         <>
             {/* {Auth.currentAuthenticatedUser().then((user) => {  */}
@@ -223,6 +331,20 @@ const UserProfilePage = () => {
                                         <p className='' style={{color: '#92929F'}}>
                                             {dataUser.descripcion}
                                         </p>
+
+                                        <div
+                                            className='d-flex'
+                                            style={{color: '#009EF7', cursor: 'pointer'}}
+                                            onClick={showModalPassword}
+                                        >
+                                            <span className='me-3'>
+                                                <i
+                                                    className='bi bi-lock-fill fs-2 fw-bolder'
+                                                    style={{color: '#009EF7'}}
+                                                ></i>
+                                            </span>
+                                            <p>Cambiar contraseña</p>
+                                        </div>
                                     </div>
                                 </Col>
                             </div>
@@ -440,13 +562,27 @@ const UserProfilePage = () => {
 
             {/* })}  */}
 
+            <ChangePassword
+                show={modalChangePassword.show}
+                setShow={setModalChangePassword}
+                onClose={() => setModalChangePassword({show: false, stateChangePassword: {}})}
+                dataPassword={data}
+                setDataPassword={setData}
+                changePasswordMethod={changePasswordMethod}
+                password={password}
+                validPassword={validPassword}
+                touchedPasswordInput={touchedPasswordInput}
+                values={values}
+                handleChange={handleChange}
+                handleClickShowPassword={handleClickShowPassword}
+            />
             <UpImage
                 show={modalupimg}
                 onClose={() => setModalupIMG(false)}
                 cargarIMG={uploadImage}
                 ubicacionBucket={'fotoPerfiles'}
                 tipoArchivoPermitido={'image/*'}
-                />
+            />
         </>
     )
 }
