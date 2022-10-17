@@ -1011,7 +1011,7 @@ const EditSite = () => {
                                                         })
                                                         return
                                                     }
-                                                    postSiteMaquetar(site, 'web')
+                                                    postSiteMaquetar(site, 'movil')
                                                 }}
                                             >
                                                 {' '}
