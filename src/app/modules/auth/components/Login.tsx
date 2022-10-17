@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from 'react'
 import {useState} from 'react'
 import {Link} from 'react-router-dom'
 import {Form, Button} from 'react-bootstrap'
@@ -54,14 +54,14 @@ const alertPasswordNoEnviado = async () => {
         text: '¡Contraseña no Ingresada!',
         icon: 'warning',
     })
-} 
+}
 interface State {
-    amount: string;
-    password: string;
-    weight: string;
-    weightRange: string;
-    showPassword: boolean;
-  }
+    amount: string
+    password: string
+    weight: string
+    weightRange: string
+    showPassword: boolean
+}
 
 export function Login() {
     const [loading, setLoading] = useState(false)
@@ -86,7 +86,7 @@ export function Login() {
     //     numberCheck: false,
     //     pwdLengthCheck: false,
     //     specialChaCheck: false,
-    // }) 
+    // })
 
     const login = async (email: string, password: string) => {
         try {
@@ -178,7 +178,7 @@ export function Login() {
             return
         }
         setPasswordType('password')
-    } 
+    }
 
     const [values, setValues] = useState({
         amount: '',
@@ -186,27 +186,25 @@ export function Login() {
         weight: '',
         weightRange: '',
         showPassword: false,
-      });
-    
-      const handleChange =
-        (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
-          setValues({ ...values, [prop]: event.target.value }); 
-          setTouchedPasswordInput(true)
-    
-                                        if (validateStringPassword(event.target.value)) {
-                                            setPassword(event.target.value)
-                                        }
-    
-                                        setValidPassword(validateStringPassword(event.target.value))
-        };
-    
-      const handleClickShowPassword = () => {
+    })
+
+    const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({...values, [prop]: event.target.value})
+        setTouchedPasswordInput(true)
+
+        if (validateStringPassword(event.target.value)) {
+            setPassword(event.target.value)
+        }
+
+        setValidPassword(validateStringPassword(event.target.value))
+    }
+
+    const handleClickShowPassword = () => {
         setValues({
-          ...values,
-          showPassword: !values.showPassword,
-        });
-      };
-    
+            ...values,
+            showPassword: !values.showPassword,
+        })
+    }
 
     return (
         <Form style={{width: '50%'}}>
@@ -223,8 +221,8 @@ export function Login() {
                         </div>
                         <Form.Group className='mb-3'>
                             <Form.Label>Correo electronico</Form.Label>
-                            <Form.Control  
-                            className='border border-2 border-primary'
+                            <Form.Control
+                                className='border border-2 border-primary'
                                 type='email'
                                 onChange={(event) => {
                                     setTouchedEmailInput(true)
@@ -248,34 +246,27 @@ export function Login() {
                             ) : null}
                         </Form.Group>
 
-                        <Form.Group className='mb-3' style={{color: 'red'}} >
+                        <Form.Group className='mb-3' style={{color: 'red'}}>
                             <Form.Label>{'Contraseña'}</Form.Label>
-                            <FormControl sx={{width: '100%'}} variant='outlined' color="primary" focused >
-                                
-                                <OutlinedInput   
-                                inputProps={{ style: { fontFamily: 'inherit', color: "#92929F"}}}
-                                    
+                            <FormControl
+                                sx={{width: '100%'}}
+                                variant='outlined'
+                                color='primary'
+                                focused
+                            >
+                                <OutlinedInput
+                                    inputProps={{style: {fontFamily: 'inherit', color: '#92929F'}}}
                                     id='outlined-adornment-password'
                                     type={values.showPassword ? 'text' : 'password'}
                                     value={values.password}
-                                    onChange={handleChange('password')}  
+                                    onChange={handleChange('password')}
                                     placeholder='Introduce tu contraseña'
-                                    // onChange={(event) => { 
-                                    //     setTouchedPasswordInput(true)
-    
-                                    //     if (validateStringPassword(event.target.value)) {
-                                    //         setPassword(event.target.value)
-                                    //     }
-    
-                                    //     setValidPassword(validateStringPassword(event.target.value))
-                                    // }}
                                     endAdornment={
                                         <InputAdornment position='end'>
-                                            <IconButton 
-                                                style={{ color: "#92929F" }}
+                                            <IconButton
+                                                style={{color: '#92929F'}}
                                                 aria-label='toggle password visibility'
                                                 onClick={handleClickShowPassword}
-                                             
                                                 edge='end'
                                             >
                                                 {values.showPassword ? (
@@ -286,31 +277,8 @@ export function Login() {
                                             </IconButton>
                                         </InputAdornment>
                                     }
-                                 
                                 />
                             </FormControl>
-
-                            {/* <Form.Control
-                                style={{display: 'none !important'}}
-                                type={passwordShown ? 'text' : 'password'}
-                                onChange={(event) => {
-                                    setTouchedPasswordInput(true)
-
-                                    if (validateStringPassword(event.target.value)) {
-                                        setPassword(event.target.value)
-                                    }
-
-                                    setValidPassword(validateStringPassword(event.target.value))
-                                }}
-                                placeholder='Introduce tu contraseña'
-                            /> */}
-
-                            {/* <button
-                                style={{background: 'none'}}
-                                onClick={(event) => togglePasswordOriginal(event)}
-                            >
-                                <i className='fs-2 bi bi-eye-fill px-0 fw-bolder'></i>
-                            </button> */}
                             {validPassword && touchedPasswordInput ? (
                                 <Form.Label className='mt-2 text-primary'>
                                     Contraseña válida

@@ -17,6 +17,7 @@ import {
 import {json} from 'node:stream/consumers'
 import {NewPassword} from '../auth/components/NewPassoword'
 import swal from 'sweetalert'
+import {validateStringEmail, validateStringPassword} from '../validarCadena/validadorCadena'
 
 interface Profile {
     fileImage: any
@@ -24,6 +25,14 @@ interface Profile {
     apellido: string
     telefono: string
     email: string
+}
+
+interface State {
+    amount: string
+    password: string
+    weight: string
+    weightRange: string
+    showPassword: boolean
 }
 
 const UserProfilePage = () => {
@@ -204,31 +213,66 @@ const UserProfilePage = () => {
         })
     }
 
-    const [data, setData] = useState({oldPassword: '', newPassword: ''})
+    const [data, setData] = useState({oldPassword: '', newPassword: '', confirmPassword: ''})
     const changePasswordMethod = async () => {
         if (data.oldPassword != '' && data.newPassword != '') {
-            const user = await Auth.currentAuthenticatedUser()
-            console.log('user: ', user)
-            try {
-                Auth.currentAuthenticatedUser()
-                    .then((user) => {
-                        return Auth.changePassword(user, data.oldPassword, data.newPassword)
-                    })
-                    .then((data) => changePasswordDone())
-                    .catch((err) => console.log(err))
-            } catch (error) {
-                console.log(error)
+            if (data.newPassword == data.confirmPassword) {
+                const user = await Auth.currentAuthenticatedUser()
+                console.log('user: ', user)
+                try {
+                    Auth.currentAuthenticatedUser()
+                        .then((user) => {
+                            return Auth.changePassword(user, data.oldPassword, data.newPassword)
+                        })
+                        .then((data) => changePasswordDone())
+                        .catch((err) => console.log(err))
+                } catch (error) {
+                    console.log(error)
+                }
+            } else { 
+                swal('Las contraseñas no son iguales', 'Intentalo de nuevo', 'warning')
             }
-        } else { 
-            alertNotNullInputsObj({ 
-                Contraseña_Antigua: data.oldPassword, 
-                Contraseña_Nueva: data.newPassword
+        } else {
+            alertNotNullInputsObj({
+                Contraseña_Antigua: data.oldPassword,
+                Contraseña_Nueva: data.newPassword, 
+                Confirmar_Contraseña: data.confirmPassword
             })
         }
     }
 
     const showModalPassword = () => {
         setModalChangePassword({show: true, stateChangePassword: {}})
+    }
+
+    const [password, setPassword] = useState('')
+    const [validPassword, setValidPassword] = useState(false)
+    const [touchedPasswordInput, setTouchedPasswordInput] = useState(false)
+
+    const [values, setValues] = useState({
+        amount: '',
+        password: '',
+        weight: '',
+        weightRange: '',
+        showPassword: false,
+    })
+
+    const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({...values, [prop]: event.target.value})
+        setTouchedPasswordInput(true)
+
+        if (validateStringPassword(event.target.value)) {
+            setPassword(event.target.value)
+        }
+
+        setValidPassword(validateStringPassword(event.target.value))
+    }
+
+    const handleClickShowPassword = () => {
+        setValues({
+            ...values,
+            showPassword: !values.showPassword,
+        })
     }
 
     return (
@@ -525,6 +569,12 @@ const UserProfilePage = () => {
                 dataPassword={data}
                 setDataPassword={setData}
                 changePasswordMethod={changePasswordMethod}
+                password={password}
+                validPassword={validPassword}
+                touchedPasswordInput={touchedPasswordInput}
+                values={values}
+                handleChange={handleChange}
+                handleClickShowPassword={handleClickShowPassword}
             />
             <UpImage
                 show={modalupimg}
