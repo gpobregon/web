@@ -102,12 +102,12 @@ const UserProfilePage = () => {
         })
     }
 
-    //console.log('dataUser: ', dataUser)
+    console.log('dataUser: ', dataUser)
 
     useEffect(() => {
         getRoles()
         getEmail()
-        console.log('getEmail: ', getEmail())
+       
     }, [existRoles])
 
     // getEmail()
