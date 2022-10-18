@@ -255,7 +255,8 @@ const PushNotificationsPage = () => {
 
         await swal({
             title: '¿Estás seguro de eliminar esta notificación?',
-            icon: 'warning',
+            icon: 'warning', 
+            dangerMode: true,
             buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {

@@ -187,7 +187,8 @@ const RoleManagement: FC<any> = ({show}) => {
 
         await swal({
             title: '¿Estás seguro de eliminar este rol?',
-            icon: 'warning',
+            icon: 'warning', 
+            dangerMode: true,
             buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {

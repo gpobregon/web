@@ -141,16 +141,19 @@ const AddRoute = () => {
                 swal({
                     title: '¿Quiere seguir editando ?',
                     icon: 'warning',
-                    buttons: ['Sí', 'No'],
+                    buttons: ['No', 'Sí'],
                 }).then(async (res) => {
-                    if (res) {
+                    if (res) { 
+                        swal({
+                            text: 'Se Guardó guía correctamente ',
+                            icon: 'success',
+                            timer: 2000,
+                        })
+                       
+                    }else{ 
                         navigate(`/sitios/edit-point-interes/${puntos.id_sitio}/${puntos.id_punto_a}` )
                     }
-                    swal({
-                        text: 'Se Guardó guía correctamente ',
-                        icon: 'success',
-                        timer: 2000,
-                    })
+                    
                 })
             
         } else {
