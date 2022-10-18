@@ -1,4 +1,4 @@
-import React, {useState, useEffect, FC} from 'react'
+import React, {useState, useEffect, FC, useContext} from 'react'
 import {
     Container,
     Row,
@@ -47,6 +47,7 @@ import {
 import {KTSVG} from '../../../_metronic/helpers'
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../models/roleManager'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -394,6 +395,7 @@ const EditSite = () => {
     }
 
     // * Restricción por rol
+    const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -409,6 +411,7 @@ const EditSite = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -423,9 +426,11 @@ const EditSite = () => {
                 setPermissionMockSite(filter[0]?.sitio_maquetar)
             }
         })
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
