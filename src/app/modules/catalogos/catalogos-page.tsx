@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import {Container, Col, Row, Button, InputGroup, Form, Stack} from 'react-bootstrap'
 import moment from 'moment'
 import Catalogo from './components/catalogo'
@@ -27,6 +27,7 @@ import {Auth} from 'aws-amplify'
 import {useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
 import {ConsoleLogger} from '@aws-amplify/core'
+import {LoadingContext} from '../../utility/component/loading/context'
 const alertLanguageDone = async () => {
     swal({
         text: 'Lenguaje creado',
@@ -35,6 +36,7 @@ const alertLanguageDone = async () => {
 }
 
 const CatalogosPage = () => {
+    const {setShowLoad} = useContext(LoadingContext)
     const [modalAddTag, setModalAddTag] = useState(false)
     const [modalAddLanguage, setModalAddLanguage] = useState({show: false, language: {}})
     const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
@@ -457,6 +459,8 @@ const CatalogosPage = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -474,9 +478,12 @@ const CatalogosPage = () => {
                 setPermissionDeleteTag(filter[0]?.categoria_eliminar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
@@ -666,7 +673,7 @@ const CatalogosPage = () => {
                     updateIdioma={updateIdioma}
                     deleteIdioma={deleteIdioma}
                     permissionDeleteLanguage={permissionDeleteLanguage}
-                 />
+                />
             </Container>
         </>
     )

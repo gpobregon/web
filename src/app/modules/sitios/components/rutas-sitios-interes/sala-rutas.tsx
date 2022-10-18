@@ -1,5 +1,5 @@
 import {Room} from '../../../../models/rooms'
-import {FC, useEffect, useState} from 'react'
+import {FC, useContext, useEffect, useState} from 'react'
 import {Button, Card, Col, Row} from 'react-bootstrap'
 import {PointInteres} from '../../../../models/sitio-interes'
 import {
@@ -23,6 +23,7 @@ import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import React from 'react'
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
+import { LoadingContext } from '../../../../utility/component/loading/context'
 type datosPuntoInteres = {
     id_punto: number
     lenguajes: [
@@ -209,6 +210,7 @@ const SalaRutas: FC<id_punto_a> = (props) => {
     }, [])
 
     // * Restricción por rol
+    const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -223,6 +225,8 @@ const SalaRutas: FC<id_punto_a> = (props) => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -236,9 +240,12 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                 setPermissionDeleteRoutePoint(filter[0]?.sitio_punto_ruta_eliminar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])

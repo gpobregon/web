@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import {Col, Card, Button, Row, Modal, Form} from 'react-bootstrap'
 import {
@@ -30,6 +30,7 @@ import {CostExplorer} from 'aws-sdk'
 import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
+import { LoadingContext } from '../../../../utility/component/loading/context'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -387,6 +388,7 @@ const EditPoint = () => {
     }, [])
 
     // * Restricción por rol
+    const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -400,6 +402,8 @@ const EditPoint = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -412,9 +416,12 @@ const EditPoint = () => {
                 setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])

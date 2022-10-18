@@ -1,4 +1,4 @@
-import React, {useState, useEffect, FC} from 'react'
+import React, {useState, useEffect, FC, useContext} from 'react'
 import {
     Container,
     Row,
@@ -46,10 +46,9 @@ import {
 } from '../validarCadena/validadorCadena'
 import {KTSVG} from '../../../_metronic/helpers'
 import {Auth} from 'aws-amplify'
-import {roleManager} from '../../models/roleManager' 
-import { useContext } from 'react' 
-import { ContentContext } from '../template/movil/context' 
 import { LoadingContext } from '../../utility/component/loading/context'
+import { ContentContext } from '../template/movil/context' 
+import {roleManager} from '../../models/roleManager'
 
 const customStyles = { 
     control: (base: any, state: any) => ({
@@ -416,6 +415,7 @@ const EditSite = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -430,9 +430,11 @@ const EditSite = () => {
                 setPermissionMockSite(filter[0]?.sitio_maquetar)
             }
         })
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
