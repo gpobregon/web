@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useContext, useEffect, useState} from 'react'
 import {Link, useLocation, useNavigate} from 'react-router-dom'
 import {Button, Col, Form, Row, Table, Card} from 'react-bootstrap'
 import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
@@ -7,8 +7,10 @@ import {OfflinePartWithContent} from '../../models/offline-config'
 import {roleManager} from '../../models/roleManager'
 import {Auth} from 'aws-amplify'
 import swal from 'sweetalert'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const OfflineManagement: FC<any> = ({show}) => {
+    const {setShowLoad} = useContext(LoadingContext)
     const {state} = useLocation()
 
     const [url_get] = useState('offline/part')
@@ -188,6 +190,8 @@ const OfflineManagement: FC<any> = ({show}) => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             // console.log(user)
             const filter = roles.filter((role) => {
@@ -212,12 +216,15 @@ const OfflineManagement: FC<any> = ({show}) => {
 
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
-        validateRole()
         getOfflineParts()
+        validateRole()
     }, [existRoles, listParts,permissionOfflineSites,permissionOfflinePoints])
 
     useEffect(() => {

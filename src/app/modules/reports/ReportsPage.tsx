@@ -1,12 +1,14 @@
 import {Auth} from 'aws-amplify'
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import {Container, Col, Row, Card} from 'react-bootstrap'
 import {Link, useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
 import {getData, getRolesMethod} from '../../services/api'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const ReportsPage = () => {
     let navigate = useNavigate()
+    const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -17,6 +19,8 @@ const ReportsPage = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -26,9 +30,12 @@ const ReportsPage = () => {
                 navigate('/error/401', {replace: true})
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])

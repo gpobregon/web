@@ -1,4 +1,4 @@
-import React, {useState, useEffect, FC} from 'react'
+import React, {useState, useEffect, FC, useContext} from 'react'
 import {
     Container,
     Row,
@@ -46,9 +46,11 @@ import {
 } from '../validarCadena/validadorCadena'
 import {KTSVG} from '../../../_metronic/helpers'
 import {Auth} from 'aws-amplify'
+import { LoadingContext } from '../../utility/component/loading/context'
+import { ContentContext } from '../template/movil/context' 
 import {roleManager} from '../../models/roleManager'
 
-const customStyles = {
+const customStyles = { 
     control: (base: any, state: any) => ({
         ...base,
         background: '#1b1b29',
@@ -100,7 +102,9 @@ const customStyles = {
 }
 const animatedComponents = makeAnimated()
 
-const EditSite = () => {
+const EditSite = () => { 
+    //const { toogleSave, discardChange } = useContext(ContentContext) 
+    const { setShowLoad } = useContext(LoadingContext)
     const{id}=useParams()
     const {state} = useLocation()
     const [site, setSite] = useState<Site>({
@@ -236,7 +240,8 @@ const EditSite = () => {
     async function postDefault(route: string, object: any) {
         const sit: any = await postData(route, object)
     }
-    const changeStatus = async (favorito: boolean, publicado: boolean, oculto: boolean,cercania:boolean) => {
+    const changeStatus = async (favorito: boolean, publicado: boolean, oculto: boolean,cercania:boolean) => { 
+        setShowLoad(true)
        const respuesta3:any= await postData(statesMethod, {
             id_sitio: site.id_sitio,
             favorito: favorito,
@@ -284,7 +289,8 @@ const EditSite = () => {
         const getSites = async () => {
             const site: any = await getData(sitesMethod)
             // console.log(site)
-        }
+        } 
+        setShowLoad(false)
     }
 
     //alert methods-----------------------------------------------------------------------
@@ -409,6 +415,7 @@ const EditSite = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -423,9 +430,11 @@ const EditSite = () => {
                 setPermissionMockSite(filter[0]?.sitio_maquetar)
             }
         })
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
@@ -603,8 +612,37 @@ const EditSite = () => {
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
                                 ></Button>
 
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
                                 <Button
-                                    onClick={() => {
+                                    onClick={() => { 
+                                        //toogleSave()
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)

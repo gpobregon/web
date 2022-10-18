@@ -29,7 +29,6 @@ const changePassword: FC<any> = ({
     handleChange,
     handleClickShowPassword,
 }) => {
-    
     return (
         <>
             <Modal show={show} onHide={onClose}>
@@ -38,7 +37,7 @@ const changePassword: FC<any> = ({
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group className=''>
-                        <Form.Label>Contraseña antigua</Form.Label> 
+                        <Form.Label>Contraseña antigua</Form.Label>
                         <FormControl
                             sx={{width: '100%'}}
                             variant='outlined'
@@ -49,13 +48,12 @@ const changePassword: FC<any> = ({
                                 inputProps={{style: {fontFamily: 'sans-serif', color: '#92929F'}}}
                                 id='outlined-adornment-password'
                                 type={values.showPassword ? 'text' : 'password'}
-                                onChange={(e) => { 
-                                    
+                                onChange={(e) => {
                                     setDataPassword({
-                                      oldPassword: e.target.value,
-                                      newPassword: dataPassword.newPassword, 
-                                      confirmPassword: dataPassword.confirmPassword,
-                                    });  
+                                        oldPassword: e.target.value,
+                                        newPassword: dataPassword.newPassword,
+                                        confirmPassword: dataPassword.confirmPassword,
+                                    })
                                     handleChange('password')
                                 }}
                                 placeholder='Introduce tu contraseña'
@@ -102,13 +100,12 @@ const changePassword: FC<any> = ({
                                 inputProps={{style: {fontFamily: 'sans-serif', color: '#92929F'}}}
                                 id='outlined-adornment-password'
                                 type={values.showPassword ? 'text' : 'password'}
-                                onChange={(e) => { 
-                                    
+                                onChange={(e) => {
                                     setDataPassword({
-                                      oldPassword: dataPassword.oldPassword,
-                                      newPassword: e.target.value, 
-                                      confirmPassword: dataPassword.confirmPassword,
-                                    });  
+                                        oldPassword: dataPassword.oldPassword,
+                                        newPassword: e.target.value,
+                                        confirmPassword: dataPassword.confirmPassword,
+                                    })
                                     handleChange('password')
                                 }}
                                 placeholder='Introduce tu contraseña'
@@ -130,7 +127,7 @@ const changePassword: FC<any> = ({
                                 }
                             />
                         </FormControl>
-                    </Form.Group> 
+                    </Form.Group>
 
                     <Form.Group className='pt-5'>
                         <Form.Label>Confirmar contraseña</Form.Label>
@@ -144,12 +141,12 @@ const changePassword: FC<any> = ({
                                 inputProps={{style: {fontFamily: 'sans-serif', color: '#92929F'}}}
                                 id='outlined-adornment-password'
                                 type={values.showPassword ? 'text' : 'password'}
-                                onChange={(e) => { 
+                                onChange={(e) => {
                                     setDataPassword({
                                         oldPassword: dataPassword.oldPassword,
-                                        newPassword: dataPassword.newPassword, 
+                                        newPassword: dataPassword.newPassword,
                                         confirmPassword: e.target.value,
-                                      });  
+                                    })
                                     handleChange('password')
                                 }}
                                 placeholder='Introduce tu contraseña'

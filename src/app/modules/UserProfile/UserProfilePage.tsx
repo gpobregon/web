@@ -17,7 +17,14 @@ import {
 import {json} from 'node:stream/consumers'
 import {NewPassword} from '../auth/components/NewPassoword'
 import swal from 'sweetalert'
-import {validateStringEmail, validateStringPassword} from '../validarCadena/validadorCadena'
+import {
+    validateStringEmail,
+    validateStringNombre,
+    validateStringPassword,
+    validateStringPhoneNumber,
+    validateStringPhoneNumberAlert,
+    validateStringSoloNumeros,
+} from '../validarCadena/validadorCadena'
 
 interface Profile {
     fileImage: any
@@ -107,7 +114,6 @@ const UserProfilePage = () => {
     useEffect(() => {
         getRoles()
         getEmail()
-       
     }, [existRoles])
 
     // getEmail()
@@ -155,32 +161,44 @@ const UserProfilePage = () => {
     }
 
     const updateUsuarios = async () => {
+        if (
+            dataUser.name === '' ||
+            dataUser.lastname === '' ||
+            dataUser.phoneNumber === '' ||
+            dataUser.imageProfile === ''
+        ) {
+            swal({
+                title: 'Error',
+                text: 'Debe llenar todos los campos',
+                icon: 'error',
+            })
+            return
+        }
+
         const user = await Auth.currentAuthenticatedUser()
-        console.log('user: ', user)
+
         const result = await Auth.updateUserAttributes(user, {
             name: dataUser.name,
             //email: dataUser.email,
             'custom:lastname': dataUser.lastname,
-
             'custom:phoneNumber': dataUser.phoneNumber,
             'custom:imageProfile': dataUser.imageProfile,
         })
-        const filter = roles.filter((item) => {
+
+        const filter: any = roles.filter((item) => {
             return dataUser.role === item.nombre
         })
 
-        console.log('filter: ', filter)
         let objeto = {
             id_usuario: user.username,
             id_rol: filter[0].id_rol,
             foto: dataUser.imageProfile,
         }
 
-        await postData(updateUserMethod, objeto).then((data) => {
-            console.log(data)
-        })
+        await postData(updateUserMethod, objeto)
         setShowUpdateButton(true)
     }
+
     const [modalupimg, setModalupIMG] = useState(false)
 
     const changePasswordDone = async () => {
@@ -229,14 +247,14 @@ const UserProfilePage = () => {
                 } catch (error) {
                     console.log(error)
                 }
-            } else { 
+            } else {
                 swal('Las contraseñas no son iguales', 'Intentalo de nuevo', 'warning')
             }
         } else {
             alertNotNullInputsObj({
                 Contraseña_Antigua: data.oldPassword,
-                Contraseña_Nueva: data.newPassword, 
-                Confirmar_Contraseña: data.confirmPassword
+                Contraseña_Nueva: data.newPassword,
+                Confirmar_Contraseña: data.confirmPassword,
             })
         }
     }
@@ -441,19 +459,21 @@ const UserProfilePage = () => {
                                     <Form.Group className=''>
                                         <Form.Label>Nombres</Form.Label>
                                         <Form.Control
-                                            defaultValue={dataUser.name}
+                                            value={dataUser.name}
                                             type='text'
                                             name='nombre'
                                             onChange={(e) => {
-                                                setDataUser({
-                                                    email: dataUser.email,
-                                                    name: e.target.value,
-                                                    lastname: dataUser.lastname,
-                                                    phoneNumber: dataUser.phoneNumber,
-                                                    imageProfile: dataUser.imageProfile,
-                                                    role: dataUser.role,
-                                                    descripcion: '',
-                                                })
+                                                if (validateStringNombre(e.target.value)) {
+                                                    setDataUser({
+                                                        email: dataUser.email,
+                                                        name: e.target.value,
+                                                        lastname: dataUser.lastname,
+                                                        phoneNumber: dataUser.phoneNumber,
+                                                        imageProfile: dataUser.imageProfile,
+                                                        role: dataUser.role,
+                                                        descripcion: '',
+                                                    })
+                                                }
                                             }}
                                             disabled={showUpdateButton}
                                         ></Form.Control>
@@ -463,20 +483,22 @@ const UserProfilePage = () => {
                                     <Form.Group className=''>
                                         <Form.Label>Apellidos</Form.Label>
                                         <Form.Control
-                                            defaultValue={dataUser.lastname}
+                                            value={dataUser.lastname}
                                             type='text'
                                             name='apellido'
                                             disabled={showUpdateButton}
                                             onChange={(e) => {
-                                                setDataUser({
-                                                    email: dataUser.email,
-                                                    name: dataUser.name,
-                                                    lastname: e.target.value,
-                                                    phoneNumber: dataUser.phoneNumber,
-                                                    imageProfile: dataUser.imageProfile,
-                                                    role: dataUser.role,
-                                                    descripcion: '',
-                                                })
+                                                if (validateStringNombre(e.target.value)) {
+                                                    setDataUser({
+                                                        email: dataUser.email,
+                                                        name: dataUser.name,
+                                                        lastname: e.target.value,
+                                                        phoneNumber: dataUser.phoneNumber,
+                                                        imageProfile: dataUser.imageProfile,
+                                                        role: dataUser.role,
+                                                        descripcion: '',
+                                                    })
+                                                }
                                             }}
                                         ></Form.Control>
                                     </Form.Group>
@@ -487,21 +509,23 @@ const UserProfilePage = () => {
                                     <Form.Group className=''>
                                         <Form.Label>Teléfono</Form.Label>
                                         <Form.Control
-                                            defaultValue={dataUser.phoneNumber}
-                                            type='number'
+                                            value={dataUser.phoneNumber}
+                                            type='text'
+                                            maxLength={8}
                                             pattern='/^-?\d+\.?\d*$/'
-                                            autoComplete='off'
                                             name='telefono'
                                             onChange={(e) => {
-                                                setDataUser({
-                                                    email: dataUser.email,
-                                                    name: dataUser.name,
-                                                    lastname: dataUser.lastname,
-                                                    phoneNumber: e.target.value,
-                                                    imageProfile: dataUser.imageProfile,
-                                                    role: dataUser.role,
-                                                    descripcion: '',
-                                                })
+                                                if (validateStringSoloNumeros(e.target.value)) {
+                                                    setDataUser({
+                                                        email: dataUser.email,
+                                                        name: dataUser.name,
+                                                        lastname: dataUser.lastname,
+                                                        phoneNumber: e.target.value,
+                                                        imageProfile: dataUser.imageProfile,
+                                                        role: dataUser.role,
+                                                        descripcion: '',
+                                                    })
+                                                }
                                             }}
                                             disabled={showUpdateButton}
                                         ></Form.Control>

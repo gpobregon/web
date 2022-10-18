@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {Card, Col, Form, Row} from 'react-bootstrap'
 import swal from 'sweetalert'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
@@ -25,6 +25,7 @@ import {CatalogLanguage} from '../../../../models/catalogLanguage'
 import {roleManager} from '../../../../models/roleManager'
 import {Auth} from 'aws-amplify'
 import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
+import { LoadingContext } from '../../../../utility/component/loading/context'
 type datosPuntoInteres2 = {
     id_punto: number
     lenguajes: [
@@ -140,16 +141,19 @@ const AddRoute = () => {
                 swal({
                     title: '¿Quiere seguir editando ?',
                     icon: 'warning',
-                    buttons: ['Sí', 'No'],
+                    buttons: ['No', 'Sí'],
                 }).then(async (res) => {
-                    if (res) {
+                    if (res) { 
+                        swal({
+                            text: 'Se Guardó guía correctamente ',
+                            icon: 'success',
+                            timer: 2000,
+                        })
+                       
+                    }else{ 
                         navigate(`/sitios/edit-point-interes/${puntos.id_sitio}/${puntos.id_punto_a}` )
                     }
-                    swal({
-                        text: 'Se Guardó guía correctamente ',
-                        icon: 'success',
-                        timer: 2000,
-                    })
+                    
                 })
             
         } else {
@@ -332,6 +336,7 @@ const AddRoute = () => {
     }
 
     // * Restricción por rol
+    const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -354,6 +359,8 @@ const AddRoute = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -375,9 +382,12 @@ const AddRoute = () => {
                 setPermissionDeleteRouteMap(filter[0]?.sitio_punto_maquetar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
