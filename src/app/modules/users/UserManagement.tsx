@@ -31,7 +31,7 @@ const customStyles = {
             borderColor: '#323248',
         },
         '&:focus': {
-            borderColor: '#323248',
+            borderColor: '#323248', 
         },
         '&:active': {
             borderColor: '#323248',

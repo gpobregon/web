@@ -19,7 +19,7 @@ const Index = () => {
                     className="text-white fa fa-save fs-1 cursor-pointer tooltip-trigger"
                     onClick={() => toogleSave()}
                 />
-                <div className="tooltip-one">
+                <div className="tooltip-one"> 
                     Guardar
                 </div>
             </div>
