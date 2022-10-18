@@ -9,6 +9,15 @@ export const validateStringSinCaracteresEspeciales = (cadena: string) => {
     return true
 }
 
+export const validateStringNombre = (cadena: string) => {
+    var patron = /^$|^[a-zA-Z\u00C0-\u017F|  '`´¨]+$/
+    if (cadena.search(patron)) {
+        swal('Error', 'No se permiten caracteres especiales', 'error')
+        return false
+    }
+    return true
+}
+
 // VALIDAR CADENA CORREO ------------------------------------------------
 export const validateStringEmail = (cadena: string) => {
     var patron =
