@@ -102,12 +102,12 @@ const UserProfilePage = () => {
         })
     }
 
-    //console.log('dataUser: ', dataUser)
+    console.log('dataUser: ', dataUser)
 
     useEffect(() => {
         getRoles()
         getEmail()
-        console.log('getEmail: ', getEmail())
+       
     }, [existRoles])
 
     // getEmail()
@@ -488,7 +488,9 @@ const UserProfilePage = () => {
                                         <Form.Label>Teléfono</Form.Label>
                                         <Form.Control
                                             defaultValue={dataUser.phoneNumber}
-                                            type='text'
+                                            type='number'
+                                            pattern='/^-?\d+\.?\d*$/'
+                                            autoComplete='off'
                                             name='telefono'
                                             onChange={(e) => {
                                                 setDataUser({
