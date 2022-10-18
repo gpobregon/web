@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {useState} from 'react'
 import {Link} from 'react-router-dom'
 import {Form, Button} from 'react-bootstrap'
@@ -6,6 +7,18 @@ import {awsconfig} from '../../../../aws-exports'
 import {useAuth} from '../core/Auth'
 import swal from 'sweetalert'
 import {validateStringEmail, validateStringPassword} from '../../validarCadena/validadorCadena'
+import IconButton from '@mui/material/IconButton'
+import Input from '@mui/material/Input'
+import FilledInput from '@mui/material/FilledInput'
+import OutlinedInput from '@mui/material/OutlinedInput'
+import InputLabel from '@mui/material/InputLabel'
+import InputAdornment from '@mui/material/InputAdornment'
+import FormHelperText from '@mui/material/FormHelperText'
+import FormControl from '@mui/material/FormControl'
+import TextField from '@mui/material/TextField'
+import Visibility from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
+
 Amplify.configure(awsconfig)
 Amplify.configure(awsconfig)
 
@@ -41,6 +54,13 @@ const alertPasswordNoEnviado = async () => {
         text: '¡Contraseña no Ingresada!',
         icon: 'warning',
     })
+}
+interface State {
+    amount: string
+    password: string
+    weight: string
+    weightRange: string
+    showPassword: boolean
 }
 
 export function Login() {
@@ -137,6 +157,55 @@ export function Login() {
         }
     }
 
+    const [passwordShown, setPasswordShown] = useState(false)
+
+    // Password toggle handler
+    const togglePasswordOriginal = (event: any) => {
+        // When the handler is invoked
+        // inverse the boolean state of passwordShown
+        event.preventDefault()
+        setPasswordShown(!passwordShown)
+    }
+
+    const [passwordType, setPasswordType] = useState('password')
+    const [passwordInput, setPasswordInput] = useState('')
+    const handlePasswordChange = (event: any) => {
+        setPasswordInput(event.target.value)
+    }
+    const togglePassword = () => {
+        if (passwordType === 'text') {
+            setPasswordType('text')
+            return
+        }
+        setPasswordType('password')
+    }
+
+    const [values, setValues] = useState({
+        amount: '',
+        password: '',
+        weight: '',
+        weightRange: '',
+        showPassword: false,
+    })
+
+    const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({...values, [prop]: event.target.value})
+        setTouchedPasswordInput(true)
+
+        if (validateStringPassword(event.target.value)) {
+            setPassword(event.target.value)
+        }
+
+        setValidPassword(validateStringPassword(event.target.value))
+    }
+
+    const handleClickShowPassword = () => {
+        setValues({
+            ...values,
+            showPassword: !values.showPassword,
+        })
+    }
+
     return (
         <Form style={{width: '50%'}}>
             {
@@ -153,6 +222,7 @@ export function Login() {
                         <Form.Group className='mb-3'>
                             <Form.Label>Correo electronico</Form.Label>
                             <Form.Control
+                                className='border border-2 border-primary'
                                 type='email'
                                 onChange={(event) => {
                                     setTouchedEmailInput(true)
@@ -176,21 +246,39 @@ export function Login() {
                             ) : null}
                         </Form.Group>
 
-                        <Form.Group className='mb-3'>
+                        <Form.Group className='mb-3' style={{color: 'red'}}>
                             <Form.Label>{'Contraseña'}</Form.Label>
-                            <Form.Control
-                                type='password'
-                                onChange={(event) => {
-                                    setTouchedPasswordInput(true)
-
-                                    if (validateStringPassword(event.target.value)) {
-                                        setPassword(event.target.value)
+                            <FormControl
+                                sx={{width: '100%'}}
+                                variant='outlined'
+                                color='primary'
+                                focused
+                            >
+                                <OutlinedInput
+                                    inputProps={{style: {fontFamily: 'inherit', color: '#92929F'}}}
+                                    id='outlined-adornment-password'
+                                    type={values.showPassword ? 'text' : 'password'}
+                                    value={values.password}
+                                    onChange={handleChange('password')}
+                                    placeholder='Introduce tu contraseña'
+                                    endAdornment={
+                                        <InputAdornment position='end'>
+                                            <IconButton
+                                                style={{color: '#92929F'}}
+                                                aria-label='toggle password visibility'
+                                                onClick={handleClickShowPassword}
+                                                edge='end'
+                                            >
+                                                {values.showPassword ? (
+                                                    <VisibilityOff />
+                                                ) : (
+                                                    <Visibility />
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
                                     }
-
-                                    setValidPassword(validateStringPassword(event.target.value))
-                                }}
-                                placeholder='Introduce tu contraseña'
-                            />
+                                />
+                            </FormControl>
                             {validPassword && touchedPasswordInput ? (
                                 <Form.Label className='mt-2 text-primary'>
                                     Contraseña válida
@@ -208,7 +296,11 @@ export function Login() {
                             </Link>
                         </div>
 
-                        <Button variant='primary w-100' onClick={emailValidation} disabled={!validPassword || !validEmail}>
+                        <Button
+                            variant='primary w-100'
+                            onClick={emailValidation}
+                            disabled={!validPassword || !validEmail}
+                        >
                             {'Iniciar sesión'}
                         </Button>
                     </>

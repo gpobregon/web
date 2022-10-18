@@ -258,8 +258,7 @@ const CatalogosPage = () => {
         await swal({
             title: '¿Estás seguro de eliminar esta categoría?',
             icon: 'warning',
-            buttons: ['Cancelar', 'Eliminar'],
-            dangerMode: true,
+            buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {
                 flag = true
@@ -294,8 +293,7 @@ const CatalogosPage = () => {
         await swal({
             title: '¿Estás seguro de eliminar este idioma?',
             icon: 'warning',
-            buttons: ['Cancelar', 'Eliminar'],
-            dangerMode: true,
+            buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {
                 flag = true
