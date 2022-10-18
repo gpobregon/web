@@ -22,10 +22,10 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
          } else {
              edit = { ...data }
          }
- 
          const item = {
              ...editItem,
-             ...edit
+             ...edit,
+             typeList: data.typeList
          }
          updateElement(item)
     }
