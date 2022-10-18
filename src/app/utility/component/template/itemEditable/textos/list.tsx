@@ -35,7 +35,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     }
     updateElement(edit)
   }
-
+  
   const Convert = (str: any) => {
     let parser = new DOMParser();
     let doc = parser.parseFromString(str, 'text/html');
@@ -44,7 +44,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     for (let i = 0; i < children.length; i++) {
       let text = children[i].childNodes[0].nodeValue;
       if (text) {
-        nodes.push({ text: text });
+        nodes.push({ text: `${data.typeList === "" ? '* ' : `${i+=1}. ` }${text}` });
       }
     }
     return (nodes)

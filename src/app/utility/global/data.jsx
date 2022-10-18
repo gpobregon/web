@@ -43,7 +43,7 @@ const Element = [
             fontWeight: "fw-normal",
             fontFamily: "fw-normal",
             textDecoration: "",
-            typeList: "",
+            typeList: "list-group-numbered",
             item: [],
             typeElement: 'texts'
           }
