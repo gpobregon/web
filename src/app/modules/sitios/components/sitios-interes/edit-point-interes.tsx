@@ -74,31 +74,7 @@ const customStyles = {
     }),
 }
 
-type datosPuntoInteres = {
-    id_punto: number
-    lenguajes: [
-        {
-            value: number
-            label: string
-            id_punto: number
-            id_lenguaje: number
-            descripcion: string
-        }
-    ]
-    id_sitio: number
-    id_guia: number
-    nombre: string
-    descripcion: string
-    geoX: number
-    geoY: number
-    portada_path: string
-    qr_path: string
-    es_portada_de_sitio: boolean
-    estado: boolean
-    es_visible: boolean
-    publicado: boolean
-    nombreSala: string
-}
+
 const animatedComponents = makeAnimated()
 const EditPoint = () => {
     const navigate = useNavigate()

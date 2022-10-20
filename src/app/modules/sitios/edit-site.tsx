@@ -126,7 +126,8 @@ const EditSite = () => {
         oculto: false,
         geo_json: '',
         cercania_activa: false, 
-        nombre_usuario_edito: ''
+        nombre_usuario_edito: '',
+        qr_path:'',
     }) 
     // console.log("site: ", site);
     const handleClose = () => setShow(false) //modal close qr
@@ -303,7 +304,8 @@ const EditSite = () => {
                         oculto: status.oculto,
                         geo_json: site.geo_json,
                         cercania_activa: status.cercania_activa, 
-                        nombre_usuario_edito: dataUser.name
+                        nombre_usuario_edito: dataUser.name,
+                        qr_path: site.qr_path,
                     })
                 }else{
                     swal({
@@ -398,7 +400,8 @@ const EditSite = () => {
             oculto: status.oculto,
             geo_json: site.geo_json,
             cercania_activa: status.cercania_activa, 
-            nombre_usuario_edito: dataUser.name
+            nombre_usuario_edito: dataUser.name,
+            qr_path: site.qr_path,
         })
         // console.log(site)
     }
@@ -556,7 +559,7 @@ const EditSite = () => {
                                         className='btn-secondary fa-solid fa-qrcode background-button '
                                         id='center2'
                                         onClick={() => {
-                                            setQr('sitios/view/' + site.id_sitio)
+                                            setQr( site.qr_path)
                                             handleShow()
                                         }}
                                         style={{
@@ -801,7 +804,8 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa:  status.cercania_activa, 
-                                                            nombre_usuario_edito: dataUser.name
+                                                            nombre_usuario_edito: dataUser.name,
+                                                            qr_path: site.qr_path,
                                                         })
                                                     }
                                                 ></Link>
@@ -848,7 +852,8 @@ const EditSite = () => {
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
                                                     cercania_activa:  status.cercania_activa, 
-                                                    nombre_usuario_edito: dataUser.name
+                                                    nombre_usuario_edito: dataUser.name,
+                                                    qr_path: site.qr_path,
                                                 })
                                             }
                                         }}
@@ -890,7 +895,8 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa, 
-                                                            nombre_usuario_edito: dataUser.name
+                                                            nombre_usuario_edito: dataUser.name,
+                                                            qr_path: site.qr_path,
                                                         })
                                                     }
                                                 }}
@@ -931,7 +937,8 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa:  status.cercania_activa, 
-                                                            nombre_usuario_edito: site.nombre_usuario_edito
+                                                            nombre_usuario_edito: site.nombre_usuario_edito,
+                                                            qr_path: site.qr_path,
                                                         })
                                                     }
                                                 }}
@@ -974,7 +981,8 @@ const EditSite = () => {
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
                                                     cercania_activa:  status.cercania_activa, 
-                                                    nombre_usuario_edito: dataUser.name
+                                                    nombre_usuario_edito: dataUser.name,
+                                                    qr_path: site.qr_path,
                                                 })
                                             }
                                         }}
