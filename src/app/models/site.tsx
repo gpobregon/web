@@ -25,6 +25,9 @@ export interface Site {
   geo_json: string
   cercania_activa: boolean 
   nombre_usuario_edito: string
-  qr_path: string
+  qr_path: string 
+  telefono: string 
+  website: string 
+  qr_image_path: string
 }
 
