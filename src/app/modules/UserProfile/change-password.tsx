@@ -33,9 +33,12 @@ const changePassword: FC<any> = ({
         <>
             <Modal show={show} onHide={onClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{'Cambiar Contraseña'}</Modal.Title>
+                    <Modal.Title>{'Cambiar Contraseña'}</Modal.Title>  
+                    <br />
+                    
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body> 
+                <Modal.Dialog>{'* Se recomienda no cambiar de contraseña más de 2 veces por día *'}</Modal.Dialog>
                     <Form.Group className=''>
                         <Form.Label>Contraseña antigua</Form.Label>
                         <FormControl
