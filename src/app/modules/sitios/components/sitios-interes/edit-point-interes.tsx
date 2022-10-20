@@ -74,7 +74,6 @@ const customStyles = {
     }),
 }
 
-
 const animatedComponents = makeAnimated()
 const EditPoint = () => {
     const navigate = useNavigate()
@@ -704,98 +703,100 @@ const EditPoint = () => {
 
                                     <br />
 
-                                    <div className='col-6'>
-                                        <label style={{fontSize: '14px', color: '#FFFFFF'}}>
-                                            GeoX
-                                        </label>
-                                        <input
-                                            type='text'
-                                            className='form-control'
-                                            style={{
-                                                border: '0',
-                                                fontSize: '18px',
-                                                color: '#FFFFFF',
-                                            }}
-                                            value={sitio.geoX == '' ? '' : sitio.geoX}
-                                            onChange={(e) => {
-                                                if (
-                                                    validateStringSinCaracteresEspeciales(
-                                                        e.target.value
-                                                    )
-                                                ) {
-                                                    setSitio({
-                                                        id_punto: sitio.id_punto,
-                                                        id_sitio: sitio.id_sitio,
-                                                        lenguajes: sitio.lenguajes,
-                                                        descripcion: sitio.descripcion,
-                                                        id_lenguaje: sitio.id_lenguaje,
-                                                        nombre: sitio.nombre,
-                                                        geoX: e.target.value,
-                                                        geoY: sitio.geoY,
-                                                        portada_path: sitio.portada_path,
-                                                        qr_path: sitio.qr_path,
-                                                        es_portada_de_sitio:
-                                                            sitio.es_portada_de_sitio,
-                                                        estado: sitio.estado,
-                                                        es_visible: sitio.es_visible,
-                                                        publicado: true,
-                                                        id_lenguaje_anterior:
-                                                            sitio.id_lenguaje_anterior,
-                                                        nombre_usuario_edito:
-                                                            sitio.nombre_usuario_edito,
-                                                    })
-                                                }
-                                            }}
-                                        />
-                                        <hr style={{position: 'relative', top: '-20px'}}></hr>
-                                    </div>
+                                    <div className='row'>
+                                        <div className='col-6'>
+                                            <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                                GeoX
+                                            </label>
+                                            <input
+                                                type='number'
+                                                className='form-control'
+                                                style={{
+                                                    border: '0',
+                                                    fontSize: '18px',
+                                                    color: '#FFFFFF',
+                                                }}
+                                                value={sitio.geoX == '' ? '' : sitio.geoX}
+                                                onChange={(e) => {
+                                                    if (
+                                                        validateStringSinCaracteresEspeciales(
+                                                            e.target.value
+                                                        )
+                                                    ) {
+                                                        setSitio({
+                                                            id_punto: sitio.id_punto,
+                                                            id_sitio: sitio.id_sitio,
+                                                            lenguajes: sitio.lenguajes,
+                                                            descripcion: sitio.descripcion,
+                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            nombre: sitio.nombre,
+                                                            geoX: e.target.value,
+                                                            geoY: sitio.geoY,
+                                                            portada_path: sitio.portada_path,
+                                                            qr_path: sitio.qr_path,
+                                                            es_portada_de_sitio:
+                                                                sitio.es_portada_de_sitio,
+                                                            estado: sitio.estado,
+                                                            es_visible: sitio.es_visible,
+                                                            publicado: true,
+                                                            id_lenguaje_anterior:
+                                                                sitio.id_lenguaje_anterior,
+                                                            nombre_usuario_edito:
+                                                                sitio.nombre_usuario_edito,
+                                                        })
+                                                    }
+                                                }}
+                                            />
+                                            <hr style={{position: 'relative', top: '-20px'}}></hr>
+                                        </div>
 
-                                    <div className='col-6'>
-                                        <label style={{fontSize: '14px', color: '#FFFFFF'}}>
-                                            GeoY
-                                        </label>
-                                        <input
-                                            type='text'
-                                            className='form-control'
-                                            style={{
-                                                border: '0',
-                                                fontSize: '18px',
-                                                color: '#FFFFFF',
-                                            }}
-                                            value={sitio.geoY == '' ? '' : sitio.geoY}
-                                            onChange={(e) => {
-                                                if (
-                                                    validateStringSinCaracteresEspeciales(
-                                                        e.target.value
-                                                    )
-                                                ) {
-                                                    setSitio({
-                                                        id_punto: sitio.id_punto,
-                                                        id_sitio: sitio.id_sitio,
-                                                        lenguajes: sitio.lenguajes,
-                                                        descripcion: sitio.descripcion,
-                                                        id_lenguaje: sitio.id_lenguaje,
-                                                        nombre: sitio.nombre,
-                                                        geoX: sitio.geoX,
-                                                        geoY: e.target.value,
-                                                        portada_path: sitio.portada_path,
-                                                        qr_path: sitio.qr_path,
-                                                        es_portada_de_sitio:
-                                                            sitio.es_portada_de_sitio,
-                                                        estado: sitio.estado,
-                                                        es_visible: sitio.es_visible,
-                                                        publicado: true,
-                                                        id_lenguaje_anterior:
-                                                            sitio.id_lenguaje_anterior,
-                                                        nombre_usuario_edito:
-                                                            sitio.nombre_usuario_edito,
-                                                    })
-                                                }
-                                            }}
-                                        />
-                                        <hr style={{position: 'relative', top: '-20px'}}></hr>
+                                        <div className='col-6'>
+                                            <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                                GeoY
+                                            </label>
+                                            <input
+                                                type='number'
+                                                className='form-control'
+                                                style={{
+                                                    border: '0',
+                                                    fontSize: '18px',
+                                                    color: '#FFFFFF',
+                                                }}
+                                                value={sitio.geoY == '' ? '' : sitio.geoY}
+                                                onChange={(e) => {
+                                                    if (
+                                                        validateStringSinCaracteresEspeciales(
+                                                            e.target.value
+                                                        )
+                                                    ) {
+                                                        setSitio({
+                                                            id_punto: sitio.id_punto,
+                                                            id_sitio: sitio.id_sitio,
+                                                            lenguajes: sitio.lenguajes,
+                                                            descripcion: sitio.descripcion,
+                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            nombre: sitio.nombre,
+                                                            geoX: sitio.geoX,
+                                                            geoY: e.target.value,
+                                                            portada_path: sitio.portada_path,
+                                                            qr_path: sitio.qr_path,
+                                                            es_portada_de_sitio:
+                                                                sitio.es_portada_de_sitio,
+                                                            estado: sitio.estado,
+                                                            es_visible: sitio.es_visible,
+                                                            publicado: true,
+                                                            id_lenguaje_anterior:
+                                                                sitio.id_lenguaje_anterior,
+                                                            nombre_usuario_edito:
+                                                                sitio.nombre_usuario_edito,
+                                                        })
+                                                    }
+                                                }}
+                                            />
+                                            <hr style={{position: 'relative', top: '-20px'}}></hr>
+                                        </div>
                                     </div>
-
+ 
                                     <label style={{fontSize: '14px', color: '#FFFFFF'}}>
                                         Lenguajes
                                     </label>
