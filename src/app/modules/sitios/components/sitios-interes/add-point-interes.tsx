@@ -84,7 +84,7 @@ const AddPoint = () => {
         geoX: '',
         geoY: '',
         portada_path: '',
-        qr_path: 'sitio/interes/' + datospuntoInteres.id_sitio + '/' + datospuntoInteres.id_guia,
+        qr_path: '',
         es_portada_de_sitio: false,
         estado: 1,
         id_guia: datospuntoInteres.id_guia,
