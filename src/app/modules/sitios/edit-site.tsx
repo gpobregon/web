@@ -1,4 +1,4 @@
-import React, {useState, useEffect, FC} from 'react'
+import React, {useState, useEffect, FC, useContext} from 'react'
 import {
     Container,
     Row,
@@ -46,9 +46,11 @@ import {
 } from '../validarCadena/validadorCadena'
 import {KTSVG} from '../../../_metronic/helpers'
 import {Auth} from 'aws-amplify'
+import { LoadingContext } from '../../utility/component/loading/context'
+import { ContentContext } from '../template/movil/context' 
 import {roleManager} from '../../models/roleManager'
 
-const customStyles = {
+const customStyles = { 
     control: (base: any, state: any) => ({
         ...base,
         background: '#1b1b29',
@@ -100,10 +102,13 @@ const customStyles = {
 }
 const animatedComponents = makeAnimated()
 
-const EditSite = () => {
+const EditSite = () => { 
+    //const { toogleSave, discardChange } = useContext(ContentContext) 
+    const { setShowLoad } = useContext(LoadingContext)
     const{id}=useParams()
     const {state} = useLocation()
     const [site, setSite] = useState<Site>({
+        
         id_sitio: 0,
         nombre: '',
         descripcion: '',
@@ -120,8 +125,10 @@ const EditSite = () => {
         publicado: false,
         oculto: false,
         geo_json: '',
-        cercania_activa: false,
-    })
+        cercania_activa: false, 
+        nombre_usuario_edito: ''
+    }) 
+    // console.log("site: ", site);
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
     const [show, setShow] = useState(false) //modal show qr
@@ -213,7 +220,32 @@ const EditSite = () => {
         } else {
             alertNotNullInputs()
         }
-    }
+    } 
+
+     // obtener usuario que editó  
+     const [dataUser, setDataUser] = useState({
+        
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
+    })
+    const getUser = async () => {
+        Auth.currentUserInfo().then((user) => {
+            setDataUser({
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
+                descripcion: '',
+            })
+        })
+    }  
 
     //methods to post data to api------------------------------------------------------
 
@@ -236,7 +268,8 @@ const EditSite = () => {
     async function postDefault(route: string, object: any) {
         const sit: any = await postData(route, object)
     }
-    const changeStatus = async (favorito: boolean, publicado: boolean, oculto: boolean,cercania:boolean) => {
+    const changeStatus = async (favorito: boolean, publicado: boolean, oculto: boolean,cercania:boolean) => { 
+        setShowLoad(true)
        const respuesta3:any= await postData(statesMethod, {
             id_sitio: site.id_sitio,
             favorito: favorito,
@@ -269,7 +302,8 @@ const EditSite = () => {
                         publicado: status.publicado,
                         oculto: status.oculto,
                         geo_json: site.geo_json,
-                        cercania_activa: status.cercania_activa,
+                        cercania_activa: status.cercania_activa, 
+                        nombre_usuario_edito: dataUser.name
                     })
                 }else{
                     swal({
@@ -284,13 +318,14 @@ const EditSite = () => {
         const getSites = async () => {
             const site: any = await getData(sitesMethod)
             // console.log(site)
-        }
+        } 
+        setShowLoad(false)
     }
 
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
         swal({
-            title: '¿Estas seguro de Descartar Los Cambios ?',
+            title: '¿Estas seguro de descartar los cambios ?',
             icon: 'warning',
             buttons: ['No', 'Sí'],
         }).then((res) => {
@@ -306,9 +341,9 @@ const EditSite = () => {
     }
     const saveChanges = async () => {
         swal({
-            title: '¿Quiere Seguir Editando?',
+            title: '¿Quiere guardar los cambios?',
             icon: 'warning',
-            buttons: ['Sí', 'No'],
+            buttons: ['No', 'Sí'],
         }).then((res) => {
             if (res) {
                 swal({
@@ -362,7 +397,8 @@ const EditSite = () => {
             publicado: status.publicado,
             oculto: status.oculto,
             geo_json: site.geo_json,
-            cercania_activa: status.cercania_activa,
+            cercania_activa: status.cercania_activa, 
+            nombre_usuario_edito: dataUser.name
         })
         // console.log(site)
     }
@@ -409,6 +445,7 @@ const EditSite = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -423,14 +460,21 @@ const EditSite = () => {
                 setPermissionMockSite(filter[0]?.sitio_maquetar)
             }
         })
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
-    useEffect(() => {
-        getRoles()
-        validateRole()
-    }, [existRoles])
+   
 
-    // * Fin restricción por rol
+    // * Fin restricción por rol 
+
+   
+
+    useEffect(() => {
+        setShowLoad(true)
+        getRoles()
+        validateRole() 
+        getUser()
+    }, [existRoles])
 
     return (
         <>
@@ -468,7 +512,8 @@ const EditSite = () => {
                         <div id='center'>
                             <p style={{marginTop: '16px'}}>
                                 {'   '} Ultima vez editado el{' '}
-                                {Moment(site.editado).format('DD/MM/YYYY hh:mm') + ' '} por{' '}
+
+                                {Moment(site.editado).format('DD/MM/YYYY hh:mm') + ' '} por{' '+ (site.nombre_usuario_edito)}
                             </p>
                         </div>
                     </div>
@@ -603,8 +648,37 @@ const EditSite = () => {
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
                                 ></Button>
 
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
                                 <Button
-                                    onClick={() => {
+                                    onClick={() => { 
+                                        //toogleSave()
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
@@ -726,7 +800,8 @@ const EditSite = () => {
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
-                                                            cercania_activa:  status.cercania_activa,
+                                                            cercania_activa:  status.cercania_activa, 
+                                                            nombre_usuario_edito: dataUser.name
                                                         })
                                                     }
                                                 ></Link>
@@ -772,7 +847,8 @@ const EditSite = () => {
                                                     publicado: status.publicado,
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
-                                                    cercania_activa:  status.cercania_activa,
+                                                    cercania_activa:  status.cercania_activa, 
+                                                    nombre_usuario_edito: dataUser.name
                                                 })
                                             }
                                         }}
@@ -813,7 +889,8 @@ const EditSite = () => {
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
-                                                            cercania_activa: status.cercania_activa,
+                                                            cercania_activa: status.cercania_activa, 
+                                                            nombre_usuario_edito: dataUser.name
                                                         })
                                                     }
                                                 }}
@@ -853,7 +930,8 @@ const EditSite = () => {
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
-                                                            cercania_activa:  status.cercania_activa,
+                                                            cercania_activa:  status.cercania_activa, 
+                                                            nombre_usuario_edito: site.nombre_usuario_edito
                                                         })
                                                     }
                                                 }}
@@ -895,7 +973,8 @@ const EditSite = () => {
                                                     publicado: status.publicado,
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
-                                                    cercania_activa:  status.cercania_activa,
+                                                    cercania_activa:  status.cercania_activa, 
+                                                    nombre_usuario_edito: dataUser.name
                                                 })
                                             }
                                         }}
@@ -1011,7 +1090,7 @@ const EditSite = () => {
                                                         })
                                                         return
                                                     }
-                                                    postSiteMaquetar(site, 'web')
+                                                    postSiteMaquetar(site, 'movil')
                                                 }}
                                             >
                                                 {' '}

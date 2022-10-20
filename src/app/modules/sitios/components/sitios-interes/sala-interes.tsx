@@ -1,5 +1,5 @@
 import {type} from 'os'
-import React, {FC, useEffect, useRef, useState} from 'react'
+import React, {FC, useContext, useEffect, useRef, useState} from 'react'
 import {Col, Card, Button, Row, Modal} from 'react-bootstrap'
 import {
     RoomsMethod,
@@ -32,6 +32,7 @@ import SalaRutas from '../rutas-sitios-interes/sala-rutas'
 import {CatalogLanguage} from '../../../../models/catalogLanguage'
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
+import {LoadingContext} from '../../../../utility/component/loading/context'
 
 type id_sitio = {
     id_sitio: number
@@ -73,8 +74,12 @@ const Interes: FC<id_sitio> = (props) => {
             timer: 2000,
         })
     }
-    const changeImagePrincipal = async (idpunto: number, idsitio: number,idsala:number) => {
-       const res:any= await postData(changePointOfInterestFront, {id_punto: idpunto, id_sitio: idsitio,id_sala:idsala})
+    const changeImagePrincipal = async (idpunto: number, idsitio: number, idsala: number) => {
+        const res: any = await postData(changePointOfInterestFront, {
+            id_punto: idpunto,
+            id_sitio: idsitio,
+            id_sala: idsala,
+        })
         setPuntoInteres([])
         setRooms([])
         swal({
@@ -188,7 +193,7 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     //descargar QR------------------------------------------------------
-    const downloadQRCode = (nombreArchivo:string) => {
+    const downloadQRCode = (nombreArchivo: string) => {
         const canvas = document.getElementById('qrCode') as HTMLCanvasElement
         const pngUrl = canvas!.toDataURL('image/png').replace('image/png', 'image/octet-stream')
         let downloadLink = document.createElement('a')
@@ -239,6 +244,8 @@ const Interes: FC<id_sitio> = (props) => {
     // }
 
     // * Restricción por rol
+    const {setShowLoad} = useContext(LoadingContext)
+
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -260,6 +267,8 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -280,9 +289,12 @@ const Interes: FC<id_sitio> = (props) => {
                 setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
@@ -301,9 +313,13 @@ const Interes: FC<id_sitio> = (props) => {
                                 room?.map(sala => <Rooms {...sala} key={sala.id_sala.toString()} />)
                                 }  */}
 
-                                {room?.map((sala,index) => (
-                                    <div className="btn-group" role="group" aria-label="Basic example" key={index}>
-                                    
+                                {room?.map((sala, index) => (
+                                    <div
+                                        className='btn-group'
+                                        role='group'
+                                        aria-label='Basic example'
+                                        key={index}
+                                    >
                                         <Button
                                             variant='outline-dark'
                                             size='sm'
@@ -318,7 +334,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         >
                                             {sala.nombre}
                                         </Button>
-                                        
+
                                         <Button
                                             variant='outline-dark'
                                             size='sm'
@@ -367,9 +383,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                 }}
                                             ></i>
                                         </Button>
-                                        </div>
+                                    </div>
                                 ))}
-                                       
 
                                 <Button
                                     variant='outline-dark'
@@ -496,7 +511,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                 <Card
                                                     style={{
                                                         display: 'flex',
-                                                        padding:' 0px 12px 0px 12px',
+                                                        padding: ' 0px 12px 0px 12px',
                                                         height: '100%',
                                                         justifyContent: 'center',
                                                         flexDirection: 'column',
@@ -504,7 +519,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                 >
                                                     <Card.Title
                                                         className='text-center'
-                                                        style={{flexDirection: 'row',}}
+                                                        style={{flexDirection: 'row'}}
                                                     ></Card.Title>
                                                     <Card.Subtitle
                                                         className='text-white'
@@ -523,7 +538,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                             paddingLeft: 20,
                                                             paddingTop: 5,
                                                             marginLeft: '75px',
-                                                         
                                                         }}
                                                     >
                                                         {punto.descripcion}
@@ -557,241 +571,237 @@ const Interes: FC<id_sitio> = (props) => {
                                                 </Card>
                                             </div>
                                             <div className='col-xs-12 col-md-12 col-lg-12 col-xl-6 d-flex justify-content-end'>
-                                               
-                                                    <ul className='nav justify-content-end'>
-                                                        <li className='nav-item '>
+                                                <ul className='nav justify-content-end'>
+                                                    <li className='nav-item '>
+                                                        <Button
+                                                            className='btn-secondary fa-solid fa-qrcode background-button '
+                                                            style={{
+                                                                color: '#92929F',
+                                                                display: 'flex',
+                                                                marginRight: '30px',
+                                                                fontSize: '23px',
+                                                            }}
+                                                            onClick={() => {
+                                                                setQr(punto.qr_path)
+                                                                setNombre(punto.nombre)
+                                                                handleShow()
+                                                            }}
+                                                        ></Button>
+                                                    </li>
+                                                    <Modal show={show} onHide={handleClose}>
+                                                        <Modal.Header closeButton>
+                                                            <Modal.Title>
+                                                                Escanee su Código QR
+                                                            </Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body style={{textAlign: 'center'}}>
+                                                            <Modal.Dialog>
+                                                                Punto de Interes: {name}
+                                                            </Modal.Dialog>
+                                                            <QRCodeCanvas
+                                                                id='qrCode'
+                                                                value={qr}
+                                                                size={300}
+                                                                level={'H'}
+                                                            />
+                                                        </Modal.Body>
+                                                        <Modal.Footer>
                                                             <Button
-                                                                className='btn-secondary fa-solid fa-qrcode background-button '
-                                                                style={{
-                                                                    color: '#92929F',
-                                                                    display: 'flex',
-                                                                    marginRight: '30px',
-                                                                    fontSize: '23px',
-                                                                }}
+                                                                variant='secondary'
+                                                                onClick={handleClose}
+                                                            >
+                                                                Close
+                                                            </Button>
+                                                            <Button
+                                                                variant='primary'
                                                                 onClick={() => {
-                                                                    setQr(punto.qr_path)
-                                                                    setNombre(punto.nombre)
-                                                                    handleShow()
-                                                                }}
-                                                            ></Button>
-                                                        </li>
-                                                        <Modal show={show} onHide={handleClose}>
-                                                            <Modal.Header closeButton>
-                                                                <Modal.Title>
-                                                                    Escanee su Código QR
-                                                                </Modal.Title>
-                                                            </Modal.Header>
-                                                            <Modal.Body
-                                                                style={{textAlign: 'center'}}
-                                                            >
-                                                                <Modal.Dialog>
-                                                                    Punto de Interes: {name}
-                                                                </Modal.Dialog>
-                                                                <QRCodeCanvas
-                                                                    id='qrCode'
-                                                                    value={qr}
-                                                                    size={300}
-                                                                    level={'H'}
-                                                                />
-                                                            </Modal.Body>
-                                                            <Modal.Footer>
-                                                                <Button
-                                                                    variant='secondary'
-                                                                    onClick={handleClose}
-                                                                >
-                                                                    Close
-                                                                </Button>
-                                                                <Button
-                                                                    variant='primary'
-                                                                    onClick={()=>{downloadQRCode(name)}}
-                                                                >
-                                                                    Descargar
-                                                                </Button>
-                                                            </Modal.Footer>
-                                                        </Modal>
-                                                        <li className='nav-item '>
-                                                            <p
-                                                                style={{
-                                                                    display: 'flex',
-                                                                    marginRight: '30px',
-                                                                    fontSize: '14px',
-                                                                    marginTop: '15px',
+                                                                    downloadQRCode(name)
                                                                 }}
                                                             >
-                                                                <i
-                                                                    className={
-                                                                        punto.es_portada_de_sitio ==
-                                                                        false
-                                                                            ? 'bi bi bi-circle'
-                                                                            : 'bi bi-record-circle'
-                                                                    }
-                                                                    onClick={() => {
-                                                                        if (
-                                                                            !permissionSetPrincipalImage
-                                                                        ) {
-                                                                            swal({
-                                                                                title: 'No tienes permiso para establecer una imagen principal',
-                                                                                icon: 'warning',
-                                                                            })
-                                                                            return
-                                                                        }
-
-                                                                        punto.es_portada_de_sitio =
-                                                                            !punto.es_portada_de_sitio
-                                                                        changeImagePrincipal(
-                                                                            punto.id_punto,
-                                                                            punto.id_sitio,
-                                                                            Number(idsala),
-                                                                        )
-                                                                    }}
-                                                                    style={{
-                                                                        color: '#92929F',
-                                                                        display: 'flex',
-                                                                        marginRight: '8px',
-                                                                        fontSize: '23px',
-                                                                    }}
-                                                                ></i>
-                                                                imagen principal
-                                                            </p>
-                                                        </li>
-
-                                                        <li className='nav-item'>
-                                                            <Button
+                                                                Descargar
+                                                            </Button>
+                                                        </Modal.Footer>
+                                                    </Modal>
+                                                    <li className='nav-item '>
+                                                        <p
+                                                            style={{
+                                                                display: 'flex',
+                                                                marginRight: '30px',
+                                                                fontSize: '14px',
+                                                                marginTop: '15px',
+                                                            }}
+                                                        >
+                                                            <i
                                                                 className={
-                                                                    punto.es_visible == false
-                                                                        ? 'btn-secondary fa-solid fa-eye-slash background-button'
-                                                                        : 'btn-secondary fa-solid fa-eye background-button'
+                                                                    punto.es_portada_de_sitio ==
+                                                                    false
+                                                                        ? 'bi bi bi-circle'
+                                                                        : 'bi bi-record-circle'
                                                                 }
-                                                                id='center2'
                                                                 onClick={() => {
-                                                                    if (!permissionChangeVisibilityPoint) {
+                                                                    if (
+                                                                        !permissionSetPrincipalImage
+                                                                    ) {
                                                                         swal({
-                                                                            title: 'No tienes permiso para cambiar la visibilidad de los puntos de interés',
+                                                                            title: 'No tienes permiso para establecer una imagen principal',
                                                                             icon: 'warning',
                                                                         })
                                                                         return
                                                                     }
-                                                                    punto.es_visible =
-                                                                        !punto.es_visible
-                                                                    changeStatus(
+
+                                                                    punto.es_portada_de_sitio =
+                                                                        !punto.es_portada_de_sitio
+                                                                    changeImagePrincipal(
                                                                         punto.id_punto,
-                                                                        punto.es_visible
+                                                                        punto.id_sitio,
+                                                                        Number(idsala)
                                                                     )
                                                                 }}
                                                                 style={{
                                                                     color: '#92929F',
                                                                     display: 'flex',
-                                                                    marginRight: '4px',
+                                                                    marginRight: '8px',
+                                                                    fontSize: '23px',
                                                                 }}
-                                                            ></Button>
-                                                        </li>
+                                                            ></i>
+                                                            imagen principal
+                                                        </p>
+                                                    </li>
+
+                                                    <li className='nav-item'>
                                                         <Button
-                                                            className='btn-secondary fa-solid  fa-pencil background-button'
+                                                            className={
+                                                                punto.es_visible == false
+                                                                    ? 'btn-secondary fa-solid fa-eye-slash background-button'
+                                                                    : 'btn-secondary fa-solid fa-eye background-button'
+                                                            }
+                                                            id='center2'
+                                                            onClick={() => {
+                                                                if (
+                                                                    !permissionChangeVisibilityPoint
+                                                                ) {
+                                                                    swal({
+                                                                        title: 'No tienes permiso para cambiar la visibilidad de los puntos de interés',
+                                                                        icon: 'warning',
+                                                                    })
+                                                                    return
+                                                                }
+                                                                punto.es_visible = !punto.es_visible
+                                                                changeStatus(
+                                                                    punto.id_punto,
+                                                                    punto.es_visible
+                                                                )
+                                                            }}
                                                             style={{
                                                                 color: '#92929F',
                                                                 display: 'flex',
                                                                 marginRight: '4px',
                                                             }}
-                                                            onClick={(event) => {
-                                                                if (!permissionEditPoint) {
-                                                                    swal({
-                                                                        title: 'No tienes permiso para editar un punto de interés',
-                                                                        icon: 'warning',
-                                                                    })
-                                                                    return
-                                                                }
-                                                                // let lenaguajeDefault = ''
-                                                                // for (
-                                                                //     let i = 0;
-                                                                //     i < languages.length;
-                                                                //     i++
-                                                                // ) {
-                                                                //     for (
-                                                                //         let j = 0;
-                                                                //         j < punto.lenguajes.length;
-                                                                //         j++
-                                                                //     ) {
-                                                                //         if (
-                                                                //             languages[i]
-                                                                //                 .id_lenguaje ===
-                                                                //             punto.lenguajes[j]
-                                                                //                 .id_lenguaje
-                                                                //         ) {
-                                                                // setLenaguajeDefault(languages[i].descripcion)
-
-                                                                //             lenaguajeDefault =
-                                                                //                 languages[i].nombre
-                                                                //         }
-                                                                //     }
-                                                                // }
-                                                                // console.log(punto.lenguajes)
-                                                                // console.log(lenaguajeDefault)
-                                                                // const languageEscogido =
-                                                                //     punto.lenguajes.map(
-                                                                //         (language) => ({
-                                                                //             value: language.id_lenguaje,
-                                                                //             label: lenaguajeDefault,
-                                                                //         })
-                                                                //     )
-                                                                // console.log(languageEscogido)
-                                                                navigate(
-                                                                    `/sitios/edit-point-interes/${punto.id_sitio}/${punto.id_punto}`,
-                                                                    {
-                                                                        state: {
-                                                                            id_punto:
-                                                                                punto.id_punto,
-                                                                            lenguajes:
-                                                                                punto.lenguajes,
-                                                                            id_sitio:
-                                                                                punto.id_sitio,
-                                                                            id_guia: idsala,
-                                                                            nombre: punto.nombre,
-                                                                            descripcion:
-                                                                                punto.descripcion,
-                                                                            geoX: punto.geoX,
-                                                                            geoY: punto.geoY,
-                                                                            portada_path:
-                                                                                punto.portada_path,
-                                                                            qr_path: punto.qr_path,
-                                                                            es_portada_de_sitio:
-                                                                                punto.es_portada_de_sitio,
-                                                                            estado: punto.estado,
-                                                                            es_visible:
-                                                                                punto.es_visible,
-                                                                            nombreSala: nombresala,
-                                                                            publicado:
-                                                                                punto.publicado,
-                                                                        },
-                                                                    }
-                                                                )
-                                                            }}
                                                         ></Button>
-                                                        <Button
-                                                            className='btn-secondary  bi-trash3 background-button'
-                                                            id='center2'
-                                                            style={{
-                                                                color: '#92929F',
-                                                                display: 'flex',
-                                                                marginRight: '20px',
-                                                            }}
-                                                            onClick={() => {
-                                                                if (!permissionDeletePoint) {
-                                                                    swal({
-                                                                        title: 'No tienes permiso para eliminar un punto de interés',
-                                                                        icon: 'warning',
-                                                                    })
-                                                                    return
-                                                                }
-                                                                // console.log(punto.es_portada_de_sitio)
-                                                                deletePointInteres(
-                                                                    punto.id_punto,
-                                                                    punto.id_sitio
-                                                                )
-                                                                getSalas()
-                                                            }}
-                                                        ></Button>
+                                                    </li>
+                                                    <Button
+                                                        className='btn-secondary fa-solid  fa-pencil background-button'
+                                                        style={{
+                                                            color: '#92929F',
+                                                            display: 'flex',
+                                                            marginRight: '4px',
+                                                        }}
+                                                        onClick={(event) => {
+                                                            if (!permissionEditPoint) {
+                                                                swal({
+                                                                    title: 'No tienes permiso para editar un punto de interés',
+                                                                    icon: 'warning',
+                                                                })
+                                                                return
+                                                            }
+                                                            // let lenaguajeDefault = ''
+                                                            // for (
+                                                            //     let i = 0;
+                                                            //     i < languages.length;
+                                                            //     i++
+                                                            // ) {
+                                                            //     for (
+                                                            //         let j = 0;
+                                                            //         j < punto.lenguajes.length;
+                                                            //         j++
+                                                            //     ) {
+                                                            //         if (
+                                                            //             languages[i]
+                                                            //                 .id_lenguaje ===
+                                                            //             punto.lenguajes[j]
+                                                            //                 .id_lenguaje
+                                                            //         ) {
+                                                            // setLenaguajeDefault(languages[i].descripcion)
 
-                                                        {/* <i
+                                                            //             lenaguajeDefault =
+                                                            //                 languages[i].nombre
+                                                            //         }
+                                                            //     }
+                                                            // }
+                                                            // console.log(punto.lenguajes)
+                                                            // console.log(lenaguajeDefault)
+                                                            // const languageEscogido =
+                                                            //     punto.lenguajes.map(
+                                                            //         (language) => ({
+                                                            //             value: language.id_lenguaje,
+                                                            //             label: lenaguajeDefault,
+                                                            //         })
+                                                            //     )
+                                                            // console.log(languageEscogido)
+                                                            navigate(
+                                                                `/sitios/edit-point-interes/${punto.id_sitio}/${punto.id_punto}`,
+                                                                {
+                                                                    state: {
+                                                                        id_punto: punto.id_punto,
+                                                                        lenguajes: punto.lenguajes,
+                                                                        id_sitio: punto.id_sitio,
+                                                                        id_guia: idsala,
+                                                                        nombre: punto.nombre,
+                                                                        descripcion:
+                                                                            punto.descripcion,
+                                                                        geoX: punto.geoX,
+                                                                        geoY: punto.geoY,
+                                                                        portada_path:
+                                                                            punto.portada_path,
+                                                                        qr_path: punto.qr_path,
+                                                                        es_portada_de_sitio:
+                                                                            punto.es_portada_de_sitio,
+                                                                        estado: punto.estado,
+                                                                        es_visible:
+                                                                            punto.es_visible,
+                                                                        nombreSala: nombresala,
+                                                                        publicado: punto.publicado,
+                                                                    },
+                                                                }
+                                                            )
+                                                        }}
+                                                    ></Button>
+                                                    <Button
+                                                        className='btn-secondary  bi-trash3 background-button'
+                                                        id='center2'
+                                                        style={{
+                                                            color: '#92929F',
+                                                            display: 'flex',
+                                                            marginRight: '20px',
+                                                        }}
+                                                        onClick={() => {
+                                                            if (!permissionDeletePoint) {
+                                                                swal({
+                                                                    title: 'No tienes permiso para eliminar un punto de interés',
+                                                                    icon: 'warning',
+                                                                })
+                                                                return
+                                                            }
+                                                            // console.log(punto.es_portada_de_sitio)
+                                                            deletePointInteres(
+                                                                punto.id_punto,
+                                                                punto.id_sitio
+                                                            )
+                                                            getSalas()
+                                                        }}
+                                                    ></Button>
+
+                                                    {/* <i
                                                         className='fa-solid fa-gear background-button'
                                                         id='center2'
                                                         onClick={() => {
@@ -800,8 +810,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                         }}
                                                         style={{ color: '#92929F', display: 'flex', marginRight: '20px' }}
                                                     ></i> */}
-                                                    </ul>
-                                               
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>

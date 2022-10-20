@@ -43,10 +43,8 @@ const Element = [
             fontWeight: "fw-normal",
             fontFamily: "fw-normal",
             textDecoration: "",
-            typeList: "",
-            item: [
-              {index: 0, value: 'Elemento 1'}
-            ],
+            typeList: "list-group-numbered",
+            item: [],
             typeElement: 'texts'
           }
         ]
