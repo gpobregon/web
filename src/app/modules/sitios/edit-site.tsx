@@ -128,7 +128,7 @@ const EditSite = () => {
         cercania_activa: false, 
         nombre_usuario_edito: ''
     }) 
-    console.log("site: ", site);
+    // console.log("site: ", site);
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
     const [show, setShow] = useState(false) //modal show qr
