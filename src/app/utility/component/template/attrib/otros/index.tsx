@@ -24,7 +24,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
         <div className="w-100">
             <Row>
                 <Col lg={12}>
-                    { editItem.type === 'map' &&
+                    {/* { editItem.type === 'map' &&
                         <Fragment>
                             <Row className="py-1">
                                 <Col  className="mx-1 px-0">
@@ -38,7 +38,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
                             </Row>
                         </Fragment>
                     }
-                    
+                     */}
                 </Col>
             </Row>
         </div>

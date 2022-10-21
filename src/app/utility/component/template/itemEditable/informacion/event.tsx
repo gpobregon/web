@@ -1,7 +1,7 @@
 /* eslint-disable no-self-compare */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useState, useContext, useRef, Fragment } from "react";
-import { Row, Col, Image, Popover, OverlayTrigger, Form } from 'react-bootstrap'
+import { Row, Col, Popover, OverlayTrigger, Form } from 'react-bootstrap'
 import { useContextMenu } from "react-contexify";
 import MenuDoubleClick from '../../../menu/doubleClick'
 import ContextMenu from '../../../menu/contextMenu'

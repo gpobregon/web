@@ -21,7 +21,6 @@ const Index = () => {
     const idioma = watch('idioma')
     const storeElement = (data: any) => {
         saveTemplate(data)
-        reset()
     }
 
     const setData = () => {

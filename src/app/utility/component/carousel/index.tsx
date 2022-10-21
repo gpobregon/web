@@ -4,28 +4,31 @@ type Model = {
   list: any
 }
 
-const  CustomCarusel: FC<Model> = ({ list }) => {
+const CustomCarusel: FC<Model> = ({ list }) => {
 
   return (
-    <Carousel>
-      {
-        list.map((item: any, index: number) => {
-          return (
-            <Carousel.Item key={index}>
-              <img
-                className="d-block w-100"
-                src={item.url}
-                alt="First slide"
-              />
-              <Carousel.Caption>
-                <h3>{item.titulo}</h3>
-                <p>{item.descripcion}</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-          )
-        })
-      }
-    </Carousel>
+    <div className="h-50 my-2">
+      <Carousel fade>
+        {
+          list.map((item: any, index: number) => {
+            return (
+              <Carousel.Item key={index} className="d-flex justify-content-center">
+                <img
+                  className="d-block h-100 w-100"
+                  src={item.url}
+                  alt={item.titulo}
+                  style={{ maxHeight: '540px' }}
+                />
+                <Carousel.Caption>
+                  <h3 className="text-white">{item.titulo}</h3>
+                  <p>{item.descripcion}</p>
+                </Carousel.Caption>
+              </Carousel.Item>
+            )
+          })
+        }
+      </Carousel>
+    </div>
   );
 }
 
