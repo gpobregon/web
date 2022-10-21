@@ -139,7 +139,10 @@ const ConfSite = () => {
         publicado: false,
         oculto: false,
         geo_json: '',
-        cercania_activa:false,
+        cercania_activa: false,
+        telefono: '',
+        website: '',
+        qr_image_path: '',
     })
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
@@ -195,6 +198,9 @@ const ConfSite = () => {
             oculto: status.oculto,
             geo_json: site.geo_json,
             cercania_activa: site.cercania_activa,
+            telefono: site.telefono,
+            website: site.website,
+            qr_image_path: site.qr_image_path,
         })
 
         // console.log(site);
@@ -468,6 +474,9 @@ const ConfSite = () => {
                                                             oculto: site.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: site.cercania_activa,
+                                                            telefono: site.telefono,
+                                                            website: site.website,
+                                                            qr_image_path: site.qr_image_path,
                                                         })
                                                     }
                                                 ></Link>
@@ -514,6 +523,9 @@ const ConfSite = () => {
                                                     oculto: site.oculto,
                                                     geo_json: site.geo_json,
                                                     cercania_activa: site.cercania_activa,
+                                                    telefono: site.telefono,
+                                                    website: site.website,
+                                                    qr_image_path: site.qr_image_path,
                                                 })
                                             }
                                         }}
@@ -554,6 +566,9 @@ const ConfSite = () => {
                                                             oculto: site.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: site.cercania_activa,
+                                                            telefono: site.telefono,
+                                                            website: site.website,
+                                                            qr_image_path: site.qr_image_path,
                                                         })
                                                     }
                                                 }}
@@ -593,6 +608,9 @@ const ConfSite = () => {
                                                             oculto: site.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: site.cercania_activa,
+                                                            telefono: site.telefono,
+                                                            website: site.website,
+                                                            qr_image_path: site.qr_image_path,
                                                         })
                                                     }
                                                 }}
@@ -634,11 +652,97 @@ const ConfSite = () => {
                                                     oculto: site.oculto,
                                                     geo_json: site.geo_json,
                                                     cercania_activa: site.cercania_activa,
+                                                    telefono: site.telefono,
+                                                    website: site.website,
+                                                    qr_image_path: site.qr_image_path,
                                                 })
                                             }
                                         }}
                                     ></input>
+                                    <hr style={{position: 'relative', top: '-20px'}}></hr> 
+
+                                    <br />
+                                    <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                        Teléfono    
+                                    </label>
+                                    <br></br>
+                                    <input
+                                        type='number'
+                                        className='form-control'
+                                        style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
+                                        value={site.telefono != '' ? site.telefono : ''}
+                                        onChange={(e) => {
+                                            if (
+                                                validateStringSinCaracteresEspeciales(
+                                                    e.target.value
+                                                )
+                                            ) {
+                                                setSite({
+                                                    id_sitio: site.id_sitio,
+                                                    nombre: site.nombre,
+                                                    descripcion: site.descripcion,
+                                                    ubicacion: site.ubicacion,
+                                                    geoX: site.geoX,
+                                                    geoY: site.geoY,
+                                                    portada_path: site.portada_path,
+                                                    estado: site.estado,
+                                                    creado: site.creado,
+                                                    editado: site.editado,
+                                                    categorias: site.categorias,
+                                                    id_municipio: site.id_municipio,
+                                                    favorito: site.favorito,
+                                                    publicado: site.publicado,
+                                                    oculto: site.oculto,
+                                                    geo_json: site.geo_json,
+                                                    cercania_activa: site.cercania_activa,
+                                                    telefono: e.target.value,
+                                                    website: site.website,
+                                                    qr_image_path: site.qr_image_path,
+                                                })
+                                            }
+                                        }}
+                                    ></input>
+                                    <hr style={{position: 'relative', top: '-20px'}}></hr> 
+
+                                    <br />
+                                    <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                        Sitio web
+                                    </label>
+                                    <br></br>
+                                    <input
+                                        type='text'
+                                        className='form-control'
+                                        style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
+                                        value={site.website != '' ? site.website : ''}
+                                        onChange={(e) => {
+                                           
+                                                setSite({
+                                                    id_sitio: site.id_sitio,
+                                                    nombre: site.nombre,
+                                                    descripcion: site.descripcion,
+                                                    ubicacion: site.ubicacion,
+                                                    geoX: site.geoX,
+                                                    geoY: site.geoY,
+                                                    portada_path: site.portada_path,
+                                                    estado: site.estado,
+                                                    creado: site.creado,
+                                                    editado: site.editado,
+                                                    categorias: site.categorias,
+                                                    id_municipio: site.id_municipio,
+                                                    favorito: site.favorito,
+                                                    publicado: site.publicado,
+                                                    oculto: site.oculto,
+                                                    geo_json: site.geo_json,
+                                                    cercania_activa: site.cercania_activa,
+                                                    telefono: site.telefono,
+                                                    website: e.target.value,
+                                                    qr_image_path: site.qr_image_path,
+                                                })
+                                            
+                                        }}
+                                    ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
+
                                     <label>Etiquetas</label>
                                     <br />
                                     <div className='form-control'>
