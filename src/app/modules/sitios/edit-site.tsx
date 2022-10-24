@@ -217,6 +217,7 @@ const EditSite = () => {
             site.categorias.length > 0
         ) {
             const sit: any = await postData(updateSiteMethod, sitee)
+            console.log(sit)
             saveChanges()
         } else {
             alertNotNullInputs()

@@ -217,6 +217,8 @@ const ConfSite = () => {
             site.geo_json != ''
         ) {
             const sit: any = await postData(sitesMethod + '/add', sitee)
+            console.log(sit)
+            console.log(sitee)
             navigate(`/template/sitio/${tipo}/${sit.id_sitio}`)
         } else {
             alertNotNullInputs()
