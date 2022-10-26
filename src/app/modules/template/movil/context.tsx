@@ -466,6 +466,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
         }, [board, count]
     )
+
     // ------------------------------------------------------------
     useEffect(() => {
 
@@ -473,8 +474,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             getAllResources(1)
             getLenguate()
             oneSite()
-            console.log(modo)
-            if (modo !== 'web') {
+            if (modo === 'movil') {
                 ChangeMode(1)
             } else {
                 ChangeMode(2)
