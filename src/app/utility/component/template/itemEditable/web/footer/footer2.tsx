@@ -115,11 +115,11 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
                             </div>
                         </li>
                         <li className="nav-item">
-                            <div className={`nav-link px-3 ${data.linkedin !== '' ? 'text-white' : 'text-muted'}`}>
+                            <div className={`nav-link px-3 ${data.tiktok !== '' ? 'text-white' : 'text-muted'}`}>
                                 <div className="popover__wrapper">
-                                    <i className={`bi bi-linkedin fs-1 ${data.linkedin !== '' ? 'text-white' : 'text-muted'}`} />
+                                    <i className={`bi bi-tiktok fs-1 ${data.tiktok !== '' ? 'text-white' : 'text-muted'}`} />
                                     <div className="popover__content">
-                                        <Form.Control placeholder="ingresa url" size="sm" defaultValue={data.linkedin} onChange={(e: any) => changeText({ linkedin: stripHtml(e.target.value) })} />
+                                        <Form.Control placeholder="ingresa url" size="sm" defaultValue={data.tiktok} onChange={(e: any) => changeText({ linkedin: stripHtml(e.target.value) })} />
                                     </div>
                                 </div>
                             </div>

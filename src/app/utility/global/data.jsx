@@ -238,7 +238,7 @@ const Element = [
             twitter: '',
             instagram: '',
             youtube: '',
-            linkedin: '',
+            tiktok: '',
             typeIcon: 'svg',
             icon: 'footer2.svg',
             typeElement: 'footer'
