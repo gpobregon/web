@@ -38,15 +38,13 @@ const Element = [
             icon: 'list-ul',
             type: "list",
             text: 'Element',
-            content: '<ul><li>Elemento 1</li></ul>',
+            content: '<ul class="list-group list-group-bg list-group-numbered"><li class="list-group-item">Elemento 1</li></ul>',
             textAling: "text-star",
             fontWeight: "fw-normal",
             fontFamily: "fw-normal",
             textDecoration: "",
-            typeList: "",
-            item: [
-              {index: 0, value: 'Elemento 1'}
-            ],
+            typeList: "list-group-numbered",
+            item: [],
             typeElement: 'texts'
           }
         ]
@@ -127,7 +125,8 @@ const Element = [
             icon: 'Panorama.svg',
             type: "image-360",
             text: 'Imagen 360°',
-            typeElement: 'multimedia'
+            typeElement: 'multimedia',
+            url:''
           },
         ]
       },
@@ -207,14 +206,18 @@ const Element = [
             type: "galeria1",
             typeIcon: 'svg',
             icon: 'Galeria1.svg',
-            typeElement: 'galeria'
+            typeElement: 'galeria',
+            section1: [],
+            section2: []
           },
           {
             text: 'Galeria 2',
             type: "galeria2",
             typeIcon: 'svg',
             icon: 'Galeria2.svg',
-            typeElement: 'galeria'
+            typeElement: 'galeria',
+            section1: [],
+            section2: []
           }
         ]
       },
@@ -222,15 +225,22 @@ const Element = [
         title: 'Pie de Página',
         items: [
           {
-            text: 'Footer 1',
+            text: `© ${new Date().getFullYear()} Copyright:`,
             type: "footer1",
             typeIcon: 'svg',
+            icon: 'footer1.svg',
             typeElement: 'footer'
           },
           {
-            text: 'Footer 2',
+            text: `© ${new Date().getFullYear()} Copyright:`,
             type: "footer2",
+            facebook: '',
+            twitter: '',
+            instagram: '',
+            youtube: '',
+            tiktok: '',
             typeIcon: 'svg',
+            icon: 'footer2.svg',
             typeElement: 'footer'
           }
         ]

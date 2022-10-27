@@ -14,7 +14,7 @@ import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import {status} from '../../../../models/status'
-import UpImage from '../../../uploadFile/upload-image';
+import UpImage from '../../../uploadFile/upload-image'
 import logo from '../../upload-image_03.jpg'
 import {CatalogLanguage} from '../../../../models/catalogLanguage'
 
@@ -78,16 +78,16 @@ const AddPoint = () => {
     const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
         id_sitio: datospuntoInteres.id_sitio,
-        id_guia: datospuntoInteres.id_guia,
         descripcion: '',
         id_lenguaje: 0,
         nombre: '',
-        geoX: '232',
-        geoY: '323',
+        geoX: '',
+        geoY: '',
         portada_path: '',
-        qr_path: 'sitio/interes/' + datospuntoInteres.id_sitio + '/' + datospuntoInteres.id_guia,
+        qr_path: '',
         es_portada_de_sitio: false,
         estado: 1,
+        id_guia: datospuntoInteres.id_guia,
     })
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
     // useEffect(() => {
@@ -99,6 +99,7 @@ const AddPoint = () => {
         favorito: true,
         publicado: true,
         oculto: false,
+        cercania_activa: false,
     })
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
@@ -113,9 +114,7 @@ const AddPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${datospuntoInteres.id_sitio}`)
             }
         })
     }
@@ -131,19 +130,20 @@ const AddPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${datospuntoInteres.id_sitio}`)
             }
         })
     }
     //petitions----------------------------------------------------------------------------
-    const addNewPoint = async (tipo:string) => {
+    const addNewPoint = async (tipo: string) => {
         // console.log(sitio)
         if (sitio.nombre != '' && sitio.id_lenguaje != 0 && sitio.portada_path != '') {
-           const res:any= await postData(addNewPointInteres, sitio)
-            navigate(`/template/punto/${tipo}/${res.point.id_punto}`)
-          
+            const res: any = await postData(addNewPointInteres, sitio)
+            //    console.log(res)
+
+            navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${res.point.id_punto}`, {
+                state: sitio,
+            })
         } else {
             alertNotNullInputs()
         }
@@ -171,7 +171,6 @@ const AddPoint = () => {
     const uploadImage = async (imagen: string) => {
         setSitio({
             id_sitio: datospuntoInteres.id_sitio,
-            id_guia: datospuntoInteres.id_guia,
             descripcion: sitio.descripcion,
             id_lenguaje: sitio.id_lenguaje,
             nombre: sitio.nombre,
@@ -181,6 +180,7 @@ const AddPoint = () => {
             qr_path: sitio.qr_path,
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
+            id_guia: datospuntoInteres.id_guia,
         })
 
         // console.log(sitio)
@@ -193,7 +193,7 @@ const AddPoint = () => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        console.log(language)
+        // console.log(language)
     }
 
     const languagesOptions = languages?.map((language) => ({
@@ -202,20 +202,8 @@ const AddPoint = () => {
     }))
 
     const handleChangeLanguage = (event: any) => {
-        setSitio({
-            id_sitio: datospuntoInteres.id_sitio,
-            id_guia: datospuntoInteres.id_guia,
-            descripcion: sitio.descripcion,
-            id_lenguaje: event.value,
-            nombre: sitio.nombre,
-            geoX: sitio.geoX,
-            geoY: sitio.geoY,
-            portada_path: sitio.portada_path,
-            qr_path: sitio.qr_path,
-            es_portada_de_sitio: sitio.es_portada_de_sitio,
-            estado: sitio.estado,
-        })
-        console.log(sitio)
+        sitio.id_lenguaje = event.value
+        // console.log(sitio)
     }
     return (
         <>
@@ -401,7 +389,6 @@ const AddPoint = () => {
                                                     onClick={() =>
                                                         setSitio({
                                                             id_sitio: datospuntoInteres.id_sitio,
-                                                            id_guia: datospuntoInteres.id_guia,
                                                             descripcion: sitio.descripcion,
                                                             id_lenguaje: sitio.id_lenguaje,
                                                             nombre: sitio.nombre,
@@ -412,6 +399,7 @@ const AddPoint = () => {
                                                             es_portada_de_sitio:
                                                                 sitio.es_portada_de_sitio,
                                                             estado: sitio.estado,
+                                                            id_guia: sitio.id_guia,
                                                         })
                                                     }
                                                 ></Link>
@@ -460,7 +448,6 @@ const AddPoint = () => {
                                             ) {
                                                 setSitio({
                                                     id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
                                                     descripcion: sitio.descripcion,
                                                     id_lenguaje: sitio.id_lenguaje,
                                                     nombre: e.target.value,
@@ -470,10 +457,91 @@ const AddPoint = () => {
                                                     qr_path: sitio.qr_path,
                                                     es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                     estado: sitio.estado,
+                                                    id_guia: sitio.id_guia,
                                                 })
                                             }
                                         }}
                                     ></input>
+
+                                    <div className='row mt-5'>
+                                        <div className='col-6'>
+                                            <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                                GeoX
+                                            </label>
+                                            <input
+                                                type='number'
+                                                className='form-control'
+                                                style={{
+                                                    border: '0',
+                                                    fontSize: '18px',
+                                                    color: '#FFFFFF',
+                                                }}
+                                                value={sitio.geoX == '' ? '' : sitio.geoX}
+                                                onChange={(e) => {
+                                                    if (
+                                                        validateStringSinCaracteresEspeciales(
+                                                            e.target.value
+                                                        )
+                                                    ) {
+                                                        setSitio({
+                                                            id_sitio: datospuntoInteres.id_sitio,
+                                                            descripcion: sitio.descripcion,
+                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            nombre: sitio.nombre,
+                                                            geoX: e.target.value,
+                                                            geoY: sitio.geoY,
+                                                            portada_path: sitio.portada_path,
+                                                            qr_path: sitio.qr_path,
+                                                            es_portada_de_sitio:
+                                                                sitio.es_portada_de_sitio,
+                                                            estado: sitio.estado,
+                                                            id_guia: sitio.id_guia,
+                                                        })
+                                                    }
+                                                }}
+                                            />
+                                            <hr style={{position: 'relative', top: '-20px'}}></hr>
+                                        </div>
+
+                                        <div className='col-6'>
+                                            <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                                GeoY
+                                            </label>
+                                            <input
+                                                type='number'
+                                                className='form-control'
+                                                style={{
+                                                    border: '0',
+                                                    fontSize: '18px',
+                                                    color: '#FFFFFF',
+                                                }}
+                                                value={sitio.geoY == '' ? '' : sitio.geoY}
+                                                onChange={(e) => {
+                                                    if (
+                                                        validateStringSinCaracteresEspeciales(
+                                                            e.target.value
+                                                        )
+                                                    ) {
+                                                        setSitio({
+                                                            id_sitio: datospuntoInteres.id_sitio,
+                                                            descripcion: sitio.descripcion,
+                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            nombre: sitio.nombre,
+                                                            geoX: sitio.geoX,
+                                                            geoY: e.target.value,
+                                                            portada_path: sitio.portada_path,
+                                                            qr_path: sitio.qr_path,
+                                                            es_portada_de_sitio:
+                                                                sitio.es_portada_de_sitio,
+                                                            estado: sitio.estado,
+                                                            id_guia: sitio.id_guia,
+                                                        })
+                                                    }
+                                                }}
+                                            />
+                                            <hr style={{position: 'relative', top: '-20px'}}></hr>
+                                        </div>
+                                    </div>
 
                                     <br />
                                     <label style={{fontSize: '14px', color: '#FFFFFF'}}>
@@ -508,7 +576,7 @@ const AddPoint = () => {
                                             ) {
                                                 setSitio({
                                                     id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
+
                                                     descripcion: e.target.value,
                                                     id_lenguaje: sitio.id_lenguaje,
                                                     nombre: sitio.nombre,
@@ -518,6 +586,7 @@ const AddPoint = () => {
                                                     qr_path: sitio.qr_path,
                                                     es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                     estado: sitio.estado,
+                                                    id_guia: sitio.id_guia,
                                                 })
                                             }
                                         }}
@@ -553,23 +622,21 @@ const AddPoint = () => {
                                         </div>
                                         <br></br>
                                         <div className='row'>
-                                           
-                                                <Button
-                                                    onClick={() => {
-                                                        addNewPoint('movil')
-                                                        // console.log(sitio)
-                                                        // window.location.href = "../sitios";
+                                            <Button
+                                                onClick={() => {
+                                                    addNewPoint('movil')
+                                                    // console.log(sitio)
+                                                    // window.location.href = "../sitios";
 
-                                                        console.log(
-                                                            'creado con el boton de sitio mobil'
-                                                        )
-                                                    }}
-                                                    className='btn btn-info col-md-12 col-sm-12 col-lg-12'
-                                                >
-                                                    {' '}
-                                                    <i className='fa-solid fa-pencil'></i> Crear
-                                                </Button>
-                                           
+                                                    // console.log(
+                                                    //     'creado con el boton de sitio mobil'
+                                                    // )
+                                                }}
+                                                className='btn btn-info col-md-12 col-sm-12 col-lg-12'
+                                            >
+                                                {' '}
+                                                <i className='fa-solid fa-pencil'></i> Crear
+                                            </Button>
                                         </div>
                                     </div>
                                     <div className=' col-md-6 col-xs-12 col-lg-6'>
@@ -596,7 +663,9 @@ const AddPoint = () => {
                                         <div className='row'>
                                             <Button
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
-                                                onClick={() => { addNewPoint('web') }}
+                                                onClick={() => {
+                                                    addNewPoint('web')
+                                                }}
                                             >
                                                 <i className='fa-solid fa-pencil '></i> Crear
                                             </Button>
@@ -613,7 +682,7 @@ const AddPoint = () => {
                     cargarIMG={uploadImage}
                     ubicacionBucket={'sitePages'}
                     tipoArchivoPermitido={'image/*'}
-                    />
+                />
             </div>
         </>
     )

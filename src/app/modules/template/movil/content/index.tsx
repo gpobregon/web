@@ -19,7 +19,7 @@ const Index = () => {
                         <Card.Body className="seccion-dark rounded height-section">
                             <h1 className="text-white">{changeModeEditor === 1 ? 'Agregar Elemento' : 'Recursos Disponibles' }</h1>
                             <span>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                Elementos disponibles para uso de maquetación
                             </span>
                             <ButtonGroup className="w-100 py-5">
                                 <Button size="sm" className="text-white" variant={changeModeEditor === 1 ? 'primary' : 'dark bkg-dark'} onClick={() => setChangeModeEditor(1)}>{ changeTypeEdit === 1 ? 'Elementos' : 'Diseño' }</Button>

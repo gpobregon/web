@@ -1,7 +1,16 @@
 import swal from 'sweetalert'
 // VALIDAR CADENA CON CARACTERES SIN ESPECIALES ------------------------------------------------
 export const validateStringSinCaracteresEspeciales = (cadena: string) => {
-    var patron = /^$|^[a-zA-Z\u00C0-\u017F| \" \° '`´¨ 0-9.,\- *]+$/
+    var patron = /^$|^[a-zA-Z\u00C0-\u017F| \" \° \r \n '`´¨ 0-9.,\- *]+$/
+    if (cadena.search(patron)) {
+        swal('Error', 'No se permiten caracteres especiales', 'error')
+        return false
+    }
+    return true
+}
+
+export const validateStringNombre = (cadena: string) => {
+    var patron = /^$|^[a-zA-Z\u00C0-\u017F|  '`´¨]+$/
     if (cadena.search(patron)) {
         swal('Error', 'No se permiten caracteres especiales', 'error')
         return false

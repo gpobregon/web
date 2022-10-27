@@ -4,10 +4,11 @@
 import { FC, useState, useEffect, useRef, Fragment } from 'react'
 import { Row, Col, Button, ButtonGroup, Form } from 'react-bootstrap'
 import { generateRandomString } from '../../../../../utility/global/index'
-import { dataURLtoFile } from '../../../../global/index'
-import { Image } from 'react-bootstrap';
 import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
+import { dataURLtoFile } from '../../../../global/index'
+import { Image } from 'react-bootstrap'
 import CropImage from './cropImage'
+import swal from 'sweetalert'
 
 type Model = {
     editItem: any,
@@ -45,7 +46,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
         }
     }
     const appedItemsCarousel = () => {
-        if (titulo.current && titulo.current.value && descripcion.current && descripcion.current.value && editItemResource.url) {
+        if (editItemResource.url) {
             const items = {
                 id: generateRandomString(7),
                 url: editItemResource.url,
@@ -54,6 +55,14 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
             }
             changeSizeTitle({ list: [...editItem.list, items] })
             clearDataFormCarousel()
+        } else {
+            swal(
+                {
+                    title: 'Error!',
+                    text: 'Seleccione una imagen antes de agregar al carrusel',
+                    icon: 'error',
+                }
+            )
         }
     }
 
@@ -145,7 +154,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                                     />
                                 </Button>
                                 <div className="tooltip-one">
-                                    Eliminar Image
+                                    Eliminar Imagen
                                 </div>
                             </div>
                         </div>
@@ -268,10 +277,11 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                             <ul className="list-group overflow-auto" style={{ height: "100px" }}>
                                 {
                                     editItem.list.map((item: any, index: number) => {
+                                        console.log(item)
                                         return (
                                             <li className="list-group-item bg-transparent" key={index}>
                                                 <div className="d-flex">
-                                                    <div className="p-2 w-100">{item.titulo}</div>
+                                                    <div className="p-2 w-100">{item.titulo? item.titulo : item.id}</div>
                                                     <div className="p-2 flex-shrink-1" onClick={() => destroyElementCarousel(item.id)}><i className="bi bi-trash text-danger cursor-pointer"></i></div>
                                                 </div>
                                             </li>

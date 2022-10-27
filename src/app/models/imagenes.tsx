@@ -1,10 +1,8 @@
 export interface Imagen {
     id_punto_a: number
     id_punto_b: number
-    img_path: string
-    estado: number
-    posicion_en_lista: number
-    descripcion: string
-    id_image: number
+    imagen_ref1: string
+    imagen_ref2: string
+    imagen_ref3: string
   }
   

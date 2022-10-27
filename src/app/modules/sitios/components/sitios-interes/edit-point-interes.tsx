@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import {Col, Card, Button, Row, Modal, Form} from 'react-bootstrap'
 import {
@@ -13,13 +13,14 @@ import {
     languagesMethod,
     statePointInteresPublished,
     getRolesMethod,
+    getPuntoInteres,
 } from '../../../../services/api'
 import swal from 'sweetalert'
 import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
-import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
+import {Link, Navigate, useLocation, useNavigate, useParams} from 'react-router-dom'
 import {status} from '../../../../models/status'
-import {Site} from '../../../../models/site'
+
 import logo from '../../upload-image_03.jpg'
 import {QRCodeCanvas} from 'qrcode.react'
 import UpImage from '../../../uploadFile/upload-image'
@@ -29,6 +30,7 @@ import {CostExplorer} from 'aws-sdk'
 import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
+import {LoadingContext} from '../../../../utility/component/loading/context'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -72,31 +74,6 @@ const customStyles = {
     }),
 }
 
-type datosPuntoInteres = {
-    id_punto: number
-    lenguajes: [
-        {
-            value: number
-            label: string
-            id_punto: number
-            id_lenguaje: number
-            descripcion: string
-        }
-    ]
-    id_sitio: number
-    id_guia: number
-    nombre: string
-    descripcion: string
-    geoX: number
-    geoY: number
-    portada_path: string
-    qr_path: string
-    es_portada_de_sitio: boolean
-    estado: boolean
-    es_visible: boolean
-    publicado: boolean
-    nombreSala: string
-}
 const animatedComponents = makeAnimated()
 const EditPoint = () => {
     const navigate = useNavigate()
@@ -104,35 +81,62 @@ const EditPoint = () => {
     const handleShow = () => setShow(true) //modal open qr
     const [show, setShow] = useState(false) //modal show qr
     //get sitio-------------------------------------------------------------------------------------
-    const [sitios, setSitios] = useState()
     const {state} = useLocation()
-    const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
+    const {id_punto, id_sitio} = useParams()
+    const [nombreSalas, setNombreSalas] = useState('')
+    // const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
-        id_punto: datospuntoInteres.id_punto,
-        id_sitio: datospuntoInteres.id_sitio,
-        id_guia: datospuntoInteres.id_guia,
+        id_punto: 0,
+        id_sitio: 0,
         descripcion: '',
-        id_lenguaje: datospuntoInteres.lenguajes,
-        nombre: datospuntoInteres.nombre,
-        geoX: datospuntoInteres.geoX,
-        geoY: datospuntoInteres.geoY,
-        portada_path: datospuntoInteres.portada_path,
-        qr_path: datospuntoInteres.qr_path,
-        es_portada_de_sitio: datospuntoInteres.es_portada_de_sitio,
-        estado: datospuntoInteres.estado,
-        es_visible: datospuntoInteres.es_visible,
+        id_lenguaje: 0,
+        lenguajes: [{id_punto: 0, id_lenguaje: 0, descripcion: ''}],
+        nombre: '',
+        geoX: '',
+        geoY: '',
+        portada_path: '',
+        qr_path: '',
+        es_portada_de_sitio: '',
+        estado: false,
+        es_visible: false,
         id_lenguaje_anterior: 0,
-        publicado: datospuntoInteres.publicado,
+        publicado: false,
+        nombre_usuario_edito: '',
     })
+
+    const ObtenerPuntoInteres = async () => {
+        const punto: any = await postData(getPuntoInteres, {id_punto: Number(id_punto)})
+        setNombreSalas(punto.sala_nombre)
+        setSitio({
+            id_punto: Number(id_punto),
+            id_sitio: Number(id_sitio),
+            descripcion: '',
+            id_lenguaje: 0,
+            lenguajes: punto.lenguajes,
+            nombre: punto.nombre,
+            geoX: punto.geoX,
+            geoY: punto.geoY,
+            portada_path: punto.portada_path,
+            qr_path: punto.qr_path,
+            es_portada_de_sitio: punto.es_portada_de_sitio,
+            estado: punto.estado,
+            es_visible: punto.es_visible,
+            id_lenguaje_anterior: 0,
+            publicado: punto.publicado,
+            nombre_usuario_edito: '',
+        })
+        // console.log(punto)
+    }
+    // console.log('sitio', sitio)
     const changeOculto = async (oculto: boolean) => {
         await postData(statePointInteres, {
-            id_punto: datospuntoInteres.id_punto,
+            id_punto: id_punto,
             es_visible: oculto,
         })
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
-            id_guia: sitio.id_guia,
+            lenguajes: sitio.lenguajes,
             descripcion: sitio.descripcion,
             id_lenguaje: sitio.id_lenguaje,
             nombre: sitio.nombre,
@@ -145,18 +149,19 @@ const EditPoint = () => {
             es_visible: oculto,
             publicado: sitio.publicado,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
+            nombre_usuario_edito: sitio.nombre_usuario_edito,
         })
     }
     const changePublicado = async (publicado1: boolean) => {
         await postData(statePointInteresPublished, {
-            id_punto: datospuntoInteres.id_punto,
+            id_punto: id_punto,
             publicado: publicado1,
         })
 
         setSitio({
             id_punto: sitio.id_punto,
             id_sitio: sitio.id_sitio,
-            id_guia: sitio.id_guia,
+            lenguajes: sitio.lenguajes,
             descripcion: sitio.descripcion,
             id_lenguaje: sitio.id_lenguaje,
             nombre: sitio.nombre,
@@ -169,6 +174,7 @@ const EditPoint = () => {
             es_visible: sitio.es_visible,
             publicado: publicado1,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
+            nombre_usuario_edito: sitio.nombre_usuario_edito,
         })
     }
     //alert methods-----------------------------------------------------------------------
@@ -185,15 +191,13 @@ const EditPoint = () => {
                     timer: 2000,
                 })
                 // console.log(sitios)
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${id_sitio}`)
             }
         })
     }
     async function postSiteMaquetar(tipo: string) {
         await updatePoint()
-        navigate(`/template/punto/${tipo}/${sitio.id_punto}`)
+        navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${sitio.id_punto}`, {state: sitio})
     }
 
     const saveChanges = async () => {
@@ -209,9 +213,7 @@ const EditPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios/edit', {
-                    state: sitios,
-                })
+                navigate(`/sitios/editSite/${id_sitio}`)
             }
             await updatePoint()
         })
@@ -225,29 +227,30 @@ const EditPoint = () => {
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
-        console.log(updatePoint)
+        // console.log(updatePoint)
+        // console.log(sitio)
     }
 
-    const getSites = async () => {
-        const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
-        setSitios(site.site)
-    }
+    // const getSites = async () => {
+    //     const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
+    //     setSitios(site.site)
+    // }
     //obtener lenguajes-------------------------------------------------------------------------------------
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
-    let lenaguajeDefault = ''
-    for (let i = 0; i < languages.length; i++) {
-        if (languages[i].id_lenguaje === datospuntoInteres.lenguajes[0].value) {
-            // setLenaguajeDefault(languages[i].descripcion)
+    // let lenaguajeDefault = ''
+    // for (let i = 0; i < languages.length; i++) {
+    //     if (languages[i].id_lenguaje === sitio.id_lenguaje[0].value) {
+    //         // setLenaguajeDefault(languages[i].descripcion)
 
-            lenaguajeDefault = languages[i].nombre
-        }
-    }
+    //         lenaguajeDefault = languages[i].nombre
+    //     }
+    // }
 
-    const languageEscogido = datospuntoInteres.lenguajes?.map((language) => ({
-        value: language.value,
-        label: lenaguajeDefault,
-    }))
+    // const languageEscogido = sitio.id_lenguaje?.map((language) => ({
+    //     value: language.value,
+    //     label: lenaguajeDefault,
+    // }))
 
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
@@ -267,29 +270,15 @@ const EditPoint = () => {
     const [descripcion, setDescripcion] = useState('')
     const [mostrarDescripcion, setMostrarDescripcion] = useState(false)
     const handleChangeLanguage = async (event: any) => {
-        const result = datospuntoInteres.lenguajes?.filter(
-            (language) => language.id_lenguaje === event.value
-        )
+        const result = sitio.lenguajes?.filter((language) => language.id_lenguaje === event.value)
         if (result[0]?.descripcion) {
+            // console.log(event.value)
             setDescripcion(result[0]?.descripcion)
             setMostrarDescripcion(true)
-            setSitio({
-                id_punto: datospuntoInteres.id_punto,
-                id_sitio: datospuntoInteres.id_sitio,
-                id_guia: datospuntoInteres.id_guia,
-                descripcion: descripcion,
-                id_lenguaje: event.value,
-                nombre: sitio.nombre,
-                geoX: sitio.geoX,
-                geoY: sitio.geoY,
-                portada_path: sitio.portada_path,
-                qr_path: sitio.qr_path,
-                es_portada_de_sitio: sitio.es_portada_de_sitio,
-                estado: sitio.estado,
-                es_visible: sitio.es_visible,
-                publicado: true,
-                id_lenguaje_anterior: event.value,
-            })
+            sitio.descripcion = descripcion
+            sitio.id_lenguaje = event.value
+            sitio.id_lenguaje_anterior = event.value
+            // console.log(sitio)
         } else {
             setDescripcion('')
             swal({
@@ -301,9 +290,9 @@ const EditPoint = () => {
                 if (res) {
                     setMostrarDescripcion(true)
                     setSitio({
-                        id_punto: datospuntoInteres.id_punto,
-                        id_sitio: datospuntoInteres.id_sitio,
-                        id_guia: datospuntoInteres.id_guia,
+                        id_punto: sitio.id_punto,
+                        id_sitio: sitio.id_sitio,
+                        lenguajes: sitio.lenguajes,
                         descripcion: descripcion,
                         id_lenguaje: event.value,
                         nombre: sitio.nombre,
@@ -316,6 +305,7 @@ const EditPoint = () => {
                         es_visible: sitio.es_visible,
                         publicado: true,
                         id_lenguaje_anterior: -1,
+                        nombre_usuario_edito: sitio.nombre_usuario_edito,
                     })
                 }
             })
@@ -328,11 +318,11 @@ const EditPoint = () => {
     const [modalupimg, setModalupIMG] = useState(false)
     const uploadImage = async (imagen: string) => {
         setSitio({
-            id_punto: datospuntoInteres.id_punto,
-            id_sitio: datospuntoInteres.id_sitio,
-            id_guia: datospuntoInteres.id_guia,
-            descripcion: datospuntoInteres.descripcion,
+            id_punto: Number(id_punto),
+            id_sitio: Number(id_sitio),
+            descripcion: sitio.descripcion,
             id_lenguaje: sitio.id_lenguaje,
+            lenguajes: sitio.lenguajes,
             nombre: sitio.nombre,
             geoX: sitio.geoX,
             geoY: sitio.geoY,
@@ -343,6 +333,7 @@ const EditPoint = () => {
             es_visible: sitio.es_visible,
             publicado: true,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
+            nombre_usuario_edito: sitio.nombre_usuario_edito,
         })
 
         if (imagen != '') {
@@ -369,11 +360,13 @@ const EditPoint = () => {
     }
 
     useEffect(() => {
-        getSites()
+        // getSites()
         getLanguages()
-    }, [descripcion])
+        ObtenerPuntoInteres()
+    }, [])
 
     // * Restricción por rol
+    const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -387,21 +380,26 @@ const EditPoint = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
             })
 
             if (filter[0]?.sitio_editar === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionPostPoint(filter[0]?.sitio_punto_publicar)
                 setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
@@ -427,15 +425,20 @@ const EditPoint = () => {
                             ></Button>
                         </div>
                         <div id='center'>
-                            {/* {site.nombre != '' ? (
+                            {/* {sitio.nombre != '' ? (
                 <span className='font-size: 10rem; '>
-            <h1 style={{marginTop:'10px',marginRight:'5px'}} >{   site.nombre }</h1> 
+            <h1 style={{marginTop:'10px',marginRight:'5px'}} >{   sitio.nombre }</h1> 
                
                   
                 </span>
               ) : (
                 <p></p>
               )} */}
+                            <span className='font-size: 10rem; '>
+                                <h3 style={{marginTop: '10px', marginRight: '20px'}}>
+                                    {sitio.nombre}
+                                </h3>
+                            </span>
                         </div>
                         <div id='center'>
                             {/* <p style={{marginTop:'16px'}} > Ultima vez editado el {Moment(site.editado).format('DD/MM/YYYY hh:mm') + ' '} por{' '}</p>  */}
@@ -481,7 +484,7 @@ const EditPoint = () => {
                                         <Modal.Dialog>Sitio: {sitio.nombre}</Modal.Dialog>
                                         <QRCodeCanvas
                                             id='qrCode'
-                                            value={datospuntoInteres.qr_path}
+                                            value={sitio.qr_path}
                                             size={300}
                                             level={'H'}
                                         />
@@ -609,11 +612,10 @@ const EditPoint = () => {
                                                     to={''}
                                                     onClick={() =>
                                                         setSitio({
-                                                            id_punto: datospuntoInteres.id_punto,
-                                                            id_sitio: datospuntoInteres.id_sitio,
-                                                            id_guia: datospuntoInteres.id_guia,
-                                                            descripcion:
-                                                                datospuntoInteres.descripcion,
+                                                            id_punto: sitio.id_punto,
+                                                            id_sitio: sitio.id_sitio,
+                                                            lenguajes: sitio.lenguajes,
+                                                            descripcion: sitio.descripcion,
                                                             id_lenguaje: sitio.id_lenguaje,
                                                             nombre: sitio.nombre,
                                                             geoX: sitio.geoX,
@@ -627,6 +629,8 @@ const EditPoint = () => {
                                                             publicado: true,
                                                             id_lenguaje_anterior:
                                                                 sitio.id_lenguaje_anterior,
+                                                            nombre_usuario_edito:
+                                                                sitio.nombre_usuario_edito,
                                                         })
                                                     }
                                                 ></Link>
@@ -648,7 +652,7 @@ const EditPoint = () => {
                                         className='form-control'
                                         disabled
                                         style={{border: '0', fontSize: '14px', color: '#92929F'}}
-                                        value={datospuntoInteres.nombreSala}
+                                        value={nombreSalas}
                                     ></input>
 
                                     <br></br>
@@ -674,9 +678,9 @@ const EditPoint = () => {
                                                 )
                                             ) {
                                                 setSitio({
-                                                    id_punto: datospuntoInteres.id_punto,
-                                                    id_sitio: datospuntoInteres.id_sitio,
-                                                    id_guia: datospuntoInteres.id_guia,
+                                                    id_punto: sitio.id_punto,
+                                                    id_sitio: sitio.id_sitio,
+                                                    lenguajes: sitio.lenguajes,
                                                     descripcion: sitio.descripcion,
                                                     id_lenguaje: sitio.id_lenguaje,
                                                     nombre: e.target.value,
@@ -690,12 +694,109 @@ const EditPoint = () => {
                                                     publicado: true,
                                                     id_lenguaje_anterior:
                                                         sitio.id_lenguaje_anterior,
+                                                    nombre_usuario_edito:
+                                                        sitio.nombre_usuario_edito,
                                                 })
                                             }
                                         }}
                                     ></input>
 
                                     <br />
+
+                                    <div className='row'>
+                                        <div className='col-6'>
+                                            <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                                GeoX
+                                            </label>
+                                            <input
+                                                type='number'
+                                                className='form-control'
+                                                style={{
+                                                    border: '0',
+                                                    fontSize: '18px',
+                                                    color: '#FFFFFF',
+                                                }}
+                                                value={sitio.geoX == '' ? '' : sitio.geoX}
+                                                onChange={(e) => {
+                                                    if (
+                                                        validateStringSinCaracteresEspeciales(
+                                                            e.target.value
+                                                        )
+                                                    ) {
+                                                        setSitio({
+                                                            id_punto: sitio.id_punto,
+                                                            id_sitio: sitio.id_sitio,
+                                                            lenguajes: sitio.lenguajes,
+                                                            descripcion: sitio.descripcion,
+                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            nombre: sitio.nombre,
+                                                            geoX: e.target.value,
+                                                            geoY: sitio.geoY,
+                                                            portada_path: sitio.portada_path,
+                                                            qr_path: sitio.qr_path,
+                                                            es_portada_de_sitio:
+                                                                sitio.es_portada_de_sitio,
+                                                            estado: sitio.estado,
+                                                            es_visible: sitio.es_visible,
+                                                            publicado: true,
+                                                            id_lenguaje_anterior:
+                                                                sitio.id_lenguaje_anterior,
+                                                            nombre_usuario_edito:
+                                                                sitio.nombre_usuario_edito,
+                                                        })
+                                                    }
+                                                }}
+                                            />
+                                            <hr style={{position: 'relative', top: '-20px'}}></hr>
+                                        </div>
+
+                                        <div className='col-6'>
+                                            <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                                GeoY
+                                            </label>
+                                            <input
+                                                type='number'
+                                                className='form-control'
+                                                style={{
+                                                    border: '0',
+                                                    fontSize: '18px',
+                                                    color: '#FFFFFF',
+                                                }}
+                                                value={sitio.geoY == '' ? '' : sitio.geoY}
+                                                onChange={(e) => {
+                                                    if (
+                                                        validateStringSinCaracteresEspeciales(
+                                                            e.target.value
+                                                        )
+                                                    ) {
+                                                        setSitio({
+                                                            id_punto: sitio.id_punto,
+                                                            id_sitio: sitio.id_sitio,
+                                                            lenguajes: sitio.lenguajes,
+                                                            descripcion: sitio.descripcion,
+                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            nombre: sitio.nombre,
+                                                            geoX: sitio.geoX,
+                                                            geoY: e.target.value,
+                                                            portada_path: sitio.portada_path,
+                                                            qr_path: sitio.qr_path,
+                                                            es_portada_de_sitio:
+                                                                sitio.es_portada_de_sitio,
+                                                            estado: sitio.estado,
+                                                            es_visible: sitio.es_visible,
+                                                            publicado: true,
+                                                            id_lenguaje_anterior:
+                                                                sitio.id_lenguaje_anterior,
+                                                            nombre_usuario_edito:
+                                                                sitio.nombre_usuario_edito,
+                                                        })
+                                                    }
+                                                }}
+                                            />
+                                            <hr style={{position: 'relative', top: '-20px'}}></hr>
+                                        </div>
+                                    </div>
+ 
                                     <label style={{fontSize: '14px', color: '#FFFFFF'}}>
                                         Lenguajes
                                     </label>
@@ -729,25 +830,7 @@ const EditPoint = () => {
                                                         )
                                                     ) {
                                                         setDescripcion(e.target.value)
-                                                        setSitio({
-                                                            id_punto: datospuntoInteres.id_punto,
-                                                            id_sitio: datospuntoInteres.id_sitio,
-                                                            id_guia: datospuntoInteres.id_guia,
-                                                            descripcion: e.target.value,
-                                                            id_lenguaje: sitio.id_lenguaje,
-                                                            nombre: datospuntoInteres.nombre,
-                                                            geoX: sitio.geoX,
-                                                            geoY: sitio.geoY,
-                                                            portada_path: sitio.portada_path,
-                                                            qr_path: sitio.qr_path,
-                                                            es_portada_de_sitio:
-                                                                sitio.es_portada_de_sitio,
-                                                            estado: sitio.estado,
-                                                            es_visible: sitio.es_visible,
-                                                            publicado: true,
-                                                            id_lenguaje_anterior:
-                                                                sitio.id_lenguaje_anterior,
-                                                        })
+                                                        sitio.descripcion = e.target.value
                                                     }
                                                 }}
                                             />
@@ -873,9 +956,10 @@ const EditPoint = () => {
             <br />
             <h3>Creación de rutas entre puntos de interés</h3>
             <SalaRutas
-                id_punto_a={sitio.id_punto}
-                id_sitio={sitio.id_sitio}
-                puntosIteres={datospuntoInteres}
+                id_punto_a={Number(id_punto)}
+                id_sitio={Number(id_sitio)}
+                // puntosIteres={sitio}
+                nombrepunto_a={sitio.nombre}
             />
         </>
     )

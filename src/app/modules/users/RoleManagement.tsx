@@ -1,4 +1,4 @@
-import React, {FC, useState, useEffect} from 'react'
+import React, {FC, useState, useEffect, useContext} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {
     Button,
@@ -26,6 +26,7 @@ import {roleManager} from '../../models/roleManager'
 import swal from 'sweetalert'
 import {validateStringSinCaracteresEspeciales} from '../validarCadena/validadorCadena'
 import {Auth} from 'aws-amplify'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const RoleManagement: FC<any> = ({show}) => {
     const [roles, setRoles] = useState<roleManager[]>([])
@@ -186,9 +187,9 @@ const RoleManagement: FC<any> = ({show}) => {
 
         await swal({
             title: '¿Estás seguro de eliminar este rol?',
-            icon: 'warning',
-            buttons: ['Cancelar', 'Eliminar'],
+            icon: 'warning', 
             dangerMode: true,
+            buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {
                 flag = true
@@ -234,6 +235,7 @@ const RoleManagement: FC<any> = ({show}) => {
     console.log('----------------------------------------')
 
     let navigate = useNavigate()
+    const {setShowLoad} = useContext(LoadingContext)
     const [existRoles, setExistRoles] = useState(false)
 
     const [permissionCreateRole, setPermissionCreateRole] = useState(true)
@@ -241,22 +243,27 @@ const RoleManagement: FC<any> = ({show}) => {
     const [permissionDeleteRole, setPermissionDeleteRole] = useState(true)
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
             })
 
             if (filter[0]?.gestor_usuarios === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionCreateRole(filter[0]?.rol_crear)
                 setPermissionEditRole(filter[0]?.rol_editar)
                 setPermissionDeleteRole(filter[0]?.rol_eliminar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles, permissionEditRole, permissionDeleteRole])

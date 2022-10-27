@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import {Container, Row, Col, Button, Card} from 'react-bootstrap'
 import {getData, sitesMethod, deleteData, postData, getRolesMethod} from '../../services/api'
 import Sitio from './components/sitio'
@@ -10,6 +10,7 @@ import QRCode from 'qrcode.react'
 import {roleManager} from '../../models/roleManager'
 import {Auth} from 'aws-amplify'
 import swal from 'sweetalert'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -64,7 +65,7 @@ const SitiosPage = () => {
        
         
         let pagesLength = Math.ceil(coutsite.count / 8)
-        console.log(pagesLength)
+        // console.log(pagesLength)
         setTotalPages(pagesLength)
     }
 
@@ -141,6 +142,7 @@ const SitiosPage = () => {
     }
 
     let navigate = useNavigate()
+    const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -155,22 +157,27 @@ const SitiosPage = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
             })
 
             if (filter[0]?.gestor_sitios === false) {
-                navigate('/errors/404', {replace: true})
+                navigate('/error/401', {replace: true})
             } else {
                 setPermissionCreateSite(filter[0]?.sitio_crear)
                 setPermissionEditSite(filter[0]?.sitio_editar)
                 setPermissionDeleteSite(filter[0]?.sitio_eliminar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
@@ -271,7 +278,7 @@ const SitiosPage = () => {
                             })
                             return
                         }
-                        navigate('/sitios/create', {replace: true})
+                        navigate('/sitios/createSite', {replace: true})
                     }}
                 >
                     <i className='bi bi-file-earmark-plus'></i>
@@ -316,7 +323,7 @@ const SitiosPage = () => {
                                     })
                                     return
                                 }
-                                navigate('/sitios/create', {replace: true})
+                                navigate('/sitios/createSite', {replace: true})
                             }}
                         >
                             <svg
