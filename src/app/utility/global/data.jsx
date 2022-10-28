@@ -53,6 +53,13 @@ const Element = [
             text: 'Salto de Línea',
             type: "space",
             typeElement: 'texts'
+          },
+          {
+            typeIcon: 'bi',
+            icon: 'dash-lg',
+            text: 'Separador',
+            type: "divider",
+            typeElement: 'texts'
           }
         ]
       },
