@@ -119,7 +119,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
                                 <div className="popover__wrapper">
                                     <i className={`bi bi-tiktok fs-1 ${data.tiktok !== '' ? 'text-white' : 'text-muted'}`} />
                                     <div className="popover__content">
-                                        <Form.Control placeholder="ingresa url" size="sm" defaultValue={data.tiktok} onChange={(e: any) => changeText({ linkedin: stripHtml(e.target.value) })} />
+                                        <Form.Control placeholder="ingresa url" size="sm" defaultValue={data.tiktok} onChange={(e: any) => changeText({ tiktok: stripHtml(e.target.value) })} />
                                     </div>
                                 </div>
                             </div>
