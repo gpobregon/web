@@ -52,13 +52,15 @@ const Carousel: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateE
 
     const removeImage = () => {
         const response = itemsList.filter((item: any) => item.id_recurso !== selected.id_recurso)
-        const response2 = selectedItem.filter((item: any) => item.id_recurso !== selected.id_recurso)
+        const response2 = selectedItem.filter((item: any) => item !== selected.id_recurso)
         setItemsList(response)
         setSelectedItem(response2)
+        setSelected([])
         changeText({ list: response })
     }
 
     const appendItem = (data: any) => {
+
         if (!selectedItem.includes(selected.id_recurso) && selected.id_recurso) {
             setSelectedItem([...selectedItem, selected.id_recurso])
             setItemsList([...itemsList, { ...selected, ...data }])
@@ -71,6 +73,7 @@ const Carousel: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateE
     const selectionData = (item: any) => {
         (item.id_recurso && !selected.id_recurso) ? setSelected(item) : setSelected([])
     }
+
     useEffect(() => {
         if (count === 1) {
             changeText({ list: itemsList })
@@ -111,7 +114,10 @@ const Carousel: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateE
                                         size="sm"
                                         {...register('titulo',
                                             {
-                                                required: "Este campo es requerido",
+                                                required: {
+                                                    value: false,
+                                                    message: "Este campo es requerido"
+                                                },
                                             }
                                         )
                                         }
@@ -128,7 +134,10 @@ const Carousel: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateE
                                         size="sm"
                                         {...register('descripcion',
                                             {
-                                                required: "Este campo es requerido",
+                                                required: {
+                                                    value: false,
+                                                    message: "Este campo es requerido"
+                                                },
                                             }
                                         )
                                         }
@@ -171,15 +180,22 @@ const Carousel: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateE
                 {changeTypeEdit === 1 ?
                     data.list.length > 0 ? (<CustomCarusel list={data.list} />) : (<i className={`bi bi-images display-2 text-white`} />)
                     :
-                    (<OverlayTrigger
-                        trigger="click"
-                        placement="left"
-                        overlay={popoverClick}
-                    >
-                        <div className="px-3">
-                            {data.list.length > 0 ? (<CustomCarusel list={data.list} />) : (<i className={`bi bi-images display-2 text-white`} />)}
-                        </div>
-                    </OverlayTrigger>)
+                    (
+                        <>
+
+                            <OverlayTrigger
+                                trigger="click"
+                                placement="left"
+                                overlay={popoverClick}
+                            >
+                                <i className="bi bi-plus-circle-fill text-white fw-bolder fs-2 cursor-pointer shadow-sm position-icon" />
+
+                            </OverlayTrigger>
+                            <div className="px-3">
+                                {data.list.length > 0 ? (<CustomCarusel list={data.list} />) : (<i className={`bi bi-images display-2 text-white`} />)}
+                            </div>
+                        </>
+                    )
                 }
 
             </div>
