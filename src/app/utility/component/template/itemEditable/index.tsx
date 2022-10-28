@@ -5,7 +5,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import Text from './textos/text'
 import Paragraph from "./textos/paragraph"
 import List from "./textos/list"
-import Space from "./textos/divider"
+import Space from "./textos/space"
 import Divider from "./textos/divider"
 
 import Url from "./otros/url"
