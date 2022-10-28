@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useContext, useState, useEffect, useRef } from "react";
+import { FC, useContext, useState, useEffect } from "react";
 import Masonry from 'react-masonry-css'
 import Image from '../../../resource/imageCarousel'
 import PerfectScrollbar from 'react-perfect-scrollbar'
