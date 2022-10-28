@@ -128,8 +128,8 @@ const EditSite = () => {
         nombre_usuario_edito: '',
         qr_path: '',
         telefono: '',
-        website: '', 
-        qr_image_path: ''
+        website: '',
+        qr_image_path: '',
     })
     console.log('site: ', site)
 
@@ -312,8 +312,8 @@ const EditSite = () => {
                 nombre_usuario_edito: dataUser.name,
                 qr_path: site.qr_path,
                 telefono: site.telefono,
-                website: site.website, 
-                qr_image_path: site.website
+                website: site.website,
+                qr_image_path: site.website,
             })
         } else {
             swal({
@@ -411,8 +411,8 @@ const EditSite = () => {
             nombre_usuario_edito: dataUser.name,
             qr_path: site.qr_path,
             telefono: site.telefono,
-            website: site.website, 
-            qr_image_path: site.website
+            website: site.website,
+            qr_image_path: site.website,
         })
         // console.log(site)
     }
@@ -437,7 +437,7 @@ const EditSite = () => {
         const pngUrl = canvas!.toDataURL('image/png').replace('image/png', 'image/octet-stream')
         let downloadLink = document.createElement('a')
         downloadLink.href = pngUrl
-        downloadLink.download = 'qr.png'
+        downloadLink.download = `${site.nombre}.png`
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)
@@ -781,8 +781,8 @@ const EditSite = () => {
                                                             nombre_usuario_edito: dataUser.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
-                                                            website: site.website, 
-                                                            qr_image_path: site.website
+                                                            website: site.website,
+                                                            qr_image_path: site.website,
                                                         })
                                                     }
                                                 ></Link>
@@ -832,8 +832,8 @@ const EditSite = () => {
                                                     nombre_usuario_edito: dataUser.name,
                                                     qr_path: site.qr_path,
                                                     telefono: site.telefono,
-                                                    website: site.website, 
-                                                    qr_image_path: site.website
+                                                    website: site.website,
+                                                    qr_image_path: site.website,
                                                 })
                                             }
                                         }}
@@ -878,8 +878,8 @@ const EditSite = () => {
                                                             nombre_usuario_edito: dataUser.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
-                                                            website: site.website, 
-                                                            qr_image_path: site.website
+                                                            website: site.website,
+                                                            qr_image_path: site.website,
                                                         })
                                                     }
                                                 }}
@@ -924,8 +924,8 @@ const EditSite = () => {
                                                                 site.nombre_usuario_edito,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
-                                                            website: site.website, 
-                                                            qr_image_path: site.website
+                                                            website: site.website,
+                                                            qr_image_path: site.website,
                                                         })
                                                     }
                                                 }}
@@ -971,17 +971,17 @@ const EditSite = () => {
                                                     nombre_usuario_edito: dataUser.name,
                                                     qr_path: site.qr_path,
                                                     telefono: site.telefono,
-                                                    website: site.website, 
-                                                    qr_image_path: site.website
+                                                    website: site.website,
+                                                    qr_image_path: site.website,
                                                 })
                                             }
                                         }}
-                                    ></input> 
+                                    ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
 
                                     <br />
                                     <label style={{fontSize: '14px', color: '#FFFFFF'}}>
-                                        Teléfono    
+                                        Teléfono
                                     </label>
                                     <br></br>
                                     <input
@@ -1016,13 +1016,13 @@ const EditSite = () => {
                                                     nombre_usuario_edito: dataUser.name,
                                                     qr_path: site.qr_path,
                                                     telefono: e.target.value,
-                                                    website: site.website, 
-                                                    qr_image_path: site.website
+                                                    website: site.website,
+                                                    qr_image_path: site.website,
                                                 })
                                             }
                                         }}
                                     ></input>
-                                    <hr style={{position: 'relative', top: '-20px'}}></hr> 
+                                    <hr style={{position: 'relative', top: '-20px'}}></hr>
 
                                     <br />
                                     <label style={{fontSize: '14px', color: '#FFFFFF'}}>
@@ -1035,30 +1035,30 @@ const EditSite = () => {
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.website != '' ? site.website : ''}
                                         onChange={(e) => {
-                                                setSite({
-                                                    id_sitio: site.id_sitio,
-                                                    nombre: site.nombre,
-                                                    descripcion: site.descripcion,
-                                                    ubicacion: site.ubicacion,
-                                                    geoX: site.geoX,
-                                                    geoY: site.geoY,
-                                                    portada_path: site.portada_path,
-                                                    estado: site.estado,
-                                                    creado: site.creado,
-                                                    editado: site.editado,
-                                                    categorias: site.categorias,
-                                                    id_municipio: site.id_municipio,
-                                                    favorito: status.favorito,
-                                                    publicado: status.publicado,
-                                                    oculto: status.oculto,
-                                                    geo_json: site.geo_json,
-                                                    cercania_activa: status.cercania_activa,
-                                                    nombre_usuario_edito: dataUser.name,
-                                                    qr_path: site.qr_path,
-                                                    telefono: site.telefono,
-                                                    website: e.target.value, 
-                                                    qr_image_path: site.website
-                                                })
+                                            setSite({
+                                                id_sitio: site.id_sitio,
+                                                nombre: site.nombre,
+                                                descripcion: site.descripcion,
+                                                ubicacion: site.ubicacion,
+                                                geoX: site.geoX,
+                                                geoY: site.geoY,
+                                                portada_path: site.portada_path,
+                                                estado: site.estado,
+                                                creado: site.creado,
+                                                editado: site.editado,
+                                                categorias: site.categorias,
+                                                id_municipio: site.id_municipio,
+                                                favorito: status.favorito,
+                                                publicado: status.publicado,
+                                                oculto: status.oculto,
+                                                geo_json: site.geo_json,
+                                                cercania_activa: status.cercania_activa,
+                                                nombre_usuario_edito: dataUser.name,
+                                                qr_path: site.qr_path,
+                                                telefono: site.telefono,
+                                                website: e.target.value,
+                                                qr_image_path: site.website,
+                                            })
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>

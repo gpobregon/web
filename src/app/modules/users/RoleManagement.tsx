@@ -266,7 +266,123 @@ const RoleManagement: FC<any> = ({show}) => {
         setShowLoad(true)
         getRoles()
         validateRole()
-    }, [existRoles, permissionEditRole, permissionDeleteRole])
+    }, [existRoles, permissionEditRole, permissionDeleteRole]) 
+
+    const comprobarCategorias = () =>{
+        console.log(!stateRole.categoria_crear && !stateRole.categoria_editar && !stateRole.categoria_eliminar)
+        if(!stateRole.categoria_crear && !stateRole.categoria_editar && !stateRole.categoria_eliminar && !stateRole.idioma_crear && !stateRole.idioma_editar && !stateRole.idioma_eliminar){
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_categorias_idiomas:
+                    true
+            }))
+            console.log(stateRole.gestor_categorias_idiomas)
+        }else{
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_categorias_idiomas:
+                    false
+            }))
+        }
+    }   
+
+    const comprobarOffline = () =>{
+        console.log(!stateRole.offline_sitios && !stateRole.offline_puntos)
+        if(!stateRole.offline_sitios && !stateRole.offline_puntos){
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_offline:
+                    true
+            }))
+            console.log(stateRole.gestor_offline)
+        }else{
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_offline:
+                    false
+            }))
+        }
+    }  
+
+    const comprobarSitios = () =>{
+        if(!stateRole.sitio_crear && !stateRole.sitio_editar  
+            && !stateRole.sitio_eliminar && !stateRole.sitio_favorito
+            && !stateRole.sitio_publicar && !stateRole.sitio_visible 
+            && !stateRole.sitio_maquetar && !stateRole.sitio_sala_crear 
+            && !stateRole.sitio_establecer_imagen_principal 
+            && !stateRole.sitio_punto_crear && !stateRole.sitio_punto_editar 
+            && !stateRole.sitio_punto_eliminar && !stateRole.sitio_punto_ordenar 
+            && !stateRole.sitio_punto_visible && !stateRole.sitio_punto_maquetar 
+            && !stateRole.sitio_punto_publicar && !stateRole.sitio_punto_ruta_crear 
+            && !stateRole.sitio_punto_ruta_editar 
+            && !stateRole.sitio_punto_ruta_eliminar && !stateRole.sitio_punto_ruta_pasos_crear 
+            && !stateRole.sitio_punto_ruta_pasos_editar && !stateRole.sitio_punto_ruta_pasos_eliminar  
+            && !stateRole.sitio_punto_ruta_mapa_crear && !stateRole.sitio_punto_ruta_mapa_editar 
+            && !stateRole.sitio_punto_ruta_mapa_eliminar && !stateRole.sitio_punto_ruta_imagen_crear 
+            && !stateRole.sitio_punto_ruta_imagen_editar && !stateRole.sitio_punto_ruta_imagen_eliminar){
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_sitios:
+                    true
+            }))
+            console.log(stateRole.gestor_sitios)
+        }else{
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_sitios:
+                    false
+            }))
+        }
+    } 
+
+    const comprobarAlertas = () =>{
+        if(!stateRole.notificacion_crear && !stateRole.notificacion_programada_editar && 
+            !stateRole.notificacion_programada_eliminar && !stateRole.notificacion_historial_editar 
+            && !stateRole.notificacion_historial_eliminar){
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_notificaciones:
+                    true
+            }))
+            console.log(stateRole.gestor_notificaciones)
+        }else{
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_notificaciones:
+                    false
+            }))
+        }
+    }  
+
+    const comprobarUsuarios = () =>{
+        if(!stateRole.usuarios_crear && !stateRole.usuarios_editar 
+            && !stateRole.usuarios_eliminar && !stateRole.usuarios_buscar 
+            && !stateRole.rol_crear && !stateRole.rol_editar 
+            && !stateRole.rol_eliminar){
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_usuarios:
+                    true
+            }))
+            console.log(stateRole.gestor_usuarios)
+        }else{
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_usuarios:
+                    false
+            }))
+        }
+    }  
 
     return (
         <Container fluid>
@@ -332,7 +448,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                     idioma_editar: rol.idioma_editar,
                                     idioma_eliminar: rol.idioma_eliminar,
                                     categoria_crear: rol.categoria_crear,
-                                    categoria_editar: rol.categoria_crear,
+                                    categoria_editar: rol.categoria_editar,
                                     categoria_eliminar: rol.categoria_eliminar,
                                     sitio_crear: rol.sitio_crear,
                                     sitio_editar: rol.sitio_editar,
@@ -557,17 +673,18 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                         rol.gestor_categorias_idiomas
                                                                     }
                                                                     label='Catalogos'
-                                                                    onChange={(e) => {
-                                                                        setStateRole((role) => ({
-                                                                            ...role,
-                                                                            id_rol: role.id_rol,
-                                                                            gestor_categorias_idiomas:
-                                                                                e.target.checked,
-                                                                        }))
+                                                                    // onChange={(e) => {
+                                                                    //     setStateRole((role) => ({
+                                                                    //         ...role,
+                                                                    //         id_rol: role.id_rol,
+                                                                    //         gestor_categorias_idiomas:
+                                                                    //             e.target.checked,
+                                                                    //     }))
 
                                                                         // await postData(editRoleMethod, stateRole)
                                                                         // getRoles()
-                                                                    }}
+                                                                    // }}
+                                                                    disabled
                                                                 />
                                                             </Accordion.Header>
                                                             <Accordion.Body>
@@ -603,7 +720,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                            comprobarCategorias()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -635,7 +752,8 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .target
                                                                                                         .checked,
                                                                                             })
-                                                                                        )
+                                                                                        ) 
+                                                                                        comprobarCategorias()
 
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
@@ -668,7 +786,8 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .target
                                                                                                         .checked,
                                                                                             })
-                                                                                        )
+                                                                                        ) 
+                                                                                        comprobarCategorias()
 
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
@@ -711,7 +830,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarCategorias()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -744,7 +863,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarCategorias()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -777,7 +896,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarCategorias()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -801,17 +920,18 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                         rol.gestor_offline
                                                                     }
                                                                     label='Offline  '
-                                                                    onChange={(e) => {
-                                                                        setStateRole((role) => ({
-                                                                            ...role,
-                                                                            id_rol: role.id_rol,
-                                                                            gestor_offline:
-                                                                                e.target.checked,
-                                                                        }))
-
-                                                                        // await postData(editRoleMethod, stateRole)
-                                                                        // getRoles()
-                                                                    }}
+                                                                    // onChange={(e) => {
+                                                                    //     setStateRole((role) => ({
+                                                                    //         ...role,
+                                                                    //         id_rol: role.id_rol,
+                                                                    //         gestor_offline:
+                                                                    //             e.target.checked,
+                                                                    //     })) 
+                                                                        
+                                                                    //     // await postData(editRoleMethod, stateRole)
+                                                                    //     // getRoles()
+                                                                    // }} 
+                                                                    disabled
                                                                 />
                                                             </Accordion.Header>
                                                             <Accordion.Body>
@@ -848,7 +968,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarOffline()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -881,7 +1001,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarOffline()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -909,17 +1029,18 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                         rol.gestor_sitios
                                                                     }
                                                                     label='Sitios'
-                                                                    onChange={(e) => {
-                                                                        setStateRole((role) => ({
-                                                                            ...role,
-                                                                            id_rol: role.id_rol,
-                                                                            gestor_sitios:
-                                                                                e.target.checked,
-                                                                        }))
+                                                                    // onChange={(e) => {
+                                                                    //     setStateRole((role) => ({
+                                                                    //         ...role,
+                                                                    //         id_rol: role.id_rol,
+                                                                    //         gestor_sitios:
+                                                                    //             e.target.checked,
+                                                                    //     }))
 
-                                                                        // await postData(editRoleMethod, stateRole)
-                                                                        // getRoles()
-                                                                    }}
+                                                                    //     // await postData(editRoleMethod, stateRole)
+                                                                    //     // getRoles()
+                                                                    // }} 
+                                                                    disabled
                                                                 />
                                                             </Accordion.Header>
                                                             <Accordion.Body>
@@ -955,7 +1076,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -988,7 +1109,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1021,7 +1142,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1063,7 +1184,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1096,7 +1217,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1129,7 +1250,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1162,7 +1283,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1195,7 +1316,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1228,7 +1349,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1271,7 +1392,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1304,7 +1425,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1337,7 +1458,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1370,7 +1491,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1403,7 +1524,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1436,7 +1557,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1469,7 +1590,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarSitios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -1508,7 +1629,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1541,7 +1662,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1574,7 +1695,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1607,7 +1728,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1640,7 +1761,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1673,7 +1794,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1706,7 +1827,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1739,7 +1860,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1772,7 +1893,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1805,7 +1926,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1838,7 +1959,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1871,7 +1992,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                                     .checked,
                                                                                                         })
                                                                                                     )
-
+                                                                                                    comprobarSitios()
                                                                                                     // await postData(editRoleMethod, stateRole)
                                                                                                     // getRoles()
                                                                                                 }}
@@ -1930,17 +2051,18 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                         rol.gestor_notificaciones
                                                                     }
                                                                     label='Alertas'
-                                                                    onChange={(e) => {
-                                                                        setStateRole((role) => ({
-                                                                            ...role,
-                                                                            id_rol: role.id_rol,
-                                                                            gestor_notificaciones:
-                                                                                e.target.checked,
-                                                                        }))
+                                                                    // onChange={(e) => {
+                                                                    //     setStateRole((role) => ({
+                                                                    //         ...role,
+                                                                    //         id_rol: role.id_rol,
+                                                                    //         gestor_notificaciones:
+                                                                    //             e.target.checked,
+                                                                    //     }))
 
-                                                                        // await postData(editRoleMethod, stateRole)
-                                                                        // getRoles()
-                                                                    }}
+                                                                    //     // await postData(editRoleMethod, stateRole)
+                                                                    //     // getRoles()
+                                                                    // }} 
+                                                                    disabled
                                                                 />
                                                             </Accordion.Header>
                                                             <Accordion.Body>
@@ -1976,7 +2098,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarAlertas()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2009,7 +2131,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarAlertas()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2042,7 +2164,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarAlertas()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2075,7 +2197,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarAlertas()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2108,7 +2230,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarAlertas()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2132,17 +2254,18 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                         rol.gestor_usuarios
                                                                     }
                                                                     label='Usuarios'
-                                                                    onChange={(e) => {
-                                                                        setStateRole((role) => ({
-                                                                            ...role,
-                                                                            id_rol: role.id_rol,
-                                                                            gestor_usuarios:
-                                                                                e.target.checked,
-                                                                        }))
+                                                                    // onChange={(e) => {
+                                                                    //     setStateRole((role) => ({
+                                                                    //         ...role,
+                                                                    //         id_rol: role.id_rol,
+                                                                    //         gestor_usuarios:
+                                                                    //             e.target.checked,
+                                                                    //     }))
 
-                                                                        // await postData(editRoleMethod, stateRole)
-                                                                        // getRoles()
-                                                                    }}
+                                                                    //     // await postData(editRoleMethod, stateRole)
+                                                                    //     // getRoles()
+                                                                    // }} 
+                                                                    disabled
                                                                 />
                                                             </Accordion.Header>
                                                             <Accordion.Body>
@@ -2178,7 +2301,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarUsuarios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2211,7 +2334,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarUsuarios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2244,7 +2367,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarUsuarios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2277,7 +2400,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarUsuarios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2319,7 +2442,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarUsuarios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2352,7 +2475,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarUsuarios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}
@@ -2385,7 +2508,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                                         .checked,
                                                                                             })
                                                                                         )
-
+                                                                                        comprobarUsuarios()
                                                                                         // await postData(editRoleMethod, stateRole)
                                                                                         // getRoles()
                                                                                     }}

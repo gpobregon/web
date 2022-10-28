@@ -37,7 +37,7 @@ const Element = [
             typeIcon: 'bi',
             icon: 'list-ul',
             type: "list",
-            text: 'Element',
+            text: 'Elemento',
             content: '<ul class="list-group list-group-bg list-group-numbered"><li class="list-group-item">Elemento 1</li></ul>',
             textAling: "text-star",
             fontWeight: "fw-normal",
@@ -45,6 +45,13 @@ const Element = [
             textDecoration: "",
             typeList: "list-group-numbered",
             item: [],
+            typeElement: 'texts'
+          },
+          {
+            typeIcon: 'bi',
+            icon: 'distribute-vertical',
+            text: 'Salto de Línea',
+            type: "space",
             typeElement: 'texts'
           }
         ]
