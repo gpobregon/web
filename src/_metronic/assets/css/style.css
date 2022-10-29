@@ -390,6 +390,12 @@ input[type=number]::-webkit-outer-spin-button {
   background-color: #12121B !important;
 }
 
+.position-icon {
+    left: 35px;
+    position: absolute !important;
+    z-index: 50;
+}
+
 /* --------------------------------- */
 /* .swal-modal {
   background: #1E1E2D;
