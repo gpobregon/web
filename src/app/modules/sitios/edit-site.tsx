@@ -522,7 +522,7 @@ const EditSite = () => {
                         <div id='center'>
                             <p style={{marginTop: '16px'}}>
                                 {'   '} Ultima vez editado el{' '}
-                                {Moment(site.editado).format('DD/MM/YYYY hh:mm') + ' '} por
+                                {Moment(site.editado).format('DD/MM/YYYY HH:mm') + ' '} por
                                 {' ' + site.nombre_usuario_edito}
                             </p>
                         </div>
