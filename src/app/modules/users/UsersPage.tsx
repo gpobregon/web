@@ -12,7 +12,7 @@ const UsersPage = () => {
                     </div>
                 </Row>
                 <Row className='g-10'>
-                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>  
+                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>
                         <Link to='/usuarios/user-management'>
                             <Card
                                 className='d-flex justify-content-center align-items-center p-5'
@@ -36,7 +36,7 @@ const UsersPage = () => {
                                     </span>
                                 </Card.Title>
                                 <Card.Subtitle className='mb-4 fs-3'>Usuarios</Card.Subtitle>
-                            </Card> 
+                            </Card>
                         </Link>
                     </Col>
 

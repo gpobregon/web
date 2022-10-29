@@ -1,19 +1,30 @@
-import React, { ChangeEvent, useState, useEffect } from 'react'
-import { Button, Col, Container, Form, Row } from 'react-bootstrap'
-import { getToBase64 } from './base64'
-import { awsconfig } from '../../../aws-exports'
+import React, {ChangeEvent, useState, useEffect} from 'react'
+import {Button, Col, Container, Form, Row} from 'react-bootstrap'
+import {getToBase64} from './base64'
+import {awsconfig} from '../../../aws-exports'
 import imgUpload from './upload-image_03.jpg'
-import { Amplify, Auth } from 'aws-amplify'
-import { URLAWS, postData, updateUserMethod, getData, getRolesMethod } from '../../services/api'
-import { roleManager } from '../../models/roleManager'
+import {Amplify, Auth} from 'aws-amplify'
+import {URLAWS, postData, updateUserMethod, getData, getRolesMethod} from '../../services/api'
+import {roleManager} from '../../models/roleManager'
 import * as AWS from 'aws-sdk'
-import UpImage from './components/add-image'
+import UpImage from '../uploadFile/upload-image'
+import ChangePassword from './change-password'
 import {
     ListUsersResponse,
     UsersListType,
     UserType,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider'
-import { json } from 'node:stream/consumers'
+import {json} from 'node:stream/consumers'
+import {NewPassword} from '../auth/components/NewPassoword'
+import swal from 'sweetalert'
+import {
+    validateStringEmail,
+    validateStringNombre,
+    validateStringPassword,
+    validateStringPhoneNumber,
+    validateStringPhoneNumberAlert,
+    validateStringSoloNumeros,
+} from '../validarCadena/validadorCadena'
 
 interface Profile {
     fileImage: any
@@ -23,7 +34,19 @@ interface Profile {
     email: string
 }
 
+interface State {
+    amount: string
+    password: string
+    weight: string
+    weightRange: string
+    showPassword: boolean
+}
+
 const UserProfilePage = () => {
+    const [modalChangePassword, setModalChangePassword] = useState({
+        show: false,
+        stateChangePassword: {},
+    })
     const [showUpdateButton, setShowUpdateButton] = useState(true)
     const [users, setUsers] = useState<UserType[]>([])
     // console.log("users: ", users);
@@ -38,7 +61,7 @@ const UserProfilePage = () => {
         lastname: '',
         imageProfile: '',
         role: '',
-        descripcion: ''
+        descripcion: '',
     })
 
     const [form, setForm] = useState<Profile>({
@@ -49,22 +72,18 @@ const UserProfilePage = () => {
         email: '',
     })
 
-
-
     //TODO: get roles
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
         setExistRoles(true)
     }
-    // console.log(getRoles())   
+    // console.log(getRoles())
     //console.log("roles: ", roles);
 
-    //esto me retorna el email del usuario con el que estoy logueado  
-
+    //esto me retorna el email del usuario con el que estoy logueado
 
     const getEmail = async () => {
-        
         getRoles()
         Auth.currentUserInfo().then((user) => {
             setDataUser({
@@ -74,7 +93,7 @@ const UserProfilePage = () => {
                 lastname: user.attributes['custom:lastname'],
                 imageProfile: user.attributes['custom:imageProfile'],
                 role: user.attributes['custom:role'],
-                descripcion: ''
+                descripcion: '',
             })
             const filter = roles.filter((item) => user.attributes['custom:role'] === item.nombre)
             setDataUser({
@@ -85,17 +104,16 @@ const UserProfilePage = () => {
                 lastname: user.attributes['custom:lastname'],
                 imageProfile: user.attributes['custom:imageProfile'],
                 role: user.attributes['custom:role'],
-                descripcion: filter[0].descripcion
+                descripcion: filter[0].descripcion,
             })
         })
     }
 
-    console.log("dataUser: ", dataUser); 
-   
+    console.log('dataUser: ', dataUser)
+
     useEffect(() => {
         getRoles()
         getEmail()
-        console.log("getEmail: ", getEmail());
     }, [existRoles])
 
     // getEmail()
@@ -135,7 +153,7 @@ const UserProfilePage = () => {
                 phoneNumber: dataUser.phoneNumber,
                 imageProfile: URLAWS + 'fotoPerfiles/' + imagen,
                 role: dataUser.role,
-                descripcion: ''
+                descripcion: '',
             })
             setModalupIMG(false)
             setShowUpdateButton(false)
@@ -143,25 +161,137 @@ const UserProfilePage = () => {
     }
 
     const updateUsuarios = async () => {
+        if (
+            dataUser.name === '' ||
+            dataUser.lastname === '' ||
+            dataUser.phoneNumber === '' ||
+            dataUser.imageProfile === ''
+        ) {
+            swal({
+                title: 'Error',
+                text: 'Debe llenar todos los campos',
+                icon: 'error',
+            })
+            return
+        }
+
         const user = await Auth.currentAuthenticatedUser()
-        console.log("user: ", user);
+
         const result = await Auth.updateUserAttributes(user, {
             name: dataUser.name,
             //email: dataUser.email,
             'custom:lastname': dataUser.lastname,
-
             'custom:phoneNumber': dataUser.phoneNumber,
             'custom:imageProfile': dataUser.imageProfile,
         })
-        const filter = roles.filter((item) => { return dataUser.role === item.nombre })
 
-        console.log("filter: ", filter);
-        let objeto = { id_usuario: user.username, id_rol: filter[0].id_rol, foto: dataUser.imageProfile }
+        const filter: any = roles.filter((item) => {
+            return dataUser.role === item.nombre
+        })
 
-        await postData(updateUserMethod, objeto).then(data => { console.log(data) })
+        let objeto = {
+            id_usuario: user.username,
+            id_rol: filter[0].id_rol,
+            foto: dataUser.imageProfile,
+        }
+
+        await postData(updateUserMethod, objeto)
         setShowUpdateButton(true)
     }
+
     const [modalupimg, setModalupIMG] = useState(false)
+
+    const changePasswordDone = async () => {
+        swal({
+            text: 'Contraseña modificada',
+            icon: 'success',
+        })
+    }
+
+    const alertNotNullInputsObj = async (data: any) => {
+        let keys = Object.keys(data),
+            msg = ''
+
+        for (let key of keys) {
+            if (
+                data[key] !== null &&
+                data[key] !== undefined &&
+                data[key] !== 0 &&
+                data[key] !== ''
+            )
+                continue
+            msg += `El campo ${key} es obligatorio\n`
+        }
+
+        msg.trim()
+
+        swal({
+            text: msg,
+            icon: 'warning',
+        })
+    }
+
+    const [data, setData] = useState({oldPassword: '', newPassword: '', confirmPassword: ''})
+    const changePasswordMethod = async () => {
+        if (data.oldPassword != '' && data.newPassword != '') {
+            if (data.newPassword == data.confirmPassword) {
+                const user = await Auth.currentAuthenticatedUser()
+                console.log('user: ', user)
+                try {
+                    Auth.currentAuthenticatedUser()
+                        .then((user) => {
+                            return Auth.changePassword(user, data.oldPassword, data.newPassword)
+                        })
+                        .then((data) => changePasswordDone())
+                        .catch((err) => console.log(err))
+                } catch (error) {
+                    console.log(error)
+                }
+            } else {
+                swal('Las contraseñas no son iguales', 'Intentalo de nuevo', 'warning')
+            }
+        } else {
+            alertNotNullInputsObj({
+                Contraseña_Antigua: data.oldPassword,
+                Contraseña_Nueva: data.newPassword,
+                Confirmar_Contraseña: data.confirmPassword,
+            })
+        }
+    }
+
+    const showModalPassword = () => {
+        setModalChangePassword({show: true, stateChangePassword: {}})
+    }
+
+    const [password, setPassword] = useState('')
+    const [validPassword, setValidPassword] = useState(false)
+    const [touchedPasswordInput, setTouchedPasswordInput] = useState(false)
+
+    const [values, setValues] = useState({
+        amount: '',
+        password: '',
+        weight: '',
+        weightRange: '',
+        showPassword: false,
+    })
+
+    const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({...values, [prop]: event.target.value})
+        setTouchedPasswordInput(true)
+
+        if (validateStringPassword(event.target.value)) {
+            setPassword(event.target.value)
+        }
+
+        setValidPassword(validateStringPassword(event.target.value))
+    }
+
+    const handleClickShowPassword = () => {
+        setValues({
+            ...values,
+            showPassword: !values.showPassword,
+        })
+    }
 
     return (
         <>
@@ -216,9 +346,23 @@ const UserProfilePage = () => {
                                 <Col md={5} className='d-flex'>
                                     <div className='d-flex flex-column justify-content-center mx-xxl-9 mx-xl-9 mx-md-9'>
                                         <h2 className='mb-5'>{dataUser.role}</h2>
-                                        <p className='' style={{ color: '#92929F' }}>
+                                        <p className='' style={{color: '#92929F'}}>
                                             {dataUser.descripcion}
                                         </p>
+
+                                        <div
+                                            className='d-flex'
+                                            style={{color: '#009EF7', cursor: 'pointer'}}
+                                            onClick={showModalPassword}
+                                        >
+                                            <span className='me-3'>
+                                                <i
+                                                    className='bi bi-lock-fill fs-2 fw-bolder'
+                                                    style={{color: '#009EF7'}}
+                                                ></i>
+                                            </span>
+                                            <p>Cambiar contraseña</p>
+                                        </div>
                                     </div>
                                 </Col>
                             </div>
@@ -243,11 +387,11 @@ const UserProfilePage = () => {
                             <h2 className='mb-5'>Editor</h2>
                             <hr
                                 className='mb-5'
-                                style={{ border: '1px solid rgba(86, 86, 116, 0.1)' }}
+                                style={{border: '1px solid rgba(86, 86, 116, 0.1)'}}
                             />
                             <div
                                 className='d-xl-flex align-items-center'
-                                style={{ borderRadius: '5px' }}
+                                style={{borderRadius: '5px'}}
                             >
                                 <div>
                                     <img
@@ -259,9 +403,9 @@ const UserProfilePage = () => {
                                         onClick={
                                             dataUser.imageProfile == ''
                                                 ? (e) => {
-                                                    setModalupIMG(true)
-                                                }
-                                                : (e) => { }
+                                                      setModalupIMG(true)
+                                                  }
+                                                : (e) => {}
                                         }
                                         style={{
                                             width: '200px',
@@ -307,7 +451,7 @@ const UserProfilePage = () => {
                             <h2 className='mb-5'>Información del perfil</h2>
                             <hr
                                 className='mb-5'
-                                style={{ border: '1px solid rgba(86, 86, 116, 0.1)' }}
+                                style={{border: '1px solid rgba(86, 86, 116, 0.1)'}}
                             />
 
                             <Row className='mb-5'>
@@ -315,19 +459,21 @@ const UserProfilePage = () => {
                                     <Form.Group className=''>
                                         <Form.Label>Nombres</Form.Label>
                                         <Form.Control
-                                            defaultValue={dataUser.name}
+                                            value={dataUser.name}
                                             type='text'
                                             name='nombre'
                                             onChange={(e) => {
-                                                setDataUser({
-                                                    email: dataUser.email,
-                                                    name: e.target.value,
-                                                    lastname: dataUser.lastname,
-                                                    phoneNumber: dataUser.phoneNumber,
-                                                    imageProfile: dataUser.imageProfile,
-                                                    role: dataUser.role,
-                                                    descripcion: ''
-                                                })
+                                                if (validateStringNombre(e.target.value)) {
+                                                    setDataUser({
+                                                        email: dataUser.email,
+                                                        name: e.target.value,
+                                                        lastname: dataUser.lastname,
+                                                        phoneNumber: dataUser.phoneNumber,
+                                                        imageProfile: dataUser.imageProfile,
+                                                        role: dataUser.role,
+                                                        descripcion: '',
+                                                    })
+                                                }
                                             }}
                                             disabled={showUpdateButton}
                                         ></Form.Control>
@@ -337,20 +483,22 @@ const UserProfilePage = () => {
                                     <Form.Group className=''>
                                         <Form.Label>Apellidos</Form.Label>
                                         <Form.Control
-                                            defaultValue={dataUser.lastname}
+                                            value={dataUser.lastname}
                                             type='text'
                                             name='apellido'
                                             disabled={showUpdateButton}
                                             onChange={(e) => {
-                                                setDataUser({
-                                                    email: dataUser.email,
-                                                    name: dataUser.name,
-                                                    lastname: e.target.value,
-                                                    phoneNumber: dataUser.phoneNumber,
-                                                    imageProfile: dataUser.imageProfile,
-                                                    role: dataUser.role,
-                                                    descripcion: ''
-                                                })
+                                                if (validateStringNombre(e.target.value)) {
+                                                    setDataUser({
+                                                        email: dataUser.email,
+                                                        name: dataUser.name,
+                                                        lastname: e.target.value,
+                                                        phoneNumber: dataUser.phoneNumber,
+                                                        imageProfile: dataUser.imageProfile,
+                                                        role: dataUser.role,
+                                                        descripcion: '',
+                                                    })
+                                                }
                                             }}
                                         ></Form.Control>
                                     </Form.Group>
@@ -361,19 +509,23 @@ const UserProfilePage = () => {
                                     <Form.Group className=''>
                                         <Form.Label>Teléfono</Form.Label>
                                         <Form.Control
-                                            defaultValue={dataUser.phoneNumber}
+                                            value={dataUser.phoneNumber}
                                             type='text'
+                                            maxLength={8}
+                                            pattern='/^-?\d+\.?\d*$/'
                                             name='telefono'
                                             onChange={(e) => {
-                                                setDataUser({
-                                                    email: dataUser.email,
-                                                    name: dataUser.name,
-                                                    lastname: dataUser.lastname,
-                                                    phoneNumber: e.target.value,
-                                                    imageProfile: dataUser.imageProfile,
-                                                    role: dataUser.role,
-                                                    descripcion: ''
-                                                })
+                                                if (validateStringSoloNumeros(e.target.value)) {
+                                                    setDataUser({
+                                                        email: dataUser.email,
+                                                        name: dataUser.name,
+                                                        lastname: dataUser.lastname,
+                                                        phoneNumber: e.target.value,
+                                                        imageProfile: dataUser.imageProfile,
+                                                        role: dataUser.role,
+                                                        descripcion: '',
+                                                    })
+                                                }
                                             }}
                                             disabled={showUpdateButton}
                                         ></Form.Control>
@@ -397,8 +549,8 @@ const UserProfilePage = () => {
                             <Row
                                 style={
                                     showUpdateButton == true
-                                        ? { display: 'block' }
-                                        : { display: 'none' }
+                                        ? {display: 'block'}
+                                        : {display: 'none'}
                                 }
                             >
                                 <Col lg={12} md={12} sm={12}>
@@ -409,7 +561,7 @@ const UserProfilePage = () => {
                                 </Col>
                             </Row>
 
-                            <Row style={showUpdateButton == true ? { display: 'none' } : {}}>
+                            <Row style={showUpdateButton == true ? {display: 'none'} : {}}>
                                 <Col lg={6} md={6} sm={6}>
                                     <Button
                                         variant='secondary w-100'
@@ -436,10 +588,26 @@ const UserProfilePage = () => {
 
             {/* })}  */}
 
+            <ChangePassword
+                show={modalChangePassword.show}
+                setShow={setModalChangePassword}
+                onClose={() => setModalChangePassword({show: false, stateChangePassword: {}})}
+                dataPassword={data}
+                setDataPassword={setData}
+                changePasswordMethod={changePasswordMethod}
+                password={password}
+                validPassword={validPassword}
+                touchedPasswordInput={touchedPasswordInput}
+                values={values}
+                handleChange={handleChange}
+                handleClickShowPassword={handleClickShowPassword}
+            />
             <UpImage
                 show={modalupimg}
                 onClose={() => setModalupIMG(false)}
                 cargarIMG={uploadImage}
+                ubicacionBucket={'fotoPerfiles'}
+                tipoArchivoPermitido={'image/*'}
             />
         </>
     )

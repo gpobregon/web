@@ -12,42 +12,44 @@ const EditableMovil = () => {
         <Fragment>
             <Col lg={6}>
                 <div className="bkg-dark rounded p-4" ref={drop}>
-                    <PerfectScrollbar className="height-section-editable" component="div">
-                        {
-                            board.map((item : any, index : number) => {
+                    <PerfectScrollbar className="height-section-editable" component="div" style={{ paddingBottom: '100px', width: "100%" }}>
+                        <div className="w-100 px-8">
+                            {
+                                board.map((item: any, index: number) => {
 
-                                return (
-                                    <div key={index}>
-                                        <ItemEditable 
-                                            key={index} 
-                                            data={item}
-                                            id={item.id}
-                                            index={index}
-                                            removeItem={removeItem}
-                                            moveCard={moveCard}
-                                            setEditItem={setEditItem}
-                                            updateElement={updateElement}
-                                        />
-                                    </div>
-                                )
-                            })
-                        }
+                                    return (
+                                        <div key={index}>
+                                            <ItemEditable
+                                                key={index}
+                                                data={item}
+                                                id={item.id}
+                                                index={index}
+                                                moveCard={moveCard}
+                                                removeItem={removeItem}
+                                                setEditItem={setEditItem}
+                                                updateElement={updateElement}
+                                            />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
                     </PerfectScrollbar>
                 </div>
             </Col>
             <Col lg={6}>
                 <Card.Body className="rounded height-section-editable d-flex justify-content-center">
                     <div className="d-flex align-items-center w-100">
-                        { 
-                            editItem.length !== 0 && 
+                        {
+                            editItem.length !== 0 &&
                             <AttrItems
                                 drop2={drop2}
-                                editItem={editItem} 
+                                editItem={editItem}
                                 updateElement={updateElement}
                                 uploadResource={uploadResource}
                                 editItemResource={editItemResource}
                                 setEditItemResource={setEditItemResource}
-                                
+
                             />
                         }
                     </div>

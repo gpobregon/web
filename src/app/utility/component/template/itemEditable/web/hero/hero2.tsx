@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC } from "react";
+import NewCol from './col'
 import { Row, Col } from 'react-bootstrap'
 import { Menu, Item, useContextMenu } from "react-contexify";
 
@@ -11,8 +12,9 @@ type Model = {
     setEditItem: (data : any) => void
     updateElement: (data : any) => void
     removeItem: (data : any) => void
+    moveCard: (dragIndex: number, hoverIndex: number) => void
 }
-const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => { 
+const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, setEditItem, updateElement, removeItem }) => { 
   
   const { show } = useContextMenu({ id: "menu-id" });  
     
@@ -35,28 +37,43 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
                 <i className="bi bi-x-circle-fill text-danger pe-4"/>Quitar Elemento
               </Item>
             </Menu>
-            <Row className="w-100">
-              <Col className="border">
-                <Row>
-                  <Col className="border">
-                    Col 1
-                  </Col>
-                </Row>
-                <Row>
-                  <Col className="border">
-                    Col 1
-                  </Col>
-                </Row>
-                <Row>
-                  <Col className="border">
-                    Col 1
-                  </Col>
-                </Row>
-              </Col>
-              <Col className="border">
-              
-              </Col>
-            </Row>
+            <div className="w-100 me-3">
+              <Row>
+                <Col className="border">
+                  <Row>
+                      <NewCol 
+                        lg={12}
+                        section={0}
+                        data={data}
+                        sectionData={data.section1}
+                        removeItem={removeItem}
+                        setEditItem={setEditItem}
+                        updateElement={updateElement}
+                      />
+                  </Row>
+                  <Row>
+                    <NewCol
+                        lg={12}
+                        section={1}
+                        data={data}
+                        sectionData={data.section2}
+                        removeItem={removeItem}
+                        setEditItem={setEditItem}
+                        updateElement={updateElement}
+                      />
+                  </Row>
+                </Col>
+                <NewCol 
+                  lg={6}
+                  section={2}
+                  data={data}
+                  sectionData={data.section3}
+                  removeItem={removeItem}
+                  setEditItem={setEditItem}
+                  updateElement={updateElement}
+                />
+              </Row>
+            </div>
           </div>
     )
 }

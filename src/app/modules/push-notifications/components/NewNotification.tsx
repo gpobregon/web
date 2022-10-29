@@ -1,12 +1,57 @@
 import React, {FC, useState} from 'react'
 import imgUpload from '../upload-image_03.jpg'
-import UploadImage from './UploadImage'
+import UpImage from '../../uploadFile/upload-image'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
 import {URLAWS} from '../../../services/api'
-import { validateStringSinCaracteresEspeciales } from '../../validarCadena/validadorCadena'
+import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+import makeAnimated from 'react-select/animated'
+import Select from 'react-select'
 
-import { initializeApp } from 'firebase-admin/app';
+const customStyles = {
+    control: (base: any, state: any) => ({
+        ...base,
+        background: 'transparent',
+        borderColor: state.isFocused ? '#474761' : '#323248',
+        borderRadius: 6.175,
+        color: '#92929F',
+        '&:hover': {
+            borderColor: '#323248',
+        },
+        '&:focus': {
+            borderColor: '#323248',
+        },
+        '&:active': {
+            borderColor: '#323248',
+        },
+    }),
+    input: (base: any, state: any) => ({
+        ...base,
+        color: '#92929f',
+    }),
+    option: (base: any, state: any) => ({
+        ...base,
+        background: state.isFocused ? '#009EF7' : '#323248',
+        color: state.isFocused ? '#fff' : '#92929F',
+        padding: 10,
+    }),
+    singleValue: (base: any) => ({
+        ...base,
+        color: '#fff',
+    }),
+    menu: (base: any) => ({
+        ...base,
+        borderRadius: 6.175,
+        background: '#323248',
+    }),
+    menuList: (base: any) => ({
+        ...base,
+        padding: 0,
+        borderRadius: 6.175,
+    }),
+}
+
+const animatedComponents = makeAnimated()
 
 const NewNotification: FC<any> = ({
     showCardAddNotification,
@@ -49,6 +94,17 @@ const NewNotification: FC<any> = ({
     }
 
     const [modalUploadIMG, setModalUploadIMG] = useState(false)
+    const [siteRedirect, setSiteRedirect] = useState('')
+    let options = [
+        {value: -1, label: 'Sin redirección'},
+        {value: 1, label: 'Tikal'},
+        {value: 2, label: 'Antigua Guatemala'},
+        {value: 3, label: 'Flores'},
+    ]
+
+    const handleChange = (event: any) => {
+        setSiteRedirect(event.value)
+    }
 
     return (
         <div style={showCardAddNotification == false ? {display: 'none'} : {display: 'block'}}>
@@ -146,7 +202,7 @@ const NewNotification: FC<any> = ({
                         />
                     </Form.Group>
 
-                    <Form.Group className='mb-9'>
+                    <Form.Group className='mb-4'>
                         <Form.Label>Contenido de notificación</Form.Label>
                         <Form.Control
                             value={notification.descripcion}
@@ -167,6 +223,16 @@ const NewNotification: FC<any> = ({
                                     })
                                 }
                             }}
+                        />
+                    </Form.Group>
+
+                    <Form.Group className={'mb-9'}>
+                        <Form.Label>{'Redirección al presionar la notificación'}</Form.Label>
+                        <Select
+                            options={options}
+                            styles={customStyles}
+                            components={animatedComponents}
+                            onChange={handleChange}
                         />
                     </Form.Group>
 
@@ -277,10 +343,12 @@ const NewNotification: FC<any> = ({
                 </div>
             </Card>
 
-            <UploadImage
+            <UpImage
                 show={modalUploadIMG}
                 onClose={() => setModalUploadIMG(false)}
-                uploadImage={uploadImage}
+                cargarIMG={uploadImage}
+                ubicacionBucket={'notificaciones'}
+                tipoArchivoPermitido={'image/*'}
             />
         </div>
     )

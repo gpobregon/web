@@ -18,6 +18,7 @@ import {
     UsersListType,
     UserType,
 } from 'aws-sdk/clients/cognitoidentityserviceprovider'
+import swal from 'sweetalert'
 
 async function deleteUser() {
     try {
@@ -138,28 +139,66 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                 }
             })
         })
-    }
+    }  
 
-    const deleteUsuarios = async () => {
+    const [dataUser, setDataUser] = useState({
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
+    })
+
+    //esto me retorna el email del usuario con el que estoy logueado 
+    const getEmail = async () => {
+        Auth.currentUserInfo().then((user) => {
+            setDataUser({
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
+                descripcion: '',
+            })
+        })
+    }  
+
+    console.log('dataUser: ', dataUser)
+    useEffect(() => { 
+        getEmail()
+    }, [])
+
+    const deleteUsuarios = async () => { 
         var params = {
+           
             UserPoolId: awsconfig.userPoolId /* required */,
             Username: user.Attributes[4].Value /* required */,
+        } 
+        
+        if (dataUser.email == user.Attributes[4].Value) {
+            swal('Acción denegada', 'No puedes eliminar tu propio usuario', 'warning')
+        } else {
+            return new Promise(async (resolve, reject) => {
+                let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
+                cognito.adminDeleteUser(params, (err, data) => {
+                    if (err) {
+                        console.log(err)
+                        reject(err)
+                    } else {
+                        resolve(data)
+                    }
+                })   
+                    let objeto = {id_usuario: user.Username}
+                    
+                 await deleteData(deleteUserMethod, objeto) 
+                 setTimeout(() => document.location.href = '/usuarios/user-management', 750)
+            }) 
         }
-
-        return new Promise(async (resolve, reject) => {
-            let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
-            cognito.adminDeleteUser(params, (err, data) => {
-                if (err) {
-                    console.log(err)
-                    reject(err)
-                } else {
-                    resolve(data)
-                }
-            })   
-                let objeto = {id_usuario: user.Username}
-             await deleteData(deleteUserMethod, objeto)
-        }) 
-    }
+    } 
+    console.log("user: ", user);
 
     return (
         <>
@@ -213,7 +252,7 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                         variant='btn btn-light-danger btn-active-danger'
                         onClick={() => {
                             deleteUsuarios()
-                            document.location.href = '/usuarios/user-management'
+                            
                         }}
                     >
                         {'Eliminar '}

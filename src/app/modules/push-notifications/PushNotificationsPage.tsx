@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import moment from 'moment'
 import {Button, ButtonGroup, Container, Form, Table, ToggleButton} from 'react-bootstrap'
 import NewNotification from './components/NewNotification'
@@ -8,46 +8,17 @@ import {
     addNotificationMethod,
     deleteData,
     deleteNotificationMethod,
+    getData,
+    getRolesMethod,
     notificationMethod,
     postData,
     updateNotificationMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
-
-// // Import the functions you need from the SDKs you need
-// import {initializeApp, credential, messaging} from 'firebase-admin'
-
-// // TODO: Add SDKs for Firebase products that you want to use
-// // https://firebase.google.com/docs/web/setup#available-libraries
-// // Initialize Firebase
-
-// const initFirebase = () => {
-//     const serviceAccount = require('../../../cultura-guate-app-firebase-adminsdk-1fwan-5cdd5e4cf6.json')
-//     initializeApp({
-//         credential: credential.cert(serviceAccount),
-//     })
-// }
-
-// initFirebase()
-
-// const sendPushNotification = () => {
-//     const message = {
-//         notification: {
-//             body: 'Prueba desde el back office',
-//             title: 'Prueba desde el back office',
-//         },
-//         topic: 'general',
-//     }
-
-//     messaging()
-//         .send(message)
-//         .then((response) => {
-//             console.log('Successfully sent message:', response)
-//         })
-//         .catch((error) => {
-//             console.log('Error sending message:', error)
-//         })
-// }
+import {useNavigate} from 'react-router-dom'
+import {roleManager} from '../../models/roleManager'
+import {Auth} from 'aws-amplify'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const PushNotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([])
@@ -84,9 +55,7 @@ const PushNotificationsPage = () => {
     }
 
     const getNotificationsProgrammed = async () => {
-        const notificationsData: any = await postData(`${notificationMethod}/programmed`, {
-            id_usuario: 'lenguaje 1',
-        })
+        const notificationsData: any = await getData(`${notificationMethod}/programmed`)
         setNotifications(notificationsData.data as Notification[])
         setOptionGetNotifications('programadas')
     }
@@ -127,13 +96,36 @@ const PushNotificationsPage = () => {
     })
 
     const toggleCardAddNotification = (value: any) => {
-        setShowCardAddNotification(value)
-        if (value === true) {
-            setCardUpdateNotification({show: false, notification: {}})
+        if (permissionCreateNotification) {
+            setShowCardAddNotification(value)
+            if (value === true) {
+                setCardUpdateNotification({show: false, notification: {}})
+            }
+        } else {
+            swal({
+                title: 'No tienes permiso para crear una notificación',
+                icon: 'warning',
+            })
         }
     }
 
     const showCardUpdateNotification = (notification: any) => {
+        if (!permissionEditNotificationProgrammed && optionGetNotifications === 'programadas') {
+            swal({
+                title: 'No tienes permiso para editar una notificación programada',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (!permissionEditNotificationHistory && optionGetNotifications === 'historial') {
+            swal({
+                title: 'No tienes permiso para editar una notificación en el historial',
+                icon: 'warning',
+            })
+            return
+        }
+
         setCardUpdateNotification({show: true, notification})
         setNotification({
             id_notificacion: notification?.id_notificacion,
@@ -245,11 +237,27 @@ const PushNotificationsPage = () => {
     }
 
     const deleteNotification = async (tag: any) => {
+        if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
+            swal({
+                title: 'No tienes permiso para eliminar una notificación programada',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (!permissionDeleteNotificationHistory && optionGetNotifications === 'historial') {
+            swal({
+                title: 'No tienes permiso para eliminar una notificación en el historial',
+                icon: 'warning',
+            })
+            return
+        }
+
         await swal({
             title: '¿Estás seguro de eliminar esta notificación?',
-            icon: 'warning',
-            buttons: ['Cancelar', 'Eliminar'],
+            icon: 'warning', 
             dangerMode: true,
+            buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {
                 deleteData(deleteNotificationMethod, tag)
@@ -303,6 +311,22 @@ const PushNotificationsPage = () => {
     }
 
     const deleteSelectedNotification = async () => {
+        if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
+            swal({
+                title: 'No tienes permiso para eliminar notificaciones programadas',
+                icon: 'warning',
+            })
+            return
+        }
+
+        if (!permissionDeleteNotificationHistory && optionGetNotifications === 'historial') {
+            swal({
+                title: 'No tienes permiso para eliminar notificaciones en el historial',
+                icon: 'warning',
+            })
+            return
+        }
+
         if (arrayDeleteNotifications.length === 0) {
             swal({
                 title: 'Selecciona notificaciones para eliminar',
@@ -312,8 +336,7 @@ const PushNotificationsPage = () => {
             await swal({
                 title: '¿Estás seguro de eliminar estas notificaciones?',
                 icon: 'warning',
-                buttons: ['Cancelar', 'Eliminar'],
-                dangerMode: true,
+                buttons: ['No', 'Sí'],
             }).then((willDelete) => {
                 if (willDelete) {
                     for (let i = 0; i < arrayDeleteNotifications.length; i++) {
@@ -361,6 +384,60 @@ const PushNotificationsPage = () => {
             next: false,
         })
     }
+
+    let navigate = useNavigate()
+    const {setShowLoad} = useContext(LoadingContext)
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionCreateNotification, setPermissionCreateNotification] = useState(true)
+
+    const [permissionEditNotificationProgrammed, setPermissionEditNotificationProgrammed] =
+        useState(true)
+    const [permissionEditNotificationHistory, setPermissionEditNotificationHistory] = useState(true)
+
+    const [permissionDeleteNotificationProgrammed, setPermissionDeleteNotificationProgrammed] =
+        useState(true)
+    const [permissionDeleteNotificationHistory, setPermissionDeleteNotificationHistory] =
+        useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        setShowLoad(true)
+
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_notificaciones === false) {
+                navigate('/error/401', {replace: true})
+            } else {
+                setPermissionCreateNotification(filter[0]?.notificacion_crear)
+
+                setPermissionEditNotificationProgrammed(filter[0]?.notificacion_programada_editar)
+                setPermissionEditNotificationHistory(filter[0]?.notificacion_historial_editar)
+
+                setPermissionDeleteNotificationProgrammed(
+                    filter[0]?.notificacion_programada_eliminar
+                )
+                setPermissionDeleteNotificationHistory(filter[0]?.notificacion_historial_eliminar)
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    }
+
+    useEffect(() => {
+        setShowLoad(true)
+        getRoles()
+        validateRole()
+    }, [existRoles])
 
     useEffect(() => {
         chooseGetNotifications()
@@ -516,7 +593,9 @@ const PushNotificationsPage = () => {
                                                 className='ms-5'
                                                 type='checkbox'
                                                 id={notification.id_notificacion.toString()}
-                                                onChange={(e) => handleChangeCheckbox(e)}
+                                                onChange={(e) => {
+                                                    handleChangeCheckbox(e)
+                                                }}
                                             />
                                         </td>
                                         <td className='text-muted' style={{width: '200px'}}>

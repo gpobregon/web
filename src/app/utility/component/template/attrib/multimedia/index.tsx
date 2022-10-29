@@ -4,10 +4,11 @@
 import { FC, useState, useEffect, useRef, Fragment } from 'react'
 import { Row, Col, Button, ButtonGroup, Form } from 'react-bootstrap'
 import { generateRandomString } from '../../../../../utility/global/index'
-import { dataURLtoFile } from '../../../../global/index'
-import { Image } from 'react-bootstrap';
 import { toAbsoluteUrl } from '../../../../../../_metronic/helpers'
+import { dataURLtoFile } from '../../../../global/index'
+import { Image } from 'react-bootstrap'
 import CropImage from './cropImage'
+import swal from 'sweetalert'
 
 type Model = {
     editItem: any,
@@ -31,6 +32,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
     }
 
     const cropImage = async () => {
+        changeResource()
         const img = dataURLtoFile(dataResource, editItemResource.nombre.replace('.jpg', ".png").replace('.jpeg', ".png"))
         const response = await uploadResource(img, 2)
         changeSizeTitle({ url: response })
@@ -44,7 +46,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
         }
     }
     const appedItemsCarousel = () => {
-        if (titulo.current && titulo.current.value && descripcion.current && descripcion.current.value && editItemResource.url) {
+        if (editItemResource.url) {
             const items = {
                 id: generateRandomString(7),
                 url: editItemResource.url,
@@ -53,6 +55,14 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
             }
             changeSizeTitle({ list: [...editItem.list, items] })
             clearDataFormCarousel()
+        } else {
+            swal(
+                {
+                    title: 'Error!',
+                    text: 'Seleccione una imagen antes de agregar al carrusel',
+                    icon: 'error',
+                }
+            )
         }
     }
 
@@ -67,7 +77,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
     }
     useEffect(() => {
 
-        if (editItemResource.tipo && (editItemResource.tipo.includes('video') || editItemResource.tipo.includes('audio') ||  (editItemResource.tipo.includes('image') && editItem.type === 'image-360'))) {
+        if (editItemResource.tipo && (editItemResource.tipo.includes('video') || editItemResource.tipo.includes('audio') || (editItemResource.tipo.includes('image') && editItem.type === 'image-360'))) {
             changeSizeTitle({ url: editItemResource.url })
         }
 
@@ -82,9 +92,10 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                         <div className="py-2 d-flex flex-row">
                             <div className="tooltip-container mx-2">
                                 <Button
+                                    size="sm"
                                     variant="secondary"
                                     className="btn-icon tooltip-trigger"
-                                    onClick={() => changeResource() }
+                                    onClick={() => changeResource()}
                                 >
                                     <Image
                                         alt="Logo"
@@ -99,6 +110,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
 
                             <div className="tooltip-container mx-2">
                                 <Button
+                                    size="sm"
                                     variant="secondary"
                                     className="btn-icon tooltip-trigger"
                                     onClick={() => cropImage()}
@@ -113,8 +125,24 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                                     Recortar
                                 </div>
                             </div>
+
                             <div className="tooltip-container mx-2">
                                 <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    className="btn-icon tooltip-trigger"
+                                    onClick={() => changeSizeTitle({ url: editItemResource.url })}
+                                >
+                                    <i className="fa fa-check fs-3 text-success"></i>
+                                </Button>
+                                <div className="tooltip-one">
+                                    Asignar
+                                </div>
+                            </div>
+
+                            <div className="tooltip-container mx-2">
+                                <Button
+                                    size="sm"
                                     variant="secondary"
                                     className="btn-icon tooltip-trigger"
                                     onClick={() => changeSizeTitle({ borderRadius: 'rounded-top' })}
@@ -126,7 +154,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                                     />
                                 </Button>
                                 <div className="tooltip-one">
-                                    Eliminar Image
+                                    Eliminar Imagen
                                 </div>
                             </div>
                         </div>
@@ -169,7 +197,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                             <div className="resource-element size-resource-video rounded d-flex justify-content-center align-items-center">
                                 <span className="text-center">
                                     <p><i className="bi bi-arrow-90deg-down text-white" /></p>
-                                    <p>Arrasta {(editItem.type === 'video') ? 'un video' : (editItem.type === 'audio') ? 'un audio' : 'una Imagen 360°' } de los recursos</p>
+                                    <p>Arrasta {(editItem.type === 'video') ? 'un video' : (editItem.type === 'audio') ? 'un audio' : 'una Imagen 360°'} de los recursos</p>
                                 </span>
                             </div>
                         </Col>
@@ -182,7 +210,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                             <Button
                                 variant="secondary"
                                 className="btn-icon tooltip-trigger"
-                                onClick={() => changeResource() }
+                                onClick={() => changeResource()}
                                 disabled={!editItemResource.url}
                             >
                                 <Image
@@ -249,10 +277,11 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                             <ul className="list-group overflow-auto" style={{ height: "100px" }}>
                                 {
                                     editItem.list.map((item: any, index: number) => {
+                                        console.log(item)
                                         return (
                                             <li className="list-group-item bg-transparent" key={index}>
                                                 <div className="d-flex">
-                                                    <div className="p-2 w-100">{item.titulo}</div>
+                                                    <div className="p-2 w-100">{item.titulo? item.titulo : item.id}</div>
                                                     <div className="p-2 flex-shrink-1" onClick={() => destroyElementCarousel(item.id)}><i className="bi bi-trash text-danger cursor-pointer"></i></div>
                                                 </div>
                                             </li>

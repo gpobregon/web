@@ -1,4 +1,4 @@
-import React, {useState, useEffect, FC} from 'react'
+import React, {useState, useEffect, FC, useContext} from 'react'
 import {
     Container,
     Row,
@@ -14,7 +14,7 @@ import {
 } from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
+import {Link, Navigate, useLocation, useNavigate, useParams} from 'react-router-dom'
 import {Site} from '../../models/site'
 import Moment from 'moment'
 import {
@@ -26,6 +26,8 @@ import {
     statesMethod,
     updateSiteMethod,
     URLAWS,
+    getRolesMethod,
+    getValue,
 } from '../../services/api'
 import {Tag} from '../../models/tag'
 import {status} from '../../models/status'
@@ -36,12 +38,17 @@ import {Category} from '../../models/category'
 import Interes from './components/sitios-interes/sala-interes'
 import {QRCodeCanvas} from 'qrcode.react'
 import logo from './upload-image_03.jpg'
-import UpImage from './components/upload-image'
+import UpImage from '../uploadFile/upload-image'
 import {ModelOperation} from '@aws-amplify/datastore'
 import {
     validateStringSinCaracteresEspeciales,
     validateStringSoloNumeros,
 } from '../validarCadena/validadorCadena'
+import {KTSVG} from '../../../_metronic/helpers'
+import {Auth} from 'aws-amplify'
+import {LoadingContext} from '../../utility/component/loading/context'
+import {ContentContext} from '../template/movil/context'
+import {roleManager} from '../../models/roleManager'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -96,43 +103,85 @@ const customStyles = {
 const animatedComponents = makeAnimated()
 
 const EditSite = () => {
+    //const { toogleSave, discardChange } = useContext(ContentContext)
+    const {setShowLoad} = useContext(LoadingContext)
+    const {id} = useParams()
     const {state} = useLocation()
-    const [site, setSite] = useState(state as Site)
+    const [site, setSite] = useState<Site>({
+        id_sitio: 0,
+        nombre: '',
+        descripcion: '',
+        ubicacion: '',
+        geoX: '',
+        geoY: '',
+        portada_path: '',
+        estado: 0,
+        creado: new Date(),
+        editado: new Date(),
+        categorias: [{id_categoria: 0, nombre: '', estado: 0}],
+        id_municipio: 0,
+        favorito: false,
+        publicado: false,
+        oculto: false,
+        geo_json: '',
+        cercania_activa: false,
+        nombre_usuario_edito: '',
+        qr_path: '',
+        telefono: '',
+        website: '',
+        qr_image_path: '',
+    })
+    console.log('site: ', site)
+
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
     const [show, setShow] = useState(false) //modal show qr
     const [qr, setQr] = useState<any>() //modal qr
     let [categorys, setCategorys] = useState<Tag[]>([])
     const [editcategorys, setEditCategory] = useState<Tag[]>([])
-    const [categorysHolder, setCategorysHolder] = useState('')
     const navigate = useNavigate()
-
-    useEffect(() => {
-        // console.log(state)
+    const [nombreJson, setNombreJson] = useState('')
+    const [unbicacionBucket, setUbicacionBucket] = useState('')
+    const [ArchivoPermitido, setArchivoPermitido] = useState('')
+    const [mostrarCategorias, setmostrarCategorias] = useState<any>()
+    const getSite = async () => {
+        const sitio: any = await getValue(sitesMethod, Number(id))
+        setSite(sitio.site)
+        let aux = sitio.site.geo_json
+        let auxSplit = aux.split('/')
+        setNombreJson(auxSplit[auxSplit.length - 1])
         getCategorys()
 
-        setearStatus()
-        var txt = ''
-        for (var i = 0; i < site.categorias.length; i++) {
-            txt += site.categorias[i].nombre + ', '
-        }
-        txt = txt.substring(0, txt.length - 2)
-        setCategorysHolder(txt)
+        setearStatus(sitio.site)
+
+        const mostrarCategorys = await sitio.site.categorias.map((cat: any) => ({
+            value: Number(cat.id_categoria),
+            label: cat.nombre,
+        }))
+
+        setmostrarCategorias(mostrarCategorys)
+    }
+    useEffect(() => {
+        getSite()
+        //  console.log(state)
     }, [])
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
         favorito: site.favorito,
-        publicado: site.favorito,
+        publicado: site.publicado,
         oculto: site.oculto,
+        cercania_activa: site.cercania_activa,
     })
 
-    const setearStatus = () => {
+    const setearStatus = (sitio: Site) => {
         setStatus({
-            id_sitio: site.id_sitio,
-            favorito: site.favorito,
-            publicado: site.favorito,
-            oculto: site.oculto,
+            id_sitio: sitio.id_sitio,
+            favorito: sitio.favorito,
+            publicado: sitio.publicado,
+            oculto: sitio.oculto,
+            cercania_activa: sitio.cercania_activa,
         })
+        // console.log(status)
     }
     async function getCategorys() {
         const category: any = await getData(categorysMethod)
@@ -149,11 +198,6 @@ const EditSite = () => {
     //   )
 
     // }
-
-    const mostrarCategorys = site.categorias.map((cat) => ({
-        value: cat.id_categoria,
-        label: cat.nombre,
-    }))
 
     const alertNotNullInputs = async () => {
         swal({
@@ -173,51 +217,125 @@ const EditSite = () => {
             site.categorias.length > 0
         ) {
             const sit: any = await postData(updateSiteMethod, sitee)
+            console.log(sit)
             saveChanges()
         } else {
             alertNotNullInputs()
         }
     }
+
+    // obtener usuario que editó
+    const [dataUser, setDataUser] = useState({
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
+    })
+    const getUser = async () => {
+        Auth.currentUserInfo().then((user) => {
+            setDataUser({
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
+                descripcion: '',
+            })
+        })
+    }
+
+    //methods to post data to api------------------------------------------------------
+
+    async function postSiteMaquetar(sitee: any, tipo: string) {
+        if (
+            site.nombre != '' &&
+            site.geoX != '' &&
+            site.geoY != '' &&
+            site.ubicacion != '' &&
+            site.portada_path != '' &&
+            site.geo_json != ''
+        ) {
+            const sit: any = await postData(updateSiteMethod, sitee)
+            navigate(`/template/sitio/${tipo}/${sitee.id_sitio}`)
+        } else {
+            alertNotNullInputs()
+        }
+    }
+
     async function postDefault(route: string, object: any) {
         const sit: any = await postData(route, object)
     }
-    const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
-        setStatus({
+    const changeStatus = async (
+        favorito: boolean,
+        publicado: boolean,
+        oculto: boolean,
+        cercania: boolean
+    ) => {
+        setShowLoad(true)
+        const respuesta3: any = await postData(statesMethod, {
             id_sitio: site.id_sitio,
             favorito: favorito,
             publicado: publicado,
             oculto: oculto,
+            cercania_activa: cercania,
         })
-        setSite({
-            id_sitio: site.id_sitio,
-            nombre: site.nombre,
-            descripcion: site.descripcion,
-            ubicacion: site.ubicacion,
-            geoX: site.geoX,
-            geoY: site.geoY,
-            portada_path: site.portada_path,
-            estado: site.estado,
-            creado: site.creado,
-            editado: site.editado,
-            categorias: site.categorias,
-            id_municipio: site.id_municipio,
-            favorito: status.favorito,
-            publicado: status.publicado,
-            oculto: status.oculto,
-        })
+        if (!respuesta3.hasOwnProperty('titulo')) {
+            setStatus({
+                id_sitio: site.id_sitio,
+                favorito: favorito,
+                publicado: publicado,
+                oculto: oculto,
+                cercania_activa: cercania,
+            })
+            setSite({
+                id_sitio: site.id_sitio,
+                nombre: site.nombre,
+                descripcion: site.descripcion,
+                ubicacion: site.ubicacion,
+                geoX: site.geoX,
+                geoY: site.geoY,
+                portada_path: site.portada_path,
+                estado: site.estado,
+                creado: site.creado,
+                editado: site.editado,
+                categorias: site.categorias,
+                id_municipio: site.id_municipio,
+                favorito: status.favorito,
+                publicado: status.publicado,
+                oculto: status.oculto,
+                geo_json: site.geo_json,
+                cercania_activa: status.cercania_activa,
+                nombre_usuario_edito: dataUser.name,
+                qr_path: site.qr_path,
+                telefono: site.telefono,
+                website: site.website,
+                qr_image_path: site.website,
+            })
+        } else {
+            swal({
+                text: `¡${respuesta3.titulo}!`,
+                icon: 'error',
+            })
+        }
+
         // console.log(status.favorito)
         // console.log(site)
-        postDefault(statesMethod, status)
+
         const getSites = async () => {
             const site: any = await getData(sitesMethod)
             // console.log(site)
         }
+        setShowLoad(false)
     }
 
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
         swal({
-            title: '¿Estas seguro de Descartar Los Cambios ?',
+            title: '¿Estas seguro de descartar los cambios ?',
             icon: 'warning',
             buttons: ['No', 'Sí'],
         }).then((res) => {
@@ -233,13 +351,13 @@ const EditSite = () => {
     }
     const saveChanges = async () => {
         swal({
-            title: '¿Quiere Seguir Editando ?',
+            title: '¿Quiere guardar los cambios?',
             icon: 'warning',
-            buttons: ['Sí', 'No'],
+            buttons: ['No', 'Sí'],
         }).then((res) => {
             if (res) {
                 swal({
-                    text: 'Descartado Correctamente',
+                    text: 'Cambios guardados',
                     icon: 'success',
                     timer: 2000,
                 })
@@ -257,6 +375,7 @@ const EditSite = () => {
         },
     ])
     const handleChange = (event: any) => {
+        setmostrarCategorias(event.target)
         var arrtempo: [
             {
                 id_categoria: number
@@ -269,6 +388,8 @@ const EditSite = () => {
         event.map((cat: any) => {
             arrtempo.push({id_categoria: cat.value, nombre: cat.label, estado: 1})
         })
+
+        console.log(arrtempo)
         setSite({
             id_sitio: site.id_sitio,
             nombre: site.nombre,
@@ -285,29 +406,25 @@ const EditSite = () => {
             favorito: status.favorito,
             publicado: status.publicado,
             oculto: status.oculto,
+            geo_json: site.geo_json,
+            cercania_activa: status.cercania_activa,
+            nombre_usuario_edito: dataUser.name,
+            qr_path: site.qr_path,
+            telefono: site.telefono,
+            website: site.website,
+            qr_image_path: site.website,
         })
-        console.log(site)
+        // console.log(site)
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
     const uploadImage = async (imagen: string) => {
-        setSite({
-            id_sitio: site.id_sitio,
-            nombre: site.nombre,
-            descripcion: site.descripcion,
-            ubicacion: site.ubicacion,
-            geoX: site.geoX,
-            geoY: site.geoY,
-            portada_path: URLAWS + 'sitePages/' + imagen,
-            estado: site.estado,
-            creado: site.creado,
-            editado: site.editado,
-            categorias: site.categorias,
-            id_municipio: site.id_municipio,
-            favorito: status.favorito,
-            publicado: status.publicado,
-            oculto: status.oculto,
-        })
+        if (ArchivoPermitido == '.json') {
+            site.geo_json = URLAWS + 'sitePages/GeoJSON/' + imagen
+            setNombreJson(imagen)
+        } else {
+            site.portada_path = URLAWS + 'sitePages/' + imagen
+        }
         if (imagen != '') {
             setModalupIMG(false)
         }
@@ -320,11 +437,55 @@ const EditSite = () => {
         const pngUrl = canvas!.toDataURL('image/png').replace('image/png', 'image/octet-stream')
         let downloadLink = document.createElement('a')
         downloadLink.href = pngUrl
-        downloadLink.download = 'qr.png'
+        downloadLink.download = `${site.nombre}.png`
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)
     }
+
+    // * Restricción por rol
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const [permissionFavoriteSite, setPermissionFavoriteSite] = useState(true)
+    const [permissionPostSite, setPermissionPostSite] = useState(true)
+    const [permissionChangeVisibilitySite, setPermissionChangeVisibilitySite] = useState(true)
+    const [permissionMockSite, setPermissionMockSite] = useState(true)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.sitio_editar === false) {
+                navigate('/error/401', {replace: true})
+            } else {
+                setPermissionFavoriteSite(filter[0]?.sitio_favorito)
+                setPermissionPostSite(filter[0]?.sitio_publicar)
+                setPermissionChangeVisibilitySite(filter[0]?.sitio_visible)
+                setPermissionMockSite(filter[0]?.sitio_maquetar)
+            }
+        })
+        setTimeout(() => setShowLoad(false), 1000)
+    }
+
+    // * Fin restricción por rol
+
+    useEffect(() => {
+        setShowLoad(true)
+        getRoles()
+        validateRole()
+        getUser()
+    }, [existRoles])
+
     return (
         <>
             <div className=' '>
@@ -339,7 +500,7 @@ const EditSite = () => {
                     <div className='col-xs-12 col-md-5 col-lg-7 d-flex py-5 px-9'>
                         <div id='center'>
                             <Button
-                                className='btn-secondary fa-solid fa-less-than background-button '
+                                className='btn-secondary fa-solid fa-chevron-left background-button'
                                 id='center2'
                                 style={{display: 'flex', marginRight: '6px', color: '#FFFFFF'}}
                                 onClick={() => {
@@ -361,7 +522,8 @@ const EditSite = () => {
                         <div id='center'>
                             <p style={{marginTop: '16px'}}>
                                 {'   '} Ultima vez editado el{' '}
-                                {Moment(site.editado).format('DD/MM/YYYY hh:mm') + ' '} por{' '}
+                                {Moment(site.editado).format('DD/MM/YYYY HH:mm') + ' '} por
+                                {' ' + site.nombre_usuario_edito}
                             </p>
                         </div>
                     </div>
@@ -377,13 +539,18 @@ const EditSite = () => {
                                         }
                                         id='center2'
                                         onClick={() => {
+                                            if (!permissionFavoriteSite) {
+                                                swal({
+                                                    title: 'No tienes permiso para marcar como destacado un sitio',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
                                             // status.favorito == false
-                                            status.favorito = !status.favorito
-                                            changeStatus(
-                                                status.favorito,
-                                                status.publicado,
-                                                status.oculto
-                                            )
+                                            if (!status.favorito) {
+                                                status.favorito = !status.favorito
+                                                changeStatus(status.favorito, true, false, true)
+                                            }
                                             // : changeStatus(false, status.publicado, status.oculto)
                                         }}
                                         style={{display: 'flex', marginRight: '4px'}}
@@ -394,7 +561,7 @@ const EditSite = () => {
                                         className='btn-secondary fa-solid fa-qrcode background-button '
                                         id='center2'
                                         onClick={() => {
-                                            setQr('sitios/view/' + site.id_sitio)
+                                            setQr(site.qr_path)
                                             handleShow()
                                         }}
                                         style={{
@@ -431,11 +598,18 @@ const EditSite = () => {
                                 <Button
                                     className={
                                         status.oculto == false
-                                            ? 'btn-secondary fa-solid fa-eye-slash background-button'
-                                            : 'btn-secondary fa-solid fa-eye background-button'
+                                            ? 'btn-secondary fa-solid fa-eye background-button'
+                                            : 'btn-secondary fa-solid fa-eye-slash background-button'
                                     }
                                     id='center2'
                                     onClick={() => {
+                                        if (!permissionChangeVisibilitySite) {
+                                            swal({
+                                                title: 'No tienes permiso para cambiar la visibilidad de un sitio',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
                                         // status.oculto == false
                                         //   ? changeStatus(status.favorito, status.publicado, true)
                                         //   : changeStatus(status.favorito, status.publicado, false)
@@ -443,7 +617,8 @@ const EditSite = () => {
                                         changeStatus(
                                             status.favorito,
                                             status.publicado,
-                                            status.oculto
+                                            status.oculto,
+                                            status.cercania_activa
                                         )
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
@@ -466,12 +641,38 @@ const EditSite = () => {
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
                                     onClick={() => {
-                                        // console.log('site')
+                                        if (!permissionPostSite) {
+                                            swal({
+                                                title: 'No tienes permiso para publicar cambios de un sitio',
+                                                icon: 'warning',
+                                            })
+                                            return
+                                        }
                                         postSite(site)
-
-                                        // console.log(site)
-                                        // navigate('/site')
                                     }}
+                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
+                                ></Button>
+
+                                <Button
+                                    onClick={() => {
+                                        //toogleSave()
+                                        // status.publicado == false
+                                        //   ? changeStatus(status.favorito, true, status.oculto)
+                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                        status.publicado = !status.publicado
+                                        changeStatus(
+                                            status.favorito,
+                                            status.publicado,
+                                            status.oculto,
+                                            status.cercania_activa
+                                        )
+                                    }}
+                                    className={
+                                        status.publicado == false
+                                            ? 'btn-secondary fa-solid fa-download background-button'
+                                            : 'btn-secondary fa-solid fa-upload background-button'
+                                    }
+                                    id='center2'
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
                                 ></Button>
 
@@ -480,17 +681,18 @@ const EditSite = () => {
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
-                                        status.publicado = !status.publicado
+                                        status.cercania_activa = !status.cercania_activa
                                         changeStatus(
                                             status.favorito,
                                             status.publicado,
-                                            status.oculto
+                                            status.oculto,
+                                            status.cercania_activa
                                         )
                                     }}
                                     className={
-                                        status.publicado == false
-                                            ? 'btn-secondary fa-solid fa-download background-button'
-                                            : 'btn-secondary fa-solid fa-upload background-button'
+                                        status.cercania_activa == false
+                                            ? 'btn-secondary fa-solid bi-cursor background-button'
+                                            : 'btn-secondary fa-solid bi-cursor-fill background-button'
                                     }
                                     id='center2'
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
@@ -522,6 +724,8 @@ const EditSite = () => {
                                     onClick={
                                         site.portada_path == ''
                                             ? (e) => {
+                                                  setArchivoPermitido('image/*')
+                                                  setUbicacionBucket('sitePages')
                                                   setModalupIMG(true)
                                               }
                                             : (e) => {}
@@ -539,6 +743,8 @@ const EditSite = () => {
                                                     className='bi bi-arrow-left-right background-button text-info'
                                                     to={''}
                                                     onClick={() => {
+                                                        setArchivoPermitido('image/*')
+                                                        setUbicacionBucket('sitePages')
                                                         setModalupIMG(true)
                                                     }}
                                                 ></Link>
@@ -570,6 +776,13 @@ const EditSite = () => {
                                                             favorito: status.favorito,
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
+                                                            geo_json: site.geo_json,
+                                                            cercania_activa: status.cercania_activa,
+                                                            nombre_usuario_edito: dataUser.name,
+                                                            qr_path: site.qr_path,
+                                                            telefono: site.telefono,
+                                                            website: site.website,
+                                                            qr_image_path: site.website,
                                                         })
                                                     }
                                                 ></Link>
@@ -614,6 +827,13 @@ const EditSite = () => {
                                                     favorito: status.favorito,
                                                     publicado: status.publicado,
                                                     oculto: status.oculto,
+                                                    geo_json: site.geo_json,
+                                                    cercania_activa: status.cercania_activa,
+                                                    nombre_usuario_edito: dataUser.name,
+                                                    qr_path: site.qr_path,
+                                                    telefono: site.telefono,
+                                                    website: site.website,
+                                                    qr_image_path: site.website,
                                                 })
                                             }
                                         }}
@@ -653,6 +873,13 @@ const EditSite = () => {
                                                             favorito: status.favorito,
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
+                                                            geo_json: site.geo_json,
+                                                            cercania_activa: status.cercania_activa,
+                                                            nombre_usuario_edito: dataUser.name,
+                                                            qr_path: site.qr_path,
+                                                            telefono: site.telefono,
+                                                            website: site.website,
+                                                            qr_image_path: site.website,
                                                         })
                                                     }
                                                 }}
@@ -691,6 +918,14 @@ const EditSite = () => {
                                                             favorito: status.favorito,
                                                             publicado: status.publicado,
                                                             oculto: status.oculto,
+                                                            geo_json: site.geo_json,
+                                                            cercania_activa: status.cercania_activa,
+                                                            nombre_usuario_edito:
+                                                                site.nombre_usuario_edito,
+                                                            qr_path: site.qr_path,
+                                                            telefono: site.telefono,
+                                                            website: site.website,
+                                                            qr_image_path: site.website,
                                                         })
                                                     }
                                                 }}
@@ -731,26 +966,173 @@ const EditSite = () => {
                                                     favorito: status.favorito,
                                                     publicado: status.publicado,
                                                     oculto: status.oculto,
+                                                    geo_json: site.geo_json,
+                                                    cercania_activa: status.cercania_activa,
+                                                    nombre_usuario_edito: dataUser.name,
+                                                    qr_path: site.qr_path,
+                                                    telefono: site.telefono,
+                                                    website: site.website,
+                                                    qr_image_path: site.website,
                                                 })
                                             }
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
-                                    <br></br>
-                                    <label>Etiquetas</label>
+
                                     <br />
+                                    <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                        Teléfono
+                                    </label>
+                                    <br></br>
+                                    <input
+                                        type='number'
+                                        className='form-control'
+                                        style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
+                                        value={site.telefono != '' ? site.telefono : ''}
+                                        onChange={(e) => {
+                                            if (
+                                                validateStringSinCaracteresEspeciales(
+                                                    e.target.value
+                                                )
+                                            ) {
+                                                setSite({
+                                                    id_sitio: site.id_sitio,
+                                                    nombre: site.nombre,
+                                                    descripcion: site.descripcion,
+                                                    ubicacion: site.ubicacion,
+                                                    geoX: site.geoX,
+                                                    geoY: site.geoY,
+                                                    portada_path: site.portada_path,
+                                                    estado: site.estado,
+                                                    creado: site.creado,
+                                                    editado: site.editado,
+                                                    categorias: site.categorias,
+                                                    id_municipio: site.id_municipio,
+                                                    favorito: status.favorito,
+                                                    publicado: status.publicado,
+                                                    oculto: status.oculto,
+                                                    geo_json: site.geo_json,
+                                                    cercania_activa: status.cercania_activa,
+                                                    nombre_usuario_edito: dataUser.name,
+                                                    qr_path: site.qr_path,
+                                                    telefono: e.target.value,
+                                                    website: site.website,
+                                                    qr_image_path: site.website,
+                                                })
+                                            }
+                                        }}
+                                    ></input>
+                                    <hr style={{position: 'relative', top: '-20px'}}></hr>
+
+                                    <br />
+                                    <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                        Sitio web
+                                    </label>
+                                    <br></br>
+                                    <input
+                                        type='text'
+                                        className='form-control'
+                                        style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
+                                        value={site.website != '' ? site.website : ''}
+                                        onChange={(e) => {
+                                            setSite({
+                                                id_sitio: site.id_sitio,
+                                                nombre: site.nombre,
+                                                descripcion: site.descripcion,
+                                                ubicacion: site.ubicacion,
+                                                geoX: site.geoX,
+                                                geoY: site.geoY,
+                                                portada_path: site.portada_path,
+                                                estado: site.estado,
+                                                creado: site.creado,
+                                                editado: site.editado,
+                                                categorias: site.categorias,
+                                                id_municipio: site.id_municipio,
+                                                favorito: status.favorito,
+                                                publicado: status.publicado,
+                                                oculto: status.oculto,
+                                                geo_json: site.geo_json,
+                                                cercania_activa: status.cercania_activa,
+                                                nombre_usuario_edito: dataUser.name,
+                                                qr_path: site.qr_path,
+                                                telefono: site.telefono,
+                                                website: e.target.value,
+                                                qr_image_path: site.website,
+                                            })
+                                        }}
+                                    ></input>
+                                    <hr style={{position: 'relative', top: '-20px'}}></hr>
+
+                                    <label>Etiquetas</label>
+
                                     <div className='form-control'>
                                         <Select
                                             closeMenuOnSelect={false}
                                             styles={customStyles}
                                             components={animatedComponents}
-                                            defaultValue={mostrarCategorys}
+                                            value={mostrarCategorias}
                                             isMulti
                                             options={categorys}
                                             // placeholder={categorysHolder}
                                             onChange={handleChange}
                                         ></Select>
                                     </div>
+                                    <br></br>
+                                    <Form.Group>
+                                        <Form.Label>Adjuntar GeoJSON</Form.Label>
+                                        <Card
+                                            className='mb-4'
+                                            style={{
+                                                backgroundColor: '#151521',
+                                                height: '50px',
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                justifyContent: 'center',
+                                            }}
+                                            onClick={() => {
+                                                setArchivoPermitido('.json')
+                                                setUbicacionBucket('sitePages/GeoJSON')
+                                                setModalupIMG(true)
+                                            }}
+                                        >
+                                            <div
+                                                style={{
+                                                    width: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
+
+                                                    <div>
+                                                        {site.geo_json === ''
+                                                            ? 'Subir GeoJSON'
+                                                            : nombreJson}
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <KTSVG
+                                                        path='/media/icons/duotune/general/gen035.svg'
+                                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Card>
+                                        <div style={{textAlign: 'center', color: 'gray'}}>
+                                            Formato permitido: .json
+                                        </div>
+                                    </Form.Group>
+                                    <br></br>
                                 </div>
                             </div>
                             <div className='col-xs-12 col-md-12 col-xl-5 mb-5'>
@@ -780,12 +1162,22 @@ const EditSite = () => {
                                         </div>
                                         <br></br>
                                         <div className='row'>
-                                            <Link to={`/template/movil/${site.id_sitio}`}>
-                                                <Button className='btn btn-info col-md-12 col-sm-12 col-lg-12'>
-                                                    {' '}
-                                                    <i className='fa-solid fa-pencil'></i> Crear
-                                                </Button>
-                                            </Link>
+                                            <Button
+                                                className='btn btn-info col-md-12 col-sm-12 col-lg-12'
+                                                onClick={() => {
+                                                    if (!permissionMockSite) {
+                                                        swal({
+                                                            title: 'No tienes permiso para maquetar',
+                                                            icon: 'warning',
+                                                        })
+                                                        return
+                                                    }
+                                                    postSiteMaquetar(site, 'movil')
+                                                }}
+                                            >
+                                                {' '}
+                                                <i className='fa-solid fa-pencil'></i> Crear
+                                            </Button>
                                         </div>
                                     </div>
                                     <div className=' col-md-6 col-xs-12 col-lg-6'>
@@ -810,18 +1202,21 @@ const EditSite = () => {
                                         </div>
                                         <br></br>
                                         <div className='row'>
-                                            <Link to={`/template/web/${site.id_sitio}`}>
-                                                <Button
-                                                    className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
-                                                    onClick={() => {
-                                                        console.log(
-                                                            'creado con el boton de sitio web'
-                                                        )
-                                                    }}
-                                                >
-                                                    <i className='fa-solid fa-pencil '></i> Crear
-                                                </Button>
-                                            </Link>
+                                            <Button
+                                                className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
+                                                onClick={() => {
+                                                    if (!permissionMockSite) {
+                                                        swal({
+                                                            title: 'No tienes permiso para maquetar',
+                                                            icon: 'warning',
+                                                        })
+                                                        return
+                                                    }
+                                                    postSiteMaquetar(site, 'web')
+                                                }}
+                                            >
+                                                <i className='fa-solid fa-pencil '></i> Crear
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>
@@ -833,11 +1228,17 @@ const EditSite = () => {
             <br />
             <br />
             <h3>Puntos de interés</h3>
-            <Interes id_sitio={site.id_sitio} />
+            <Interes id_sitio={Number(id)} />
             <UpImage
                 show={modalupimg}
-                onClose={() => setModalupIMG(false)}
+                onClose={() => {
+                    setArchivoPermitido('')
+                    setUbicacionBucket('')
+                    setModalupIMG(false)
+                }}
                 cargarIMG={uploadImage}
+                ubicacionBucket={unbicacionBucket}
+                tipoArchivoPermitido={ArchivoPermitido}
             />
         </>
     )

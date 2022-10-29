@@ -10,28 +10,50 @@ const Elementos = () => {
     return (
         <Fragment>
             {
-                Element[0].ElementosWeb.map((item : any, index : number) => {
-                       return (
-                            <CustomCollapse title={item.title} key={index}>
-                                <Row className="text-center text-white">
-                                    {item.items.map((item : any, index : number) => {
-                                        return (
-                                            <Col lg={6} key={index}>
-                                                <ElementDrag
-                                                    key={index}
-                                                    data={item}
-                                                    setEditItem={setEditItem}
-                                                    updateElement={updateElement}
-                                                />
-                                            </Col>
-                                        )
-                                    })}
-                                </Row>
-                            </CustomCollapse>
-                            )
-                        }
+                Element[0].ElementosWeb.map((item: any, index: number) => {
+                    return (
+                        <CustomCollapse title={item.title} key={index}>
+                            <Row className="text-center text-white">
+                                {item.items.map((item: any, index: number) => {
+                                    return (
+                                        <Col lg={6} key={index}>
+                                            <ElementDrag
+                                                key={index}
+                                                data={item}
+                                                setEditItem={setEditItem}
+                                                updateElement={updateElement}
+                                            />
+                                        </Col>
+                                    )
+                                })}
+                            </Row>
+                        </CustomCollapse>
                     )
-
+                }
+                )
+            }
+            {
+                Element[0].ElementosMovil.map((item: any, index: number) => {
+                    return (
+                        <CustomCollapse title={item.title} key={index}>
+                            <Row className="text-center text-white">
+                                {item.items.map((item: any, index: number) => {
+                                    return (
+                                        <Col lg={6} key={index}>
+                                            <ElementDrag
+                                                key={index}
+                                                data={item}
+                                                setEditItem={setEditItem}
+                                                updateElement={updateElement}
+                                            />
+                                        </Col>
+                                    )
+                                })}
+                            </Row>
+                        </CustomCollapse>
+                    )
+                }
+                )
             }
         </Fragment>
     )

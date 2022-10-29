@@ -1,8 +1,45 @@
-import React from 'react'
+import {Auth} from 'aws-amplify'
+import React, {useContext, useEffect, useState} from 'react'
 import {Container, Col, Row, Card} from 'react-bootstrap'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
+import {roleManager} from '../../models/roleManager'
+import {getData, getRolesMethod} from '../../services/api'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const ReportsPage = () => {
+    let navigate = useNavigate()
+    const {setShowLoad} = useContext(LoadingContext)
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        setShowLoad(true)
+
+        Auth.currentUserInfo().then((user) => {
+            const filter = roles.filter((role) => {
+                return user.attributes['custom:role'] === role.nombre
+            })
+
+            if (filter[0]?.gestor_reportes === false) {
+                navigate('/error/401', {replace: true})
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    }
+
+    useEffect(() => {
+        setShowLoad(true)
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
     return (
         <>
             <Container fluid>
@@ -13,7 +50,7 @@ const ReportsPage = () => {
                     </div>
                 </Row>
                 <Row className='g-10'>
-                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>  
+                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>
                         <Link to='/reportes/reporte-de-usuario'>
                             <Card
                                 className='d-flex justify-content-center align-items-center p-5'
@@ -37,7 +74,7 @@ const ReportsPage = () => {
                                     </span>
                                 </Card.Title>
                                 <Card.Subtitle className='mb-4 fs-3'>Usuarios</Card.Subtitle>
-                            </Card> 
+                            </Card>
                         </Link>
                     </Col>
 
@@ -71,7 +108,7 @@ const ReportsPage = () => {
                         </Link>
                     </Col>
 
-                    <Col sm='4' md='3' style={{cursor: 'pointer'}}> 
+                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>
                         <Link to='/reportes/sitios-por-calificacion'>
                             <Card
                                 className='d-flex justify-content-center align-items-center p-5'
@@ -97,35 +134,35 @@ const ReportsPage = () => {
                                 <Card.Subtitle className='mb-4 fs-3'>
                                     Sitios por calificación
                                 </Card.Subtitle>
-                            </Card> 
+                            </Card>
                         </Link>
                     </Col>
 
-                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>  
-                    <Link to=''>
-                        <Card
-                            className='d-flex justify-content-center align-items-center p-5'
-                            style={{
-                                height: 270,
-                            }}
-                        >
-                            <Card.Title
-                                className='mb-4'
+                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>
+                        <Link to=''>
+                            <Card
+                                className='d-flex justify-content-center align-items-center p-5'
                                 style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
+                                    height: 270,
                                 }}
                             >
-                                <span className='menu-ico'>
-                                    <i
-                                        className='bi bi-file-earmark-text text-white'
-                                        style={{fontSize: 64}}
-                                    ></i>
-                                </span>
-                            </Card.Title>
-                            <Card.Subtitle className='mb-4 fs-3'>Otro reporte</Card.Subtitle>
-                        </Card> 
+                                <Card.Title
+                                    className='mb-4'
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <span className='menu-ico'>
+                                        <i
+                                            className='bi bi-file-earmark-text text-white'
+                                            style={{fontSize: 64}}
+                                        ></i>
+                                    </span>
+                                </Card.Title>
+                                <Card.Subtitle className='mb-4 fs-3'>Otro reporte</Card.Subtitle>
+                            </Card>
                         </Link>
                     </Col>
                 </Row>
