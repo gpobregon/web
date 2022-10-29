@@ -26,6 +26,7 @@ const myBucket = new AWS.S3({
 
 export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [board, setBoard] = useState<any>([])
+    const [sizeWeb, setSizeWeb] = useState<string>('100%')
     const [oneDataTemplate, setOneDataTemplate] = useState<any>([])
     const [templateToClone, setTemplateToClone] = useState<any>('')
     const [show, handleClose] = useState<boolean>(false)
@@ -546,18 +547,19 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-
     const value = {
         drop,
         show,
         tipo,
         drop2,
         board,
+        sizeWeb,
         oneData,
         language,
         editItem,
         moveCard,
         showSave,
+        setSizeWeb,
         toogleSave,
         ReturnView,
         ChangeMode,
