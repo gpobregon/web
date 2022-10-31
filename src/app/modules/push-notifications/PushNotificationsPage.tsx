@@ -18,7 +18,7 @@ import swal from 'sweetalert'
 import {useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
 import {Auth} from 'aws-amplify'
-import { LoadingContext } from '../../utility/component/loading/context'
+import {LoadingContext} from '../../utility/component/loading/context'
 
 const PushNotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([])
@@ -31,6 +31,7 @@ const PushNotificationsPage = () => {
         fecha_hora_programada: '',
         tipo: 0,
         estado: 1,
+        id_sitio: 0,
     })
 
     let dateNow = moment().toJSON()
@@ -42,6 +43,7 @@ const PushNotificationsPage = () => {
         fecha_hora_programada: dateNow,
         tipo: 0,
         estado: 1,
+        id_sitio: 0,
     })
 
     const [optionGetNotifications, setOptionGetNotifications] = useState('programadas')
@@ -135,6 +137,7 @@ const PushNotificationsPage = () => {
             fecha_hora_programada: notification?.fecha_hora_programada,
             tipo: notification?.tipo,
             estado: 1,
+            id_sitio: notification?.id_sitio,
         })
     }
 
@@ -187,14 +190,13 @@ const PushNotificationsPage = () => {
                 fecha_hora_programada: dateNow,
                 tipo: 0,
                 estado: 1,
+                id_sitio: 0,
             })
 
             swal({
                 text: 'Notificación creada',
                 icon: 'success',
             })
-
-            // sendPushNotification()
 
             setTimeout(chooseGetNotifications, 500)
             setTimeout(chooseGetNotifications, 1000)
@@ -255,7 +257,7 @@ const PushNotificationsPage = () => {
 
         await swal({
             title: '¿Estás seguro de eliminar esta notificación?',
-            icon: 'warning', 
+            icon: 'warning',
             dangerMode: true,
             buttons: ['No', 'Sí'],
         }).then((willDelete) => {

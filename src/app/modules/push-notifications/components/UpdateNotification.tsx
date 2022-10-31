@@ -1,10 +1,57 @@
-import React, {FC, useState} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import imgUpload from '../upload-image_03.jpg'
-import UpImage from '../../uploadFile/upload-image';
+import UpImage from '../../uploadFile/upload-image'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
-import {URLAWS} from '../../../services/api'
+import {getData, getSitesActivesAndPublicatedMethod, URLAWS} from '../../../services/api'
 import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+import makeAnimated from 'react-select/animated'
+import Select from 'react-select'
+
+const customStyles = {
+    control: (base: any, state: any) => ({
+        ...base,
+        background: 'transparent',
+        borderColor: state.isFocused ? '#474761' : '#323248',
+        borderRadius: 6.175,
+        color: '#92929F',
+        '&:hover': {
+            borderColor: '#323248',
+        },
+        '&:focus': {
+            borderColor: '#323248',
+        },
+        '&:active': {
+            borderColor: '#323248',
+        },
+    }),
+    input: (base: any, state: any) => ({
+        ...base,
+        color: '#92929f',
+    }),
+    option: (base: any, state: any) => ({
+        ...base,
+        background: state.isFocused ? '#009EF7' : '#323248',
+        color: state.isFocused ? '#fff' : '#92929F',
+        padding: 10,
+    }),
+    singleValue: (base: any) => ({
+        ...base,
+        color: '#fff',
+    }),
+    menu: (base: any) => ({
+        ...base,
+        borderRadius: 6.175,
+        background: '#323248',
+    }),
+    menuList: (base: any) => ({
+        ...base,
+        padding: 0,
+        borderRadius: 6.175,
+    }),
+}
+
+const animatedComponents = makeAnimated()
 
 const UpdateNotification: FC<any> = ({
     cardUpdateNotification,
@@ -31,6 +78,7 @@ const UpdateNotification: FC<any> = ({
                 fecha_hora_programada: dateNow,
                 tipo: 0,
                 estado: 1,
+                id_sitio: notification.id_sitio,
             })
         }
     }
@@ -44,6 +92,7 @@ const UpdateNotification: FC<any> = ({
             fecha_hora_programada: notification.fecha_hora_programada,
             tipo: notification.tipo,
             estado: 1,
+            id_sitio: notification.id_sitio,
         })
         if (image !== '') {
             setModalUploadIMG(false)
@@ -61,8 +110,52 @@ const UpdateNotification: FC<any> = ({
             fecha_hora_programada: dateNow,
             tipo: 0,
             estado: 1,
+            id_sitio: notification.id_sitio,
         })
     }
+
+    interface Options {
+        value: number
+        label: string
+    }
+
+    const [optionsSites, setOptionsSites] = useState<Options[]>([])
+
+    const handleChange = (event: any) => {
+        setNotification({
+            nombre: notification.nombre,
+            descripcion: notification.descripcion,
+            imagen_path: notification.imagen_path,
+            fecha_hora_programada: notification.fecha_hora_programada,
+            tipo: notification.tipo,
+            estado: 1,
+            id_sitio: event.value,
+        })
+    }
+
+    const getSites = async () => {
+        const sitesResult: any = await getData(getSitesActivesAndPublicatedMethod)
+
+        let newOptions = sitesResult.allSites.map((site: any) => ({
+            value: site.id_sitio,
+            label: site.nombre,
+        }))
+
+        newOptions.unshift({value: null, label: 'Sin redirección'})
+
+        setOptionsSites(newOptions)
+
+        console.log(notification.hasOwnProperty('id_sitio'))
+        console.log(notification)
+
+        if (notification.hasOwnProperty('id_sitio')) {
+            console.log(newOptions.find((item: any) => item.value == notification?.id_sitio ?? -1))
+        }
+    }
+
+    useEffect(() => {
+        getSites()
+    }, [cardUpdateNotification])
 
     return (
         <div
@@ -133,6 +226,7 @@ const UpdateNotification: FC<any> = ({
                                         fecha_hora_programada: notification.fecha_hora_programada,
                                         tipo: notification.tipo,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }}
                             >
@@ -159,6 +253,7 @@ const UpdateNotification: FC<any> = ({
                                         fecha_hora_programada: notification.fecha_hora_programada,
                                         tipo: notification.tipo,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }
                             }}
@@ -183,9 +278,29 @@ const UpdateNotification: FC<any> = ({
                                         fecha_hora_programada: notification.fecha_hora_programada,
                                         tipo: notification.tipo,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }
                             }}
+                        />
+                    </Form.Group>
+
+                    <Form.Group className={'mb-9'}>
+                        <Form.Label>{'Redirección al presionar la notificación'}</Form.Label>
+                        <Select
+                            defaultValue={{
+                                value: optionsSites.find(
+                                    (item) => item.value === notification?.id_sitio
+                                )?.value,
+                                label: optionsSites.find(
+                                    (item) => item.value === notification?.id_sitio
+                                )?.label,
+                            }}
+                            options={optionsSites}
+                            styles={customStyles}
+                            components={animatedComponents}
+                            onChange={handleChange}
+                            onMenuOpen={getSites}
                         />
                     </Form.Group>
 
@@ -218,6 +333,7 @@ const UpdateNotification: FC<any> = ({
                                         fecha_hora_programada: e.target.value,
                                         tipo: 1,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }}
                             />
@@ -255,6 +371,7 @@ const UpdateNotification: FC<any> = ({
                                     fecha_hora_programada: dateNow,
                                     tipo: 0,
                                     estado: 1,
+                                    id_sitio: notification.id_sitio,
                                 })
 
                                 updateNotification(notification)
@@ -278,6 +395,7 @@ const UpdateNotification: FC<any> = ({
                                     fecha_hora_programada: notification.fecha_hora_programada,
                                     tipo: 1,
                                     estado: 1,
+                                    id_sitio: notification.id_sitio,
                                 })
 
                                 updateNotification(notification)
