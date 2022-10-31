@@ -147,7 +147,7 @@ export function Login() {
     }
 
     const passwordValidation = () => {
-        const regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g
+        const regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*?_-])[A-Za-z\d!@#$%&*?_-]{8,}$/g
         if (regEx.test(password)) {
             handleSubmit(true)
         } else if (!regEx.test(password) && password !== '') {

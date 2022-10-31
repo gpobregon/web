@@ -115,11 +115,13 @@ const UpdateNotification: FC<any> = ({
     }
 
     interface Options {
-        value: number
+        value: number | null
         label: string
     }
 
     const [optionsSites, setOptionsSites] = useState<Options[]>([])
+    const [valueSelect, setValueSelect] = useState<number | null | undefined>(null)
+    const [labelSelect, setLabelSelect] = useState<string | undefined>('Sin redirección')
 
     const handleChange = (event: any) => {
         setNotification({
@@ -145,12 +147,8 @@ const UpdateNotification: FC<any> = ({
 
         setOptionsSites(newOptions)
 
-        console.log(notification.hasOwnProperty('id_sitio'))
-        console.log(notification)
-
-        if (notification.hasOwnProperty('id_sitio')) {
-            console.log(newOptions.find((item: any) => item.value == notification?.id_sitio ?? -1))
-        }
+        setValueSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.value)
+        setLabelSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.label)
     }
 
     useEffect(() => {
@@ -286,15 +284,11 @@ const UpdateNotification: FC<any> = ({
                     </Form.Group>
 
                     <Form.Group className={'mb-9'}>
-                        <Form.Label>{'Redirección al presionar la notificación'}</Form.Label>
+                        <Form.Label>Redirección al presionar la notificación</Form.Label>
                         <Select
                             defaultValue={{
-                                value: optionsSites.find(
-                                    (item) => item.value === notification?.id_sitio
-                                )?.value,
-                                label: optionsSites.find(
-                                    (item) => item.value === notification?.id_sitio
-                                )?.label,
+                                value: valueSelect,
+                                label: labelSelect,
                             }}
                             options={optionsSites}
                             styles={customStyles}
