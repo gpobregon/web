@@ -631,11 +631,6 @@ const ConfSite = () => {
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.ubicacion != '' ? site.ubicacion : ''}
                                         onChange={(e) => {
-                                            if (
-                                                validateStringSinCaracteresEspeciales(
-                                                    e.target.value
-                                                )
-                                            ) {
                                                 setSite({
                                                     id_sitio: site.id_sitio,
                                                     nombre: site.nombre,
@@ -658,7 +653,6 @@ const ConfSite = () => {
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
                                                 })
-                                            }
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr> 
