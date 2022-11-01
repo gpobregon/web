@@ -268,6 +268,8 @@ const RoleManagement: FC<any> = ({show}) => {
         validateRole()
     }, [existRoles, permissionEditRole, permissionDeleteRole]) 
 
+    //Esto se hizo con el fin de que cuando se guarde un check box hijo tambien se guarde automaticamente el padre 
+    //Pero la función en realidad viene desde el back
     const comprobarCategorias = () =>{
         console.log(!stateRole.categoria_crear && !stateRole.categoria_editar && !stateRole.categoria_eliminar)
         if(!stateRole.categoria_crear && !stateRole.categoria_editar && !stateRole.categoria_eliminar && !stateRole.idioma_crear && !stateRole.idioma_editar && !stateRole.idioma_eliminar){
@@ -609,7 +611,8 @@ const RoleManagement: FC<any> = ({show}) => {
                                                         setTimeout(getRoles, 500)
                                                         setTimeout(getRoles, 1000)
                                                         setTimeout(getRoles, 1500)
-                                                        setTimeout(getRoles, 2000)
+                                                        setTimeout(getRoles, 2000) 
+                                                        setTimeout(() => document.location.href = '/usuarios/role-management', 750)
                                                     }}
                                                 >
                                                     <i className={`bi bi-check fs-3`}></i>
