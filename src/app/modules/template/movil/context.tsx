@@ -26,6 +26,7 @@ const myBucket = new AWS.S3({
 
 export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [board, setBoard] = useState<any>([])
+    const [sizeWeb, setSizeWeb] = useState<string>('100%')
     const [oneDataTemplate, setOneDataTemplate] = useState<any>([])
     const [templateToClone, setTemplateToClone] = useState<any>('')
     const [show, handleClose] = useState<boolean>(false)
@@ -116,6 +117,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         )
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+    
+    // ----------------------------------------------------------------
 
     // Actualizar el recurso a editar 
     const updateElementResource = (item: any) => {
@@ -129,10 +132,63 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     // Cambiar Lenguaje
     const changeLangegeSelect = (data: any) => {
         setChangeLaguage(data)
-        oneData(data, changeTypeEdit === 1 ? true : false)
+        swal({
+            title: '¿Quiere guardar los cambios?',
+            icon: 'warning',
+            buttons: ['No', 'Sí'],
+        }).then((res) => {
+            if (res) {
+                onlySave(changeTypeEdit === 1 ? true : false)
+                if (data.value === changeLaguage.value) {
+                    oneData(changeLaguage, modo === 'movil' ? true : false )
+                } else {
+                    oneData(data, modo === 'movil' ? true : false )
+                }
+            } else {
+                oneData(data, changeTypeEdit === 1 ? true : false)
+            }
+        })
     }
     // cambiar modalidad de edición
-    const ChangeMode = (type: number) => {
+    const ChangeMode = async (type: number) => {
+        swal({
+            title: '¿Quiere guardar los cambios?',
+            icon: 'warning',
+            buttons: ['No', 'Sí'],
+        }).then((res) => {
+            if (res) {
+                onlySave(type)
+            }
+            setChangeMode(type)
+        })
+
+    }
+
+    const onlySave = async (type: any) => {
+        setShowLoad(true)
+        const dataTemplate = {
+            "id_punto": tipo === 'punto' ? id : -1,
+            "id_sitio": tipo === 'sitio' ? id : idSitio,
+            "id_lenguaje": changeLaguage.value,
+            "nombre": oneDataTemplate.nombre,
+            "descripcion": oneDataTemplate.descripcion,
+            "contenido": JSON.stringify(board),
+            "version": "version sitio movil 1",
+            "es_movil": changeTypeEdit === 1 ? true : false,
+            "estado": 1
+        }
+        const response: any = await postData('site/mobile/set', dataTemplate)
+        response &&
+            swal(
+                {
+                    text: '¡Maquetación almacenada exitosamente!',
+                    icon: 'success',
+                }
+            )
+        setShowLoad(false)
+    }
+
+    const setChangeMode = (type: number) => {
         if (type === 1) {
             if (tipo === 'sitio') {
                 navigate(`/template/sitio/movil/${id}`)
@@ -154,11 +210,11 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     // get all data
-    const getLenguate = async () => {
+    const getLenguaje = async () => {
         const response: any = await getData('language/select')
         setLanguage(response.data.length > 0 ? response.data : [])
         setChangeLaguage(response.data.length > 0 ? response.data[0] : [])
-        oneData(response.data.length > 0 ? response.data[0] : [], changeTypeEdit === 1 ? true : false)
+        oneData(response.data.length > 0 ? response.data[0] : [], modo === 'movil' ? true : false)
     }
 
     // obtenemos el template para modificar
@@ -166,8 +222,13 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         const response = await getTemplate(item, type)
         if (response.data.length > 0) {
             setOneDataTemplate(response.data[0])
-            setBoard(JSON.parse(response.data[0].contenido))
-            setOldBoard(JSON.parse(response.data[0].contenido))
+            if (response.data[0].contenido !== "[]") {
+                setBoard(JSON.parse(response.data[0].contenido))
+                setOldBoard(JSON.parse(response.data[0].contenido))
+            } else {
+                setBoard([])
+                setOldBoard([])
+            }
         } else {
             setBoard([])
             setOldBoard([])
@@ -222,7 +283,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                     icon: 'success',
                 }
             )
-        if(data.clonar) {
+        if (data.clonar) {
             setOneDataTemplate(dataTemplate)
             setBoard(JSON.parse(templateToClone.contenido))
             setOldBoard(JSON.parse(templateToClone.contenido))
@@ -231,7 +292,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     }
 
     // abrir modal guardar maqueta
-    const toogleSave = () => { 
+    const toogleSave = () => {
         swal({
             title: '¿Quiere guardar los cambios?',
             icon: 'warning',
@@ -241,7 +302,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                 handleCloseSave(true)
             }
         })
-        
+
     }
 
     // guardar maqueta
@@ -466,27 +527,25 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
 
         }, [board, count]
     )
+
     // ------------------------------------------------------------
     useEffect(() => {
 
         if ((tipo === 'sitio' || tipo === 'punto') && (modo === 'movil' || modo === 'web')) {
-            getAllResources(1)
-            getLenguate()
-            oneSite()
-            console.log(modo)
-            if (modo !== 'web') {
-                ChangeMode(1)
-            } else {
-                ChangeMode(2)
+            if (modo === 'movil') {
+                setChangeMode(1)
             }
+            if (modo === 'web') {
+                setChangeMode(2)
+            }
+            oneSite()
+            getLenguaje()
         } else {
             navigate(`/error/404`)
         }
 
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
 
     const value = {
         drop,
@@ -494,11 +553,13 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         tipo,
         drop2,
         board,
+        sizeWeb,
         oneData,
         language,
         editItem,
         moveCard,
         showSave,
+        setSizeWeb,
         toogleSave,
         ReturnView,
         ChangeMode,

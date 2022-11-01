@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import {Container, Col, Row, Button, InputGroup, Form, Stack} from 'react-bootstrap'
 import moment from 'moment'
 import Catalogo from './components/catalogo'
@@ -24,9 +24,11 @@ import {
 } from '../../services/api'
 import swal from 'sweetalert'
 import {Auth} from 'aws-amplify'
-import {useNavigate} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
 import {ConsoleLogger} from '@aws-amplify/core'
+import {LoadingContext} from '../../utility/component/loading/context'
+import favicon from '../../../../public/manifest.json'
 const alertLanguageDone = async () => {
     swal({
         text: 'Lenguaje creado',
@@ -35,6 +37,7 @@ const alertLanguageDone = async () => {
 }
 
 const CatalogosPage = () => {
+    const {setShowLoad} = useContext(LoadingContext)
     const [modalAddTag, setModalAddTag] = useState(false)
     const [modalAddLanguage, setModalAddLanguage] = useState({show: false, language: {}})
     const [modalUpdateIdioma, setModalUpdateIdioma] = useState({show: false, language: {}})
@@ -258,6 +261,7 @@ const CatalogosPage = () => {
         await swal({
             title: '¿Estás seguro de eliminar esta categoría?',
             icon: 'warning',
+            dangerMode: true,
             buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {
@@ -293,6 +297,7 @@ const CatalogosPage = () => {
         await swal({
             title: '¿Estás seguro de eliminar este idioma?',
             icon: 'warning',
+            dangerMode: true,
             buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {
@@ -457,6 +462,8 @@ const CatalogosPage = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -474,9 +481,12 @@ const CatalogosPage = () => {
                 setPermissionDeleteTag(filter[0]?.categoria_eliminar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
@@ -623,7 +633,21 @@ const CatalogosPage = () => {
                 </Row>
 
                 <Row className='mb-9'>
-                    <div className='d-flex justify-content-end'>
+                    <div className='d-flex flex-row-reverse'>
+                        <a
+                             style={{paddingLeft: 30}}
+                            href='https://mcd-archivos.s3.amazonaws.com/sitePages/GeoJSON/es+(1).json'
+                            download
+                        >
+                            <Button variant='primary' className='mt-md-0 mt-4'>
+                                <span className='menu-icon me-0  '>
+                                    <i className={`bi bi-file-earmark-arrow-down fs-2`}></i>
+                                </span>
+                                {' Descargar json'}
+                            </Button>
+                        </a>
+                    
+                    
                         <Button
                             variant='primary'
                             className='mt-md-0 mt-4'
@@ -666,7 +690,7 @@ const CatalogosPage = () => {
                     updateIdioma={updateIdioma}
                     deleteIdioma={deleteIdioma}
                     permissionDeleteLanguage={permissionDeleteLanguage}
-                 />
+                />
             </Container>
         </>
     )

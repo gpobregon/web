@@ -1,4 +1,4 @@
-import React, {FC, useState, useEffect} from 'react'
+import React, {FC, useState, useEffect, useContext} from 'react'
 import {Button, Col, Container, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
 import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
@@ -18,6 +18,7 @@ import {
 import {roleManager} from '../../models/roleManager'
 import {getData, postData, getRolesMethod, updateUserMethod} from '../../services/api'
 import swal from 'sweetalert'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -233,6 +234,7 @@ const UserManagement: FC<any> = ({show}) => {
     }, [])
 
     let navigate = useNavigate()
+    const {setShowLoad} = useContext(LoadingContext)
     const [existRoles, setExistRoles] = useState(false)
 
     const [permissionCreateUsers, setPermissionCreateUsers] = useState(true)
@@ -241,6 +243,8 @@ const UserManagement: FC<any> = ({show}) => {
     const [permissionSearchUsers, setPermissionSearchUsers] = useState(true)
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -255,9 +259,12 @@ const UserManagement: FC<any> = ({show}) => {
                 setPermissionSearchUsers(filter[0]?.usuarios_buscar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles, permissionEditUsers])

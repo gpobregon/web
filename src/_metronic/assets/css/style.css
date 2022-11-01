@@ -389,3 +389,28 @@ input[type=number]::-webkit-outer-spin-button {
 .css-306hrz-option {
   background-color: #12121B !important;
 }
+
+.position-icon {
+    left: 35px;
+    position: absolute !important;
+    z-index: 50;
+}
+
+/* --------------------------------- */
+/* .swal-modal {
+  background: #1E1E2D;
+}
+
+.swal-title {
+  color: #fff !important;
+}
+
+.swal-button--cancel {
+  background-color: #0D0D14 !important;
+  color: #fff !important;
+}
+
+.swal-button--confirm {
+  background-color: #009EF7 !important;
+  color: #fff !important;
+} */

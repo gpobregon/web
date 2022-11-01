@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import {Container, Row, Col, Button, Card} from 'react-bootstrap'
 import {getData, sitesMethod, deleteData, postData, getRolesMethod} from '../../services/api'
 import Sitio from './components/sitio'
@@ -10,6 +10,7 @@ import QRCode from 'qrcode.react'
 import {roleManager} from '../../models/roleManager'
 import {Auth} from 'aws-amplify'
 import swal from 'sweetalert'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -141,6 +142,7 @@ const SitiosPage = () => {
     }
 
     let navigate = useNavigate()
+    const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -155,6 +157,8 @@ const SitiosPage = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -168,9 +172,12 @@ const SitiosPage = () => {
                 setPermissionDeleteSite(filter[0]?.sitio_eliminar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])

@@ -161,6 +161,20 @@ const UserProfilePage = () => {
     }
 
     const updateUsuarios = async () => {
+        if (
+            dataUser.name === '' ||
+            dataUser.lastname === '' ||
+            dataUser.phoneNumber === '' ||
+            dataUser.imageProfile === ''
+        ) {
+            swal({
+                title: 'Error',
+                text: 'Debe llenar todos los campos',
+                icon: 'error',
+            })
+            return
+        }
+
         const user = await Auth.currentAuthenticatedUser()
 
         const result = await Auth.updateUserAttributes(user, {

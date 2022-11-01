@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import moment from 'moment'
 import {Button, ButtonGroup, Container, Form, Table, ToggleButton} from 'react-bootstrap'
 import NewNotification from './components/NewNotification'
@@ -18,6 +18,7 @@ import swal from 'sweetalert'
 import {useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
 import {Auth} from 'aws-amplify'
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const PushNotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([])
@@ -254,7 +255,8 @@ const PushNotificationsPage = () => {
 
         await swal({
             title: '¿Estás seguro de eliminar esta notificación?',
-            icon: 'warning',
+            icon: 'warning', 
+            dangerMode: true,
             buttons: ['No', 'Sí'],
         }).then((willDelete) => {
             if (willDelete) {
@@ -384,6 +386,7 @@ const PushNotificationsPage = () => {
     }
 
     let navigate = useNavigate()
+    const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
 
@@ -405,6 +408,8 @@ const PushNotificationsPage = () => {
     }
 
     const validateRole = async () => {
+        setShowLoad(true)
+
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -424,9 +429,12 @@ const PushNotificationsPage = () => {
                 setPermissionDeleteNotificationHistory(filter[0]?.notificacion_historial_eliminar)
             }
         })
+
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
+        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])

@@ -23,7 +23,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
         }
     }
     const changeSizeTitle = (data: {}) => {
-        if (editItem.type === 'event') {
+        if (editItem.type === 'event' && (editItem.finalHour || editItem.finalDate) !== '0000-00-00') {
             if (ValidarFechas()) {
                 const item = {
                     ...editItem,

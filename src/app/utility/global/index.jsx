@@ -3,7 +3,7 @@
 import {Element} from './data'
 
 export function updateData(allData, oneData) {
-    let all = allData.map((u) => (u.index !== oneData.index ? u : oneData))
+    let all = allData.map((u) => (u.id !== oneData.id ? u : oneData))
     return all
 }
 
