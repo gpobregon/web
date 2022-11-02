@@ -22,6 +22,7 @@ export const notificationMethod = 'notifications'
 export const addNotificationMethod = 'notification/add'
 export const updateNotificationMethod = 'notification/update'
 export const deleteNotificationMethod = 'notification'
+export const getSitesActivesAndPublicatedMethod = 'site/sites/activesandpublicated'
 
 export const RoomsMethod = sitesMethod + '/rooms'
 export const addRoom = RoomsMethod + '/add'
@@ -52,7 +53,6 @@ export const getUsersMethod = 'user'
 export const addUserMethod = 'user/add'  
 export const updateUserMethod = 'user/edit'  
 export const deleteUserMethod = 'user'
-
 
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {
