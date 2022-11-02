@@ -6,4 +6,5 @@ export interface Notification {
     fecha_hora_programada: Date
     tipo: number
     estado: number
+    id_sitio: number
 }

@@ -1,9 +1,9 @@
-import React, {FC, useState} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import imgUpload from '../upload-image_03.jpg'
 import UpImage from '../../uploadFile/upload-image'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
-import {URLAWS} from '../../../services/api'
+import {getData, getSitesActivesAndPublicatedMethod, URLAWS} from '../../../services/api'
 import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 import makeAnimated from 'react-select/animated'
 import Select from 'react-select'
@@ -75,6 +75,7 @@ const NewNotification: FC<any> = ({
                 fecha_hora_programada: dateNow,
                 tipo: 0,
                 estado: 1,
+                id_sitio: notification.id_sitio,
             })
         }
     }
@@ -87,24 +88,49 @@ const NewNotification: FC<any> = ({
             fecha_hora_programada: notification.fecha_hora_programada,
             tipo: notification.tipo,
             estado: 1,
+            id_sitio: notification.id_sitio,
         })
         if (image != '') {
             setModalUploadIMG(false)
         }
     }
 
+    interface Options {
+        value: number
+        label: string
+    }
+
     const [modalUploadIMG, setModalUploadIMG] = useState(false)
-    const [siteRedirect, setSiteRedirect] = useState('')
-    let options = [
-        {value: -1, label: 'Sin redirección'},
-        {value: 1, label: 'Tikal'},
-        {value: 2, label: 'Antigua Guatemala'},
-        {value: 3, label: 'Flores'},
-    ]
+    const [optionsSites, setOptionsSites] = useState<Options[]>([])
 
     const handleChange = (event: any) => {
-        setSiteRedirect(event.value)
+        setNotification({
+            nombre: notification.nombre,
+            descripcion: notification.descripcion,
+            imagen_path: notification.imagen_path,
+            fecha_hora_programada: notification.fecha_hora_programada,
+            tipo: notification.tipo,
+            estado: 1,
+            id_sitio: event.value,
+        })
     }
+
+    const getSites = async () => {
+        const sitesResult: any = await getData(getSitesActivesAndPublicatedMethod)
+
+        let newOptions = sitesResult.allSites.map((site: any) => ({
+            value: site.id_sitio,
+            label: site.nombre,
+        }))
+
+        newOptions.unshift({value: null, label: 'Sin redirección'})
+
+        setOptionsSites(newOptions)
+    }
+
+    useEffect(() => {
+        getSites()
+    }, [showCardAddNotification])
 
     return (
         <div style={showCardAddNotification == false ? {display: 'none'} : {display: 'block'}}>
@@ -170,6 +196,7 @@ const NewNotification: FC<any> = ({
                                         fecha_hora_programada: notification.fecha_hora_programada,
                                         tipo: notification.tipo,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }}
                             >
@@ -196,6 +223,7 @@ const NewNotification: FC<any> = ({
                                         fecha_hora_programada: notification.fecha_hora_programada,
                                         tipo: 0,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }
                             }}
@@ -220,6 +248,7 @@ const NewNotification: FC<any> = ({
                                         fecha_hora_programada: notification.fecha_hora_programada,
                                         tipo: 0,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }
                             }}
@@ -229,10 +258,11 @@ const NewNotification: FC<any> = ({
                     <Form.Group className={'mb-9'}>
                         <Form.Label>{'Redirección al presionar la notificación'}</Form.Label>
                         <Select
-                            options={options}
+                            options={optionsSites}
                             styles={customStyles}
                             components={animatedComponents}
                             onChange={handleChange}
+                            onMenuOpen={getSites}
                         />
                     </Form.Group>
 
@@ -264,6 +294,7 @@ const NewNotification: FC<any> = ({
                                         fecha_hora_programada: e.target.value,
                                         tipo: 1,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }}
                             />
@@ -285,6 +316,7 @@ const NewNotification: FC<any> = ({
                                 fecha_hora_programada: '',
                                 tipo: 1,
                                 estado: 1,
+                                id_sitio: 0,
                             })
                             toggleCardAddNotification(false)
                         }}
@@ -307,6 +339,7 @@ const NewNotification: FC<any> = ({
                                     fecha_hora_programada: dateNow,
                                     tipo: 0,
                                     estado: 1,
+                                    id_sitio: notification.id_sitio,
                                 })
 
                                 addNotification(notification)
@@ -329,6 +362,7 @@ const NewNotification: FC<any> = ({
                                     fecha_hora_programada: notification.fecha_hora_programada,
                                     tipo: 1,
                                     estado: 1,
+                                    id_sitio: notification.id_sitio,
                                 })
 
                                 addNotification(notification)
