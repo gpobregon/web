@@ -41,7 +41,7 @@ export const validateStringEmailAlert = (cadena: string) => {
 
 // VALIDAR CADENA CONTRASEÑA ------------------------------------------------
 export const validateStringPassword = (cadena: string) => {
-    var patron = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*?_-])[A-Za-z\d!@#$%&*?_-]{8,}$/g
+    var patron = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ])[A-Za-z\d¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ]{8,}$/g
     if (cadena.search(patron)) {
         // swal('Error', 'No se permiten caracteres especiales', 'error')
         return false
@@ -50,7 +50,7 @@ export const validateStringPassword = (cadena: string) => {
 }
 
 export const validateStringPasswordAlert = (cadena: string) => {
-    var patron = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*?_-])[A-Za-z\d!@#$%&*?_-]{8,}$/g
+    var patron = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ])[A-Za-z\d¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ]{8,}$/g
     if (cadena.search(patron)) {
         swal(
             'Error',

@@ -153,7 +153,7 @@ const AddUser: FC<any> = ({show, onClose}) => {
             user.phoneNumber != ''
         ) {
             const regExPassword =
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*?_-])[A-Za-z\d!@#$%&*?_-]{8,}$/g
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ])[A-Za-z\d¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ]{8,}$/g
             if (regExPassword.test(user.password) == false) {
                 swal(
                     'La contraseña no es válida',

@@ -10,6 +10,7 @@ import {
     deleteNotificationMethod,
     getData,
     getRolesMethod,
+    getSitesActivesAndPublicatedMethod,
     notificationMethod,
     postData,
     updateNotificationMethod,
@@ -21,8 +22,13 @@ import {Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
 
 const PushNotificationsPage = () => {
-    const [notifications, setNotifications] = useState<Notification[]>([])
+    const [showCardAddNotification, setShowCardAddNotification] = useState(false)
+    const [cardUpdateNotification, setCardUpdateNotification] = useState({
+        show: false,
+        notification: {},
+    })
 
+    const [notifications, setNotifications] = useState<Notification[]>([])
     const [notification, setNotification] = useState({
         id_notificacion: 0,
         nombre: '',
@@ -31,8 +37,37 @@ const PushNotificationsPage = () => {
         fecha_hora_programada: '',
         tipo: 0,
         estado: 1,
-        id_sitio: 0,
+        id_sitio: null,
     })
+
+    interface Options {
+        value: number | null
+        label: string
+    }
+
+    const [optionsSites, setOptionsSites] = useState<Options[]>([])
+    const [valueSelect, setValueSelect] = useState<number | null | undefined>(null)
+    const [labelSelect, setLabelSelect] = useState<string | undefined>('Sin redirección')
+
+    const getSites = async () => {
+        const sitesResult: any = await getData(getSitesActivesAndPublicatedMethod)
+
+        let newOptions = sitesResult.allSites.map((site: any) => ({
+            value: site.id_sitio,
+            label: site.nombre,
+        }))
+
+        newOptions.unshift({value: null, label: 'Sin redirección'})
+
+        setOptionsSites(newOptions)
+
+        setValueSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.value)
+        setLabelSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.label)
+    }
+
+    useEffect(() => {
+        getSites()
+    }, [cardUpdateNotification])
 
     let dateNow = moment().toJSON()
 
@@ -43,7 +78,7 @@ const PushNotificationsPage = () => {
         fecha_hora_programada: dateNow,
         tipo: 0,
         estado: 1,
-        id_sitio: 0,
+        id_sitio: null,
     })
 
     const [optionGetNotifications, setOptionGetNotifications] = useState('programadas')
@@ -91,12 +126,6 @@ const PushNotificationsPage = () => {
     const [optionSort, setOptionSort] = useState('Orden descendente')
     const [resultIcon, setResultIcon] = useState('bi-sort-down')
 
-    const [showCardAddNotification, setShowCardAddNotification] = useState(false)
-    const [cardUpdateNotification, setCardUpdateNotification] = useState({
-        show: false,
-        notification: {},
-    })
-
     const toggleCardAddNotification = (value: any) => {
         if (permissionCreateNotification) {
             setShowCardAddNotification(value)
@@ -112,6 +141,9 @@ const PushNotificationsPage = () => {
     }
 
     const showCardUpdateNotification = (notification: any) => {
+        setValueSelect(null)
+        setLabelSelect('Sin redirección')
+
         if (!permissionEditNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
                 title: 'No tienes permiso para editar una notificación programada',
@@ -127,6 +159,9 @@ const PushNotificationsPage = () => {
             })
             return
         }
+
+        setValueSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.value)
+        setLabelSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.label)
 
         setCardUpdateNotification({show: true, notification})
         setNotification({
@@ -190,7 +225,7 @@ const PushNotificationsPage = () => {
                 fecha_hora_programada: dateNow,
                 tipo: 0,
                 estado: 1,
-                id_sitio: 0,
+                id_sitio: null,
             })
 
             swal({
@@ -214,6 +249,7 @@ const PushNotificationsPage = () => {
     }
 
     const updateNotification = async (notification: any) => {
+        console.log(notification)
         if (
             notification.nombre !== '' &&
             notification.descripcion !== '' &&
@@ -224,10 +260,23 @@ const PushNotificationsPage = () => {
             ).toISOString()
 
             await postData(updateNotificationMethod, notification)
+            setValueSelect(null)
+            setLabelSelect('Sin redirección')
             setCardUpdateNotification({
                 show: false,
                 notification: {},
             })
+            setNotification({
+                id_notificacion: 0,
+                nombre: '',
+                descripcion: '',
+                imagen_path: '',
+                fecha_hora_programada: '',
+                tipo: 0,
+                estado: 1,
+                id_sitio: null,
+            })
+
             chooseGetNotifications()
             setTimeout(chooseGetNotifications, 500)
             setTimeout(chooseGetNotifications, 1000)
@@ -668,6 +717,12 @@ const PushNotificationsPage = () => {
                     notification={notification}
                     setNotification={setNotification}
                     updateNotification={updateNotification}
+                    optionsSites={optionsSites}
+                    setOptionsSites={setOptionsSites}
+                    valueSelect={valueSelect}
+                    setValueSelect={setValueSelect}
+                    labelSelect={labelSelect}
+                    setLabelSelect={setLabelSelect}
                 />
             </div>
         </Container>

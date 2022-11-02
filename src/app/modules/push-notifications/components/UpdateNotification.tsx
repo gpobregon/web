@@ -59,6 +59,12 @@ const UpdateNotification: FC<any> = ({
     notification,
     setNotification,
     updateNotification,
+    optionsSites,
+    setOptionsSites,
+    valueSelect,
+    setValueSelect,
+    labelSelect,
+    setLabelSelect,
 }) => {
     const [scheduleNotification, setScheduleNotification] = useState(false)
     const [switchValue, setSwitchValue] = useState(notification?.tipo === 1 ? true : false)
@@ -119,12 +125,9 @@ const UpdateNotification: FC<any> = ({
         label: string
     }
 
-    const [optionsSites, setOptionsSites] = useState<Options[]>([])
-    const [valueSelect, setValueSelect] = useState<number | null | undefined>(null)
-    const [labelSelect, setLabelSelect] = useState<string | undefined>('Sin redirección')
-
     const handleChange = (event: any) => {
         setNotification({
+            id_notificacion: notification.id_notificacion,
             nombre: notification.nombre,
             descripcion: notification.descripcion,
             imagen_path: notification.imagen_path,
@@ -133,27 +136,10 @@ const UpdateNotification: FC<any> = ({
             estado: 1,
             id_sitio: event.value,
         })
+
+        setValueSelect(optionsSites.find((item: Options) => item.value == event.value)?.value)
+        setLabelSelect(optionsSites.find((item: Options) => item.value == event.value)?.label)
     }
-
-    const getSites = async () => {
-        const sitesResult: any = await getData(getSitesActivesAndPublicatedMethod)
-
-        let newOptions = sitesResult.allSites.map((site: any) => ({
-            value: site.id_sitio,
-            label: site.nombre,
-        }))
-
-        newOptions.unshift({value: null, label: 'Sin redirección'})
-
-        setOptionsSites(newOptions)
-
-        setValueSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.value)
-        setLabelSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.label)
-    }
-
-    useEffect(() => {
-        getSites()
-    }, [cardUpdateNotification])
 
     return (
         <div
@@ -286,7 +272,7 @@ const UpdateNotification: FC<any> = ({
                     <Form.Group className={'mb-9'}>
                         <Form.Label>Redirección al presionar la notificación</Form.Label>
                         <Select
-                            defaultValue={{
+                            value={{
                                 value: valueSelect,
                                 label: labelSelect,
                             }}
@@ -294,7 +280,6 @@ const UpdateNotification: FC<any> = ({
                             styles={customStyles}
                             components={animatedComponents}
                             onChange={handleChange}
-                            onMenuOpen={getSites}
                         />
                     </Form.Group>
 
