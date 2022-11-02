@@ -14,6 +14,7 @@ import {
     statePointInteresPublished,
     getRolesMethod,
     getPuntoInteres,
+    publishPI,
 } from '../../../../services/api'
 import swal from 'sweetalert'
 import makeAnimated from 'react-select/animated'
@@ -101,6 +102,8 @@ const EditPoint = () => {
         id_lenguaje_anterior: 0,
         publicado: false,
         nombre_usuario_edito: '',
+        publicar_web: false,
+        publicar_movil: false,
     })
 
     const ObtenerPuntoInteres = async () => {
@@ -123,6 +126,8 @@ const EditPoint = () => {
             id_lenguaje_anterior: 0,
             publicado: punto.publicado,
             nombre_usuario_edito: '',
+            publicar_web: punto.publicar_web,
+            publicar_movil: punto.publicar_movil,
         })
         // console.log(punto)
     }
@@ -149,6 +154,8 @@ const EditPoint = () => {
             publicado: sitio.publicado,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
             nombre_usuario_edito: sitio.nombre_usuario_edito,
+            publicar_web: sitio.publicar_web,
+            publicar_movil: sitio.publicar_movil,
         })
     }
     const changePublicado = async (publicado1: boolean) => {
@@ -174,6 +181,8 @@ const EditPoint = () => {
             publicado: publicado1,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
             nombre_usuario_edito: sitio.nombre_usuario_edito,
+            publicar_web: sitio.publicar_web,
+            publicar_movil: sitio.publicar_movil,
         })
     }
     //alert methods-----------------------------------------------------------------------
@@ -226,6 +235,7 @@ const EditPoint = () => {
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
+        console.log('sitio: ', sitio)
         // console.log(updatePoint)
         // console.log(sitio)
     }
@@ -305,6 +315,8 @@ const EditPoint = () => {
                         publicado: true,
                         id_lenguaje_anterior: -1,
                         nombre_usuario_edito: sitio.nombre_usuario_edito,
+                        publicar_web: sitio.publicar_web,
+                        publicar_movil: sitio.publicar_movil,
                     })
                 }
             })
@@ -333,6 +345,8 @@ const EditPoint = () => {
             publicado: true,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
             nombre_usuario_edito: sitio.nombre_usuario_edito,
+            publicar_web: sitio.publicar_web,
+            publicar_movil: sitio.publicar_movil,
         })
 
         if (imagen != '') {
@@ -553,6 +567,44 @@ const EditPoint = () => {
                                     id='center2'
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
                                 ></Button>
+                                <Button
+                                    onClick={() => {
+                                        //toogleSave()
+                                        // status.publicado == false
+                                        //   ? changeStatus(status.favorito, true, status.oculto)
+                                        //   : changeStatus(status.favorito, false, status.oculto)
+
+                                        setSitio({
+                                            ...sitio,
+                                            publicar_movil: !sitio.publicar_movil,
+                                        })
+                                    }}
+                                    className={'btn-secondary fa-solid fa-mobile background-button'}
+                                    id='center2'
+                                    style={{
+                                        color: false ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button>
+                                <Button
+                                    onClick={() => {
+                                        //toogleSave()
+                                        // status.publicado == false
+                                        //   ? changeStatus(status.favorito, true, status.oculto)
+                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                        setSitio({...sitio, publicar_web: !false})
+                                    }}
+                                    className={
+                                        'btn-secondary fa-solid fa-computer background-button'
+                                    }
+                                    id='center2'
+                                    style={{
+                                        color: false ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button>
                                 {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
                             </ul>
                         </div>
@@ -632,6 +684,8 @@ const EditPoint = () => {
                                                                 sitio.id_lenguaje_anterior,
                                                             nombre_usuario_edito:
                                                                 sitio.nombre_usuario_edito,
+                                                            publicar_web: sitio.publicar_web,
+                                                            publicar_movil: sitio.publicar_movil,
                                                         })
                                                     }
                                                 ></Link>
@@ -697,6 +751,8 @@ const EditPoint = () => {
                                                         sitio.id_lenguaje_anterior,
                                                     nombre_usuario_edito:
                                                         sitio.nombre_usuario_edito,
+                                                    publicar_web: sitio.publicar_web,
+                                                    publicar_movil: sitio.publicar_movil,
                                                 })
                                             }
                                         }}
@@ -745,6 +801,8 @@ const EditPoint = () => {
                                                                 sitio.id_lenguaje_anterior,
                                                             nombre_usuario_edito:
                                                                 sitio.nombre_usuario_edito,
+                                                            publicar_web: sitio.publicar_web,
+                                                            publicar_movil: sitio.publicar_movil,
                                                         })
                                                     }
                                                 }}
@@ -792,6 +850,8 @@ const EditPoint = () => {
                                                                 sitio.id_lenguaje_anterior,
                                                             nombre_usuario_edito:
                                                                 sitio.nombre_usuario_edito,
+                                                            publicar_web: sitio.publicar_web,
+                                                            publicar_movil: sitio.publicar_movil,
                                                         })
                                                     }
                                                 }}
@@ -799,7 +859,7 @@ const EditPoint = () => {
                                             <hr style={{position: 'relative', top: '-20px'}}></hr>
                                         </div>
                                     </div>
- 
+
                                     <label style={{fontSize: '14px', color: '#FFFFFF'}}>
                                         Lenguajes
                                     </label>
