@@ -349,10 +349,10 @@ const AddUser: FC<any> = ({show, onClose}) => {
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
                                 <Form.Label>{'Teléfono'}</Form.Label>
-                                <Form.Control
-                                    type='number'
+                                <Form.Control 
+                                    value={user.phoneNumber}
+                                    type='text'
                                     pattern='/^-?\d+\.?\d*$/' 
-                                    onKeyDown={blockInvalidChar}
                                     maxLength={8}
                                     autoComplete='off'
                                     className='mb-4' 
