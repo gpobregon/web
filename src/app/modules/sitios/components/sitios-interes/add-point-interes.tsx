@@ -206,7 +206,9 @@ const AddPoint = () => {
     const handleChangeLanguage = (event: any) => {
         sitio.id_lenguaje = event.value
         // console.log(sitio)
-    }
+    } 
+
+    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
     return (
         <>
             <div className=' '>
@@ -478,7 +480,8 @@ const AddPoint = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={sitio.geoX == '' ? '' : sitio.geoX}
+                                                value={sitio.geoX == '' ? '' : sitio.geoX} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
                                                         validateStringSinCaracteresEspeciales(
@@ -517,7 +520,8 @@ const AddPoint = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={sitio.geoY == '' ? '' : sitio.geoY}
+                                                value={sitio.geoY == '' ? '' : sitio.geoY} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
                                                         validateStringSinCaracteresEspeciales(
