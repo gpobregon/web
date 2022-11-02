@@ -28,6 +28,7 @@ import {
     URLAWS,
     getRolesMethod,
     getValue,
+    publishSite,
 } from '../../services/api'
 import {Tag} from '../../models/tag'
 import {status} from '../../models/status'
@@ -107,6 +108,9 @@ const EditSite = () => {
     const {setShowLoad} = useContext(LoadingContext)
     const {id} = useParams()
     const {state} = useLocation()
+    const [publishMobile, setPublishMobile] = useState(false)
+    const [publishWeb, setPublishWeb] = useState(false)
+
     const [site, setSite] = useState<Site>({
         id_sitio: 0,
         nombre: '',
@@ -131,7 +135,10 @@ const EditSite = () => {
         website: '',
         qr_image_path: '',
     })
-    console.log('site: ', site)
+    const [typePublication, setTypePublication] = useState({
+        id_sitio: 0,
+        modo_publicacion: 0,
+    })
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -221,6 +228,25 @@ const EditSite = () => {
             saveChanges()
         } else {
             alertNotNullInputs()
+        }
+    }
+
+    const publishTypeSite = async () => {
+        if (publishMobile === true && publishWeb === true) {
+            await postData(publishSite, {
+                id_sitio: site.id_sitio,
+                modo_publicacion: 3,
+            })
+        } else if (publishMobile === true && publishWeb === false) {
+            await postData(publishSite, {
+                id_sitio: site.id_sitio,
+                modo_publicacion: 1,
+            })
+        } else if (publishWeb === true && publishMobile === false) {
+            await postData(publishSite, {
+                id_sitio: site.id_sitio,
+                modo_publicacion: 2,
+            })
         }
     }
 
@@ -571,7 +597,6 @@ const EditSite = () => {
                                         }}
                                     ></Button>
                                 </li>
-
                                 <Modal show={show} onHide={handleClose}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>Escanee su Código QR</Modal.Title>
@@ -594,7 +619,6 @@ const EditSite = () => {
                                         </Button>
                                     </Modal.Footer>
                                 </Modal>
-
                                 <Button
                                     className={
                                         status.oculto == false
@@ -652,7 +676,6 @@ const EditSite = () => {
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
                                 ></Button>
-
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -666,6 +689,7 @@ const EditSite = () => {
                                             status.oculto,
                                             status.cercania_activa
                                         )
+                                        publishTypeSite()
                                     }}
                                     className={
                                         status.publicado == false
@@ -675,7 +699,47 @@ const EditSite = () => {
                                     id='center2'
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
                                 ></Button>
+                                <Button
+                                    onClick={() => {
+                                        //toogleSave()
+                                        // status.publicado == false
+                                        //   ? changeStatus(status.favorito, true, status.oculto)
+                                        //   : changeStatus(status.favorito, false, status.oculto)
 
+                                        setPublishMobile(!publishMobile)
+                                    }}
+                                    className={
+                                        status.publicado == false
+                                            ? 'btn-secondary fa-solid fa-mobile background-button'
+                                            : 'btn-secondary fa-solid fa-mobile background-button'
+                                    }
+                                    id='center2'
+                                    style={{
+                                        color: publishMobile ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button>
+                                <Button
+                                    onClick={() => {
+                                        //toogleSave()
+                                        // status.publicado == false
+                                        //   ? changeStatus(status.favorito, true, status.oculto)
+                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                        setPublishWeb(!publishWeb)
+                                    }}
+                                    className={
+                                        status.publicado == false
+                                            ? 'btn-secondary fa-solid fa-computer background-button'
+                                            : 'btn-secondary fa-solid fa-computer background-button'
+                                    }
+                                    id='center2'
+                                    style={{
+                                        color: publishWeb ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button>
                                 <Button
                                     onClick={() => {
                                         // status.publicado == false
