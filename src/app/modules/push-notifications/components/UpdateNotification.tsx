@@ -228,18 +228,16 @@ const UpdateNotification: FC<any> = ({
                             type='text'
                             name='titleNotification'
                             onChange={(e) => {
-                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
-                                    setNotification({
-                                        id_notificacion: notification.id_notificacion,
-                                        nombre: e.target.value,
-                                        descripcion: notification.descripcion,
-                                        imagen_path: notification.imagen_path,
-                                        fecha_hora_programada: notification.fecha_hora_programada,
-                                        tipo: notification.tipo,
-                                        estado: 1,
-                                        id_sitio: notification.id_sitio,
-                                    })
-                                }
+                                setNotification({
+                                    id_notificacion: notification.id_notificacion,
+                                    nombre: e.target.value,
+                                    descripcion: notification.descripcion,
+                                    imagen_path: notification.imagen_path,
+                                    fecha_hora_programada: notification.fecha_hora_programada,
+                                    tipo: notification.tipo,
+                                    estado: 1,
+                                    id_sitio: notification.id_sitio,
+                                })
                             }}
                         />
                     </Form.Group>
@@ -253,18 +251,16 @@ const UpdateNotification: FC<any> = ({
                             name='descriptionNotification'
                             style={{height: '100px'}}
                             onChange={(e) => {
-                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
-                                    setNotification({
-                                        id_notificacion: notification.id_notificacion,
-                                        nombre: notification.nombre,
-                                        descripcion: e.target.value,
-                                        imagen_path: notification.imagen_path,
-                                        fecha_hora_programada: notification.fecha_hora_programada,
-                                        tipo: notification.tipo,
-                                        estado: 1,
-                                        id_sitio: notification.id_sitio,
-                                    })
-                                }
+                                setNotification({
+                                    id_notificacion: notification.id_notificacion,
+                                    nombre: notification.nombre,
+                                    descripcion: e.target.value,
+                                    imagen_path: notification.imagen_path,
+                                    fecha_hora_programada: notification.fecha_hora_programada,
+                                    tipo: notification.tipo,
+                                    estado: 1,
+                                    id_sitio: notification.id_sitio,
+                                })
                             }}
                         />
                     </Form.Group>
