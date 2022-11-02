@@ -108,12 +108,13 @@ const EditPoint = () => {
 
     const ObtenerPuntoInteres = async () => {
         const punto: any = await postData(getPuntoInteres, {id_punto: Number(id_punto)})
+        console.log('punto: ', punto.lenguajes)
         setNombreSalas(punto.sala_nombre)
         setSitio({
             id_punto: Number(id_punto),
             id_sitio: Number(id_sitio),
             descripcion: '',
-            id_lenguaje: 0,
+            id_lenguaje: punto.lenguajes[0].id_lenguaje ? punto.lenguajes[0].id_lenguaje : 0,
             lenguajes: punto.lenguajes,
             nombre: punto.nombre,
             geoX: punto.geoX,
@@ -227,15 +228,9 @@ const EditPoint = () => {
         })
     }
     //petitions----------------------------------------------------------------------------
-    const addNewPoint = async () => {
-        await postData(addNewPointInteres, sitio)
-
-        //  console.log(sitio)
-    }
 
     const updatePoint = async () => {
         const updatePoint = await postData(updatePointInteres, sitio)
-        console.log('sitio: ', sitio)
         // console.log(updatePoint)
         // console.log(sitio)
     }
@@ -417,9 +412,10 @@ const EditPoint = () => {
         validateRole()
     }, [existRoles])
 
-    // * Fin restricción por rol 
+    // * Fin restricción por rol
 
-    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
+    const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
+        ['e', 'E'].includes(e.key) && e.preventDefault()
 
     return (
         <>
@@ -773,7 +769,7 @@ const EditPoint = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={sitio.geoX == '' ? '' : sitio.geoX} 
+                                                value={sitio.geoX == '' ? '' : sitio.geoX}
                                                 onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
@@ -822,7 +818,7 @@ const EditPoint = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={sitio.geoY == '' ? '' : sitio.geoY} 
+                                                value={sitio.geoY == '' ? '' : sitio.geoY}
                                                 onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
