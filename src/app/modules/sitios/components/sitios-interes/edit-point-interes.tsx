@@ -108,7 +108,6 @@ const EditPoint = () => {
 
     const ObtenerPuntoInteres = async () => {
         const punto: any = await postData(getPuntoInteres, {id_punto: Number(id_punto)})
-        console.log('punto: ', punto.lenguajes)
         setNombreSalas(punto.sala_nombre)
         setSitio({
             id_punto: Number(id_punto),
