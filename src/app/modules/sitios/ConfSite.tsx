@@ -143,6 +143,8 @@ const ConfSite = () => {
         telefono: '',
         website: '',
         qr_image_path: '',
+        publicar_web: false,
+        publicar_movil: false,
     })
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
@@ -150,6 +152,8 @@ const ConfSite = () => {
         publicado: site.favorito,
         oculto: site.oculto,
         cercania_activa: site.cercania_activa,
+        publicar_web: site.publicar_web,
+        publicar_movil: site.publicar_movil,
     })
 
     async function getCategorys() {
@@ -201,6 +205,8 @@ const ConfSite = () => {
             telefono: site.telefono,
             website: site.website,
             qr_image_path: site.qr_image_path,
+            publicar_web: status.publicar_web,
+            publicar_movil: status.publicar_movil,
         })
 
         // console.log(site);
@@ -227,21 +233,21 @@ const ConfSite = () => {
     async function postDefault(route: string, object: any) {
         const sit: any = await postData(route, object)
     }
-    const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
-        setStatus({
-            id_sitio: site.id_sitio,
-            favorito: favorito,
-            publicado: publicado,
-            oculto: oculto,
-            cercania_activa: site.cercania_activa,
-        })
-        // console.log(status)
-        postDefault(statesMethod, status)
-        // const getSites = async () => {
-        //   const site: any = await getData(sitesMethod)
-        //   console.log(site)
-        // }
-    }
+    // const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
+    //     setStatus({
+    //         id_sitio: site.id_sitio,
+    //         favorito: favorito,
+    //         publicado: publicado,
+    //         oculto: oculto,
+    //         cercania_activa: site.cercania_activa,
+    //     })
+    //     // console.log(status)
+    //     postDefault(statesMethod, status)
+    //     // const getSites = async () => {
+    //     //   const site: any = await getData(sitesMethod)
+    //     //   console.log(site)
+    //     // }
+    // }
 
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
@@ -479,6 +485,9 @@ const ConfSite = () => {
                                                             telefono: site.telefono,
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
+                                                            publicar_web: site.publicar_web,
+                                                            publicar_movil: site.publicar_movil,
+
                                                         })
                                                     }
                                                 ></Link>
@@ -528,6 +537,8 @@ const ConfSite = () => {
                                                     telefono: site.telefono,
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
+                                                    publicar_web: site.publicar_web,
+                                                    publicar_movil: site.publicar_movil,
                                                 })
                                             }
                                         }}
@@ -571,6 +582,8 @@ const ConfSite = () => {
                                                             telefono: site.telefono,
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
+                                                            publicar_web: site.publicar_web,
+                                                            publicar_movil: site.publicar_movil,
                                                         })
                                                     }
                                                 }}
@@ -613,6 +626,8 @@ const ConfSite = () => {
                                                             telefono: site.telefono,
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
+                                                            publicar_web: site.publicar_web,
+                                                            publicar_movil: site.publicar_movil,
                                                         })
                                                     }
                                                 }}
@@ -631,11 +646,6 @@ const ConfSite = () => {
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.ubicacion != '' ? site.ubicacion : ''}
                                         onChange={(e) => {
-                                            if (
-                                                validateStringSinCaracteresEspeciales(
-                                                    e.target.value
-                                                )
-                                            ) {
                                                 setSite({
                                                     id_sitio: site.id_sitio,
                                                     nombre: site.nombre,
@@ -657,8 +667,9 @@ const ConfSite = () => {
                                                     telefono: site.telefono,
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
+                                                    publicar_web: site.publicar_web,
+                                                    publicar_movil: site.publicar_movil,
                                                 })
-                                            }
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr> 
@@ -700,6 +711,8 @@ const ConfSite = () => {
                                                     telefono: e.target.value,
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
+                                                    publicar_web: site.publicar_web,
+                                                    publicar_movil: site.publicar_movil,
                                                 })
                                             }
                                         }}
@@ -739,6 +752,8 @@ const ConfSite = () => {
                                                     telefono: site.telefono,
                                                     website: e.target.value,
                                                     qr_image_path: site.qr_image_path,
+                                                    publicar_web: site.publicar_web,
+                                                    publicar_movil: site.publicar_movil,
                                                 })
                                             
                                         }}
@@ -771,7 +786,7 @@ const ConfSite = () => {
                                                 justifyContent: 'center',
                                             }}
                                             onClick={() => {
-                                                setArchivoPermitido('.json')
+                                                setArchivoPermitido('.geojson')
                                                 setUbicacionBucket('sitePages/GeoJSON')
                                                 setModalupIMG(true)
                                             }}

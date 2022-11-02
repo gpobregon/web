@@ -1,8 +1,6 @@
-
-
 export const URLAWS = 'https://mcd-archivos.s3.amazonaws.com/'
-const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
-// const URL='https://ezah7sxfbh.execute-api.us-east-1.amazonaws.com/qa'
+//const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
+ const URL='https://ezah7sxfbh.execute-api.us-east-1.amazonaws.com/qa'
 // const URL = 'https://57de-190-148-50-142.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
@@ -34,7 +32,7 @@ export const statePointInteres = RoomsMethod + '/points/visibility'
 export const changePointOfInterestFront = RoomsMethod + '/points/changePointOfInterestFront'
 export const OrderPointOfInterest = RoomsMethod + '/points/changeorder'
 export const statePointInteresPublished = RoomsMethod + '/points/changepublishedpointofinterest'
-export const getPuntoInteres ='/site/rooms/points/get'
+export const getPuntoInteres = '/site/rooms/points/get'
 
 export const getRoutefInterest = RoomsMethod + '/points/getpointswithroute'
 export const addRoute = RoomsMethod + '/points/route/add'
@@ -44,15 +42,18 @@ export const addImagePrincipal = ObtenerRuta + '/principalimage'
 export const addImages = ObtenerRuta + '/images'
 export const deleteRuta = ObtenerRuta + '/delete'
 
-export const getRolesMethod = 'user/rol' 
-export const addRolesMethod = 'user/rol/add' 
-export const editRoleMethod = 'user/rol/edit' 
+export const getRolesMethod = 'user/rol'
+export const addRolesMethod = 'user/rol/add'
+export const editRoleMethod = 'user/rol/edit'
 export const deleteRoleMethod = 'user/rol'
 
 export const getUsersMethod = 'user'
-export const addUserMethod = 'user/add'  
-export const updateUserMethod = 'user/edit'  
+export const addUserMethod = 'user/add'
+export const updateUserMethod = 'user/edit'
 export const deleteUserMethod = 'user'
+
+export const publishPI = 'site/publish/solo/point'
+export const publishSite = 'site/publish/solo/site'
 
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {
