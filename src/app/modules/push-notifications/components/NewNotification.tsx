@@ -215,17 +215,15 @@ const NewNotification: FC<any> = ({
                             name='titleNotification'
                             placeholder='Ej. Nueva Actualización'
                             onChange={(e) => {
-                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
-                                    setNotification({
-                                        nombre: e.target.value,
-                                        descripcion: notification.descripcion,
-                                        imagen_path: notification.imagen_path,
-                                        fecha_hora_programada: notification.fecha_hora_programada,
-                                        tipo: 0,
-                                        estado: 1,
-                                        id_sitio: notification.id_sitio,
-                                    })
-                                }
+                                setNotification({
+                                    nombre: e.target.value,
+                                    descripcion: notification.descripcion,
+                                    imagen_path: notification.imagen_path,
+                                    fecha_hora_programada: notification.fecha_hora_programada,
+                                    tipo: 0,
+                                    estado: 1,
+                                    id_sitio: notification.id_sitio,
+                                })
                             }}
                         />
                     </Form.Group>
@@ -240,17 +238,15 @@ const NewNotification: FC<any> = ({
                             placeholder='Escribe una breve descripción'
                             style={{height: '100px'}}
                             onChange={(e) => {
-                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
-                                    setNotification({
-                                        nombre: notification.nombre,
-                                        descripcion: e.target.value,
-                                        imagen_path: notification.imagen_path,
-                                        fecha_hora_programada: notification.fecha_hora_programada,
-                                        tipo: 0,
-                                        estado: 1,
-                                        id_sitio: notification.id_sitio,
-                                    })
-                                }
+                                setNotification({
+                                    nombre: notification.nombre,
+                                    descripcion: e.target.value,
+                                    imagen_path: notification.imagen_path,
+                                    fecha_hora_programada: notification.fecha_hora_programada,
+                                    tipo: 0,
+                                    estado: 1,
+                                    id_sitio: notification.id_sitio,
+                                })
                             }}
                         />
                     </Form.Group>
