@@ -10,6 +10,7 @@ import {
     validateStringPhoneNumber,
     validateStringPhoneNumberAlert,
     validateStringSinCaracteresEspeciales,
+    validateStringSoloNumeros,
 } from '../../validarCadena/validadorCadena'
 import {roleManager} from '../../../models/roleManager'
 import {addUserMethod, getData, getRolesMethod, postData} from '../../../services/api'
@@ -234,7 +235,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
             phoneNumber: user.phoneNumber,
             imageProfile: user.imageProfile,
         })
-    }
+    } 
+
+    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault();
 
     return (
         <>
@@ -348,13 +351,13 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                 <Form.Label>{'Teléfono'}</Form.Label>
                                 <Form.Control
                                     type='number'
-                                    pattern='/^-?\d+\.?\d*$/'
+                                    pattern='/^-?\d+\.?\d*$/' 
+                                    onKeyDown={blockInvalidChar}
+                                    maxLength={8}
                                     autoComplete='off'
-                                    className='mb-4'
+                                    className='mb-4' 
                                     onChange={(e) => {
-                                        setTouchedPhoneInput(true)
-
-                                        if (validateStringPhoneNumber(e.target.value)) {
+                                        if ( validateStringSoloNumeros(e.target.value)) {
                                             setUser({
                                                 username: user.username,
                                                 password: user.password,
@@ -365,8 +368,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                                 phoneNumber: e.target.value,
                                                 imageProfile: user.imageProfile,
                                             })
-                                        }
-                                        setValidPhone(validateStringPhoneNumber(e.target.value))
+                                        } 
+                                        setTouchedPhoneInput(true)
+                                        setValidPhone( validateStringSoloNumeros(e.target.value))
                                     }}
                                 />
                                 {validPhone && touchedPhoneInput ? (
