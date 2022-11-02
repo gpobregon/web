@@ -280,7 +280,9 @@ const ConfSite = () => {
             setModalupIMG(false)
         }
     }
-    const [modalupimg, setModalupIMG] = useState(false)
+    const [modalupimg, setModalupIMG] = useState(false) 
+
+    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
 
     return (
         <>
@@ -551,14 +553,15 @@ const ConfSite = () => {
                                                 GeoX
                                             </label>
                                             <input
-                                                type='text'
+                                                type='number'
                                                 className='form-control'
                                                 style={{
                                                     border: '0',
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={site.geoX == '' ? '' : site.geoX}
+                                                value={site.geoX == '' ? '' : site.geoX} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (validateStringSoloNumeros(e.target.value)) {
                                                         setSite({
@@ -595,14 +598,15 @@ const ConfSite = () => {
                                                 GeoY
                                             </label>
                                             <input
-                                                type='text'
+                                                type='number'
                                                 className='form-control'
                                                 style={{
                                                     border: '0',
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={site.geoY == '' ? '' : site.geoY}
+                                                value={site.geoY == '' ? '' : site.geoY} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (validateStringSoloNumeros(e.target.value)) {
                                                         setSite({
@@ -680,13 +684,14 @@ const ConfSite = () => {
                                     </label>
                                     <br></br>
                                     <input
-                                        type='number'
+                                        type='text' 
+                                        maxLength={8}
                                         className='form-control'
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.telefono != '' ? site.telefono : ''}
                                         onChange={(e) => {
                                             if (
-                                                validateStringSinCaracteresEspeciales(
+                                                validateStringSoloNumeros(
                                                     e.target.value
                                                 )
                                             ) {
