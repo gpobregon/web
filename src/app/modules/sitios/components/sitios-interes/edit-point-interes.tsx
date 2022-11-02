@@ -403,7 +403,9 @@ const EditPoint = () => {
         validateRole()
     }, [existRoles])
 
-    // * Fin restricción por rol
+    // * Fin restricción por rol 
+
+    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
 
     return (
         <>
@@ -715,7 +717,8 @@ const EditPoint = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={sitio.geoX == '' ? '' : sitio.geoX}
+                                                value={sitio.geoX == '' ? '' : sitio.geoX} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
                                                         validateStringSinCaracteresEspeciales(
@@ -761,7 +764,8 @@ const EditPoint = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={sitio.geoY == '' ? '' : sitio.geoY}
+                                                value={sitio.geoY == '' ? '' : sitio.geoY} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
                                                         validateStringSinCaracteresEspeciales(
