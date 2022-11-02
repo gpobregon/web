@@ -50,38 +50,38 @@ const customStyles = {
     }),
 }
 
-// const options = [
-//     {value: 'airplane', label: 'airplane'},
-//     {value: 'bag', label: 'bag'},
-//     {value: 'bank', label: 'bank'},
-//     {value: 'basket', label: 'basket'},
-//     {value: 'binoculars', label: 'binoculars'},
-//     {value: 'brightness-alt-high', label: 'brightness-alt-high'},
-//     {value: 'brush', label: 'brush'},
-//     {value: 'building', label: 'building'},
-//     {value: 'camera-reels', label: 'camera-reels'},
-//     {value: 'car-front', label: 'car-front'},
-//     {value: 'cloud-sun', label: 'cloud-sun'},
-//     {value: 'cup-hot', label: 'cup-hot'},
-//     {value: 'bi-film', label: 'bi-film'},
-//     {value: 'bi-flower1', label: 'bi-flower1'},
-//     {value: 'geo-alt', label: 'geo-alt'},
-//     {value: 'bi-hospital', label: 'bi-hospital'},
-//     {value: 'image-alt', label: 'image-alt'},
-//     {value: 'life-preserver', label: 'life-preserver'},
-//     {value: 'mortarboard', label: 'mortarboard'},
-//     {value: 'palette', label: 'palette'},
-//     {value: 'puzzle', label: 'puzzle'},
-//     {value: 'tree', label: 'tree'},
-//     {value: 'tsunami', label: 'tsunami'},
-// ]
+/* const options = [
+    {value: 'airplane', label: 'airplane'},
+    {value: 'bag', label: 'bag'},
+    {value: 'bank', label: 'bank'},
+    {value: 'basket', label: 'basket'},
+    {value: 'binoculars', label: 'binoculars'},
+    {value: 'brightness-alt-high', label: 'brightness-alt-high'},
+    {value: 'brush', label: 'brush'},
+    {value: 'building', label: 'building'},
+    {value: 'camera-reels', label: 'camera-reels'},
+    {value: 'car-front', label: 'car-front'},
+    {value: 'cloud-sun', label: 'cloud-sun'},
+    {value: 'cup-hot', label: 'cup-hot'},
+    {value: 'bi-film', label: 'bi-film'},
+    {value: 'bi-flower1', label: 'bi-flower1'},
+    {value: 'geo-alt', label: 'geo-alt'},
+    {value: 'bi-hospital', label: 'bi-hospital'},
+    {value: 'image-alt', label: 'image-alt'},
+    {value: 'life-preserver', label: 'life-preserver'},
+    {value: 'mortarboard', label: 'mortarboard'},
+    {value: 'palette', label: 'palette'},
+    {value: 'puzzle', label: 'puzzle'},
+    {value: 'tree', label: 'tree'},
+    {value: 'tsunami', label: 'tsunami'},
+]
 
-// const optionTemplate = (option: any) => (
-//     <span>
-//         <i className={`bi-${option.value} text-white`} style={{fontSize: 16}}></i>
-//         {`ㅤ${option.label}`}
-//     </span>
-// )
+const optionTemplate = (option: any) => (
+    <span>
+        <i className={`bi-${option.value} text-white`} style={{fontSize: 16}}></i>
+        {`ㅤ${option.label}`}
+    </span>
+) */
 
 const options = [
     {value: 'plane', label: 'plane'},

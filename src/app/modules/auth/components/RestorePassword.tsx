@@ -39,11 +39,10 @@ export function RestorePassword() {
     return (
         <div style={{width: '50%'}}>
             <div className='text-left mb-10'>
-                <span>{'/*Aparece al acceder al link*/'}</span>
                 <h1 className='text-dark mb-3'>Nueva Contraseña</h1>
                 <span>
                     {
-                        'Se ha enviado un mail para restablecer la contraseña. Por favor, revisa tu correo electronico para restablecer tu contraseña'
+                        'Se ha enviado un mensaje para restablecer la contraseña. Por favor, revisa tu correo electronico para restablecer tu contraseña'
                     }
                 </span>
             </div>

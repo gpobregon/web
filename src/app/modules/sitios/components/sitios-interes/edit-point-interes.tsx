@@ -20,7 +20,6 @@ import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
 import {Link, Navigate, useLocation, useNavigate, useParams} from 'react-router-dom'
 import {status} from '../../../../models/status'
-
 import logo from '../../upload-image_03.jpg'
 import {QRCodeCanvas} from 'qrcode.react'
 import UpImage from '../../../uploadFile/upload-image'
