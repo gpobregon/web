@@ -1,4 +1,5 @@
-import React, {useState, useEffect, FC, useRef} from 'react'
+import React, {useState, useEffect, FC, useRef} from 'react' 
+import {Auth} from 'aws-amplify'
 import {
     Container,
     Row,
@@ -40,7 +41,7 @@ import {
 import {KTSVG} from '../../../_metronic/helpers'
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     (item) => ({label: item, value: item})
-)
+) 
 
 const options = [
     {label: 'Grapes', value: 'grapes'},
@@ -112,7 +113,8 @@ const animatedComponents = makeAnimated()
 
 const ConfSite = () => {
     useEffect(() => {
-        getCategorys()
+        getCategorys() 
+        getUser()
     }, [])
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
@@ -144,8 +146,38 @@ const ConfSite = () => {
         website: '',
         qr_image_path: '',
         publicar_web: false,
-        publicar_movil: false,
+        publicar_movil: false, 
+        nombre_usuario_edito: '',
+    }) 
+    //console.log("site: ", site);  
+
+    // obtener usuario que editó
+    const [dataUser, setDataUser] = useState({
+        
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
     })
+    const getUser = async () => {
+        Auth.currentUserInfo().then((user) => {
+            setDataUser({
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
+                descripcion: '',
+            })
+        })
+    }   
+    //console.log("dataUser: ", dataUser);
+    // fin obtener usuario que editó
+
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
         favorito: site.favorito,
@@ -206,12 +238,14 @@ const ConfSite = () => {
             website: site.website,
             qr_image_path: site.qr_image_path,
             publicar_web: status.publicar_web,
-            publicar_movil: status.publicar_movil,
+            publicar_movil: status.publicar_movil, 
+            nombre_usuario_edito: dataUser.name,
         })
 
         // console.log(site);
-    }
-    //methods to post data to api------------------------------------------------------
+    } 
+    
+    //methods to post data to api------------------------------------------------------ 
 
     async function postSite(sitee: any, tipo: string) {
         if (
@@ -515,7 +549,7 @@ const ConfSite = () => {
                                                             qr_image_path: site.qr_image_path,
                                                             publicar_web: site.publicar_web,
                                                             publicar_movil: site.publicar_movil,
-
+                                                            nombre_usuario_edito: dataUser.name,
                                                         })
                                                     }
                                                 ></Link>
@@ -566,7 +600,8 @@ const ConfSite = () => {
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
                                                     publicar_web: site.publicar_web,
-                                                    publicar_movil: site.publicar_movil,
+                                                    publicar_movil: site.publicar_movil, 
+                                                    nombre_usuario_edito: dataUser.name,
                                                 })
                                             }
                                         }}
@@ -612,7 +647,8 @@ const ConfSite = () => {
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
                                                             publicar_web: site.publicar_web,
-                                                            publicar_movil: site.publicar_movil,
+                                                            publicar_movil: site.publicar_movil, 
+                                                            nombre_usuario_edito: dataUser.name,
                                                         })
                                                     }
                                                 }}
@@ -657,7 +693,8 @@ const ConfSite = () => {
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
                                                             publicar_web: site.publicar_web,
-                                                            publicar_movil: site.publicar_movil,
+                                                            publicar_movil: site.publicar_movil, 
+                                                            nombre_usuario_edito: dataUser.name,
                                                         })
                                                     }
                                                 }}
@@ -698,7 +735,8 @@ const ConfSite = () => {
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
                                                     publicar_web: site.publicar_web,
-                                                    publicar_movil: site.publicar_movil,
+                                                    publicar_movil: site.publicar_movil, 
+                                                    nombre_usuario_edito: dataUser.name,
                                                 })
                                         }}
                                     ></input>
@@ -743,7 +781,8 @@ const ConfSite = () => {
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
                                                     publicar_web: site.publicar_web,
-                                                    publicar_movil: site.publicar_movil,
+                                                    publicar_movil: site.publicar_movil, 
+                                                    nombre_usuario_edito: dataUser.name,
                                                 })
                                             }
                                         }}
@@ -784,7 +823,8 @@ const ConfSite = () => {
                                                     website: e.target.value,
                                                     qr_image_path: site.qr_image_path,
                                                     publicar_web: site.publicar_web,
-                                                    publicar_movil: site.publicar_movil,
+                                                    publicar_movil: site.publicar_movil, 
+                                                    nombre_usuario_edito: dataUser.name,
                                                 })
                                             
                                         }}
