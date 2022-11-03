@@ -627,9 +627,9 @@ const EditPoint = () => {
                 </div>
             </div>
             <br />
-            <h1 style={{color: 'white', fontSize: '18px'}}>Editar el punto de interes</h1>
+            <h1 style={{color: 'white', fontSize: '18px'}}>Editar el punto de interés</h1>
             <h5 style={{color: '#565674', fontSize: '14px'}}>
-                Lista de Sitios - Configuración del punto de interes
+                Lista de Sitios - Configuración del punto de interés
             </h5>
             <br />
             <div className='row'>
