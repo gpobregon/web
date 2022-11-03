@@ -455,17 +455,42 @@ const EditSite = () => {
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
     const uploadImage = async (imagen: string) => {
-        if (ArchivoPermitido == '.json') {
-            site.geo_json = URLAWS + 'sitePages/GeoJSON/' + imagen
-            setNombreJson(imagen)
-        } else {
-            site.portada_path = URLAWS + 'sitePages/' + imagen
+        let arr = imagen.split('.');
+        //esta validacion solo es unicamente para ver que sea un archivo admitido en la carga
+        if (arr[arr.length-1] === 'geojson') {
+            // esta validacion es para vereficcar apartado selecciona la carga (geojson o img)
+            if(ArchivoPermitido==='.geojson'){
+                site.geo_json = URLAWS + 'sitePages/GeoJSON/' + imagen
+                setNombreJson(imagen)
+            }else{
+                swal({
+                    text: '¡Tipo de archivo no admitido!',
+                    icon: 'warning',
+                    timer: 2000,
+                })
+            }
+        } else if(arr[arr.length-1]==='jpg' || arr[arr.length-1]==='bmp' ||arr[arr.length-1]==='gif' || arr[arr.length-1]==='jpeg' ||arr[arr.length-1]==='png'){
+            if(ArchivoPermitido==='image/*'){
+                site.portada_path = URLAWS + 'sitePages/' + imagen
+            }else{
+                swal({
+                    text: '¡Tipo de archivo no admitido!',
+                    icon: 'warning',
+                    timer: 2000,
+                })
+            }
+        }else{
+            swal({
+                text: '¡Tipo de archivo no admitido!',
+                icon: 'warning',
+                timer: 2000,
+            })
         }
         if (imagen != '') {
             setModalupIMG(false)
         }
     }
-    const [modalupimg, setModalupIMG] = useState(false)
+    const [modalupimg, setModalupIMG] = useState(false) 
 
     //DONWLOAD QR-------------------------------------------------------------------------
     const downloadQRCode = () => {
