@@ -223,9 +223,7 @@ const EditSite = () => {
             site.ubicacion != '' &&
             site.categorias.length > 0
         ) {
-            const sit: any = await postData(updateSiteMethod, sitee)
-            console.log(sit)
-            saveChanges()
+            saveChanges(sitee)
         } else {
             alertNotNullInputs()
         }
@@ -303,18 +301,37 @@ const EditSite = () => {
         publicarWeb: boolean,
         publicarMovil: boolean
     ) => {
-        setShowLoad(true)
-        const respuesta3: any = await postData(statesMethod, {
-            id_sitio: site.id_sitio,
-            favorito: favorito,
-            publicado: publicado,
-            oculto: oculto,
-            cercania_activa: cercania,
-            publicar_web: publicarWeb,
-            publicar_movil: publicarMovil,
-        })
-        if (!respuesta3.hasOwnProperty('titulo')) {
-            setStatus({
+        if(favorito){
+            swal({
+                title: '¿Deseas actualizar la informacion del sitio?',
+                icon: 'warning',
+                buttons: ['No', 'Sí'],
+            }).then(async (res) => {
+                if (res) {
+                    setShowLoad(true)
+                    const respuesta3: any = await postData(statesMethod, {
+                        id_sitio: site.id_sitio,
+                        favorito: true,
+                        publicado: true,
+                        oculto: false,
+                        cercania_activa: cercania,
+                        publicar_web: publicarWeb,
+                        publicar_movil: publicarMovil,
+                    })
+                    setShowLoad(false)
+                    swal({
+                        text: 'Actualizado Correctamente',
+                        icon: 'success',
+                        timer: 2000,
+                    })
+                }
+            })
+            status.cercania_activa = cercania
+            status.publicar_web = publicarWeb
+            status.publicar_movil = publicarMovil
+        }else{
+            setShowLoad(true)
+            const respuesta3: any = await postData(statesMethod, {
                 id_sitio: site.id_sitio,
                 favorito: favorito,
                 publicado: publicado,
@@ -323,38 +340,85 @@ const EditSite = () => {
                 publicar_web: publicarWeb,
                 publicar_movil: publicarMovil,
             })
-            setSite({
-                id_sitio: site.id_sitio,
-                nombre: site.nombre,
-                descripcion: site.descripcion,
-                ubicacion: site.ubicacion,
-                geoX: site.geoX,
-                geoY: site.geoY,
-                portada_path: site.portada_path,
-                estado: site.estado,
-                creado: site.creado,
-                editado: site.editado,
-                categorias: site.categorias,
-                id_municipio: site.id_municipio,
-                favorito: status.favorito,
-                publicado: status.publicado,
-                oculto: status.oculto,
-                geo_json: site.geo_json,
-                cercania_activa: status.cercania_activa,
-                nombre_usuario_edito: dataUser.name,
-                qr_path: site.qr_path,
-                telefono: site.telefono,
-                website: site.website,
-                qr_image_path: site.website,
-                publicar_web: status.publicar_web,
-                publicar_movil: status.publicar_movil,
-            })
-        } else {
-            swal({
-                text: `¡${respuesta3.titulo}!`,
-                icon: 'error',
-            })
+            status.oculto = oculto
+            status.publicado = publicado
+            status.favorito = favorito
+            status.cercania_activa = cercania
+            status.publicar_web = publicarWeb
+            status.publicar_movil = publicarMovil
+
+                    setSite({
+                                id_sitio: site.id_sitio,
+                                nombre: site.nombre,
+                                descripcion: site.descripcion,
+                                ubicacion: site.ubicacion,
+                                geoX: site.geoX,
+                                geoY: site.geoY,
+                                portada_path: site.portada_path,
+                                estado: site.estado,
+                                creado: site.creado,
+                                editado: site.editado,
+                                categorias: site.categorias,
+                                id_municipio: site.id_municipio,
+                                favorito: status.favorito,
+                                publicado: status.publicado,
+                                oculto: status.oculto,
+                                geo_json: site.geo_json,
+                                cercania_activa: status.cercania_activa,
+                                nombre_usuario_edito: dataUser.name,
+                                qr_path: site.qr_path,
+                                telefono: site.telefono,
+                                website: site.website,
+                                qr_image_path: site.website,
+                                publicar_web: status.publicar_web,
+                                publicar_movil: status.publicar_movil,
+                            })
+                            setShowLoad(false)
         }
+       
+        // console.log(respuesta3)
+        // if (!respuesta3.hasOwnProperty('titulo')) {
+        //     setStatus({
+        //         id_sitio: site.id_sitio,
+        //         favorito: favorito,
+        //         publicado: publicado,
+        //         oculto: oculto,
+        //         cercania_activa: cercania,
+        //         publicar_web: publicarWeb,
+        //         publicar_movil: publicarMovil,
+        //     })
+        //     setSite({
+        //         id_sitio: site.id_sitio,
+        //         nombre: site.nombre,
+        //         descripcion: site.descripcion,
+        //         ubicacion: site.ubicacion,
+        //         geoX: site.geoX,
+        //         geoY: site.geoY,
+        //         portada_path: site.portada_path,
+        //         estado: site.estado,
+        //         creado: site.creado,
+        //         editado: site.editado,
+        //         categorias: site.categorias,
+        //         id_municipio: site.id_municipio,
+        //         favorito: status.favorito,
+        //         publicado: status.publicado,
+        //         oculto: status.oculto,
+        //         geo_json: site.geo_json,
+        //         cercania_activa: status.cercania_activa,
+        //         nombre_usuario_edito: dataUser.name,
+        //         qr_path: site.qr_path,
+        //         telefono: site.telefono,
+        //         website: site.website,
+        //         qr_image_path: site.website,
+        //         publicar_web: status.publicar_web,
+        //         publicar_movil: status.publicar_movil,
+        //     })
+        // } else {
+        //     swal({
+        //         text: `¡${respuesta3.titulo}!`,
+        //         icon: 'error',
+        //     })
+        // }
 
         // console.log(status.favorito)
         // console.log(site)
@@ -363,7 +427,7 @@ const EditSite = () => {
             const site: any = await getData(sitesMethod)
             // console.log(site)
         }
-        setShowLoad(false)
+      
     }
 
     //alert methods-----------------------------------------------------------------------
@@ -383,21 +447,23 @@ const EditSite = () => {
             }
         })
     }
-    const saveChanges = async () => {
+    const saveChanges = async (sitee:any) => {
         swal({
             title: '¿Quiere guardar los cambios?',
             icon: 'warning',
             buttons: ['No', 'Sí'],
-        }).then((res) => {
+        }).then(async (res) => {
             if (res) {
                 swal({
                     text: 'Cambios guardados',
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate('/sitios')
+                const sit: any = await postData(updateSiteMethod, sitee)
+                console.log(sit)
                 // window.location.href = "../sitios";
             }
+           
         })
     }
 
@@ -681,11 +747,11 @@ const EditSite = () => {
                                         // status.oculto == false
                                         //   ? changeStatus(status.favorito, status.publicado, true)
                                         //   : changeStatus(status.favorito, status.publicado, false)
-                                        status.oculto = !status.oculto
+                                       
                                         changeStatus(
                                             status.favorito,
                                             status.publicado,
-                                            status.oculto,
+                                            !status.oculto,
                                             status.cercania_activa,
                                             status.publicar_web,
                                             status.publicar_movil
@@ -728,10 +794,10 @@ const EditSite = () => {
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
-                                        status.publicado = !status.publicado
+                                        
                                         changeStatus(
                                             status.favorito,
-                                            status.publicado,
+                                            !status.publicado,
                                             status.oculto,
                                             status.cercania_activa,
                                             status.publicar_web,
@@ -754,10 +820,14 @@ const EditSite = () => {
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
 
-                                        setStatus({
-                                            ...status,
-                                            publicar_movil: !status.publicar_movil,
-                                        })
+                                        changeStatus(
+                                            status.favorito,
+                                            status.publicado,
+                                            status.oculto,
+                                            status.cercania_activa,
+                                            status.publicar_web,
+                                            !status.publicar_movil
+                                        )
                                     }}
                                     className={
                                         status.publicado == false
@@ -777,7 +847,15 @@ const EditSite = () => {
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
-                                        setStatus({...status, publicar_web: !status.publicar_web})
+                                      
+                                        changeStatus(
+                                            status.favorito,
+                                            status.publicado,
+                                            status.oculto,
+                                            status.cercania_activa,
+                                            !status.publicar_web,
+                                            status.publicar_movil
+                                        )
                                     }}
                                     className={
                                         status.publicado == false
@@ -796,12 +874,12 @@ const EditSite = () => {
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
-                                        status.cercania_activa = !status.cercania_activa
+                                        
                                         changeStatus(
                                             status.favorito,
                                             status.publicado,
                                             status.oculto,
-                                            status.cercania_activa,
+                                            !status.cercania_activa,
                                             status.publicar_web,
                                             status.publicar_movil
                                         )
