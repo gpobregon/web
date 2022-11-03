@@ -229,7 +229,8 @@ const EditPoint = () => {
     //petitions----------------------------------------------------------------------------
 
     const updatePoint = async () => {
-        const updatePoint = await postData(updatePointInteres, sitio)
+        await postData(updatePointInteres, sitio)
+        await publishTypePoint()
         // console.log(updatePoint)
         // console.log(sitio)
     }
@@ -254,6 +255,25 @@ const EditPoint = () => {
     //     value: language.value,
     //     label: lenaguajeDefault,
     // }))
+
+    const publishTypePoint = async () => {
+        if (sitio.publicar_movil === true && sitio.publicar_web === true) {
+            await postData(publishPI, {
+                id_sitio: sitio.id_sitio,
+                modo_publicacion: 3,
+            })
+        } else if (sitio.publicar_movil === true && sitio.publicar_web === false) {
+            await postData(publishPI, {
+                id_sitio: sitio.id_sitio,
+                modo_publicacion: 1,
+            })
+        } else if (sitio.publicar_movil === false && sitio.publicar_web === true) {
+            await postData(publishPI, {
+                id_sitio: sitio.id_sitio,
+                modo_publicacion: 2,
+            })
+        }
+    }
 
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
