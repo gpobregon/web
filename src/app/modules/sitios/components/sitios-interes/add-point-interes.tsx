@@ -88,6 +88,8 @@ const AddPoint = () => {
         es_portada_de_sitio: false,
         estado: 1,
         id_guia: datospuntoInteres.id_guia,
+        publicar_web: false,
+        publicar_movil: false,
     })
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
     // useEffect(() => {
@@ -142,7 +144,6 @@ const AddPoint = () => {
         if (sitio.nombre != '' && sitio.id_lenguaje != 0 && sitio.portada_path != '') {
             const res: any = await postData(addNewPointInteres, sitio)
             //    console.log(res)
-
             navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${res.point.id_punto}`, {
                 state: sitio,
             })
@@ -183,6 +184,8 @@ const AddPoint = () => {
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
             id_guia: datospuntoInteres.id_guia,
+            publicar_web: sitio.publicar_web,
+            publicar_movil: sitio.publicar_movil,
         })
 
         // console.log(sitio)
@@ -206,7 +209,9 @@ const AddPoint = () => {
     const handleChangeLanguage = (event: any) => {
         sitio.id_lenguaje = event.value
         // console.log(sitio)
-    }
+    } 
+
+    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
     return (
         <>
             <div className=' '>
@@ -337,9 +342,9 @@ const AddPoint = () => {
                 </div>
             </div>
             <br />
-            <h1 style={{color: 'white', fontSize: '18px'}}>Configuración del punto de interes</h1>
+            <h1 style={{color: 'white', fontSize: '18px'}}>Configuración del punto de interés</h1>
             <h5 style={{color: '#565674', fontSize: '14px'}}>
-                Lista de Sitios - Configuración del punto de interes
+                Lista de Sitios - Configuración del punto de interés
             </h5>
             <br />
             <div className='row'>
@@ -402,6 +407,8 @@ const AddPoint = () => {
                                                                 sitio.es_portada_de_sitio,
                                                             estado: sitio.estado,
                                                             id_guia: sitio.id_guia,
+                                                            publicar_web: sitio.publicar_web,
+                                                            publicar_movil: sitio.publicar_movil,
                                                         })
                                                     }
                                                 ></Link>
@@ -460,6 +467,8 @@ const AddPoint = () => {
                                                     es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                     estado: sitio.estado,
                                                     id_guia: sitio.id_guia,
+                                                    publicar_web: sitio.publicar_web,
+                                                    publicar_movil: sitio.publicar_movil,
                                                 })
                                             }
                                         }}
@@ -478,7 +487,8 @@ const AddPoint = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={sitio.geoX == '' ? '' : sitio.geoX}
+                                                value={sitio.geoX == '' ? '' : sitio.geoX} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
                                                         validateStringSinCaracteresEspeciales(
@@ -498,6 +508,8 @@ const AddPoint = () => {
                                                                 sitio.es_portada_de_sitio,
                                                             estado: sitio.estado,
                                                             id_guia: sitio.id_guia,
+                                                            publicar_web: sitio.publicar_web,
+                                                            publicar_movil: sitio.publicar_movil,
                                                         })
                                                     }
                                                 }}
@@ -517,7 +529,8 @@ const AddPoint = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={sitio.geoY == '' ? '' : sitio.geoY}
+                                                value={sitio.geoY == '' ? '' : sitio.geoY} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
                                                         validateStringSinCaracteresEspeciales(
@@ -537,6 +550,8 @@ const AddPoint = () => {
                                                                 sitio.es_portada_de_sitio,
                                                             estado: sitio.estado,
                                                             id_guia: sitio.id_guia,
+                                                            publicar_web: sitio.publicar_web,
+                                                            publicar_movil: sitio.publicar_movil,
                                                         })
                                                     }
                                                 }}
@@ -578,7 +593,6 @@ const AddPoint = () => {
                                             ) {
                                                 setSitio({
                                                     id_sitio: datospuntoInteres.id_sitio,
-
                                                     descripcion: e.target.value,
                                                     id_lenguaje: sitio.id_lenguaje,
                                                     nombre: sitio.nombre,
@@ -589,6 +603,8 @@ const AddPoint = () => {
                                                     es_portada_de_sitio: sitio.es_portada_de_sitio,
                                                     estado: sitio.estado,
                                                     id_guia: sitio.id_guia,
+                                                    publicar_web: sitio.publicar_web,
+                                                    publicar_movil: sitio.publicar_movil,
                                                 })
                                             }
                                         }}

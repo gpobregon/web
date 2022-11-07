@@ -14,6 +14,7 @@ import {
     statePointInteresPublished,
     getRolesMethod,
     getPuntoInteres,
+    publishPI,
 } from '../../../../services/api'
 import swal from 'sweetalert'
 import makeAnimated from 'react-select/animated'
@@ -101,6 +102,8 @@ const EditPoint = () => {
         id_lenguaje_anterior: 0,
         publicado: false,
         nombre_usuario_edito: '',
+        publicar_web: false,
+        publicar_movil: false,
     })
 
     const ObtenerPuntoInteres = async () => {
@@ -110,7 +113,7 @@ const EditPoint = () => {
             id_punto: Number(id_punto),
             id_sitio: Number(id_sitio),
             descripcion: '',
-            id_lenguaje: 0,
+            id_lenguaje: punto.lenguajes[0].id_lenguaje ? punto.lenguajes[0].id_lenguaje : 0,
             lenguajes: punto.lenguajes,
             nombre: punto.nombre,
             geoX: punto.geoX,
@@ -123,6 +126,8 @@ const EditPoint = () => {
             id_lenguaje_anterior: 0,
             publicado: punto.publicado,
             nombre_usuario_edito: '',
+            publicar_web: punto.publicar_web,
+            publicar_movil: punto.publicar_movil,
         })
         // console.log(punto)
     }
@@ -149,6 +154,8 @@ const EditPoint = () => {
             publicado: sitio.publicado,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
             nombre_usuario_edito: sitio.nombre_usuario_edito,
+            publicar_web: sitio.publicar_web,
+            publicar_movil: sitio.publicar_movil,
         })
     }
     const changePublicado = async (publicado1: boolean) => {
@@ -174,6 +181,8 @@ const EditPoint = () => {
             publicado: publicado1,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
             nombre_usuario_edito: sitio.nombre_usuario_edito,
+            publicar_web: sitio.publicar_web,
+            publicar_movil: sitio.publicar_movil,
         })
     }
     //alert methods-----------------------------------------------------------------------
@@ -218,14 +227,10 @@ const EditPoint = () => {
         })
     }
     //petitions----------------------------------------------------------------------------
-    const addNewPoint = async () => {
-        await postData(addNewPointInteres, sitio)
-
-        //  console.log(sitio)
-    }
 
     const updatePoint = async () => {
-        const updatePoint = await postData(updatePointInteres, sitio)
+        await postData(updatePointInteres, sitio)
+        await publishTypePoint()
         // console.log(updatePoint)
         // console.log(sitio)
     }
@@ -250,6 +255,25 @@ const EditPoint = () => {
     //     value: language.value,
     //     label: lenaguajeDefault,
     // }))
+
+    const publishTypePoint = async () => {
+        if (sitio.publicar_movil === true && sitio.publicar_web === true) {
+            await postData(publishPI, {
+                id_sitio: sitio.id_sitio,
+                modo_publicacion: 3,
+            })
+        } else if (sitio.publicar_movil === true && sitio.publicar_web === false) {
+            await postData(publishPI, {
+                id_sitio: sitio.id_sitio,
+                modo_publicacion: 1,
+            })
+        } else if (sitio.publicar_movil === false && sitio.publicar_web === true) {
+            await postData(publishPI, {
+                id_sitio: sitio.id_sitio,
+                modo_publicacion: 2,
+            })
+        }
+    }
 
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
@@ -305,6 +329,8 @@ const EditPoint = () => {
                         publicado: true,
                         id_lenguaje_anterior: -1,
                         nombre_usuario_edito: sitio.nombre_usuario_edito,
+                        publicar_web: sitio.publicar_web,
+                        publicar_movil: sitio.publicar_movil,
                     })
                 }
             })
@@ -333,6 +359,8 @@ const EditPoint = () => {
             publicado: true,
             id_lenguaje_anterior: sitio.id_lenguaje_anterior,
             nombre_usuario_edito: sitio.nombre_usuario_edito,
+            publicar_web: sitio.publicar_web,
+            publicar_movil: sitio.publicar_movil,
         })
 
         if (imagen != '') {
@@ -404,6 +432,9 @@ const EditPoint = () => {
     }, [existRoles])
 
     // * Fin restricción por rol
+
+    const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
+        ['e', 'E'].includes(e.key) && e.preventDefault()
 
     return (
         <>
@@ -551,6 +582,44 @@ const EditPoint = () => {
                                     id='center2'
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
                                 ></Button>
+                                <Button
+                                    onClick={() => {
+                                        //toogleSave()
+                                        // status.publicado == false
+                                        //   ? changeStatus(status.favorito, true, status.oculto)
+                                        //   : changeStatus(status.favorito, false, status.oculto)
+
+                                        setSitio({
+                                            ...sitio,
+                                            publicar_movil: !sitio.publicar_movil,
+                                        })
+                                    }}
+                                    className={'btn-secondary fa-solid fa-mobile background-button'}
+                                    id='center2'
+                                    style={{
+                                        color: false ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button>
+                                <Button
+                                    onClick={() => {
+                                        //toogleSave()
+                                        // status.publicado == false
+                                        //   ? changeStatus(status.favorito, true, status.oculto)
+                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                        setSitio({...sitio, publicar_web: !false})
+                                    }}
+                                    className={
+                                        'btn-secondary fa-solid fa-computer background-button'
+                                    }
+                                    id='center2'
+                                    style={{
+                                        color: false ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button>
                                 {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
                             </ul>
                         </div>
@@ -558,9 +627,9 @@ const EditPoint = () => {
                 </div>
             </div>
             <br />
-            <h1 style={{color: 'white', fontSize: '18px'}}>Editar el punto de interes</h1>
+            <h1 style={{color: 'white', fontSize: '18px'}}>Editar el punto de interés</h1>
             <h5 style={{color: '#565674', fontSize: '14px'}}>
-                Lista de Sitios - Configuración del punto de interes
+                Lista de Sitios - Configuración del punto de interés
             </h5>
             <br />
             <div className='row'>
@@ -630,6 +699,8 @@ const EditPoint = () => {
                                                                 sitio.id_lenguaje_anterior,
                                                             nombre_usuario_edito:
                                                                 sitio.nombre_usuario_edito,
+                                                            publicar_web: sitio.publicar_web,
+                                                            publicar_movil: sitio.publicar_movil,
                                                         })
                                                     }
                                                 ></Link>
@@ -695,6 +766,8 @@ const EditPoint = () => {
                                                         sitio.id_lenguaje_anterior,
                                                     nombre_usuario_edito:
                                                         sitio.nombre_usuario_edito,
+                                                    publicar_web: sitio.publicar_web,
+                                                    publicar_movil: sitio.publicar_movil,
                                                 })
                                             }
                                         }}
@@ -716,6 +789,7 @@ const EditPoint = () => {
                                                     color: '#FFFFFF',
                                                 }}
                                                 value={sitio.geoX == '' ? '' : sitio.geoX}
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
                                                         validateStringSinCaracteresEspeciales(
@@ -742,6 +816,8 @@ const EditPoint = () => {
                                                                 sitio.id_lenguaje_anterior,
                                                             nombre_usuario_edito:
                                                                 sitio.nombre_usuario_edito,
+                                                            publicar_web: sitio.publicar_web,
+                                                            publicar_movil: sitio.publicar_movil,
                                                         })
                                                     }
                                                 }}
@@ -762,6 +838,7 @@ const EditPoint = () => {
                                                     color: '#FFFFFF',
                                                 }}
                                                 value={sitio.geoY == '' ? '' : sitio.geoY}
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (
                                                         validateStringSinCaracteresEspeciales(
@@ -788,6 +865,8 @@ const EditPoint = () => {
                                                                 sitio.id_lenguaje_anterior,
                                                             nombre_usuario_edito:
                                                                 sitio.nombre_usuario_edito,
+                                                            publicar_web: sitio.publicar_web,
+                                                            publicar_movil: sitio.publicar_movil,
                                                         })
                                                     }
                                                 }}
@@ -795,7 +874,7 @@ const EditPoint = () => {
                                             <hr style={{position: 'relative', top: '-20px'}}></hr>
                                         </div>
                                     </div>
- 
+
                                     <label style={{fontSize: '14px', color: '#FFFFFF'}}>
                                         Lenguajes
                                     </label>
