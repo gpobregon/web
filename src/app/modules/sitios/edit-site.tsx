@@ -301,15 +301,22 @@ const EditSite = () => {
         publicarWeb: boolean,
         publicarMovil: boolean
     ) => {
-        if(favorito){
+        if (favorito) {
             swal({
-                title: '¿Deseas actualizar la informacion del sitio?',
+                title:
+                    publicarMovil === true && publicarWeb === true
+                        ? '¿Deseas autorizar la publicación del sitio en web y móvil?'
+                        : publicarMovil === true && publicarWeb === false
+                        ? '¿Deseas autorizar la publicación del sitio unicamente en móvil?'
+                        : publicarMovil === false && publicarWeb === true
+                        ? '¿Deseas autorizar la publicación del sitio unicamente en web?'
+                        : '¿Deseas desautorizar la publicación del sitio?',
                 icon: 'warning',
                 buttons: ['No', 'Sí'],
             }).then(async (res) => {
                 if (res) {
                     setShowLoad(true)
-                    const respuesta3: any = await postData(statesMethod, {
+                    await postData(statesMethod, {
                         id_sitio: site.id_sitio,
                         favorito: true,
                         publicado: true,
@@ -329,9 +336,9 @@ const EditSite = () => {
             status.cercania_activa = cercania
             status.publicar_web = publicarWeb
             status.publicar_movil = publicarMovil
-        }else{
+        } else {
             setShowLoad(true)
-            const respuesta3: any = await postData(statesMethod, {
+            await postData(statesMethod, {
                 id_sitio: site.id_sitio,
                 favorito: favorito,
                 publicado: publicado,
@@ -347,87 +354,34 @@ const EditSite = () => {
             status.publicar_web = publicarWeb
             status.publicar_movil = publicarMovil
 
-                    setSite({
-                                id_sitio: site.id_sitio,
-                                nombre: site.nombre,
-                                descripcion: site.descripcion,
-                                ubicacion: site.ubicacion,
-                                geoX: site.geoX,
-                                geoY: site.geoY,
-                                portada_path: site.portada_path,
-                                estado: site.estado,
-                                creado: site.creado,
-                                editado: site.editado,
-                                categorias: site.categorias,
-                                id_municipio: site.id_municipio,
-                                favorito: status.favorito,
-                                publicado: status.publicado,
-                                oculto: status.oculto,
-                                geo_json: site.geo_json,
-                                cercania_activa: status.cercania_activa,
-                                nombre_usuario_edito: dataUser.name,
-                                qr_path: site.qr_path,
-                                telefono: site.telefono,
-                                website: site.website,
-                                qr_image_path: site.website,
-                                publicar_web: status.publicar_web,
-                                publicar_movil: status.publicar_movil,
-                            })
-                            setShowLoad(false)
+            setSite({
+                id_sitio: site.id_sitio,
+                nombre: site.nombre,
+                descripcion: site.descripcion,
+                ubicacion: site.ubicacion,
+                geoX: site.geoX,
+                geoY: site.geoY,
+                portada_path: site.portada_path,
+                estado: site.estado,
+                creado: site.creado,
+                editado: site.editado,
+                categorias: site.categorias,
+                id_municipio: site.id_municipio,
+                favorito: status.favorito,
+                publicado: status.publicado,
+                oculto: status.oculto,
+                geo_json: site.geo_json,
+                cercania_activa: status.cercania_activa,
+                nombre_usuario_edito: dataUser.name,
+                qr_path: site.qr_path,
+                telefono: site.telefono,
+                website: site.website,
+                qr_image_path: site.website,
+                publicar_web: status.publicar_web,
+                publicar_movil: status.publicar_movil,
+            })
+            setShowLoad(false)
         }
-       
-        // console.log(respuesta3)
-        // if (!respuesta3.hasOwnProperty('titulo')) {
-        //     setStatus({
-        //         id_sitio: site.id_sitio,
-        //         favorito: favorito,
-        //         publicado: publicado,
-        //         oculto: oculto,
-        //         cercania_activa: cercania,
-        //         publicar_web: publicarWeb,
-        //         publicar_movil: publicarMovil,
-        //     })
-        //     setSite({
-        //         id_sitio: site.id_sitio,
-        //         nombre: site.nombre,
-        //         descripcion: site.descripcion,
-        //         ubicacion: site.ubicacion,
-        //         geoX: site.geoX,
-        //         geoY: site.geoY,
-        //         portada_path: site.portada_path,
-        //         estado: site.estado,
-        //         creado: site.creado,
-        //         editado: site.editado,
-        //         categorias: site.categorias,
-        //         id_municipio: site.id_municipio,
-        //         favorito: status.favorito,
-        //         publicado: status.publicado,
-        //         oculto: status.oculto,
-        //         geo_json: site.geo_json,
-        //         cercania_activa: status.cercania_activa,
-        //         nombre_usuario_edito: dataUser.name,
-        //         qr_path: site.qr_path,
-        //         telefono: site.telefono,
-        //         website: site.website,
-        //         qr_image_path: site.website,
-        //         publicar_web: status.publicar_web,
-        //         publicar_movil: status.publicar_movil,
-        //     })
-        // } else {
-        //     swal({
-        //         text: `¡${respuesta3.titulo}!`,
-        //         icon: 'error',
-        //     })
-        // }
-
-        // console.log(status.favorito)
-        // console.log(site)
-
-        const getSites = async () => {
-            const site: any = await getData(sitesMethod)
-            // console.log(site)
-        }
-      
     }
 
     //alert methods-----------------------------------------------------------------------
@@ -447,7 +401,7 @@ const EditSite = () => {
             }
         })
     }
-    const saveChanges = async (sitee:any) => {
+    const saveChanges = async (sitee: any) => {
         swal({
             title: '¿Quiere guardar los cambios?',
             icon: 'warning',
@@ -463,7 +417,6 @@ const EditSite = () => {
                 console.log(sit)
                 // window.location.href = "../sitios";
             }
-           
         })
     }
 
@@ -521,31 +474,37 @@ const EditSite = () => {
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
     const uploadImage = async (imagen: string) => {
-        let arr = imagen.split('.');
+        let arr = imagen.split('.')
         //esta validacion solo es unicamente para ver que sea un archivo admitido en la carga
-        if (arr[arr.length-1] === 'geojson') {
+        if (arr[arr.length - 1] === 'geojson') {
             // esta validacion es para vereficcar apartado selecciona la carga (geojson o img)
-            if(ArchivoPermitido==='.geojson'){
+            if (ArchivoPermitido === '.geojson') {
                 site.geo_json = URLAWS + 'sitePages/GeoJSON/' + imagen
                 setNombreJson(imagen)
-            }else{
+            } else {
                 swal({
                     text: '¡Tipo de archivo no admitido!',
                     icon: 'warning',
                     timer: 2000,
                 })
             }
-        } else if(arr[arr.length-1]==='jpg' || arr[arr.length-1]==='bmp' ||arr[arr.length-1]==='gif' || arr[arr.length-1]==='jpeg' ||arr[arr.length-1]==='png'){
-            if(ArchivoPermitido==='image/*'){
+        } else if (
+            arr[arr.length - 1] === 'jpg' ||
+            arr[arr.length - 1] === 'bmp' ||
+            arr[arr.length - 1] === 'gif' ||
+            arr[arr.length - 1] === 'jpeg' ||
+            arr[arr.length - 1] === 'png'
+        ) {
+            if (ArchivoPermitido === 'image/*') {
                 site.portada_path = URLAWS + 'sitePages/' + imagen
-            }else{
+            } else {
                 swal({
                     text: '¡Tipo de archivo no admitido!',
                     icon: 'warning',
                     timer: 2000,
                 })
             }
-        }else{
+        } else {
             swal({
                 text: '¡Tipo de archivo no admitido!',
                 icon: 'warning',
@@ -556,7 +515,7 @@ const EditSite = () => {
             setModalupIMG(false)
         }
     }
-    const [modalupimg, setModalupIMG] = useState(false) 
+    const [modalupimg, setModalupIMG] = useState(false)
 
     //DONWLOAD QR-------------------------------------------------------------------------
     const downloadQRCode = () => {
@@ -611,9 +570,10 @@ const EditSite = () => {
         getRoles()
         validateRole()
         getUser()
-    }, [existRoles]) 
+    }, [existRoles])
 
-    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
+    const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
+        ['e', 'E'].includes(e.key) && e.preventDefault()
 
     return (
         <>
@@ -747,7 +707,7 @@ const EditSite = () => {
                                         // status.oculto == false
                                         //   ? changeStatus(status.favorito, status.publicado, true)
                                         //   : changeStatus(status.favorito, status.publicado, false)
-                                       
+
                                         changeStatus(
                                             status.favorito,
                                             status.publicado,
@@ -794,7 +754,7 @@ const EditSite = () => {
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
-                                        
+
                                         changeStatus(
                                             status.favorito,
                                             !status.publicado,
@@ -847,7 +807,7 @@ const EditSite = () => {
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
-                                      
+
                                         changeStatus(
                                             status.favorito,
                                             status.publicado,
@@ -874,7 +834,7 @@ const EditSite = () => {
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
-                                        
+
                                         changeStatus(
                                             status.favorito,
                                             status.publicado,
@@ -1053,7 +1013,7 @@ const EditSite = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={site.geoX == '' ? '' : site.geoX} 
+                                                value={site.geoX == '' ? '' : site.geoX}
                                                 onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (validateStringSoloNumeros(e.target.value)) {
@@ -1101,7 +1061,7 @@ const EditSite = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={site.geoY == '' ? '' : site.geoY} 
+                                                value={site.geoY == '' ? '' : site.geoY}
                                                 onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (validateStringSoloNumeros(e.target.value)) {
@@ -1150,32 +1110,32 @@ const EditSite = () => {
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.ubicacion != '' ? site.ubicacion : ''}
                                         onChange={(e) => {
-                                                setSite({
-                                                    id_sitio: site.id_sitio,
-                                                    nombre: site.nombre,
-                                                    descripcion: site.descripcion,
-                                                    ubicacion: e.target.value,
-                                                    geoX: site.geoX,
-                                                    geoY: site.geoY,
-                                                    portada_path: site.portada_path,
-                                                    estado: site.estado,
-                                                    creado: site.creado,
-                                                    editado: site.editado,
-                                                    categorias: site.categorias,
-                                                    id_municipio: site.id_municipio,
-                                                    favorito: status.favorito,
-                                                    publicado: status.publicado,
-                                                    oculto: status.oculto,
-                                                    geo_json: site.geo_json,
-                                                    cercania_activa: status.cercania_activa,
-                                                    nombre_usuario_edito: dataUser.name,
-                                                    qr_path: site.qr_path,
-                                                    telefono: site.telefono,
-                                                    website: site.website,
-                                                    qr_image_path: site.website,
-                                                    publicar_web: status.publicar_web,
-                                                    publicar_movil: status.publicar_movil,
-                                                })
+                                            setSite({
+                                                id_sitio: site.id_sitio,
+                                                nombre: site.nombre,
+                                                descripcion: site.descripcion,
+                                                ubicacion: e.target.value,
+                                                geoX: site.geoX,
+                                                geoY: site.geoY,
+                                                portada_path: site.portada_path,
+                                                estado: site.estado,
+                                                creado: site.creado,
+                                                editado: site.editado,
+                                                categorias: site.categorias,
+                                                id_municipio: site.id_municipio,
+                                                favorito: status.favorito,
+                                                publicado: status.publicado,
+                                                oculto: status.oculto,
+                                                geo_json: site.geo_json,
+                                                cercania_activa: status.cercania_activa,
+                                                nombre_usuario_edito: dataUser.name,
+                                                qr_path: site.qr_path,
+                                                telefono: site.telefono,
+                                                website: site.website,
+                                                qr_image_path: site.website,
+                                                publicar_web: status.publicar_web,
+                                                publicar_movil: status.publicar_movil,
+                                            })
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
@@ -1186,17 +1146,13 @@ const EditSite = () => {
                                     </label>
                                     <br></br>
                                     <input
-                                        type='text' 
+                                        type='text'
                                         maxLength={8}
                                         className='form-control'
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.telefono != '' ? site.telefono : ''}
                                         onChange={(e) => {
-                                            if (
-                                                validateStringSoloNumeros(
-                                                    e.target.value
-                                                )
-                                            ) {
+                                            if (validateStringSoloNumeros(e.target.value)) {
                                                 setSite({
                                                     id_sitio: site.id_sitio,
                                                     nombre: site.nombre,
