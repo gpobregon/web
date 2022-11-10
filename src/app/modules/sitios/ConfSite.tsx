@@ -1,4 +1,5 @@
-import React, {useState, useEffect, FC, useRef} from 'react'
+import React, {useState, useEffect, FC, useRef} from 'react' 
+import {Auth} from 'aws-amplify'
 import {
     Container,
     Row,
@@ -40,7 +41,7 @@ import {
 import {KTSVG} from '../../../_metronic/helpers'
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     (item) => ({label: item, value: item})
-)
+) 
 
 const options = [
     {label: 'Grapes', value: 'grapes'},
@@ -112,7 +113,8 @@ const animatedComponents = makeAnimated()
 
 const ConfSite = () => {
     useEffect(() => {
-        getCategorys()
+        getCategorys() 
+        getUser()
     }, [])
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
@@ -143,13 +145,47 @@ const ConfSite = () => {
         telefono: '',
         website: '',
         qr_image_path: '',
+        publicar_web: false,
+        publicar_movil: false, 
+        nombre_usuario_edito: '',
+    }) 
+    //console.log("site: ", site);  
+
+    // obtener usuario que editó
+    const [dataUser, setDataUser] = useState({
+        
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
     })
+    const getUser = async () => {
+        Auth.currentUserInfo().then((user) => {
+            setDataUser({
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
+                descripcion: '',
+            })
+        })
+    }   
+    //console.log("dataUser: ", dataUser);
+    // fin obtener usuario que editó
+
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
         favorito: site.favorito,
         publicado: site.favorito,
         oculto: site.oculto,
         cercania_activa: site.cercania_activa,
+        publicar_web: site.publicar_web,
+        publicar_movil: site.publicar_movil,
     })
 
     async function getCategorys() {
@@ -201,11 +237,15 @@ const ConfSite = () => {
             telefono: site.telefono,
             website: site.website,
             qr_image_path: site.qr_image_path,
+            publicar_web: status.publicar_web,
+            publicar_movil: status.publicar_movil, 
+            nombre_usuario_edito: dataUser.name,
         })
 
         // console.log(site);
-    }
-    //methods to post data to api------------------------------------------------------
+    } 
+    
+    //methods to post data to api------------------------------------------------------ 
 
     async function postSite(sitee: any, tipo: string) {
         if (
@@ -227,21 +267,21 @@ const ConfSite = () => {
     async function postDefault(route: string, object: any) {
         const sit: any = await postData(route, object)
     }
-    const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
-        setStatus({
-            id_sitio: site.id_sitio,
-            favorito: favorito,
-            publicado: publicado,
-            oculto: oculto,
-            cercania_activa: site.cercania_activa,
-        })
-        // console.log(status)
-        postDefault(statesMethod, status)
-        // const getSites = async () => {
-        //   const site: any = await getData(sitesMethod)
-        //   console.log(site)
-        // }
-    }
+    // const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
+    //     setStatus({
+    //         id_sitio: site.id_sitio,
+    //         favorito: favorito,
+    //         publicado: publicado,
+    //         oculto: oculto,
+    //         cercania_activa: site.cercania_activa,
+    //     })
+    //     // console.log(status)
+    //     postDefault(statesMethod, status)
+    //     // const getSites = async () => {
+    //     //   const site: any = await getData(sitesMethod)
+    //     //   console.log(site)
+    //     // }
+    // }
 
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
@@ -264,17 +304,45 @@ const ConfSite = () => {
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
     const uploadImage = async (imagen: string) => {
-        if (ArchivoPermitido == '.json') {
-            site.geo_json = URLAWS + 'sitePages/GeoJSON/' + imagen
-            setNombreJson(imagen)
-        } else {
-            site.portada_path = URLAWS + 'sitePages/' + imagen
+        let arr = imagen.split('.');
+        //esta validacion solo es unicamente para ver que sea un archivo admitido en la carga
+        if (arr[arr.length-1] === 'geojson') {
+            // esta validacion es para vereficcar apartado selecciona la carga (geojson o img)
+            if(ArchivoPermitido==='.geojson'){
+                site.geo_json = URLAWS + 'sitePages/GeoJSON/' + imagen
+                setNombreJson(imagen)
+            }else{
+                swal({
+                    text: '¡Tipo de archivo no admitido!',
+                    icon: 'warning',
+                    timer: 2000,
+                })
+            }
+        } else if(arr[arr.length-1]==='jpg' || arr[arr.length-1]==='bmp' ||arr[arr.length-1]==='gif' || arr[arr.length-1]==='jpeg' ||arr[arr.length-1]==='png'){
+            if(ArchivoPermitido==='image/*'){
+                site.portada_path = URLAWS + 'sitePages/' + imagen
+            }else{
+                swal({
+                    text: '¡Tipo de archivo no admitido!',
+                    icon: 'warning',
+                    timer: 2000,
+                })
+            }
+        }else{
+            swal({
+                text: '¡Tipo de archivo no admitido!',
+                icon: 'warning',
+                timer: 2000,
+            })
         }
         if (imagen != '') {
             setModalupIMG(false)
         }
     }
-    const [modalupimg, setModalupIMG] = useState(false)
+    const [modalupimg, setModalupIMG] = useState(false)  
+    
+    //Bloquear letra E en inputs
+    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
 
     return (
         <>
@@ -479,6 +547,9 @@ const ConfSite = () => {
                                                             telefono: site.telefono,
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
+                                                            publicar_web: site.publicar_web,
+                                                            publicar_movil: site.publicar_movil,
+                                                            nombre_usuario_edito: dataUser.name,
                                                         })
                                                     }
                                                 ></Link>
@@ -528,6 +599,9 @@ const ConfSite = () => {
                                                     telefono: site.telefono,
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
+                                                    publicar_web: site.publicar_web,
+                                                    publicar_movil: site.publicar_movil, 
+                                                    nombre_usuario_edito: dataUser.name,
                                                 })
                                             }
                                         }}
@@ -540,14 +614,15 @@ const ConfSite = () => {
                                                 GeoX
                                             </label>
                                             <input
-                                                type='text'
+                                                type='number'
                                                 className='form-control'
                                                 style={{
                                                     border: '0',
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={site.geoX == '' ? '' : site.geoX}
+                                                value={site.geoX == '' ? '' : site.geoX} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (validateStringSoloNumeros(e.target.value)) {
                                                         setSite({
@@ -571,6 +646,9 @@ const ConfSite = () => {
                                                             telefono: site.telefono,
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
+                                                            publicar_web: site.publicar_web,
+                                                            publicar_movil: site.publicar_movil, 
+                                                            nombre_usuario_edito: dataUser.name,
                                                         })
                                                     }
                                                 }}
@@ -582,14 +660,15 @@ const ConfSite = () => {
                                                 GeoY
                                             </label>
                                             <input
-                                                type='text'
+                                                type='number'
                                                 className='form-control'
                                                 style={{
                                                     border: '0',
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={site.geoY == '' ? '' : site.geoY}
+                                                value={site.geoY == '' ? '' : site.geoY} 
+                                                onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (validateStringSoloNumeros(e.target.value)) {
                                                         setSite({
@@ -613,6 +692,9 @@ const ConfSite = () => {
                                                             telefono: site.telefono,
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
+                                                            publicar_web: site.publicar_web,
+                                                            publicar_movil: site.publicar_movil, 
+                                                            nombre_usuario_edito: dataUser.name,
                                                         })
                                                     }
                                                 }}
@@ -631,11 +713,6 @@ const ConfSite = () => {
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.ubicacion != '' ? site.ubicacion : ''}
                                         onChange={(e) => {
-                                            if (
-                                                validateStringSinCaracteresEspeciales(
-                                                    e.target.value
-                                                )
-                                            ) {
                                                 setSite({
                                                     id_sitio: site.id_sitio,
                                                     nombre: site.nombre,
@@ -657,8 +734,10 @@ const ConfSite = () => {
                                                     telefono: site.telefono,
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
+                                                    publicar_web: site.publicar_web,
+                                                    publicar_movil: site.publicar_movil, 
+                                                    nombre_usuario_edito: dataUser.name,
                                                 })
-                                            }
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr> 
@@ -669,13 +748,14 @@ const ConfSite = () => {
                                     </label>
                                     <br></br>
                                     <input
-                                        type='number'
+                                        type='text' 
+                                        maxLength={8}
                                         className='form-control'
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.telefono != '' ? site.telefono : ''}
                                         onChange={(e) => {
                                             if (
-                                                validateStringSinCaracteresEspeciales(
+                                                validateStringSoloNumeros(
                                                     e.target.value
                                                 )
                                             ) {
@@ -700,6 +780,9 @@ const ConfSite = () => {
                                                     telefono: e.target.value,
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
+                                                    publicar_web: site.publicar_web,
+                                                    publicar_movil: site.publicar_movil, 
+                                                    nombre_usuario_edito: dataUser.name,
                                                 })
                                             }
                                         }}
@@ -739,6 +822,9 @@ const ConfSite = () => {
                                                     telefono: site.telefono,
                                                     website: e.target.value,
                                                     qr_image_path: site.qr_image_path,
+                                                    publicar_web: site.publicar_web,
+                                                    publicar_movil: site.publicar_movil, 
+                                                    nombre_usuario_edito: dataUser.name,
                                                 })
                                             
                                         }}
@@ -771,7 +857,7 @@ const ConfSite = () => {
                                                 justifyContent: 'center',
                                             }}
                                             onClick={() => {
-                                                setArchivoPermitido('.json')
+                                                setArchivoPermitido('.geojson')
                                                 setUbicacionBucket('sitePages/GeoJSON')
                                                 setModalupIMG(true)
                                             }}
