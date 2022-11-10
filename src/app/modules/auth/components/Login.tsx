@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import {Form, Button} from 'react-bootstrap'
 import {Amplify, Auth} from 'aws-amplify'
@@ -90,20 +90,33 @@ export function Login() {
 
     const login = async (email: string, password: string) => {
         try {
-            const user = await Auth.signIn(email, password)
+            const user = await Auth.signIn(email, password) 
+            await Amplify.Auth.rememberDevice();
             if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
                 setChangePassword(true)
             }
             setUser(user)
             setCurrentUser(user)
-            saveAuth(user)
-            return user
+            saveAuth(user) 
+            return user             
         } catch (error) {
             alertNotNullInputs()
             console.log(error)
             return null
         }
-    }
+    } 
+
+    const getDivices = async ()=>{  
+        const devices = await Amplify.Auth.fetchDevices(); 
+        console.log(devices)
+    } 
+
+    useEffect(() => {
+      
+        getDivices()
+      
+    }, [])
+    
 
     const onChangePassword = async () => {
         try {
