@@ -28,6 +28,7 @@ type sitio = {
     favorito: boolean
     publicado: boolean
     oculto: boolean
+    validateRole: any
     permissionEditSite: boolean
     permissionDeleteSite: boolean
     geo_json: string
@@ -37,6 +38,8 @@ type sitio = {
 const Sitio: FC<sitio> = (props) => {
     const navigate = useNavigate()
     const deleteSites = async () => {
+        await props.validateRole()
+
         if (props.permissionDeleteSite) {
             swal({
                 title: '¿Estas seguro de Eliminar  ' + props.nombre + '?',
@@ -116,7 +119,9 @@ const Sitio: FC<sitio> = (props) => {
                 >
                     <Button
                         style={{width: '47%'}}
-                        onClick={(event) => {
+                        onClick={async (event) => {
+                            await props.validateRole()
+
                             if (props.permissionEditSite) {
                                 navigate(`/sitios/editSite/${props.id_sitio}`)
                             } else {
@@ -124,7 +129,7 @@ const Sitio: FC<sitio> = (props) => {
                                     title: 'No tienes permiso para editar un sitio',
                                     icon: 'warning',
                                 })
-                            }        
+                            }
                         }}
                     >
                         <i className='bi bi-pencil-square'></i>

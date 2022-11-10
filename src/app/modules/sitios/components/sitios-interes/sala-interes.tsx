@@ -389,7 +389,9 @@ const Interes: FC<id_sitio> = (props) => {
                                 <Button
                                     variant='outline-dark'
                                     size='sm'
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await validateRole()
+                                        
                                         if (!permissionCreateRoom) {
                                             swal({
                                                 title: 'No tienes permiso para crear salas',
@@ -492,7 +494,9 @@ const Interes: FC<id_sitio> = (props) => {
                                         key={index}
                                         className='list-item'
                                         draggable
-                                        onDragStart={(e) => {
+                                        onDragStart={async () => {
+                                            await validateRole()
+                                            
                                             if (!permissionSortPoint) {
                                                 swal({
                                                     title: 'No tienes permiso para ordenar puntos de interés',
@@ -638,7 +642,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                                         ? 'bi bi bi-circle'
                                                                         : 'bi bi-record-circle'
                                                                 }
-                                                                onClick={() => {
+                                                                onClick={async () => {
+                                                                    await validateRole()
+                                                                    
                                                                     if (
                                                                         !permissionSetPrincipalImage
                                                                     ) {
@@ -676,7 +682,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                                     : 'btn-secondary fa-solid fa-eye background-button'
                                                             }
                                                             id='center2'
-                                                            onClick={() => {
+                                                            onClick={async () => {
+                                                                await validateRole()
+                                                                
                                                                 if (
                                                                     !permissionChangeVisibilityPoint
                                                                 ) {
@@ -706,7 +714,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                             display: 'flex',
                                                             marginRight: '4px',
                                                         }}
-                                                        onClick={(event) => {
+                                                        onClick={async () => {
+                                                            await validateRole()
+                                                            
                                                             if (!permissionEditPoint) {
                                                                 swal({
                                                                     title: 'No tienes permiso para editar un punto de interés',
@@ -784,7 +794,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                             display: 'flex',
                                                             marginRight: '20px',
                                                         }}
-                                                        onClick={() => {
+                                                        onClick={async () => {
+                                                            await validateRole()
+                                                            
                                                             if (!permissionDeletePoint) {
                                                                 swal({
                                                                     title: 'No tienes permiso para eliminar un punto de interés',
@@ -834,7 +846,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                 borderWidth: '1px',
                                                 borderColor: '#009EF7',
                                             }}
-                                            onClick={(event) => {
+                                            onClick={async () => {
+                                                await validateRole()
+                                                
                                                 if (!permissionCreatePoint) {
                                                     swal({
                                                         title: 'No tienes permiso para crear un nuevo punto de interés',

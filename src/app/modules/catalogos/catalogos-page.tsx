@@ -359,7 +359,9 @@ const CatalogosPage = () => {
         }
     }
 
-    const showModalAddTag = () => {
+    const showModalAddTag = async () => {
+        await validateRole()
+
         if (permissionCreateTag) {
             setModalAddTag(true)
         } else {
@@ -370,7 +372,9 @@ const CatalogosPage = () => {
         }
     }
 
-    const showModalLanguage = () => {
+    const showModalLanguage = async () => {
+        await validateRole()
+
         if (permissionCreateLanguage) {
             setModalAddLanguage({show: true, language: {}})
         } else {
@@ -381,7 +385,9 @@ const CatalogosPage = () => {
         }
     }
 
-    const showModalUpdateTag = (catalogo: any) => {
+    const showModalUpdateTag = async (catalogo: any) => {
+        await validateRole()
+
         if (permissionEditTag) {
             setTag({
                 id_categoria: catalogo.id_categoria,
@@ -399,7 +405,9 @@ const CatalogosPage = () => {
         }
     }
 
-    const showModalUpdateIdioma = (language: any) => {
+    const showModalUpdateIdioma = async (language: any) => {
+        await validateRole()
+
         if (permissionEditLanguage) {
             setIdioma({
                 id_lenguaje: language.id_lenguaje,
@@ -620,6 +628,7 @@ const CatalogosPage = () => {
                     setTag={setTag}
                     updateTag={updateTag}
                     deleteTag={deleteTag}
+                    validateRole={validateRole}
                     permissionDeleteTag={permissionDeleteTag}
                 />
             </Container>
@@ -689,6 +698,7 @@ const CatalogosPage = () => {
                     setIdioma={setIdioma}
                     updateIdioma={updateIdioma}
                     deleteIdioma={deleteIdioma}
+                    validateRole={validateRole}
                     permissionDeleteLanguage={permissionDeleteLanguage}
                 />
             </Container>

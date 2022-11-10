@@ -126,7 +126,9 @@ const PushNotificationsPage = () => {
     const [optionSort, setOptionSort] = useState('Orden descendente')
     const [resultIcon, setResultIcon] = useState('bi-sort-down')
 
-    const toggleCardAddNotification = (value: any) => {
+    const toggleCardAddNotification = async (value: any) => {
+        await validateRole()
+
         if (permissionCreateNotification) {
             setShowCardAddNotification(value)
             if (value === true) {
@@ -140,9 +142,10 @@ const PushNotificationsPage = () => {
         }
     }
 
-    const showCardUpdateNotification = (notification: any) => {
+    const showCardUpdateNotification = async (notification: any) => {
         setValueSelect(null)
         setLabelSelect('Sin redirección')
+        await validateRole()
 
         if (!permissionEditNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
@@ -288,6 +291,8 @@ const PushNotificationsPage = () => {
     }
 
     const deleteNotification = async (tag: any) => {
+        await validateRole()
+
         if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
                 title: 'No tienes permiso para eliminar una notificación programada',
@@ -362,6 +367,8 @@ const PushNotificationsPage = () => {
     }
 
     const deleteSelectedNotification = async () => {
+        await validateRole()
+
         if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
                 title: 'No tienes permiso para eliminar notificaciones programadas',
