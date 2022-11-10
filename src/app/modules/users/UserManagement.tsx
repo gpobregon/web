@@ -18,7 +18,7 @@ import {
 import {roleManager} from '../../models/roleManager'
 import {getData, postData, getRolesMethod, updateUserMethod} from '../../services/api'
 import swal from 'sweetalert'
-import { LoadingContext } from '../../utility/component/loading/context'
+import {LoadingContext} from '../../utility/component/loading/context'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -31,7 +31,7 @@ const customStyles = {
             borderColor: '#323248',
         },
         '&:focus': {
-            borderColor: '#323248', 
+            borderColor: '#323248',
         },
         '&:active': {
             borderColor: '#323248',
@@ -126,7 +126,9 @@ const UserManagement: FC<any> = ({show}) => {
         setRoles(role.data as roleManager[])
     }
 
-    const showModalAddUser = () => {
+    const showModalAddUser = async () => {
+        await validateRole()
+
         if (!permissionCreateUsers) {
             swal({
                 title: 'No tienes permiso para crear usuarios',
@@ -138,7 +140,9 @@ const UserManagement: FC<any> = ({show}) => {
         setModalAddUser(true)
     }
 
-    const showModalDeleteUser = (user: any) => {
+    const showModalDeleteUser = async (user: any) => {
+        await validateRole()
+
         if (!permissionDeleteUsers) {
             swal({
                 title: 'No tienes permiso para eliminar un usuario',
@@ -325,7 +329,9 @@ const UserManagement: FC<any> = ({show}) => {
                                     data-kt-user-table-filter='search'
                                     className='form-control form-control-solid w-250px ps-14'
                                     placeholder='Buscar'
-                                    onChange={(event) => {
+                                    onChange={async (event) => {
+                                        await validateRole()
+
                                         if (!permissionSearchUsers) {
                                             swal({
                                                 title: 'No tienes permiso para buscar usuario',
@@ -359,6 +365,9 @@ const UserManagement: FC<any> = ({show}) => {
                                         <th>Usuario</th>
                                         <th>Teléfono</th>
                                         <th
+                                            onLoad={async () => {
+                                                await validateRole()
+                                            }}
                                             style={
                                                 permissionEditUsers
                                                     ? {display: 'block'}
@@ -405,6 +414,9 @@ const UserManagement: FC<any> = ({show}) => {
                                                         {item.Attributes[0].Value}
                                                     </td>
                                                     <td
+                                                        onLoad={async () => {
+                                                            await validateRole()
+                                                        }}
                                                         style={
                                                             permissionEditUsers
                                                                 ? {display: 'flex'}
@@ -511,6 +523,9 @@ const UserManagement: FC<any> = ({show}) => {
                                                         {item.Attributes[0].Value}
                                                     </td>
                                                     <td
+                                                        onLoad={async () => {
+                                                            await validateRole()
+                                                        }}
                                                         style={
                                                             permissionEditUsers
                                                                 ? {display: 'flex'}

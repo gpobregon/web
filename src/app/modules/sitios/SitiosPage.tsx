@@ -10,7 +10,7 @@ import QRCode from 'qrcode.react'
 import {roleManager} from '../../models/roleManager'
 import {Auth} from 'aws-amplify'
 import swal from 'sweetalert'
-import { LoadingContext } from '../../utility/component/loading/context'
+import {LoadingContext} from '../../utility/component/loading/context'
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -43,7 +43,7 @@ const SitiosPage = () => {
         const site: any = await postData(sitesMethod, {page: pageNumber, quantity: '8'})
         const coutsite: any = await getData(`${sitesMethod}/count`)
         // console.log(site)
-        
+
         setCantidadSite(coutsite.count)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
@@ -62,8 +62,7 @@ const SitiosPage = () => {
                 next: false,
             })
         }
-       
-        
+
         let pagesLength = Math.ceil(coutsite.count / 8)
         // console.log(pagesLength)
         setTotalPages(pagesLength)
@@ -270,7 +269,9 @@ const SitiosPage = () => {
                 </div>
                 <Button
                     className='btn btn-primary'
-                    onClick={() => {
+                    onClick={async () => {
+                        await validateRole()
+
                         if (!permissionCreateSite) {
                             swal({
                                 title: 'No tienes permiso para crear un sitio',
@@ -290,6 +291,7 @@ const SitiosPage = () => {
                     <Sitio
                         {...sitio}
                         key={sitio.id_sitio.toString()}
+                        validateRole={validateRole}
                         permissionEditSite={permissionEditSite}
                         permissionDeleteSite={permissionDeleteSite}
                     />
@@ -315,7 +317,9 @@ const SitiosPage = () => {
                                 verticalAlign: 'middle',
                                 textAlign: 'center',
                             }}
-                            onClick={() => {
+                            onClick={async () => {
+                                await validateRole()
+
                                 if (!permissionCreateSite) {
                                     swal({
                                         title: 'No tienes permiso para crear un sitio',
