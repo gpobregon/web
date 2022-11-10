@@ -109,9 +109,17 @@ const UserProfilePage = () => {
         })
     }
 
-    console.log('dataUser: ', dataUser)
+    console.log('dataUser: ', dataUser) 
 
-    useEffect(() => {
+
+    const getDivices = async ()=>{  
+        const devices = await Amplify.Auth.fetchDevices(); 
+        console.log("devices adentro: ", devices);
+    }  
+
+
+    useEffect(() => { 
+        getDivices()
         getRoles()
         getEmail()
     }, [existRoles])
