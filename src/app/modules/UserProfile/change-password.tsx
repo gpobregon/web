@@ -99,7 +99,7 @@ const changePassword: FC<any> = ({
                             variant='outlined'
                             color='primary'
                             focused
-                        >
+                        > 
                             <OutlinedInput
                                 inputProps={{style: {fontFamily: 'sans-serif', color: '#92929F'}}}
                                 id='outlined-adornment-password'
