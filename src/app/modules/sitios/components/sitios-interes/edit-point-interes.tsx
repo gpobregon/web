@@ -556,7 +556,9 @@ const EditPoint = () => {
                                 <Button
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await validateRole()
+                                        
                                         if (!permissionPostPoint) {
                                             swal({
                                                 title: 'No tienes permiso para publicar cambios de un punto de interés',
@@ -957,7 +959,9 @@ const EditPoint = () => {
                                         <br></br>
                                         <div className='row'>
                                             <Button
-                                                onClick={() => {
+                                                onClick={async () => {
+                                                    await validateRole()
+                                                    
                                                     if (!permissionMockPoint) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar un punto de interés',
@@ -1002,7 +1006,9 @@ const EditPoint = () => {
                                         <div className='row'>
                                             <Button
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
-                                                onClick={() => {
+                                                onClick={async () => {
+                                                    await validateRole()
+                                                    
                                                     if (!permissionMockPoint) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar un punto de interés',

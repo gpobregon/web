@@ -627,7 +627,9 @@ const EditSite = () => {
                                                 : 'btn-secondary text-primary fas fa-star background-button'
                                         }
                                         id='center2'
-                                        onClick={() => {
+                                        onClick={async () => {
+                                            await validateRole()
+
                                             if (!permissionFavoriteSite) {
                                                 swal({
                                                     title: 'No tienes permiso para marcar como destacado un sitio',
@@ -696,7 +698,9 @@ const EditSite = () => {
                                             : 'btn-secondary fa-solid fa-eye-slash background-button'
                                     }
                                     id='center2'
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await validateRole()
+
                                         if (!permissionChangeVisibilitySite) {
                                             swal({
                                                 title: 'No tienes permiso para cambiar la visibilidad de un sitio',
@@ -736,7 +740,9 @@ const EditSite = () => {
                                 <Button
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await validateRole()
+
                                         if (!permissionPostSite) {
                                             swal({
                                                 title: 'No tienes permiso para publicar cambios de un sitio',
@@ -1326,7 +1332,9 @@ const EditSite = () => {
                                         <div className='row'>
                                             <Button
                                                 className='btn btn-info col-md-12 col-sm-12 col-lg-12'
-                                                onClick={() => {
+                                                onClick={async () => {
+                                                    await validateRole()
+
                                                     if (!permissionMockSite) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar',
@@ -1366,7 +1374,9 @@ const EditSite = () => {
                                         <div className='row'>
                                             <Button
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
-                                                onClick={() => {
+                                                onClick={async () => {
+                                                    await validateRole()
+
                                                     if (!permissionMockSite) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar',

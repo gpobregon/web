@@ -23,7 +23,8 @@ import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import React from 'react'
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
-import { LoadingContext } from '../../../../utility/component/loading/context'
+import {LoadingContext} from '../../../../utility/component/loading/context'
+import { setMaxListeners } from 'node:process'
 type datosPuntoInteres = {
     id_punto: number
     lenguajes: [
@@ -386,8 +387,12 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                         style={{
                                                                             marginRight: '10px',
                                                                         }}
-                                                                        onClick={() => {
-                                                                            if (!permissionEditRoutePoint) {
+                                                                        onClick={async () => {
+                                                                            await validateRole()
+
+                                                                            if (
+                                                                                !permissionEditRoutePoint
+                                                                            ) {
                                                                                 swal({
                                                                                     title: 'No tienes permiso para editar una ruta',
                                                                                     icon: 'warning',
@@ -403,10 +408,11 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                             props.id_punto_a,
                                                                                         id_punto_b:
                                                                                             punto.id_punto,
-                                                                                       id_sitio: props.id_sitio,
-                                                                                       
-                                                                        
-                                                                                            nombre_punto_a:props.nombrepunto_a,
+                                                                                        id_sitio:
+                                                                                            props.id_sitio,
+
+                                                                                        nombre_punto_a:
+                                                                                            props.nombrepunto_a,
                                                                                         nombre_punto_b:
                                                                                             punto.nombre,
                                                                                     },
@@ -422,8 +428,12 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                         style={{
                                                                             marginRight: '10px',
                                                                         }}
-                                                                        onClick={() => {
-                                                                            if (!permissionDeleteRoutePoint) {
+                                                                        onClick={async () => {
+                                                                            await validateRole()
+                                                                            
+                                                                            if (
+                                                                                !permissionDeleteRoutePoint
+                                                                            ) {
                                                                                 swal({
                                                                                     title: 'No tienes permiso para eliminar una ruta',
                                                                                     icon: 'warning',
@@ -446,8 +456,12 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                         style={{
                                                                             marginRight: '10px',
                                                                         }}
-                                                                        onClick={() => {
-                                                                            if (!permissionCreateRoutePoint) {
+                                                                        onClick={async () => {
+                                                                            await validateRole()
+
+                                                                            if (
+                                                                                !permissionCreateRoutePoint
+                                                                            ) {
                                                                                 swal({
                                                                                     title: 'No tienes permiso para crear una ruta',
                                                                                     icon: 'warning',
@@ -467,10 +481,11 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                             props.id_punto_a,
                                                                                         id_punto_b:
                                                                                             punto.id_punto,
-                                                                                       id_sitio: props.id_sitio,
-                                                                                       
-                                                                        
-                                                                                            nombre_punto_a:props.nombrepunto_a,
+                                                                                        id_sitio:
+                                                                                            props.id_sitio,
+
+                                                                                        nombre_punto_a:
+                                                                                            props.nombrepunto_a,
                                                                                         nombre_punto_b:
                                                                                             punto.nombre,
                                                                                     },
