@@ -110,7 +110,7 @@ export function Login() {
                 setCurrentUser(user)
                 saveAuth(user)
                 return user
-            }
+           }
         } catch (error) {
             alertNotNullInputs()
             console.log(error)
