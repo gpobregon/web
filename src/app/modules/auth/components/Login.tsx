@@ -97,11 +97,11 @@ export function Login() {
 
     const login = async (email: string, password: string) => {
         try {
+            const user = await Auth.signIn(email, password)
             const devices = await Amplify.Auth.fetchDevices()
             if (devices.length >= 5) {
                 alertDevices()
             } else {
-                const user = await Auth.signIn(email, password)
                 await Amplify.Auth.rememberDevice()
                 if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
                     setChangePassword(true)
@@ -110,7 +110,7 @@ export function Login() {
                 setCurrentUser(user)
                 saveAuth(user)
                 return user
-           }
+            }
         } catch (error) {
             alertNotNullInputs()
             console.log(error)
@@ -118,16 +118,14 @@ export function Login() {
         }
     }
 
-    // const getDivices = async ()=>{
-    //     const devices = await Amplify.Auth.fetchDevices();
-    //     console.log(devices)
-    // }
+    const getDivices = async () => {
+        const devices = await Amplify.Auth.fetchDevices()
+        console.log(devices)
+    }
 
-    // useEffect(() => {
-
-    //     getDivices()
-
-    // }, [])
+    useEffect(() => {
+        getDivices()
+    }, [])
 
     const onChangePassword = async () => {
         try {
