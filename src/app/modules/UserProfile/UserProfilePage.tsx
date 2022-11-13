@@ -25,6 +25,7 @@ import {
     validateStringPhoneNumberAlert,
     validateStringSoloNumeros,
 } from '../validarCadena/validadorCadena'
+import { useAuth } from '../auth'
 
 interface Profile {
     fileImage: any
@@ -265,12 +266,15 @@ const UserProfilePage = () => {
                 Confirmar_Contraseña: data.confirmPassword,
             })
         }
-    } 
+    }  
 
+    const {currentUser, logout} = useAuth()
     const outSessionDevices = async ()=>{ 
         try { 
-            changePasswordMethod ()
-            await Auth.signOut({ global: true });
+            changePasswordMethod () 
+            await  Amplify.Auth.forgetDevice(); 
+            await Auth.signOut({ global: true }); 
+            await logout()
         } catch (error) {
             console.log(error)
         }
