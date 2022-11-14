@@ -18,8 +18,9 @@ import {
 import swal from 'sweetalert'
 import {useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
-import {Auth} from 'aws-amplify'
+import {Amplify, Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
+import { useAuth } from '../auth'
 
 const PushNotificationsPage = () => {
     const [showCardAddNotification, setShowCardAddNotification] = useState(false)
@@ -463,12 +464,25 @@ const PushNotificationsPage = () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
         setExistRoles(true)
+    } 
+
+    //para cerrar sesión despues de cambiar contraseña, no olvida el dispositivo :c
+    const {currentUser, logout} = useAuth()
+    const forgotDevice = async () => {
+        try {
+            logout()
+            await Amplify.Auth.forgetDevice()
+        } catch (error) {
+            console.log('no jalo', error)
+        }
     }
 
-    const validateRole = async () => {
-        setShowLoad(true)
+    //fin
 
-        Auth.currentUserInfo().then((user) => {
+    const validateRole = async () => { 
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+        try {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
             })
@@ -486,9 +500,18 @@ const PushNotificationsPage = () => {
                 )
                 setPermissionDeleteNotificationHistory(filter[0]?.notificacion_historial_eliminar)
             }
-        })
+        } catch (error) {
+            swal(
+                'Se ha cambiado la contraseña de tu usuario',
+                'Cierra sesión y vuelve a ingresar',
+                'warning'
+            )
+            await forgotDevice()
+        } 
+    })
 
-        setTimeout(() => setShowLoad(false), 1000)
+    setTimeout(() => setShowLoad(false), 1000)
+        
     }
 
     useEffect(() => {
