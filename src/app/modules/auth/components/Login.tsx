@@ -55,6 +55,13 @@ const alertPasswordNoEnviado = async () => {
         icon: 'warning',
     })
 }
+
+const alertDevices = async () => {
+    swal({
+        text: '¡No pueden haber más de 5 dispositivos conectados a esta cuenta!',
+        icon: 'warning',
+    })
+}
 interface State {
     amount: string
     password: string
@@ -90,33 +97,35 @@ export function Login() {
 
     const login = async (email: string, password: string) => {
         try {
-            const user = await Auth.signIn(email, password) 
-            await Amplify.Auth.rememberDevice();
-            if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-                setChangePassword(true)
+            const user = await Auth.signIn(email, password)
+            const devices = await Amplify.Auth.fetchDevices()
+            if (devices.length >= 5) {
+                alertDevices()
+            } else {
+                await Amplify.Auth.rememberDevice()
+                if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
+                    setChangePassword(true)
+                }
+                setUser(user)
+                setCurrentUser(user)
+                saveAuth(user)
+                return user
             }
-            setUser(user)
-            setCurrentUser(user)
-            saveAuth(user) 
-            return user             
         } catch (error) {
             alertNotNullInputs()
             console.log(error)
             return null
         }
-    } 
+    }
 
-    const getDivices = async ()=>{  
-        const devices = await Amplify.Auth.fetchDevices(); 
+    const getDivices = async () => {
+        const devices = await Amplify.Auth.fetchDevices()
         console.log(devices)
-    } 
+    }
 
     useEffect(() => {
-      
         getDivices()
-      
     }, [])
-    
 
     const onChangePassword = async () => {
         try {
@@ -160,7 +169,8 @@ export function Login() {
     }
 
     const passwordValidation = () => {
-        const regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ])[A-Za-z\d¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ]{8,}$/g
+        const regEx =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ])[A-Za-z\d¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ]{8,}$/g
         if (regEx.test(password)) {
             handleSubmit(true)
         } else if (!regEx.test(password) && password !== '') {
