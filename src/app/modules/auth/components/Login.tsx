@@ -99,9 +99,6 @@ export function Login() {
         try {
             const user = await Auth.signIn(email, password)
             const devices = await Amplify.Auth.fetchDevices()
-            if (devices.length >= 5) {
-                alertDevices()
-            } else {
                 await Amplify.Auth.rememberDevice()
                 if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
                     setChangePassword(true)
@@ -110,7 +107,6 @@ export function Login() {
                 setCurrentUser(user)
                 saveAuth(user)
                 return user
-            }
         } catch (error) {
             alertNotNullInputs()
             console.log(error)
