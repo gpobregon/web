@@ -83,6 +83,13 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
 
     }, [editItemResource])
 
+    useEffect(() => {
+    
+            setEditItemResource(editItem.url !== '' ? { url: editItem.url } : [] )
+        }, [editItem])
+
+        // console.log(editItem)
+
     return (
         <div className="w-100 text-center" ref={drop2}>
             {
@@ -160,7 +167,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                         </div>
                     </Col>
                     {
-                        editItemResource.nombre ?
+                        editItemResource.nombre || editItemResource.url ?
                             (<Fragment>
                                 <Col lg={12}>
                                     <div className="w-100">

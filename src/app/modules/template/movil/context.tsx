@@ -216,6 +216,11 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         setChangeLaguage(response.data.length > 0 ? response.data[0] : [])
         oneData(response.data.length > 0 ? response.data[0] : [], modo === 'movil' ? true : false)
     }
+    //all lenguajes
+    const getAllLenguajes = async () => {
+        const response: any = await getData('language/select')
+        setLanguage(response.data.length > 0 ? response.data : [])
+    }
 
     // obtenemos el template para modificar
     const oneData = async (item: any, type: boolean) => {
@@ -538,8 +543,7 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
             if (modo === 'web') {
                 setChangeMode(2)
             }
-            oneSite()
-            getLenguaje()
+            getAllLenguajes()
         } else {
             navigate(`/error/404`)
         }
