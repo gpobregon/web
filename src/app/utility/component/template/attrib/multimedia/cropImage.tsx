@@ -41,7 +41,7 @@ const CropDemo: FC<Model> = ({ editItemResource, setDataResource }) => {
             ref={imgRef}
             alt=""
             className="w-80" 
-            src={editItemResource.url}
+            src={editItemResource.url ? `${editItemResource.url}?not-from-cache-please` : ''}
             crossOrigin="anonymous"
           />
         </ReactCrop>
