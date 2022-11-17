@@ -86,6 +86,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
                 if (didDrop) {
                     return
                 }
+                console.log('item', item)
+                
                 addElement(item.data)
             },
             collect: (monitor) => ({
