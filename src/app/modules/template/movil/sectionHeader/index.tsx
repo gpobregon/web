@@ -12,7 +12,7 @@ const Index = () => {
                 <p className="small text-muted">Lista de { tipo === 'punto' ? 'Puntos' : 'Sitios'} - Configuracion del { tipo === 'punto' ? 'Punto' : 'Sitio'} -  {changeTypeEdit === 1 ? ' Creador móvil' : 'Creador Web'}</p>
             </div>
             <div>
-                <DropdownButton id="dropdown-item-button" size="sm" variant="dark" className="text-white px-8" title={ changeLaguage.length !== 0 ? changeLaguage.label : 'Idioma' }>
+                <DropdownButton id="dropdown-item-button" size="sm" variant="dark" className="text-white px-8" title={ changeLaguage.length !== 0 ? changeLaguage.label : 'Seleccione un Idioma' }>
                     {
                         language.map((item : any, index: number) => <Dropdown.Item key={index} as="button" onClick={() => changeLangegeSelect(item)}>{ item.label }</Dropdown.Item> )
                     }
