@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import {useEffect} from 'react'
 import {Outlet, Route, Routes} from 'react-router-dom'
-import {Registration} from './components/Registration'
+import AddUserEmergency from './components/AddUserEmergency'
 import {ForgotPassword} from './components/ForgotPassword'
 import {RestorePassword} from './components/RestorePassword'
 import {NewPassword} from './components/NewPassoword'
@@ -44,7 +44,7 @@ const AuthPage = () => (
     <Routes>
         <Route element={<AuthLayout />}>
             <Route path='login' element={<Login />} />
-            <Route path='registration' element={<Registration />} />
+            <Route path='AddUserEmergency' element={<AddUserEmergency />} />
             <Route path='forgot-password' element={<ForgotPassword />} />
             <Route path='restore-password' element={<RestorePassword />} />
             <Route path='new-password' element={<NewPassword />} />

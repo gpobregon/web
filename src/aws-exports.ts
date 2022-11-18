@@ -7,4 +7,7 @@ export const awsconfig = {
     Analytics: {
         disabled: true,
     },
-}
+} 
+
+// userPoolId: 'us-east-1_patxKuq68',
+//     userPoolWebClientId: '5vspfpludhip79jmvstjpqfs20',
