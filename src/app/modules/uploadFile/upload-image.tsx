@@ -73,7 +73,7 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG,ubicacionBucket,tipoArchivo
         <>
             <Modal show={show} onHide={onClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{'Escoge Tu Imagen'}</Modal.Title>
+                    <Modal.Title>{'Escoge Tu Archivo'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Control type="file" onChange={handleFileInput} accept={tipoArchivoPermitido}/>

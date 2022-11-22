@@ -229,7 +229,8 @@ const EditPoint = () => {
     //petitions----------------------------------------------------------------------------
 
     const updatePoint = async () => {
-        const updatePoint = await postData(updatePointInteres, sitio)
+        await postData(updatePointInteres, sitio)
+        await publishTypePoint()
         // console.log(updatePoint)
         // console.log(sitio)
     }
@@ -254,6 +255,25 @@ const EditPoint = () => {
     //     value: language.value,
     //     label: lenaguajeDefault,
     // }))
+
+    const publishTypePoint = async () => {
+        if (sitio.publicar_movil === true && sitio.publicar_web === true) {
+            await postData(publishPI, {
+                id_sitio: sitio.id_sitio,
+                modo_publicacion: 3,
+            })
+        } else if (sitio.publicar_movil === true && sitio.publicar_web === false) {
+            await postData(publishPI, {
+                id_sitio: sitio.id_sitio,
+                modo_publicacion: 1,
+            })
+        } else if (sitio.publicar_movil === false && sitio.publicar_web === true) {
+            await postData(publishPI, {
+                id_sitio: sitio.id_sitio,
+                modo_publicacion: 2,
+            })
+        }
+    }
 
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
@@ -360,7 +380,7 @@ const EditPoint = () => {
         const pngUrl = canvas!.toDataURL('image/png').replace('image/png', 'image/octet-stream')
         let downloadLink = document.createElement('a')
         downloadLink.href = pngUrl
-        downloadLink.download = 'qr.png'
+        downloadLink.download = `${sitio.nombre}.png`
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)
@@ -536,7 +556,9 @@ const EditPoint = () => {
                                 <Button
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await validateRole()
+                                        
                                         if (!permissionPostPoint) {
                                             swal({
                                                 title: 'No tienes permiso para publicar cambios de un punto de interés',
@@ -607,9 +629,9 @@ const EditPoint = () => {
                 </div>
             </div>
             <br />
-            <h1 style={{color: 'white', fontSize: '18px'}}>Editar el punto de interes</h1>
+            <h1 style={{color: 'white', fontSize: '18px'}}>Editar el punto de interés</h1>
             <h5 style={{color: '#565674', fontSize: '14px'}}>
-                Lista de Sitios - Configuración del punto de interes
+                Lista de Sitios - Configuración del punto de interés
             </h5>
             <br />
             <div className='row'>
@@ -937,7 +959,9 @@ const EditPoint = () => {
                                         <br></br>
                                         <div className='row'>
                                             <Button
-                                                onClick={() => {
+                                                onClick={async () => {
+                                                    await validateRole()
+                                                    
                                                     if (!permissionMockPoint) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar un punto de interés',
@@ -982,7 +1006,9 @@ const EditPoint = () => {
                                         <div className='row'>
                                             <Button
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
-                                                onClick={() => {
+                                                onClick={async () => {
+                                                    await validateRole()
+                                                    
                                                     if (!permissionMockPoint) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar un punto de interés',

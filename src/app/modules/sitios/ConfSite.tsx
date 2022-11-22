@@ -309,7 +309,7 @@ const ConfSite = () => {
         if (arr[arr.length-1] === 'geojson') {
             // esta validacion es para vereficcar apartado selecciona la carga (geojson o img)
             if(ArchivoPermitido==='.geojson'){
-                site.geo_json = URLAWS + 'sitePages/GeoJSON/' + imagen
+                site.geo_json = `${URLAWS}${unbicacionBucket}/${imagen}`
                 setNombreJson(imagen)
             }else{
                 swal({
@@ -320,7 +320,7 @@ const ConfSite = () => {
             }
         } else if(arr[arr.length-1]==='jpg' || arr[arr.length-1]==='bmp' ||arr[arr.length-1]==='gif' || arr[arr.length-1]==='jpeg' ||arr[arr.length-1]==='png'){
             if(ArchivoPermitido==='image/*'){
-                site.portada_path = URLAWS + 'sitePages/' + imagen
+                site.portada_path =`${URLAWS}${unbicacionBucket}/${imagen}`
             }else{
                 swal({
                     text: '¡Tipo de archivo no admitido!',

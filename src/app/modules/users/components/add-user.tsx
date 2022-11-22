@@ -387,7 +387,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
 
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
-                                <Form.Label>{'Contraseña'}</Form.Label>
+                                <Form.Label>{'Contraseña '}</Form.Label> 
+                                <p>*Debe tener por lo menos 6 caracteres, con letras mayúsculas, letras minúsculas, números y almenos un caracter especial*</p>
                                 <Form.Control
                                     type='password'
                                     className={'mb-4'}

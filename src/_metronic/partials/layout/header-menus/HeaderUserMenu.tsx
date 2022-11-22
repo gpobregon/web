@@ -14,7 +14,17 @@ const HeaderUserMenu: FC = () => {
         phoneNumber: '',
         lastname: '',
         imageProfile: '',
-    })
+    }) 
+
+    const forgotDevice = async () =>{ 
+        try {
+            logout()
+            await  Amplify.Auth.forgetDevice();
+        } catch (error) {
+            console.log("no jalo", error)
+        }
+
+    }
 
     const getEmail = () => {
         Auth.currentUserInfo().then((user) => {
@@ -61,7 +71,7 @@ const HeaderUserMenu: FC = () => {
             {/* <Languages />  */}
 
             <div className='menu-item px-5'>
-                <a onClick={logout} className='menu-link px-5'>
+                <a onClick={forgotDevice} className='menu-link px-5'>
                     Cerrar sesión
                 </a>
             </div>

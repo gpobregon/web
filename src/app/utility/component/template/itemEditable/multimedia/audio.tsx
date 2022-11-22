@@ -56,7 +56,6 @@ const Audio: FC<Model> = ({ referencia, handlerId, data, setEditItem, updateElem
           <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
             {
               allResources.map((file: any, index: number) => {
-                console.log(file.tipo)
                 return (
                   file.tipo.includes('audio/') && <Audios key={index} item={file} selected={selected} setSelected={setSelected} />
                 )

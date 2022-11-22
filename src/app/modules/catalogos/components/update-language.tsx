@@ -14,6 +14,7 @@ const UpdateLanguage: FC<any> = ({
     updateIdioma,
     deleteIdioma,
     setShow,
+    validateRole,
     permissionDeleteLanguage,
 }) => {
     const [showJson, setShowJson] = useState(false)
@@ -202,7 +203,9 @@ const UpdateLanguage: FC<any> = ({
                 <Modal.Footer>
                     <Button
                         variant='secondary'
-                        onClick={() => {
+                        onClick={async () => {
+                            await validateRole()
+
                             if (permissionDeleteLanguage) {
                                 setIdioma({
                                     id_lenguaje: 1,

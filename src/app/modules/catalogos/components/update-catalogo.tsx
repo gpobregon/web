@@ -130,6 +130,7 @@ const UpdateCatalogo: FC<any> = ({
     setTag,
     updateTag,
     deleteTag,
+    validateRole,
     permissionDeleteTag,
 }) => {
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
@@ -243,7 +244,9 @@ const UpdateCatalogo: FC<any> = ({
                 <Modal.Footer>
                     <Button
                         variant='secondary'
-                        onClick={() => {
+                        onClick={async () => {
+                            await validateRole()
+
                             if (permissionDeleteTag) {
                                 deleteTag(modifiedTagDelete)
                                 setTag({

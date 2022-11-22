@@ -25,6 +25,7 @@ import {
     validateStringPhoneNumberAlert,
     validateStringSoloNumeros,
 } from '../validarCadena/validadorCadena'
+import { useAuth } from '../auth'
 
 interface Profile {
     fileImage: any
@@ -109,9 +110,17 @@ const UserProfilePage = () => {
         })
     }
 
-    console.log('dataUser: ', dataUser)
+    console.log('dataUser: ', dataUser) 
 
-    useEffect(() => {
+
+    const getDivices = async ()=>{  
+        const devices = await Amplify.Auth.fetchDevices(); 
+        console.log("devices adentro: ", devices);
+    }  
+
+
+    useEffect(() => { 
+        getDivices()
         getRoles()
         getEmail()
     }, [existRoles])
@@ -242,7 +251,7 @@ const UserProfilePage = () => {
                         .then((user) => {
                             return Auth.changePassword(user, data.oldPassword, data.newPassword)
                         })
-                        .then((data) => changePasswordDone())
+                        .then((data) => changePasswordDone()) 
                         .catch((err) => console.log(err))
                 } catch (error) {
                     console.log(error)
@@ -256,6 +265,18 @@ const UserProfilePage = () => {
                 Contraseña_Nueva: data.newPassword,
                 Confirmar_Contraseña: data.confirmPassword,
             })
+        }
+    }  
+
+    const {currentUser, logout} = useAuth()
+    const outSessionDevices = async ()=>{ 
+        try { 
+            changePasswordMethod () 
+            await  Amplify.Auth.forgetDevice(); 
+            await Auth.signOut({ global: true }); 
+            await logout()
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -594,7 +615,7 @@ const UserProfilePage = () => {
                 onClose={() => setModalChangePassword({show: false, stateChangePassword: {}})}
                 dataPassword={data}
                 setDataPassword={setData}
-                changePasswordMethod={changePasswordMethod}
+                changePasswordMethod={outSessionDevices}
                 password={password}
                 validPassword={validPassword}
                 touchedPasswordInput={touchedPasswordInput}
