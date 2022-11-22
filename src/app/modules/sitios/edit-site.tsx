@@ -338,7 +338,7 @@ const EditSite = () => {
             status.publicar_movil = publicarMovil
         } else {
             setShowLoad(true)
-            await postData(statesMethod, {
+          const response= await postData(statesMethod, {
                 id_sitio: site.id_sitio,
                 favorito: favorito,
                 publicado: publicado,
@@ -347,6 +347,8 @@ const EditSite = () => {
                 publicar_web: publicarWeb,
                 publicar_movil: publicarMovil,
             })
+            setShowLoad(false)
+            if (response===null) return
             status.oculto = oculto
             status.publicado = publicado
             status.favorito = favorito
@@ -380,7 +382,7 @@ const EditSite = () => {
                 publicar_web: status.publicar_web,
                 publicar_movil: status.publicar_movil,
             })
-            setShowLoad(false)
+           
         }
     }
 

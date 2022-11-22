@@ -102,13 +102,13 @@ export const postData = async (route: string, object: any) => {
                 resolve(data)
             })
             .catch((err) => {
-                resolve(null)
+                resolve(null)       
                 swal({
                     title: 'Error',
                     text: err.message,
                     icon: 'error',
                     timer: 2000,
-                })                   
+                })                  
             })
     })
 }
