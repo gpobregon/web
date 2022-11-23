@@ -31,4 +31,7 @@ export interface Site {
     qr_image_path: string
     publicar_web: boolean
     publicar_movil: boolean
+    bloqueado_por_edicion: boolean
+    bloqueado_por_edicion_id: string
+    bloqueado_por_edicion_nombre: string
 }

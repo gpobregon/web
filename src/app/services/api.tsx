@@ -1,7 +1,7 @@
 import swal from 'sweetalert'
 export const URLAWS = 'https://mcd-archivos.s3.amazonaws.com/'
-// const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
- const URL='https://ezah7sxfbh.execute-api.us-east-1.amazonaws.com/qa'
+//const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
+const URL='https://ezah7sxfbh.execute-api.us-east-1.amazonaws.com/qa'
 // const URL = 'https://57de-190-148-50-142.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
