@@ -108,6 +108,35 @@ const EditSite = () => {
     const {setShowLoad} = useContext(LoadingContext)
     const {id} = useParams()
     const {state} = useLocation()
+    const [botonActivo, setbotonActivo] = useState(false) 
+
+    // obtener usuario que editó
+    const [dataUser, setDataUser] = useState({
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
+        id: '',
+    })
+    const getUser = async () => {
+        tryCharging()
+        Auth.currentUserInfo().then((user) => {
+            console.log('user: ', user)
+            setDataUser({
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
+                descripcion: '',
+                id: user.attributes.sub,
+            })
+        })
+    }
 
     const [site, setSite] = useState<Site>({
         id_sitio: 0,
@@ -134,7 +163,11 @@ const EditSite = () => {
         qr_image_path: '',
         publicar_web: false,
         publicar_movil: false,
+        bloqueado_por_edicion: false,
+        bloqueado_por_edicion_id: '',
+        bloqueado_por_edicion_nombre: '',
     })
+    console.log('site: ', site)
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -147,9 +180,20 @@ const EditSite = () => {
     const [unbicacionBucket, setUbicacionBucket] = useState('')
     const [ArchivoPermitido, setArchivoPermitido] = useState('')
     const [mostrarCategorias, setmostrarCategorias] = useState<any>()
+    const [paraCargar, setParaCargar] = useState(false)
+    const tryCharging = () => {
+        setParaCargar(true)
+    }
     const getSite = async () => {
+        tryCharging()
         const sitio: any = await getValue(sitesMethod, Number(id))
-        setSite(sitio.site)
+        //setSite(sitio.site)
+        setSite({
+            ...sitio.site,
+            // bloqueado_por_edicion: false,
+            // bloqueado_por_edicion_id: dataUser.id,
+            // bloqueado_por_edicion_nombre: dataUser.name,
+        })
         let aux = sitio.site.geo_json
         let auxSplit = aux.split('/')
         setNombreJson(auxSplit[auxSplit.length - 1])
@@ -163,11 +207,23 @@ const EditSite = () => {
         }))
 
         setmostrarCategorias(mostrarCategorys)
+    } 
+
+    //para verificar si el sitio esta bloqueado
+    const verifySite =async () => {
+        if (site.bloqueado_por_edicion = true) {
+            setbotonActivo(false)
+        } else {
+            setbotonActivo(true)
+        }
     }
+
     useEffect(() => {
-        getSite()
+        getSite() 
+        verifySite()
         //  console.log(state)
-    }, [])
+    }, [paraCargar])
+
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
         favorito: site.favorito,
@@ -248,30 +304,6 @@ const EditSite = () => {
         }
     }
 
-    // obtener usuario que editó
-    const [dataUser, setDataUser] = useState({
-        email: '',
-        name: '',
-        phoneNumber: '',
-        lastname: '',
-        imageProfile: '',
-        role: '',
-        descripcion: '',
-    })
-    const getUser = async () => {
-        Auth.currentUserInfo().then((user) => {
-            setDataUser({
-                email: user.attributes.email,
-                name: user.attributes.name,
-                phoneNumber: user.attributes['custom:phoneNumber'],
-                lastname: user.attributes['custom:lastname'],
-                imageProfile: user.attributes['custom:imageProfile'],
-                role: user.attributes['custom:role'],
-                descripcion: '',
-            })
-        })
-    }
-
     //methods to post data to api------------------------------------------------------
 
     async function postSiteMaquetar(sitee: any, tipo: string) {
@@ -338,7 +370,7 @@ const EditSite = () => {
             status.publicar_movil = publicarMovil
         } else {
             setShowLoad(true)
-          const response= await postData(statesMethod, {
+            const response = await postData(statesMethod, {
                 id_sitio: site.id_sitio,
                 favorito: favorito,
                 publicado: publicado,
@@ -348,7 +380,7 @@ const EditSite = () => {
                 publicar_movil: publicarMovil,
             })
             setShowLoad(false)
-            if (response===null) return
+            if (response === null) return
             status.oculto = oculto
             status.publicado = publicado
             status.favorito = favorito
@@ -381,8 +413,11 @@ const EditSite = () => {
                 qr_image_path: site.website,
                 publicar_web: status.publicar_web,
                 publicar_movil: status.publicar_movil,
-            })
-           
+                bloqueado_por_edicion: true,
+                bloqueado_por_edicion_id: dataUser.id,
+                bloqueado_por_edicion_nombre: dataUser.name,
+            }) 
+            setbotonActivo(true)
         }
     }
 
@@ -429,6 +464,8 @@ const EditSite = () => {
             estado: 0,
         },
     ])
+
+    //esto es para las etiquetas
     const handleChange = (event: any) => {
         setmostrarCategorias(event.target)
         var arrtempo: [
@@ -470,7 +507,11 @@ const EditSite = () => {
             qr_image_path: site.website,
             publicar_web: status.publicar_web,
             publicar_movil: status.publicar_movil,
-        })
+            bloqueado_por_edicion: true,
+            bloqueado_por_edicion_id: dataUser.id,
+            bloqueado_por_edicion_nombre: dataUser.name,
+        }) 
+        setbotonActivo(true)
         // console.log(site)
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
@@ -565,9 +606,45 @@ const EditSite = () => {
         setTimeout(() => setShowLoad(false), 1000)
     }
 
-    // * Fin restricción por rol
+    // * Fin restricción por rol 
+
+    //method para desbloquear sitio con Boton 
+    const unlockSite = async () => {
+        setSite({
+            id_sitio: site.id_sitio,
+            nombre: site.nombre,
+            descripcion: site.descripcion,
+            ubicacion: site.ubicacion,
+            geoX: site.geoX,
+            geoY: site.geoY,
+            portada_path: site.portada_path,
+            estado: site.estado,
+            creado: site.creado,
+            editado: site.editado,
+            categorias: site.categorias,
+            id_municipio: site.id_municipio,
+            favorito: status.favorito,
+            publicado: status.publicado,
+            oculto: status.oculto,
+            geo_json: site.geo_json,
+            cercania_activa: status.cercania_activa,
+            nombre_usuario_edito:
+                site.nombre_usuario_edito,
+            qr_path: site.qr_path,
+            telefono: site.telefono,
+            website: site.website,
+            qr_image_path: site.website,
+            publicar_web: status.publicar_web,
+            publicar_movil: status.publicar_movil,
+            bloqueado_por_edicion: false,
+            bloqueado_por_edicion_id: '',
+            bloqueado_por_edicion_nombre: '',
+        })  
+        swal('Desbloqueado con éxito', 'Guarda cambios antes de salir', 'success')
+    }
 
     useEffect(() => {
+        getSite()
         setShowLoad(true)
         getRoles()
         validateRole()
@@ -867,10 +944,28 @@ const EditSite = () => {
                 </div>
             </div>
             <br />
-            <h1 style={{color: 'white', fontSize: '18px'}}>Configuración del sitio</h1>
-            <h5 style={{color: '#565674', fontSize: '14px'}}>
-                Lista de Sitios - Configuración del Sitio
-            </h5>
+            <div>
+                <div className='d-flex justify-content-between'>
+                    <div>
+                        <h1 style={{color: 'white', fontSize: '18px'}}>Configuración del sitio</h1>
+                        <h5 style={{color: '#565674', fontSize: '14px'}}>
+                            Lista de Sitios - Configuración del Sitio
+                        </h5>
+                    </div>
+                    <Button
+                        variant='primary'
+                        className='mt-md-0 mt-4'
+                        disabled={!botonActivo}
+                        onClick={() => unlockSite()}
+                    >
+                        <span className='menu-icon me-0'>
+                            <i className={`bi bi-unlock-fill fs-1 `}></i>
+                        </span>
+                        {'Desbloquear sitio'}
+                    </Button>
+                </div>
+            </div>
+
             <br />
             <div className='row'>
                 <div className='card centrado'>
@@ -909,20 +1004,6 @@ const EditSite = () => {
                                                         setArchivoPermitido('image/*')
                                                         setUbicacionBucket('sitePages')
                                                         setModalupIMG(true)
-                                                    }}
-                                                ></Link>
-                                            </Col>
-                                            <Col>
-                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                            </Col>
-                                            <Col>
-                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                            </Col>
-                                            <Col>
-                                                <Link
-                                                    className='bi bi-trash background-button text-danger'
-                                                    to={''}
-                                                    onClick={() =>
                                                         setSite({
                                                             id_sitio: site.id_sitio,
                                                             nombre: site.nombre,
@@ -948,8 +1029,58 @@ const EditSite = () => {
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
+                                                            bloqueado_por_edicion: true,
+                                                            bloqueado_por_edicion_id: dataUser.id,
+                                                            bloqueado_por_edicion_nombre:
+                                                                dataUser.name,
                                                         })
-                                                    }
+                                                        setbotonActivo(true)
+                                                    }}
+                                                ></Link>
+                                            </Col>
+                                            <Col>
+                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                            </Col>
+                                            <Col>
+                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                            </Col>
+                                            <Col>
+                                                <Link
+                                                    className='bi bi-trash background-button text-danger'
+                                                    to={''}
+                                                    onClick={(e) => {
+                                                        setSite({
+                                                            id_sitio: site.id_sitio,
+                                                            nombre: site.nombre,
+                                                            descripcion: site.descripcion,
+                                                            ubicacion: site.ubicacion,
+                                                            geoX: site.geoX,
+                                                            geoY: site.geoY,
+                                                            portada_path: '',
+                                                            estado: site.estado,
+                                                            creado: site.creado,
+                                                            editado: site.editado,
+                                                            categorias: site.categorias,
+                                                            id_municipio: site.id_municipio,
+                                                            favorito: status.favorito,
+                                                            publicado: status.publicado,
+                                                            oculto: status.oculto,
+                                                            geo_json: site.geo_json,
+                                                            cercania_activa: status.cercania_activa,
+                                                            nombre_usuario_edito: dataUser.name,
+                                                            qr_path: site.qr_path,
+                                                            telefono: site.telefono,
+                                                            website: site.website,
+                                                            qr_image_path: site.website,
+                                                            publicar_web: status.publicar_web,
+                                                            publicar_movil: status.publicar_movil,
+                                                            bloqueado_por_edicion: true,
+                                                            bloqueado_por_edicion_id: dataUser.id,
+                                                            bloqueado_por_edicion_nombre:
+                                                                dataUser.name,
+                                                        })
+                                                        setbotonActivo(true)
+                                                    }}
                                                 ></Link>
                                             </Col>
                                         </Row>
@@ -1001,7 +1132,11 @@ const EditSite = () => {
                                                     qr_image_path: site.website,
                                                     publicar_web: status.publicar_web,
                                                     publicar_movil: status.publicar_movil,
+                                                    bloqueado_por_edicion: true,
+                                                    bloqueado_por_edicion_id: dataUser.id,
+                                                    bloqueado_por_edicion_nombre: dataUser.name,
                                                 })
+                                                setbotonActivo(true)
                                             }
                                         }}
                                     ></input>
@@ -1050,7 +1185,12 @@ const EditSite = () => {
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
-                                                        })
+                                                            bloqueado_por_edicion: true,
+                                                            bloqueado_por_edicion_id: dataUser.id,
+                                                            bloqueado_por_edicion_nombre:
+                                                                dataUser.name,
+                                                        }) 
+                                                        setbotonActivo(true)
                                                     }
                                                 }}
                                             />
@@ -1099,7 +1239,12 @@ const EditSite = () => {
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
-                                                        })
+                                                            bloqueado_por_edicion: true,
+                                                            bloqueado_por_edicion_id: dataUser.id,
+                                                            bloqueado_por_edicion_nombre:
+                                                                dataUser.name,
+                                                        }) 
+                                                        setbotonActivo(true)
                                                     }
                                                 }}
                                             />
@@ -1143,7 +1288,11 @@ const EditSite = () => {
                                                 qr_image_path: site.website,
                                                 publicar_web: status.publicar_web,
                                                 publicar_movil: status.publicar_movil,
-                                            })
+                                                bloqueado_por_edicion: true,
+                                                bloqueado_por_edicion_id: dataUser.id,
+                                                bloqueado_por_edicion_nombre: dataUser.name,
+                                            }) 
+                                            setbotonActivo(true)
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
@@ -1186,7 +1335,11 @@ const EditSite = () => {
                                                     qr_image_path: site.website,
                                                     publicar_web: status.publicar_web,
                                                     publicar_movil: status.publicar_movil,
-                                                })
+                                                    bloqueado_por_edicion: true,
+                                                    bloqueado_por_edicion_id: dataUser.id,
+                                                    bloqueado_por_edicion_nombre: dataUser.name,
+                                                }) 
+                                                setbotonActivo(true)
                                             }
                                         }}
                                     ></input>
@@ -1228,7 +1381,11 @@ const EditSite = () => {
                                                 qr_image_path: site.website,
                                                 publicar_web: status.publicar_web,
                                                 publicar_movil: status.publicar_movil,
-                                            })
+                                                bloqueado_por_edicion: true,
+                                                bloqueado_por_edicion_id: dataUser.id,
+                                                bloqueado_por_edicion_nombre: dataUser.name,
+                                            }) 
+                                            setbotonActivo(true)
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>

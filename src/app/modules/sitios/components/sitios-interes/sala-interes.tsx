@@ -42,7 +42,6 @@ const Interes: FC<id_sitio> = (props) => {
     const navigate = useNavigate()
     const [room, setRooms] = useState<Room[]>([])
     const [puntoInteres, setPuntoInteres] = useState<PointInteres[]>([])
-    console.log('puntoInteres: ', puntoInteres)
     const [idsala, setIdSala] = useState<number>()
     const [nombresala, setNombreSala] = useState<String>()
     const [upRoom, setupdateRoom] = useState({
