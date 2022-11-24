@@ -108,7 +108,7 @@ const EditSite = () => {
     const {setShowLoad} = useContext(LoadingContext)
     const {id} = useParams()
     const {state} = useLocation()
-    const [botonActivo, setbotonActivo] = useState(false) 
+    const [botonActivo, setbotonActivo] = useState(false)
 
     // obtener usuario que editó
     const [dataUser, setDataUser] = useState({
@@ -121,20 +121,25 @@ const EditSite = () => {
         descripcion: '',
         id: '',
     })
+    // console.log("dataUser: ", dataUser);
     const getUser = async () => {
         tryCharging()
-        Auth.currentUserInfo().then((user) => {
-            console.log('user: ', user)
-            setDataUser({
-                email: user.attributes.email,
-                name: user.attributes.name,
-                phoneNumber: user.attributes['custom:phoneNumber'],
-                lastname: user.attributes['custom:lastname'],
-                imageProfile: user.attributes['custom:imageProfile'],
-                role: user.attributes['custom:role'],
-                descripcion: '',
-                id: user.attributes.sub,
-            })
+        Auth.currentUserInfo().then(async (user) => {
+            // setDataUser({
+            //     email: user.attributes.email,
+            //     name: user.attributes.name,
+            //     phoneNumber: user.attributes['custom:phoneNumber'],
+            //     lastname: user.attributes['custom:lastname'],
+            //     imageProfile: user.attributes['custom:imageProfile'],
+            //     role: user.attributes['custom:role'],
+            //     descripcion: '',
+            //     id: user.attributes.sub,
+            // })
+
+            console.log('dataUserId: ', dataUser.id)
+            console.log('dataUserName: ', dataUser.name)
+            console.log('site dentro de get: ', site)
+            await saveLocked(true, user.attributes.sub, user.attributes.name)
         })
     }
 
@@ -167,7 +172,6 @@ const EditSite = () => {
         bloqueado_por_edicion_id: '',
         bloqueado_por_edicion_nombre: '',
     })
-    console.log('site: ', site)
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -184,16 +188,20 @@ const EditSite = () => {
     const tryCharging = () => {
         setParaCargar(true)
     }
+
     const getSite = async () => {
         tryCharging()
         const sitio: any = await getValue(sitesMethod, Number(id))
-        //setSite(sitio.site)
         setSite({
             ...sitio.site,
-            // bloqueado_por_edicion: false,
-            // bloqueado_por_edicion_id: dataUser.id,
-            // bloqueado_por_edicion_nombre: dataUser.name,
+            bloqueado_por_edicion: true,
+            bloqueado_por_edicion_id: dataUser.id,
+            bloqueado_por_edicion_nombre: dataUser.name,
         })
+
+        //setSite(sitio.site)
+        getUser()
+
         let aux = sitio.site.geo_json
         let auxSplit = aux.split('/')
         setNombreJson(auxSplit[auxSplit.length - 1])
@@ -207,11 +215,25 @@ const EditSite = () => {
         }))
 
         setmostrarCategorias(mostrarCategorys)
-    } 
+    }
+
+    //metodo para guarda automaticamente el bloqueo del sitio
+    const saveLocked = async (bloqueado_por_edicion: boolean, idUser: string, nameUser: string) => {
+        site.bloqueado_por_edicion = bloqueado_por_edicion
+        site.bloqueado_por_edicion_id = idUser
+        site.bloqueado_por_edicion_nombre = nameUser
+        if (site.id_sitio != 0) {
+            const sit: any = await postData(updateSiteMethod, site)
+        }
+        console.log('sitee: ', site)
+        // window.location.href = "../sitios";
+    }
+
+    //fin
 
     //para verificar si el sitio esta bloqueado
-    const verifySite =async () => {
-        if (site.bloqueado_por_edicion = true) {
+    const verifySite = async () => {
+        if ((site.bloqueado_por_edicion = false)) {
             setbotonActivo(false)
         } else {
             setbotonActivo(true)
@@ -219,7 +241,8 @@ const EditSite = () => {
     }
 
     useEffect(() => {
-        getSite() 
+        // getSite()
+        // saveLocked(site)
         verifySite()
         //  console.log(state)
     }, [paraCargar])
@@ -413,10 +436,10 @@ const EditSite = () => {
                 qr_image_path: site.website,
                 publicar_web: status.publicar_web,
                 publicar_movil: status.publicar_movil,
-                bloqueado_por_edicion: true,
-                bloqueado_por_edicion_id: dataUser.id,
-                bloqueado_por_edicion_nombre: dataUser.name,
-            }) 
+                bloqueado_por_edicion: site.bloqueado_por_edicion,
+                bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
+                bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
+            })
             setbotonActivo(true)
         }
     }
@@ -507,10 +530,10 @@ const EditSite = () => {
             qr_image_path: site.website,
             publicar_web: status.publicar_web,
             publicar_movil: status.publicar_movil,
-            bloqueado_por_edicion: true,
-            bloqueado_por_edicion_id: dataUser.id,
-            bloqueado_por_edicion_nombre: dataUser.name,
-        }) 
+            bloqueado_por_edicion: site.bloqueado_por_edicion,
+            bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
+            bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
+        })
         setbotonActivo(true)
         // console.log(site)
     }
@@ -606,41 +629,36 @@ const EditSite = () => {
         setTimeout(() => setShowLoad(false), 1000)
     }
 
-    // * Fin restricción por rol 
+    // * Fin restricción por rol
 
-    //method para desbloquear sitio con Boton 
+    //method para desbloquear sitio con Boton
     const unlockSite = async () => {
         setSite({
-            id_sitio: site.id_sitio,
-            nombre: site.nombre,
-            descripcion: site.descripcion,
-            ubicacion: site.ubicacion,
-            geoX: site.geoX,
-            geoY: site.geoY,
-            portada_path: site.portada_path,
-            estado: site.estado,
-            creado: site.creado,
-            editado: site.editado,
-            categorias: site.categorias,
-            id_municipio: site.id_municipio,
-            favorito: status.favorito,
-            publicado: status.publicado,
-            oculto: status.oculto,
-            geo_json: site.geo_json,
-            cercania_activa: status.cercania_activa,
-            nombre_usuario_edito:
-                site.nombre_usuario_edito,
-            qr_path: site.qr_path,
-            telefono: site.telefono,
-            website: site.website,
-            qr_image_path: site.website,
-            publicar_web: status.publicar_web,
-            publicar_movil: status.publicar_movil,
+            ...site,
             bloqueado_por_edicion: false,
             bloqueado_por_edicion_id: '',
             bloqueado_por_edicion_nombre: '',
-        })  
-        swal('Desbloqueado con éxito', 'Guarda cambios antes de salir', 'success')
+        }) 
+        setSite({
+            ...site,
+            bloqueado_por_edicion: false,
+            bloqueado_por_edicion_id: '',
+            bloqueado_por_edicion_nombre: '',
+        })
+        // await postSite(site)
+        console.log("site: ", site);
+    } 
+
+    const DouleUnlockSite = async () => { 
+        unlockSite()
+        setSite({
+            ...site,
+            bloqueado_por_edicion: false,
+            bloqueado_por_edicion_id: '',
+            bloqueado_por_edicion_nombre: '',
+        })
+        // await postSite(site)
+        console.log('site guardado: ', site)
     }
 
     useEffect(() => {
@@ -648,7 +666,6 @@ const EditSite = () => {
         setShowLoad(true)
         getRoles()
         validateRole()
-        getUser()
     }, [existRoles])
 
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
@@ -1029,10 +1046,12 @@ const EditSite = () => {
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
-                                                            bloqueado_por_edicion: true,
-                                                            bloqueado_por_edicion_id: dataUser.id,
+                                                            bloqueado_por_edicion:
+                                                                site.bloqueado_por_edicion,
+                                                            bloqueado_por_edicion_id:
+                                                                site.bloqueado_por_edicion_id,
                                                             bloqueado_por_edicion_nombre:
-                                                                dataUser.name,
+                                                                site.bloqueado_por_edicion_nombre,
                                                         })
                                                         setbotonActivo(true)
                                                     }}
@@ -1074,10 +1093,12 @@ const EditSite = () => {
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
-                                                            bloqueado_por_edicion: true,
-                                                            bloqueado_por_edicion_id: dataUser.id,
+                                                            bloqueado_por_edicion:
+                                                                site.bloqueado_por_edicion,
+                                                            bloqueado_por_edicion_id:
+                                                                site.bloqueado_por_edicion_id,
                                                             bloqueado_por_edicion_nombre:
-                                                                dataUser.name,
+                                                                site.bloqueado_por_edicion_nombre,
                                                         })
                                                         setbotonActivo(true)
                                                     }}
@@ -1132,9 +1153,12 @@ const EditSite = () => {
                                                     qr_image_path: site.website,
                                                     publicar_web: status.publicar_web,
                                                     publicar_movil: status.publicar_movil,
-                                                    bloqueado_por_edicion: true,
-                                                    bloqueado_por_edicion_id: dataUser.id,
-                                                    bloqueado_por_edicion_nombre: dataUser.name,
+                                                    bloqueado_por_edicion:
+                                                        site.bloqueado_por_edicion,
+                                                    bloqueado_por_edicion_id:
+                                                        site.bloqueado_por_edicion_id,
+                                                    bloqueado_por_edicion_nombre:
+                                                        site.bloqueado_por_edicion_nombre,
                                                 })
                                                 setbotonActivo(true)
                                             }
@@ -1185,11 +1209,13 @@ const EditSite = () => {
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
-                                                            bloqueado_por_edicion: true,
-                                                            bloqueado_por_edicion_id: dataUser.id,
+                                                            bloqueado_por_edicion:
+                                                                site.bloqueado_por_edicion,
+                                                            bloqueado_por_edicion_id:
+                                                                site.bloqueado_por_edicion_id,
                                                             bloqueado_por_edicion_nombre:
-                                                                dataUser.name,
-                                                        }) 
+                                                                site.bloqueado_por_edicion_nombre,
+                                                        })
                                                         setbotonActivo(true)
                                                     }
                                                 }}
@@ -1239,11 +1265,13 @@ const EditSite = () => {
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
-                                                            bloqueado_por_edicion: true,
-                                                            bloqueado_por_edicion_id: dataUser.id,
+                                                            bloqueado_por_edicion:
+                                                                site.bloqueado_por_edicion,
+                                                            bloqueado_por_edicion_id:
+                                                                site.bloqueado_por_edicion_id,
                                                             bloqueado_por_edicion_nombre:
-                                                                dataUser.name,
-                                                        }) 
+                                                                site.bloqueado_por_edicion_nombre,
+                                                        })
                                                         setbotonActivo(true)
                                                     }
                                                 }}
@@ -1288,10 +1316,12 @@ const EditSite = () => {
                                                 qr_image_path: site.website,
                                                 publicar_web: status.publicar_web,
                                                 publicar_movil: status.publicar_movil,
-                                                bloqueado_por_edicion: true,
-                                                bloqueado_por_edicion_id: dataUser.id,
-                                                bloqueado_por_edicion_nombre: dataUser.name,
-                                            }) 
+                                                bloqueado_por_edicion: site.bloqueado_por_edicion,
+                                                bloqueado_por_edicion_id:
+                                                    site.bloqueado_por_edicion_id,
+                                                bloqueado_por_edicion_nombre:
+                                                    site.bloqueado_por_edicion_nombre,
+                                            })
                                             setbotonActivo(true)
                                         }}
                                     ></input>
@@ -1335,10 +1365,13 @@ const EditSite = () => {
                                                     qr_image_path: site.website,
                                                     publicar_web: status.publicar_web,
                                                     publicar_movil: status.publicar_movil,
-                                                    bloqueado_por_edicion: true,
-                                                    bloqueado_por_edicion_id: dataUser.id,
-                                                    bloqueado_por_edicion_nombre: dataUser.name,
-                                                }) 
+                                                    bloqueado_por_edicion:
+                                                        site.bloqueado_por_edicion,
+                                                    bloqueado_por_edicion_id:
+                                                        site.bloqueado_por_edicion_id,
+                                                    bloqueado_por_edicion_nombre:
+                                                        site.bloqueado_por_edicion_nombre,
+                                                })
                                                 setbotonActivo(true)
                                             }
                                         }}
@@ -1381,10 +1414,12 @@ const EditSite = () => {
                                                 qr_image_path: site.website,
                                                 publicar_web: status.publicar_web,
                                                 publicar_movil: status.publicar_movil,
-                                                bloqueado_por_edicion: true,
-                                                bloqueado_por_edicion_id: dataUser.id,
-                                                bloqueado_por_edicion_nombre: dataUser.name,
-                                            }) 
+                                                bloqueado_por_edicion: site.bloqueado_por_edicion,
+                                                bloqueado_por_edicion_id:
+                                                    site.bloqueado_por_edicion_id,
+                                                bloqueado_por_edicion_nombre:
+                                                    site.bloqueado_por_edicion_nombre,
+                                            })
                                             setbotonActivo(true)
                                         }}
                                     ></input>
@@ -1475,10 +1510,7 @@ const EditSite = () => {
                                         </div>
                                         <br></br>
                                         <div className='row text-center'>
-                                            <i
-                                                className=' fa-solid fa-mobile-screen-button text-info fa-10x 
-                        text-center '
-                                            ></i>
+                                            <i className=' fa-solid fa-mobile-screen-button text-info fa-10x text-center '></i>
                                         </div>
                                         <br></br>
                                         <br />
