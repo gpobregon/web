@@ -31,11 +31,12 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
         updateElement(item)
     }
 
-    const cropImage = async () => {
+    const cropImage = async () => { 
         changeResource()
         const img = dataURLtoFile(dataResource, editItemResource.nombre.replace('.jpg', ".png").replace('.jpeg', ".png"))
         const response = await uploadResource(img, 2)
-        changeSizeTitle({ url: response })
+        changeSizeTitle({ url: response }) 
+        setDataResource([])
     }
 
     const clearDataFormCarousel = () => {
