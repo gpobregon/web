@@ -646,7 +646,8 @@ const EditSite = () => {
             bloqueado_por_edicion_nombre: '',
         })
         // await postSite(site)
-        console.log("site: ", site);
+        console.log("site: ", site); 
+        swal("Desbloqueado" ,"Por favor guarde cambios antes de salir", "info");
     } 
 
     const DouleUnlockSite = async () => { 
