@@ -222,7 +222,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     //all lenguajes
     const getAllLenguajes = async () => {
         const response: any = await getData('language/select')
-        setLanguage(response.data.length > 0 ? response.data : [])
+        setLanguage(response.data.length > 0 ? response.data : []) 
+        swal("Advertencia" ,"Por favor elija un idioma antes de maquetar", "info");
     }
 
     // obtenemos el template para modificar

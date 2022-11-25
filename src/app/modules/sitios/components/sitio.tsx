@@ -101,7 +101,7 @@ const Sitio: FC<sitio> = (props) => {
                     navigate(`/sitios/editSite/${props.id_sitio}`)
                 } else {
                     swal({
-                        title: 'Este sitio está siendo editado por otro usuario',
+                        title: `Este sitio está siendo editado por '${props.bloqueado_por_edicion_nombre}'`,
                         icon: 'warning',
                     })
                 }
