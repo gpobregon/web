@@ -304,7 +304,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                     </Row>
                 </Fragment>
             }
-            <Row className="pt-5">
+            {/* <Row className="pt-5">
                 <Col lg={12}>
                     {
                         (editItem.type === 'video') &&
@@ -319,7 +319,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                     }
 
                 </Col>
-            </Row>
+            </Row> */}
         </div>
     )
 }
