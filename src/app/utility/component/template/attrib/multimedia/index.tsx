@@ -31,11 +31,12 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
         updateElement(item)
     }
 
-    const cropImage = async () => {
+    const cropImage = async () => { 
         changeResource()
         const img = dataURLtoFile(dataResource, editItemResource.nombre.replace('.jpg', ".png").replace('.jpeg', ".png"))
         const response = await uploadResource(img, 2)
-        changeSizeTitle({ url: response })
+        changeSizeTitle({ url: response }) 
+        setDataResource([])
     }
 
     const clearDataFormCarousel = () => {
@@ -229,7 +230,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                                 />
                             </Button>
                             <div className="tooltip-one">
-                                Cambiar Imagen
+                                Cambiar Video
                             </div>
                         </div>
                     </Row>
@@ -303,7 +304,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                     </Row>
                 </Fragment>
             }
-            <Row className="pt-5">
+            {/* <Row className="pt-5">
                 <Col lg={12}>
                     {
                         (editItem.type === 'video') &&
@@ -318,7 +319,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                     }
 
                 </Col>
-            </Row>
+            </Row> */}
         </div>
     )
 }

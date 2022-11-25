@@ -27,6 +27,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const [dataSelect, setDataSelect] = useState<any>([])
 
   const changeText = (e: any) => {
+    console.log(e.target.value);
     
     const edit = {
       ...data,
@@ -84,7 +85,8 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
         nameMenu={nameMenu}
         editItem={data}
       />
-      <ContentEditable
+      <ContentEditable 
+        contentEditable = {true}
         id={data.id}
         className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
         html={`${data.content}`} // innerHTML of the editable div

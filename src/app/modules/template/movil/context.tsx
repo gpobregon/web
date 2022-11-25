@@ -41,7 +41,8 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const [oneDataSite, setOneDataSite] = useState<any>([])
     const [changeLaguage, setChangeLaguage] = useState<any>([])
     const [changeTypeEdit, setChangeTypeEdit] = useState<Number>(1)
-    let [count, setCount] = useState(0)
+    let [count, setCount] = useState(0) 
+    const [DestroyItem, setDestroyItem] = useState(false)
 
     const [searchValue, setSearchValue] = useState<any>([])
     const [filteredData, setFilteredData] = useState<any>([])
@@ -322,9 +323,11 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
     const removeItem = (data: any) => {
         const newBoard = board.filter((item: any) => String(item.id) !== String(data))
         setBoard(newBoard)
-        setEditItem([])
-        setEditItemResource([])
-    }
+        setEditItem([]) 
+        setEditItemResource([]) 
+        setDestroyItem(true)
+    } 
+    console.log('editItem:', editItem) 
 
     // descarta los cambios realizados dentro del editor
     const discardChange = () => {
@@ -551,7 +554,18 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, []) 
+
+
+    // ------------------------------------------------------------
+    useEffect(() => {
+
+        if (DestroyItem) { 
+            setEditItem([])
+            setDestroyItem(false)
+        } 
+       
+    }, [DestroyItem])
 
     const value = {
         drop,
