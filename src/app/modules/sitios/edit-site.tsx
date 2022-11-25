@@ -639,15 +639,15 @@ const EditSite = () => {
             bloqueado_por_edicion_id: '',
             bloqueado_por_edicion_nombre: '',
         }) 
-        setSite({
-            ...site,
-            bloqueado_por_edicion: false,
-            bloqueado_por_edicion_id: '',
-            bloqueado_por_edicion_nombre: '',
-        })
-        // await postSite(site)
+       
+        let converterToFalse = site  
+        
+        converterToFalse.bloqueado_por_edicion = false 
+        console.log("converterToFalse: ", converterToFalse);
+
+        await postSite(site)
         console.log("site: ", site); 
-        swal("Desbloqueado" ,"Por favor guarde cambios antes de salir", "info");
+        // swal("Desbloqueado" ,"Por favor guarde cambios antes de salir", "info");
     } 
 
     const DouleUnlockSite = async () => { 
