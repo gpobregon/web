@@ -230,7 +230,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                                 />
                             </Button>
                             <div className="tooltip-one">
-                                Cambiar Imagen
+                                Cambiar Video
                             </div>
                         </div>
                     </Row>
