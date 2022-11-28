@@ -466,20 +466,25 @@ export const ContentProvider: FC<WithChildren> = ({ children }) => {
         }
     }
     // Eliminacion de un recurso
-    const destroyOneResource = async (id: number, tipo: number) => {
-        setShowLoad(true)
-        const response: any = await postData('site/mobile/resource/delete', { "id_recurso": id })
-
-        const items = (tipo === 1 ? allResources : allResourcesElement).filter((item: any) => String(item.id_recurso) !== String(id))
-        response &&
-            swal(
-                {
-                    text: 'Recurso eliminado con exito',
-                    icon: 'success',
-                }
-            )
-        tipo === 1 ? setAllResource(items) : setAllResourceElement(items)
-        setShowLoad(false)
+    const destroyOneResource = async (id: number, tipo: number) => { 
+        try {
+            setShowLoad(true)
+            const response: any = await postData('site/mobile/resource/delete', { "id_recurso": id })
+    
+            const items = (tipo === 1 ? allResources : allResourcesElement).filter((item: any) => String(item.id_recurso) !== String(id))
+            response &&
+                swal(
+                    {
+                        text: 'Recurso eliminado con exito',
+                        icon: 'success',
+                    }
+                )
+            tipo === 1 ? setAllResource(items) : setAllResourceElement(items)
+            setShowLoad(false)
+        } catch (error) {
+            console.log(error)
+        }
+       
     }
 
     const handleFilter = (e: any, allElement: any, tipo: number) => {
