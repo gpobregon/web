@@ -120,8 +120,41 @@ const EditSite = () => {
         role: '',
         descripcion: '',
         id: '',
+    }) 
+
+    const [dataUserHeader, setDataUserHeader] = useState({
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
+        id: '',
     })
-    // console.log("dataUser: ", dataUser);
+    //console.log("dataUserHeader: ", dataUserHeader);
+
+    const getUserForHeader = async () => {
+        tryCharging()
+        Auth.currentUserInfo().then(async (user) => {
+            setDataUserHeader({
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
+                descripcion: '',
+                id: user.attributes.sub,
+            })
+
+            // console.log('dataUserId: ', dataUser.id)
+            // console.log('dataUserName: ', dataUser.name)
+            // console.log('site dentro de get: ', site)
+            
+        })
+    }
+
     const getUser = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
@@ -136,9 +169,9 @@ const EditSite = () => {
             //     id: user.attributes.sub,
             // })
 
-            console.log('dataUserId: ', dataUser.id)
-            console.log('dataUserName: ', dataUser.name)
-            console.log('site dentro de get: ', site)
+            // console.log('dataUserId: ', dataUser.id)
+            // console.log('dataUserName: ', dataUser.name)
+            // console.log('site dentro de get: ', site)
             await saveLocked(true, user.attributes.sub, user.attributes.name)
         })
     }
@@ -171,7 +204,8 @@ const EditSite = () => {
         bloqueado_por_edicion: false,
         bloqueado_por_edicion_id: '',
         bloqueado_por_edicion_nombre: '',
-    })
+    }) 
+    //console.log("site: ", site);
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -193,11 +227,9 @@ const EditSite = () => {
         tryCharging()
         const sitio: any = await getValue(sitesMethod, Number(id))
         setSite({
-            ...sitio.site,
-            bloqueado_por_edicion: true,
-            bloqueado_por_edicion_id: dataUser.id,
-            bloqueado_por_edicion_nombre: dataUser.name,
-        })
+            ...sitio.site, 
+        }) 
+        console.log("como lo trae el get: ", sitio);
 
         //setSite(sitio.site)
         getUser()
@@ -218,17 +250,22 @@ const EditSite = () => {
     }
 
     //metodo para guarda automaticamente el bloqueo del sitio
-    const saveLocked = async (bloqueado_por_edicion: boolean, idUser: string, nameUser: string) => {
+    const saveLocked = async (bloqueado_por_edicion: boolean, idUser: string, nameUser: string) => { 
         site.bloqueado_por_edicion = bloqueado_por_edicion
         site.bloqueado_por_edicion_id = idUser
         site.bloqueado_por_edicion_nombre = nameUser
         if (site.id_sitio != 0) {
             const sit: any = await postData(updateSiteMethod, site)
         }
-        console.log('sitee: ', site)
+        console.log('Save automatico: ', site) 
+        // setSite({ 
+        //     ...site
+        // }) 
+        // console.log('despues del Save automatico: ', site) 
+        
         // window.location.href = "../sitios";
     }
-
+    console.log("site: ", site);
     //fin
 
     //para verificar si el sitio esta bloqueado
@@ -429,7 +466,7 @@ const EditSite = () => {
                 oculto: status.oculto,
                 geo_json: site.geo_json,
                 cercania_activa: status.cercania_activa,
-                nombre_usuario_edito: dataUser.name,
+                nombre_usuario_edito: dataUserHeader.name,
                 qr_path: site.qr_path,
                 telefono: site.telefono,
                 website: site.website,
@@ -473,7 +510,8 @@ const EditSite = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                const sit: any = await postData(updateSiteMethod, sitee)
+                const sit: any = await postData(updateSiteMethod, sitee) 
+                navigate('/sitios')
                 console.log(sit)
                 // window.location.href = "../sitios";
             }
@@ -523,7 +561,7 @@ const EditSite = () => {
             oculto: status.oculto,
             geo_json: site.geo_json,
             cercania_activa: status.cercania_activa,
-            nombre_usuario_edito: dataUser.name,
+            nombre_usuario_edito: dataUserHeader.name,
             qr_path: site.qr_path,
             telefono: site.telefono,
             website: site.website,
@@ -650,19 +688,9 @@ const EditSite = () => {
         // swal("Desbloqueado" ,"Por favor guarde cambios antes de salir", "info");
     } 
 
-    const DouleUnlockSite = async () => { 
-        unlockSite()
-        setSite({
-            ...site,
-            bloqueado_por_edicion: false,
-            bloqueado_por_edicion_id: '',
-            bloqueado_por_edicion_nombre: '',
-        })
-        // await postSite(site)
-        console.log('site guardado: ', site)
-    }
 
-    useEffect(() => {
+    useEffect(() => { 
+        getUserForHeader()
         getSite()
         setShowLoad(true)
         getRoles()
@@ -1040,7 +1068,7 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
-                                                            nombre_usuario_edito: dataUser.name,
+                                                            nombre_usuario_edito: dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
@@ -1087,7 +1115,7 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
-                                                            nombre_usuario_edito: dataUser.name,
+                                                            nombre_usuario_edito: dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
@@ -1147,7 +1175,7 @@ const EditSite = () => {
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
                                                     cercania_activa: status.cercania_activa,
-                                                    nombre_usuario_edito: dataUser.name,
+                                                    nombre_usuario_edito: dataUserHeader.name,
                                                     qr_path: site.qr_path,
                                                     telefono: site.telefono,
                                                     website: site.website,
@@ -1203,7 +1231,7 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
-                                                            nombre_usuario_edito: dataUser.name,
+                                                            nombre_usuario_edito: dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
@@ -1259,7 +1287,7 @@ const EditSite = () => {
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
                                                             nombre_usuario_edito:
-                                                                site.nombre_usuario_edito,
+                                                            dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
@@ -1310,7 +1338,7 @@ const EditSite = () => {
                                                 oculto: status.oculto,
                                                 geo_json: site.geo_json,
                                                 cercania_activa: status.cercania_activa,
-                                                nombre_usuario_edito: dataUser.name,
+                                                nombre_usuario_edito: dataUserHeader.name,
                                                 qr_path: site.qr_path,
                                                 telefono: site.telefono,
                                                 website: site.website,
@@ -1359,7 +1387,7 @@ const EditSite = () => {
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
                                                     cercania_activa: status.cercania_activa,
-                                                    nombre_usuario_edito: dataUser.name,
+                                                    nombre_usuario_edito: dataUserHeader.name,
                                                     qr_path: site.qr_path,
                                                     telefono: e.target.value,
                                                     website: site.website,
@@ -1408,7 +1436,7 @@ const EditSite = () => {
                                                 oculto: status.oculto,
                                                 geo_json: site.geo_json,
                                                 cercania_activa: status.cercania_activa,
-                                                nombre_usuario_edito: dataUser.name,
+                                                nombre_usuario_edito: dataUserHeader.name,
                                                 qr_path: site.qr_path,
                                                 telefono: site.telefono,
                                                 website: e.target.value,
