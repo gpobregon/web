@@ -258,10 +258,10 @@ const EditSite = () => {
             const sit: any = await postData(updateSiteMethod, site)
         }
         console.log('Save automatico: ', site) 
-        // setSite({ 
-        //     ...site
-        // }) 
-        // console.log('despues del Save automatico: ', site) 
+        setSite({ 
+            ...site
+        }) 
+        console.log('despues del Save automatico: ', site) 
         
         // window.location.href = "../sitios";
     }
