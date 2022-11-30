@@ -229,7 +229,7 @@ const EditSite = () => {
         setSite({
             ...sitio.site, 
         }) 
-        console.log("como lo trae el get: ", sitio);
+        //console.log("como lo trae el get: ", sitio);
 
         //setSite(sitio.site)
         getUser()
@@ -257,15 +257,15 @@ const EditSite = () => {
         if (site.id_sitio != 0) {
             const sit: any = await postData(updateSiteMethod, site)
         }
-        console.log('Save automatico: ', site) 
+        //console.log('Save automatico: ', site) 
         setSite({ 
             ...site
         }) 
-        console.log('despues del Save automatico: ', site) 
+        //console.log('despues del Save automatico: ', site) 
         
         // window.location.href = "../sitios";
     }
-    console.log("site: ", site);
+    //console.log("site: ", site);
     //fin
 
     //para verificar si el sitio esta bloqueado
