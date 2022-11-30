@@ -27,7 +27,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const [dataSelect, setDataSelect] = useState<any>([])
 
   const changeText = (e: any) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     
     const edit = {
       ...data,
@@ -42,13 +42,14 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     let doc = parser.parseFromString(str, 'text/html');
     const children = doc.childNodes[0].childNodes[1].childNodes[0].childNodes;
     let nodes = []
-    
     for (let i = 0; i < children.length; i++) {
       let text = children[i].childNodes[0].nodeValue;
       if (text) {
-        nodes.push({ text: `${data.typeList === "" ? '* ' : `${i+1}. ` }${text}` });
+        
+        nodes.push({ text: `${data.typeList === "" ||data.typeList === undefined?  `${String.fromCharCode(248)} ` : `${i+1}. ` }${text}` });
       }
     }
+    console.log(nodes);
     return (nodes)
   }
   const destroyItem = (e: any) => {
