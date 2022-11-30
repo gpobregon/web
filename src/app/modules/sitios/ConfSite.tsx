@@ -149,7 +149,7 @@ const ConfSite = () => {
         publicar_movil: false, 
         nombre_usuario_edito: '',
     }) 
-    //console.log("site: ", site);  
+    console.log("site: ", site);
 
     // obtener usuario que editó
     const [dataUser, setDataUser] = useState({

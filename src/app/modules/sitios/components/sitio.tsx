@@ -41,7 +41,7 @@ type sitio = {
 }
 
 const Sitio: FC<sitio> = (props) => {
-    console.log('props: ', props)
+    //console.log('props: ', props)
     const navigate = useNavigate()
 
     const [idSitioState, setIdSitioState] = useState({
@@ -52,7 +52,7 @@ const Sitio: FC<sitio> = (props) => {
         nombreUsuario: props.bloqueado_por_edicion_nombre
     })
 
-    console.log('idSitioState: ', idSitioState)
+    //console.log('idSitioState: ', idSitioState)
 
     // obtener usuario que editó
     const [dataUser, setDataUser] = useState({
@@ -65,7 +65,7 @@ const Sitio: FC<sitio> = (props) => {
         descripcion: '',
         id: '',
     })
-    console.log('dataUser: ', dataUser)
+    //console.log('dataUser: ', dataUser)
 
     const getUser = async () => {
         Auth.currentUserInfo().then((user) => {
