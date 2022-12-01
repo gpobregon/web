@@ -26,6 +26,8 @@ const myBucket = new AWS.S3({
 
 export const ContentProvider: FC<WithChildren> = ({children}) => {
     const [board, setBoard] = useState<any>([])
+    const [validChange, setValidChange] =  useState<number>(0)
+    const [boardChange, setBoardChange] = useState<any>([])
     const [sizeWeb, setSizeWeb] = useState<string>('100%')
     const [oneDataTemplate, setOneDataTemplate] = useState<any>([])
     const [templateToClone, setTemplateToClone] = useState<any>('')
@@ -136,7 +138,12 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             buttons: ['No', 'Sí'],
         }).then(async (res) => {
             if (res) {
-                await onlySave(changeTypeEdit === 1 ? true : false, data)
+                onlySave(changeTypeEdit === 1 ? true : false, board)
+                if (data.value === changeLaguage.value) {
+                    oneData(changeLaguage, modo === 'movil' ? true : false)
+                } else {
+                    oneData(data, modo === 'movil' ? true : false)
+                }
             } else {
                 oneData(data, changeTypeEdit === 1 ? true : false)
             }
@@ -157,9 +164,12 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     }
 
     const onlySave = async (type: any, data: any) => {
+        setBoardChange(data)
         if (oneDataTemplate.length === 0) {
+            setValidChange(1)
             handleCloseSave(true)
         } else {
+            setValidChange(0)
             // setShowLoad(true)
             const dataTemplate = {
                 id_punto: tipo === 'punto' ? id : -1,
@@ -167,7 +177,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                 id_lenguaje: changeLaguage.value,
                 nombre: oneDataTemplate.nombre,
                 descripcion: oneDataTemplate.descripcion,
-                contenido: JSON.stringify(board),
+                contenido: JSON.stringify(data),
                 version: 'version sitio movil 1',
                 es_movil: changeTypeEdit === 1 ? true : false,
                 estado: 1,
@@ -179,11 +189,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             //         text: '¡Maquetación almacenada exitosamente!',
             //         icon: 'success',
             //     }) 
-            if (data.value === changeLaguage.value) {
-                oneData(changeLaguage, modo === 'movil' ? true : false)
-            } else {
-                oneData(data, modo === 'movil' ? true : false)
-            }
+           
             // setShowLoad(false)
         }
     }
@@ -277,12 +283,12 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             id_lenguaje: changeLaguage.value,
             nombre: data.nombre,
             descripcion: data.descripcion,
-            contenido: data.clonar ? templateToClone.contenido : JSON.stringify(board),
+            contenido: data.clonar ? templateToClone.contenido : validChange === 1 ?  JSON.stringify(boardChange) : JSON.stringify(board),
             version: 'version sitio movil 1',
             es_movil: changeTypeEdit === 1 ? true : false,
             estado: 1,
         } 
-        console.log("dataTemplate: ", dataTemplate);
+        console.log(dataTemplate)
         // const response: any = await postData('site/mobile/set', dataTemplate)
         // response &&
         //     swal({
