@@ -131,7 +131,8 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         setBoard(updateData(board, data))
     }
     // Cambiar Lenguaje
-    const changeLangegeSelect = (data: any) => {
+    const changeLangegeSelect = (data: any) => { 
+        
         setChangeLaguage(data)
         swal({
             title: '¿Quiere guardar los cambios?',
@@ -139,19 +140,23 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             buttons: ['No', 'Sí'],
         }).then(async (res) => {
             if (res) {
-                onlySave(changeTypeEdit === 1 ? true : false, board, changeLaguage.value) 
-                if (data.value === changeLaguage.value) { 
-                    console.log('es igual')
-                    oneData(changeLaguage, modo === 'movil' ? true : false)
-                } else { 
-                    console.log('es diferente')
-                    oneData(data, modo === 'movil' ? true : false)
-                }
+                onlySave(changeTypeEdit === 1 ? true : false, board, changeLaguage, data) 
             } else {
                 oneData(data, changeTypeEdit === 1 ? true : false)
             }
-        })
-    }
+        }) 
+    }  
+
+    const getChange = (data: any) => {
+        if (data.value === changeLaguage.value) { 
+            console.log('es igual')
+            oneData(changeLaguage, modo === 'movil' ? true : false)
+        } else { 
+            console.log('es diferente')
+            oneData(data, modo === 'movil' ? true : false)
+        }
+    } 
+
     // cambiar modalidad de edición
     const ChangeMode = async (type: number) => {
         swal({
@@ -160,20 +165,21 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             buttons: ['No', 'Sí'],
         }).then((res) => {
             if (res) {
-                onlySave(type, [], changeLaguage)
+                onlySave(type, [], changeLaguage, [])
             }
             setChangeMode(type)
         })
     }
 
-    const onlySave = async (type: any, data: any, lenguaje: any) => {
+    const onlySave = async (type: any, data: any, lenguaje: any, newLenguaje: any) => {
         setBoardChange(data)
         if (oneDataTemplate.length === 0) {
+            console.log("oneDataTemplate: ", oneDataTemplate);
             setValidChange(1) 
             setLenguajeOld(lenguaje)
             handleCloseSave(true)
         } else {
-            setValidChange(0)
+            setValidChange(0) 
             setShowLoad(true)
             const dataTemplate = {
                 id_punto: tipo === 'punto' ? id : -1,
@@ -193,7 +199,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                     text: '¡Maquetación almacenada exitosamente!',
                     icon: 'success',
                 }) 
-           
+            getChange(newLenguaje)
             setShowLoad(false)
         }
     }
@@ -236,7 +242,8 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     // obtenemos el template para modificar
     const oneData = async (item: any, type: boolean) => {
         const response = await getTemplate(item, type)    
-        if (response.data.length > 0) { 
+        console.log("response: ", response); 
+        if (response.data.length > 0) {  
             setOneDataTemplate(response.data[0])
             if (response.data[0].contenido !== '[]') {
                 setBoard(JSON.parse(response.data[0].contenido))
@@ -285,7 +292,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         const dataTemplate = {
             id_punto: tipo === 'punto' ? id : -1,
             id_sitio: tipo === 'sitio' ? id : idSitio,
-            id_lenguaje: validChange === 1 ? lenguajeOld: changeLaguage.value,
+            id_lenguaje: validChange === 1 ? lenguajeOld.value: changeLaguage.value,
             nombre: data.nombre,
             descripcion: data.descripcion,
             contenido: data.clonar ? templateToClone.contenido : validChange === 1 ?  JSON.stringify(boardChange) : JSON.stringify(board),
@@ -306,6 +313,9 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             setOneDataTemplate(dataTemplate)
             setBoard(JSON.parse(templateToClone.contenido))
             setOldBoard(JSON.parse(templateToClone.contenido))
+        } 
+        if (validChange === 1) {
+            getChange(changeLaguage) 
         } 
         setValidChange(0)
         setShowLoad(false)
