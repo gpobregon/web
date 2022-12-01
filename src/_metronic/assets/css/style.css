@@ -394,6 +394,14 @@ input[type=number]::-webkit-outer-spin-button {
     left: 35px;
     position: absolute !important;
     z-index: 50;
+} 
+
+.list-group-points{ 
+  list-style: inside;
+} 
+
+.list-group-numbers{ 
+  list-style: decimal;
 }
 
 /* --------------------------------- */
