@@ -27,7 +27,8 @@ const myBucket = new AWS.S3({
 export const ContentProvider: FC<WithChildren> = ({children}) => {
     const [board, setBoard] = useState<any>([])
     const [validChange, setValidChange] =  useState<number>(0)
-    const [boardChange, setBoardChange] = useState<any>([])
+    const [boardChange, setBoardChange] = useState<any>([]) 
+    const [lenguajeOld, setLenguajeOld] = useState<any>([])
     const [sizeWeb, setSizeWeb] = useState<string>('100%')
     const [oneDataTemplate, setOneDataTemplate] = useState<any>([])
     const [templateToClone, setTemplateToClone] = useState<any>('')
@@ -138,10 +139,12 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             buttons: ['No', 'Sí'],
         }).then(async (res) => {
             if (res) {
-                onlySave(changeTypeEdit === 1 ? true : false, board)
-                if (data.value === changeLaguage.value) {
+                onlySave(changeTypeEdit === 1 ? true : false, board, changeLaguage.value) 
+                if (data.value === changeLaguage.value) { 
+                    console.log('es igual')
                     oneData(changeLaguage, modo === 'movil' ? true : false)
-                } else {
+                } else { 
+                    console.log('es diferente')
                     oneData(data, modo === 'movil' ? true : false)
                 }
             } else {
@@ -157,24 +160,25 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             buttons: ['No', 'Sí'],
         }).then((res) => {
             if (res) {
-                onlySave(type, [])
+                onlySave(type, [], changeLaguage)
             }
             setChangeMode(type)
         })
     }
 
-    const onlySave = async (type: any, data: any) => {
+    const onlySave = async (type: any, data: any, lenguaje: any) => {
         setBoardChange(data)
         if (oneDataTemplate.length === 0) {
-            setValidChange(1)
+            setValidChange(1) 
+            setLenguajeOld(lenguaje)
             handleCloseSave(true)
         } else {
             setValidChange(0)
-            // setShowLoad(true)
+            setShowLoad(true)
             const dataTemplate = {
                 id_punto: tipo === 'punto' ? id : -1,
                 id_sitio: tipo === 'sitio' ? id : idSitio,
-                id_lenguaje: changeLaguage.value,
+                id_lenguaje: lenguaje.value,
                 nombre: oneDataTemplate.nombre,
                 descripcion: oneDataTemplate.descripcion,
                 contenido: JSON.stringify(data),
@@ -183,14 +187,14 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                 estado: 1,
             } 
             console.log("dataTemplate: ", dataTemplate);
-            // const response: any = await postData('site/mobile/set', dataTemplate)
-            // response &&
-            //     swal({
-            //         text: '¡Maquetación almacenada exitosamente!',
-            //         icon: 'success',
-            //     }) 
+            const response: any = await postData('site/mobile/set', dataTemplate)
+            response &&
+                swal({
+                    text: '¡Maquetación almacenada exitosamente!',
+                    icon: 'success',
+                }) 
            
-            // setShowLoad(false)
+            setShowLoad(false)
         }
     }
 
@@ -240,7 +244,8 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                 
             } else {
                 setBoard([])
-                setOldBoard([])
+                setOldBoard([]) 
+                setOneDataTemplate([])
             }
         } else {
             setBoard([])
@@ -276,11 +281,11 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
 
     // guardamos el template
     const storeTemplate = async (data: any) => {
-        // setShowLoad(true)
+        setShowLoad(true)
         const dataTemplate = {
             id_punto: tipo === 'punto' ? id : -1,
             id_sitio: tipo === 'sitio' ? id : idSitio,
-            id_lenguaje: changeLaguage.value,
+            id_lenguaje: validChange === 1 ? lenguajeOld: changeLaguage.value,
             nombre: data.nombre,
             descripcion: data.descripcion,
             contenido: data.clonar ? templateToClone.contenido : validChange === 1 ?  JSON.stringify(boardChange) : JSON.stringify(board),
@@ -289,20 +294,21 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             estado: 1,
         } 
         console.log(dataTemplate)
-        // const response: any = await postData('site/mobile/set', dataTemplate)
-        // response &&
-        //     swal({
-        //         text: data.clonar
-        //             ? '¡Maquetación clonada exitosamente!'
-        //             : '¡Maquetación almacenada exitosamente!',
-        //         icon: 'success',
-        //     })
-        // if (data.clonar) { 
-        //     setOneDataTemplate(dataTemplate)
-        //     setBoard(JSON.parse(templateToClone.contenido))
-        //     setOldBoard(JSON.parse(templateToClone.contenido))
-        // }
-        // setShowLoad(false)
+        const response: any = await postData('site/mobile/set', dataTemplate)
+        response &&
+            swal({
+                text: data.clonar
+                    ? '¡Maquetación clonada exitosamente!'
+                    : '¡Maquetación almacenada exitosamente!',
+                icon: 'success',
+            })
+        if (data.clonar) { 
+            setOneDataTemplate(dataTemplate)
+            setBoard(JSON.parse(templateToClone.contenido))
+            setOldBoard(JSON.parse(templateToClone.contenido))
+        } 
+        setValidChange(0)
+        setShowLoad(false)
     }
 
     // abrir modal guardar maqueta
