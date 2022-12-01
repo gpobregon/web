@@ -78,8 +78,6 @@ const AddPoint = () => {
     const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
     const [sitio, setSitio] = useState({
         id_sitio: datospuntoInteres.id_sitio,
-        descripcion: '',
-        id_lenguaje: 0,
         nombre: '',
         geoX: '',
         geoY: '',
@@ -90,7 +88,8 @@ const AddPoint = () => {
         id_guia: datospuntoInteres.id_guia,
         publicar_web: false,
         publicar_movil: false,
-    })
+    }) 
+    console.log("sitio: ", sitio);
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
     // useEffect(() => {
     //   console.log(sitio)
@@ -141,7 +140,7 @@ const AddPoint = () => {
     //petitions----------------------------------------------------------------------------
     const addNewPoint = async (tipo: string) => {
         // console.log(sitio)
-        if (sitio.nombre != '' && sitio.id_lenguaje != 0 && sitio.portada_path != '') {
+        if (sitio.nombre != '' && sitio.portada_path != '') {
             const res: any = await postData(addNewPointInteres, sitio)
             //    console.log(res)
             navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${res.point.id_punto}`, {
@@ -174,8 +173,6 @@ const AddPoint = () => {
     const uploadImage = async (imagen: string) => {
         setSitio({
             id_sitio: datospuntoInteres.id_sitio,
-            descripcion: sitio.descripcion,
-            id_lenguaje: sitio.id_lenguaje,
             nombre: sitio.nombre,
             geoX: sitio.geoX,
             geoY: sitio.geoY,
@@ -206,10 +203,10 @@ const AddPoint = () => {
         label: language.nombre,
     }))
 
-    const handleChangeLanguage = (event: any) => {
-        sitio.id_lenguaje = event.value
-        // console.log(sitio)
-    } 
+    // const handleChangeLanguage = (event: any) => {
+    //     sitio.id_lenguaje = event.value
+    //     // console.log(sitio)
+    // } 
 
     const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
     return (
@@ -396,8 +393,8 @@ const AddPoint = () => {
                                                     onClick={() =>
                                                         setSitio({
                                                             id_sitio: datospuntoInteres.id_sitio,
-                                                            descripcion: sitio.descripcion,
-                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            // descripcion: sitio.descripcion,
+                                                            // id_lenguaje: sitio.id_lenguaje,
                                                             nombre: sitio.nombre,
                                                             geoX: sitio.geoX,
                                                             geoY: sitio.geoY,
@@ -457,8 +454,8 @@ const AddPoint = () => {
                                             ) {
                                                 setSitio({
                                                     id_sitio: datospuntoInteres.id_sitio,
-                                                    descripcion: sitio.descripcion,
-                                                    id_lenguaje: sitio.id_lenguaje,
+                                                    // descripcion: sitio.descripcion,
+                                                    // id_lenguaje: sitio.id_lenguaje,
                                                     nombre: e.target.value,
                                                     geoX: sitio.geoX,
                                                     geoY: sitio.geoY,
@@ -497,8 +494,8 @@ const AddPoint = () => {
                                                     ) {
                                                         setSitio({
                                                             id_sitio: datospuntoInteres.id_sitio,
-                                                            descripcion: sitio.descripcion,
-                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            // descripcion: sitio.descripcion,
+                                                            // id_lenguaje: sitio.id_lenguaje,
                                                             nombre: sitio.nombre,
                                                             geoX: e.target.value,
                                                             geoY: sitio.geoY,
@@ -539,8 +536,8 @@ const AddPoint = () => {
                                                     ) {
                                                         setSitio({
                                                             id_sitio: datospuntoInteres.id_sitio,
-                                                            descripcion: sitio.descripcion,
-                                                            id_lenguaje: sitio.id_lenguaje,
+                                                            // descripcion: sitio.descripcion,
+                                                            // id_lenguaje: sitio.id_lenguaje,
                                                             nombre: sitio.nombre,
                                                             geoX: sitio.geoX,
                                                             geoY: e.target.value,
@@ -561,7 +558,7 @@ const AddPoint = () => {
                                     </div>
 
                                     <br />
-                                    <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                    {/* <label style={{fontSize: '14px', color: '#FFFFFF'}}>
                                         Selecciona Lenguaje
                                     </label>
                                     <br />
@@ -572,10 +569,10 @@ const AddPoint = () => {
                                         styles={customStyles}
                                         components={animatedComponents}
                                         onChange={handleChangeLanguage}
-                                    />
+                                    /> */}
                                     <br />
 
-                                    <label style={{fontSize: '14px', color: '#FFFFFF'}}>
+                                    {/* <label style={{fontSize: '14px', color: '#FFFFFF'}}>
                                         Descripcion
                                     </label>
                                     <Form.Control
@@ -608,7 +605,7 @@ const AddPoint = () => {
                                                 })
                                             }
                                         }}
-                                    />
+                                    /> */}
 
                                     <br></br>
                                 </div>
