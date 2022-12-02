@@ -12,7 +12,7 @@ const EditableDesktop = () => {
                 <div className="bkg-dark rounded height-section-editable p-4" style={{ height: '565px' }} ref={drop}>
                     <PerfectScrollbar component="div" style={{ height: '550px', width: "100%", paddingBottom: '100px' }}>
                         <div className="d-flex justify-content-center w-100 px-8">
-                            <div className={`w-${sizeWeb}`}>
+                            <div className={`w-${sizeWeb.replace('%', '')}`}>
                                 {
                                     board.map((item: any, index: number) => {
                                         return (
