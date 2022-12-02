@@ -39,6 +39,7 @@ import {
     validateStringSoloNumeros,
 } from '../validarCadena/validadorCadena'
 import {KTSVG} from '../../../_metronic/helpers'
+import { DeleteImage } from '../deleteFile/delete-image'
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     (item) => ({label: item, value: item})
 ) 
@@ -525,7 +526,8 @@ const ConfSite = () => {
                                                 <Link
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
-                                                    onClick={() =>
+                                                    onClick={() =>{
+                                                        DeleteImage('sitePages',site.portada_path)
                                                         setSite({
                                                             id_sitio: site.id_sitio,
                                                             nombre: site.nombre,
@@ -551,6 +553,7 @@ const ConfSite = () => {
                                                             publicar_movil: site.publicar_movil,
                                                             nombre_usuario_edito: dataUser.name,
                                                         })
+                                                    }
                                                     }
                                                 ></Link>
                                             </Col>

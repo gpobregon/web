@@ -21,6 +21,7 @@ import {roleManager} from '../../models/roleManager'
 import {Amplify, Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
 import { useAuth } from '../auth'
+import { DeleteImage } from '../deleteFile/delete-image'
 
 const PushNotificationsPage = () => {
     const [showCardAddNotification, setShowCardAddNotification] = useState(false)
@@ -716,11 +717,13 @@ const PushNotificationsPage = () => {
                                             <Button
                                                 variant='outline-danger'
                                                 className='text-center'
-                                                onClick={() =>
+                                                onClick={() =>{
+                                                    DeleteImage('notificaciones',notification.imagen_path)
                                                     deleteNotification({
                                                         id_notificacion:
                                                             notification.id_notificacion,
                                                     })
+                                                }
                                                 }
                                             >
                                                 <i className='fs-2 bi-trash px-0 fw-bolder'></i>

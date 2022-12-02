@@ -26,6 +26,7 @@ import {roleManager} from '../../../../models/roleManager'
 import {Auth} from 'aws-amplify'
 import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
 import {LoadingContext} from '../../../../utility/component/loading/context'
+import { DeleteImage } from '../../../deleteFile/delete-image'
 type datosPuntoInteres2 = {
     id_punto: number
     lenguajes: [
@@ -741,7 +742,7 @@ const AddRoute = () => {
                                                                             })
                                                                             return
                                                                         }
-
+                                                                        DeleteImage('sitePages/routes',imgprincipal.img_principal)
                                                                         imgprincipal.img_principal =
                                                                             ''
                                                                     }}
@@ -848,6 +849,7 @@ const AddRoute = () => {
                                                                                     })
                                                                                     return
                                                                                 }
+                                                                                DeleteImage('sitePages/routes', getimg.imagen_ref1)
                                                                                 getimg.imagen_ref1 =
                                                                                     ''
                                                                             }}
@@ -941,6 +943,7 @@ const AddRoute = () => {
                                                                                     })
                                                                                     return
                                                                                 }
+                                                                                DeleteImage('sitePages/routes', getimg.imagen_ref2)
                                                                                 getimg.imagen_ref2 =
                                                                                     ''
                                                                             }}
@@ -1036,6 +1039,7 @@ const AddRoute = () => {
                                                                                     })
                                                                                     return
                                                                                 }
+                                                                                DeleteImage('sitePages/routes', getimg.imagen_ref3)
                                                                                 getimg.imagen_ref3 =
                                                                                     ''
                                                                             }}
@@ -1061,7 +1065,7 @@ const AddRoute = () => {
                 show={modalupimg}
                 onClose={() => setModalupIMG(false)}
                 cargarIMG={uploadImage}
-                ubicacionBucket={'sitePages'}
+                ubicacionBucket={'sitePages/routes'}
                 tipoArchivoPermitido={'image/*'}
             />
         </>
