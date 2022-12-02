@@ -135,7 +135,7 @@ const ConfSite = () => {
         estado: 0,
         creado: new Date(),
         editado: new Date(),
-        categorias: [{id_categoria: 1, nombre: 's', estado: 0}],
+        categorias: [{id_categoria: 0, nombre: '', estado: 0}],
         id_municipio: 1,
         favorito: false,
         publicado: false,
@@ -254,7 +254,9 @@ const ConfSite = () => {
             site.geoY != '' &&
             site.ubicacion != '' &&
             site.portada_path != '' &&
-            site.geo_json != ''
+            site.geo_json != '' && 
+            site.categorias.length >= 1  && 
+            site.categorias[0].id_categoria != 0
         ) {
             const sit: any = await postData(sitesMethod + '/add', sitee)
             console.log(sit)
