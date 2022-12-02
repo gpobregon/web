@@ -172,13 +172,13 @@ const AddRoute = () => {
     const uploadImage = async (imagen: string) => {
         if (imagen != '') {
             if (numeroImg === 1) {
-                getimg.imagen_ref1 = URLAWS + 'sitePages/' + imagen
+                getimg.imagen_ref1 = URLAWS + 'sitePages/routes/' + imagen
             } else if (numeroImg === 2) {
-                getimg.imagen_ref2 = URLAWS + 'sitePages/' + imagen
+                getimg.imagen_ref2 = URLAWS + 'sitePages/routes/' + imagen
             } else if (numeroImg === 3) {
-                getimg.imagen_ref3 = URLAWS + 'sitePages/' + imagen
+                getimg.imagen_ref3 = URLAWS + 'sitePages/routes/' + imagen
             } else if (numeroImg === 0) {
-                imgprincipal.img_principal = URLAWS + 'sitePages/' + imagen
+                imgprincipal.img_principal = URLAWS + 'sitePages/routes/' + imagen
             }
 
             setModalupIMG(false)

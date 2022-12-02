@@ -353,7 +353,7 @@ const EditPoint = () => {
             nombre: sitio.nombre,
             geoX: sitio.geoX,
             geoY: sitio.geoY,
-            portada_path: URLAWS + 'sitePages/' + imagen,
+            portada_path: URLAWS + 'sitePages/puntosInteres/' + imagen,
             qr_path: sitio.qr_path,
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
