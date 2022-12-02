@@ -106,7 +106,7 @@ const animatedComponents = makeAnimated()
 
 const EditSite = () => {
     //const { toogleSave, discardChange } = useContext(ContentContext)
-    const {setShowLoad} = useContext(LoadingContext) 
+    const {setShowLoad} = useContext(LoadingContext)
     const [loadingSite, setloadingSite] = useState(true)
     const {id} = useParams()
     const {state} = useLocation()
@@ -122,7 +122,7 @@ const EditSite = () => {
         role: '',
         descripcion: '',
         id: '',
-    }) 
+    })
 
     const [dataUserHeader, setDataUserHeader] = useState({
         email: '',
@@ -153,11 +153,10 @@ const EditSite = () => {
             // console.log('dataUserId: ', dataUser.id)
             // console.log('dataUserName: ', dataUser.name)
             // console.log('site dentro de get: ', site)
-            
         })
     }
 
-    const getUser = async () => { 
+    const getUser = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
             // setDataUser({
@@ -206,8 +205,8 @@ const EditSite = () => {
         bloqueado_por_edicion: false,
         bloqueado_por_edicion_id: '',
         bloqueado_por_edicion_nombre: '',
-    }) 
-    console.log("site: ", site);
+    })
+    console.log('site: ', site)
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -228,9 +227,8 @@ const EditSite = () => {
     const getSite = async () => {
         const sitio: any = await getValue(sitesMethod, Number(id))
         setSite({
-            ...sitio.site, 
-        })  
-        
+            ...sitio.site,
+        })
 
         //setSite(sitio.site)
         //getUser()
@@ -247,24 +245,24 @@ const EditSite = () => {
             label: cat.nombre,
         }))
 
-        setmostrarCategorias(mostrarCategorys) 
+        setmostrarCategorias(mostrarCategorys)
         setloadingSite(false)
-    } 
+    }
 
     //metodo para guarda automaticamente el bloqueo del sitio
-    const saveLocked = async (bloqueado_por_edicion: boolean, idUser: string, nameUser: string) => { 
+    const saveLocked = async (bloqueado_por_edicion: boolean, idUser: string, nameUser: string) => {
         site.bloqueado_por_edicion = bloqueado_por_edicion
         site.bloqueado_por_edicion_id = idUser
-        site.bloqueado_por_edicion_nombre = nameUser 
+        site.bloqueado_por_edicion_nombre = nameUser
         if (site.id_sitio != 0) {
             const sit: any = await postData(updateSiteMethod, site)
         }
-        //console.log('Save automatico: ', site) 
-        setSite({ 
-            ...site
-        })  
-        //console.log('despues del Save automatico: ', site) 
-        
+        //console.log('Save automatico: ', site)
+        setSite({
+            ...site,
+        })
+        //console.log('despues del Save automatico: ', site)
+
         // window.location.href = "../sitios";
     }
     //console.log("site: ", site);
@@ -282,7 +280,7 @@ const EditSite = () => {
     // useEffect(() => {
     //      //getSite()
     //     // saveLocked(site)
-       
+
     //     //  console.log(state)
     // }, [paraCargar])
 
@@ -331,20 +329,72 @@ const EditSite = () => {
         })
     }
 
+    const alertNotNullInputCategories = async (data: any) => {
+        let keys = Object.keys(data),
+            msg = ''
+
+        for (let key of keys) {
+            if (data[key] != 0 && data[key] >= 1) continue
+            msg += `El campo ${key} es obligatorio\n`
+        }
+        msg.trim()
+
+        swal({
+            text: msg,
+            icon: 'warning',
+        })
+    }
+
+    const alertNotNullInputsObj = async (data: any) => {
+        let keys = Object.keys(data),
+            msg = ''
+
+        for (let key of keys) {
+            if (
+                data[key] !== null &&
+                data[key] !== undefined &&
+                data[key] !== 0 &&
+                data[key] !== ''
+            )
+                continue
+            msg += `El campo ${key} es obligatorio\n`
+        }
+
+        msg.trim()
+
+        swal({
+            text: msg,
+            icon: 'warning',
+        })
+    }
     //methods to post data to api------------------------------------------------------
 
     async function postSite(sitee: any) {
-        if (
-            site.nombre != '' &&
-            site.geoX != '' &&
-            site.geoY != '' &&
-            site.ubicacion != '' &&
-            site.categorias.length > 0
-        ) {
-            saveChanges(sitee)
-        } else {
-            alertNotNullInputs()
+        if (site.categorias.length >= 1 && site.categorias[0].id_categoria != 0) {
+            if (
+                site.nombre != '' &&
+                site.geoX != '' &&
+                site.geoY != '' &&
+                site.ubicacion != '' &&
+                site.categorias.length >= 1 &&
+                site.categorias[0].id_categoria != 0
+            ) {
+                saveChanges(sitee)
+            } else {
+                alertNotNullInputsObj({
+                    nombre: site.nombre,
+                    geoX: site.geoX,
+                    geoY: site.geoY,
+                    ubicación: site.ubicacion,
+                    categorias: site.categorias,
+                })
+            }
+        } else { 
+            alertNotNullInputCategories({
+                categorias: site.categorias,
+            })
         }
+        
     }
 
     const publishTypeSite = async () => {
@@ -475,8 +525,8 @@ const EditSite = () => {
                 bloqueado_por_edicion: site.bloqueado_por_edicion,
                 bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
                 bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
-            }) 
-            console.log("site 447: ", site);
+            })
+            console.log('site 447: ', site)
             setbotonActivo(true)
         }
     }
@@ -510,7 +560,7 @@ const EditSite = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                const sit: any = await postData(updateSiteMethod, sitee) 
+                const sit: any = await postData(updateSiteMethod, sitee)
                 navigate('/sitios')
                 console.log(sit)
                 // window.location.href = "../sitios";
@@ -563,8 +613,8 @@ const EditSite = () => {
             bloqueado_por_edicion: site.bloqueado_por_edicion,
             bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
             bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
-        }) 
-        console.log("site 565: ", site);
+        })
+        console.log('site 565: ', site)
         setbotonActivo(true)
         // console.log(site)
     }
@@ -663,36 +713,35 @@ const EditSite = () => {
     // * Fin restricción por rol
 
     //method para desbloquear sitio con Boton
-    const unlockSite = async () => { 
+    const unlockSite = async () => {
         setSite({
             ...site,
             bloqueado_por_edicion: false,
             bloqueado_por_edicion_id: '',
             bloqueado_por_edicion_nombre: '',
-        }) 
-        console.log("site 671: ", site);
-        let converterToFalse = site  
-        
-        converterToFalse.bloqueado_por_edicion = false 
-        console.log("converterToFalse: ", converterToFalse);
+        })
+        console.log('site 671: ', site)
+        let converterToFalse = site
+
+        converterToFalse.bloqueado_por_edicion = false
+        console.log('converterToFalse: ', converterToFalse)
 
         await postSite(site)
-        console.log("site: ", site); 
+        console.log('site: ', site)
         // swal("Desbloqueado" ,"Por favor guarde cambios antes de salir", "info");
-    } 
+    }
 
-
-    useEffect(() => {    
+    useEffect(() => {
         setShowLoad(true)
         getRoles()
         validateRole()
-    }, [existRoles]) 
+    }, [existRoles])
 
-    useEffect(() => {    
+    useEffect(() => {
         getUser()
         getSite()
         getUserForHeader()
-    }, [loadingSite]) 
+    }, [loadingSite])
 
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
         ['e', 'E'].includes(e.key) && e.preventDefault()
@@ -1065,7 +1114,8 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
-                                                            nombre_usuario_edito: dataUserHeader.name,
+                                                            nombre_usuario_edito:
+                                                                dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
@@ -1089,7 +1139,7 @@ const EditSite = () => {
                                             <Col>
                                                 {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                                             </Col>
-                                            <Col> 
+                                            <Col>
                                                 <Link
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
@@ -1113,7 +1163,8 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
-                                                            nombre_usuario_edito: dataUserHeader.name,
+                                                            nombre_usuario_edito:
+                                                                dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
@@ -1230,7 +1281,8 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
-                                                            nombre_usuario_edito: dataUserHeader.name,
+                                                            nombre_usuario_edito:
+                                                                dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
@@ -1286,7 +1338,7 @@ const EditSite = () => {
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
                                                             nombre_usuario_edito:
-                                                            dataUserHeader.name,
+                                                                dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
