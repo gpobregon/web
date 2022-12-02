@@ -105,7 +105,8 @@ const animatedComponents = makeAnimated()
 
 const EditSite = () => {
     //const { toogleSave, discardChange } = useContext(ContentContext)
-    const {setShowLoad} = useContext(LoadingContext)
+    const {setShowLoad} = useContext(LoadingContext) 
+    const [loadingSite, setloadingSite] = useState(true)
     const {id} = useParams()
     const {state} = useLocation()
     const [botonActivo, setbotonActivo] = useState(false)
@@ -156,7 +157,6 @@ const EditSite = () => {
     }
 
     const getUser = async () => { 
-        await getSite()
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
             // setDataUser({
@@ -228,8 +228,8 @@ const EditSite = () => {
         const sitio: any = await getValue(sitesMethod, Number(id))
         setSite({
             ...sitio.site, 
-        }) 
-        console.log("site 231: ", sitio);
+        })  
+        
 
         //setSite(sitio.site)
         //getUser()
@@ -246,7 +246,8 @@ const EditSite = () => {
             label: cat.nombre,
         }))
 
-        setmostrarCategorias(mostrarCategorys)
+        setmostrarCategorias(mostrarCategorys) 
+        setloadingSite(false)
     } 
 
     //metodo para guarda automaticamente el bloqueo del sitio
@@ -254,7 +255,6 @@ const EditSite = () => {
         site.bloqueado_por_edicion = bloqueado_por_edicion
         site.bloqueado_por_edicion_id = idUser
         site.bloqueado_por_edicion_nombre = nameUser 
-        console.log("site 256: ", site);
         if (site.id_sitio != 0) {
             const sit: any = await postData(updateSiteMethod, site)
         }
@@ -262,7 +262,6 @@ const EditSite = () => {
         setSite({ 
             ...site
         })  
-        console.log("site 263: ", site);
         //console.log('despues del Save automatico: ', site) 
         
         // window.location.href = "../sitios";
@@ -683,13 +682,16 @@ const EditSite = () => {
 
 
     useEffect(() => {    
-        getUser()
-        //getSite()
-        getUserForHeader()
         setShowLoad(true)
         getRoles()
         validateRole()
-    }, [existRoles])
+    }, [existRoles]) 
+
+    useEffect(() => {    
+        getUser()
+        getSite()
+        getUserForHeader()
+    }, [loadingSite]) 
 
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
         ['e', 'E'].includes(e.key) && e.preventDefault()
