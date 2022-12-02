@@ -155,7 +155,8 @@ const EditSite = () => {
         })
     }
 
-    const getUser = async () => {
+    const getUser = async () => { 
+        await getSite()
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
             // setDataUser({
@@ -205,7 +206,7 @@ const EditSite = () => {
         bloqueado_por_edicion_id: '',
         bloqueado_por_edicion_nombre: '',
     }) 
-    //console.log("site: ", site);
+    console.log("site: ", site);
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -224,15 +225,14 @@ const EditSite = () => {
     }
 
     const getSite = async () => {
-        tryCharging()
         const sitio: any = await getValue(sitesMethod, Number(id))
         setSite({
             ...sitio.site, 
         }) 
-        //console.log("como lo trae el get: ", sitio);
+        console.log("site 231: ", sitio);
 
         //setSite(sitio.site)
-        getUser()
+        //getUser()
 
         let aux = sitio.site.geo_json
         let auxSplit = aux.split('/')
@@ -247,20 +247,22 @@ const EditSite = () => {
         }))
 
         setmostrarCategorias(mostrarCategorys)
-    }
+    } 
 
     //metodo para guarda automaticamente el bloqueo del sitio
     const saveLocked = async (bloqueado_por_edicion: boolean, idUser: string, nameUser: string) => { 
         site.bloqueado_por_edicion = bloqueado_por_edicion
         site.bloqueado_por_edicion_id = idUser
-        site.bloqueado_por_edicion_nombre = nameUser
+        site.bloqueado_por_edicion_nombre = nameUser 
+        console.log("site 256: ", site);
         if (site.id_sitio != 0) {
             const sit: any = await postData(updateSiteMethod, site)
         }
         //console.log('Save automatico: ', site) 
         setSite({ 
             ...site
-        }) 
+        })  
+        console.log("site 263: ", site);
         //console.log('despues del Save automatico: ', site) 
         
         // window.location.href = "../sitios";
@@ -277,12 +279,12 @@ const EditSite = () => {
         }
     }
 
-    useEffect(() => {
-        // getSite()
-        // saveLocked(site)
-        verifySite()
-        //  console.log(state)
-    }, [paraCargar])
+    // useEffect(() => {
+    //      //getSite()
+    //     // saveLocked(site)
+       
+    //     //  console.log(state)
+    // }, [paraCargar])
 
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
@@ -382,9 +384,6 @@ const EditSite = () => {
         }
     }
 
-    async function postDefault(route: string, object: any) {
-        const sit: any = await postData(route, object)
-    }
     const changeStatus = async (
         favorito: boolean,
         publicado: boolean,
@@ -476,7 +475,8 @@ const EditSite = () => {
                 bloqueado_por_edicion: site.bloqueado_por_edicion,
                 bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
                 bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
-            })
+            }) 
+            console.log("site 447: ", site);
             setbotonActivo(true)
         }
     }
@@ -517,14 +517,6 @@ const EditSite = () => {
             }
         })
     }
-
-    const [categoria, setcategoria] = useState([
-        {
-            id_categoria: 1,
-            nombre: '',
-            estado: 0,
-        },
-    ])
 
     //esto es para las etiquetas
     const handleChange = (event: any) => {
@@ -571,7 +563,8 @@ const EditSite = () => {
             bloqueado_por_edicion: site.bloqueado_por_edicion,
             bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
             bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
-        })
+        }) 
+        console.log("site 565: ", site);
         setbotonActivo(true)
         // console.log(site)
     }
@@ -670,14 +663,14 @@ const EditSite = () => {
     // * Fin restricción por rol
 
     //method para desbloquear sitio con Boton
-    const unlockSite = async () => {
+    const unlockSite = async () => { 
         setSite({
             ...site,
             bloqueado_por_edicion: false,
             bloqueado_por_edicion_id: '',
             bloqueado_por_edicion_nombre: '',
         }) 
-       
+        console.log("site 671: ", site);
         let converterToFalse = site  
         
         converterToFalse.bloqueado_por_edicion = false 
@@ -689,9 +682,10 @@ const EditSite = () => {
     } 
 
 
-    useEffect(() => { 
+    useEffect(() => {    
+        getUser()
+        //getSite()
         getUserForHeader()
-        getSite()
         setShowLoad(true)
         getRoles()
         validateRole()
@@ -1001,7 +995,7 @@ const EditSite = () => {
                     <Button
                         variant='primary'
                         className='mt-md-0 mt-4'
-                        disabled={!botonActivo}
+                        // disabled={!botonActivo}
                         onClick={() => unlockSite()}
                     >
                         <span className='menu-icon me-0'>
@@ -1092,7 +1086,7 @@ const EditSite = () => {
                                             <Col>
                                                 {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
                                             </Col>
-                                            <Col>
+                                            <Col> 
                                                 <Link
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
