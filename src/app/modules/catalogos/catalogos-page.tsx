@@ -666,7 +666,7 @@ const CatalogosPage = () => {
                     <div className='d-flex flex-row-reverse'>
                         <a
                             style={{paddingLeft: 30}}
-                            href='https://mcd-archivos.s3.amazonaws.com/sitePages/GeoJSON/es+(1).json'
+                            href='https://mcd-archivos.s3.amazonaws.com/plantillasIdiomas/es.json'
                             download
                         >
                             <Button variant='primary' className='mt-md-0 mt-4'>
