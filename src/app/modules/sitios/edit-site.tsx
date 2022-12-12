@@ -40,6 +40,7 @@ import Interes from './components/sitios-interes/sala-interes'
 import {QRCodeCanvas} from 'qrcode.react'
 import logo from './upload-image_03.jpg'
 import UpImage from '../uploadFile/upload-image'
+import {DeleteImage} from '../deleteFile/delete-image'
 import {ModelOperation} from '@aws-amplify/datastore'
 import {
     validateStringSinCaracteresEspeciales,
@@ -1142,7 +1143,8 @@ const EditSite = () => {
                                                 <Link
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
-                                                    onClick={(e) => {
+                                                    onClick={() => {
+                                                        DeleteImage('sitePages',site.portada_path)
                                                         setSite({
                                                             id_sitio: site.id_sitio,
                                                             nombre: site.nombre,
@@ -1177,6 +1179,7 @@ const EditSite = () => {
                                                                 site.bloqueado_por_edicion_nombre,
                                                         })
                                                         setbotonActivo(true)
+                                                      
                                                     }}
                                                 ></Link>
                                             </Col>

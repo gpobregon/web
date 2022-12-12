@@ -31,6 +31,7 @@ import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/vali
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
 import {LoadingContext} from '../../../../utility/component/loading/context'
+import { DeleteImage } from '../../../deleteFile/delete-image'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -352,7 +353,7 @@ const EditPoint = () => {
             nombre: sitio.nombre,
             geoX: sitio.geoX,
             geoY: sitio.geoY,
-            portada_path: URLAWS + 'sitePages/' + imagen,
+            portada_path: URLAWS + 'sitePages/puntosInteres/' + imagen,
             qr_path: sitio.qr_path,
             es_portada_de_sitio: sitio.es_portada_de_sitio,
             estado: sitio.estado,
@@ -681,7 +682,8 @@ const EditPoint = () => {
                                                 <Link
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
-                                                    onClick={() =>
+                                                    onClick={() =>{
+                                                        DeleteImage('sitePages/puntosInteres',sitio.portada_path)
                                                         setSitio({
                                                             id_punto: sitio.id_punto,
                                                             id_sitio: sitio.id_sitio,
@@ -705,6 +707,7 @@ const EditPoint = () => {
                                                             publicar_web: sitio.publicar_web,
                                                             publicar_movil: sitio.publicar_movil,
                                                         })
+                                                    }
                                                     }
                                                 ></Link>
                                             </Col>
@@ -1027,7 +1030,7 @@ const EditPoint = () => {
                                             show={modalupimg}
                                             onClose={() => setModalupIMG(false)}
                                             cargarIMG={uploadImage}
-                                            ubicacionBucket={'sitePages'}
+                                            ubicacionBucket={'sitePages/puntosInteres'}
                                             tipoArchivoPermitido={'image/*'}
                                         />
                                     </div>
