@@ -231,7 +231,8 @@ const EditSite = () => {
         })
 
         //setSite(sitio.site)
-        //getUser()
+        //getUser() 
+        console.log('------------site dentro del get-----------------: ', site)
 
         let aux = sitio.site.geo_json
         let auxSplit = aux.split('/')
@@ -245,7 +246,8 @@ const EditSite = () => {
             label: cat.nombre,
         }))
 
-        setmostrarCategorias(mostrarCategorys)
+        setmostrarCategorias(mostrarCategorys) 
+        await getUser()
         setloadingSite(false)
     }
 
@@ -255,12 +257,13 @@ const EditSite = () => {
         site.bloqueado_por_edicion_id = idUser
         site.bloqueado_por_edicion_nombre = nameUser
         if (site.id_sitio != 0) {
-            const sit: any = await postData(updateSiteMethod, site)
+            const sit: any = await postData(updateSiteMethod, site) 
+            setSite({
+                ...site,
+            })
         }
         //console.log('Save automatico: ', site)
-        setSite({
-            ...site,
-        })
+        
         //console.log('despues del Save automatico: ', site)
 
         // window.location.href = "../sitios";
@@ -738,7 +741,7 @@ const EditSite = () => {
     }, [existRoles])
 
     useEffect(() => {
-        getUser()
+        // getUser()
         getSite()
         getUserForHeader()
     }, [loadingSite])
