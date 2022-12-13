@@ -24,12 +24,12 @@ const Index = () => {
                 </div>
             </div>
 
-            <div className="tooltip-container me-5">
+            {/* <div className="tooltip-container me-5">
                 <i className="text-white bi bi-gear fs-1 cursor-pointer tooltip-trigger"/>
                 <div className="tooltip-one">
                     Configuración
                 </div>
-            </div>
+            </div> */}
             
         </div>
     )
