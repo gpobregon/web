@@ -128,13 +128,23 @@ const Sitio: FC<sitio> = (props) => {
                 buttons: ['No', 'Sí'],
             }).then(async (res) => {
                 if (res) {
-                    await deleteData(sitesMethod, {id_sitio: props.id_sitio})
+                    console.log(props)
+                    if(!props.favorito){
+                        await deleteData(sitesMethod, {id_sitio: props.id_sitio})
                     swal({
                         text: 'Se elimino con éxito',
                         icon: 'success',
                         timer: 2000,
                     })
                     navigate('/')
+                }else{
+                    swal({
+                        title:'Error',
+                        text: 'No se puede eliminar un sitio Destacado, Intenta con otro sitio',
+                        icon: 'error',
+                        timer: 2000,
+                    })
+                }
                     //  window.location.reload(); //reload page
                 }
             })

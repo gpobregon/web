@@ -232,7 +232,7 @@ const EditPoint = () => {
 
     const updatePoint = async () => {
         await postData(updatePointInteres, sitio)
-        await publishTypePoint()
+        
         // console.log(updatePoint)
         // console.log(sitio)
     }
@@ -258,20 +258,20 @@ const EditPoint = () => {
     //     label: lenaguajeDefault,
     // }))
 
-    const publishTypePoint = async () => {
-        if (sitio.publicar_movil === true && sitio.publicar_web === true) {
+    const publishTypePoint = async (publicar_movil:boolean,publicar_web:boolean) => {
+        if (publicar_movil === true && publicar_web === true) {
             await postData(publishPI, {
-                id_sitio: sitio.id_sitio,
+                id_punto: sitio.id_punto,
                 modo_publicacion: 3,
             })
-        } else if (sitio.publicar_movil === true && sitio.publicar_web === false) {
+        } else if (publicar_movil === true && publicar_web === false) {
             await postData(publishPI, {
-                id_sitio: sitio.id_sitio,
+                id_punto: sitio.id_punto,
                 modo_publicacion: 1,
             })
-        } else if (sitio.publicar_movil === false && sitio.publicar_web === true) {
+        } else if (publicar_movil === false && publicar_web === true) {
             await postData(publishPI, {
-                id_sitio: sitio.id_sitio,
+                id_punto: sitio.id_punto,
                 modo_publicacion: 2,
             })
         }
@@ -593,15 +593,13 @@ const EditPoint = () => {
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
 
-                                        setSitio({
-                                            ...sitio,
-                                            publicar_movil: !sitio.publicar_movil,
-                                        })
+                                        publishTypePoint(!sitio.publicar_movil,sitio.publicar_web)
+                                        setSitio({...sitio, publicar_movil: !sitio.publicar_movil})
                                     }}
                                     className={'btn-secondary fa-solid fa-mobile background-button'}
                                     id='center2'
                                     style={{
-                                        color: false ? '#009ef7' : '#92929F',
+                                        color: sitio.publicar_movil== false ?  '#92929F': '#009ef7',
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
@@ -612,14 +610,16 @@ const EditPoint = () => {
                                         // status.publicado == false
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
-                                        setSitio({...sitio, publicar_web: !false})
+                                        // sitio.publicar_web=!sitio.publicar_web
+                                        publishTypePoint(sitio.publicar_movil,!sitio.publicar_web)
+                                        setSitio({...sitio, publicar_web: !sitio.publicar_web})
                                     }}
                                     className={
                                         'btn-secondary fa-solid fa-computer background-button'
                                     }
                                     id='center2'
                                     style={{
-                                        color: false ? '#009ef7' : '#92929F',
+                                        color: sitio.publicar_web== false ?  '#92929F': '#009ef7',
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
