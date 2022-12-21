@@ -126,9 +126,11 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         setEditItemResource(item.item)
     }
     // Actualizar data de un item
-    const updateElement = (data: []) => {
+    const updateElement = (data: any) => {
         setEditItem(data)
-        setBoard(updateData(board, data))
+        const content = board.filter((element:any) => { return element !== undefined; });
+        console.log(content, data, 'updateElement 131')
+        setBoard(updateData(content, data))
     }
     // Cambiar Lenguaje
     const changeLangegeSelect = (data: any) => { 
@@ -149,10 +151,8 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
 
     const getChange = (data: any) => {
         if (data.value === changeLaguage.value) { 
-            console.log('es igual')
             oneData(changeLaguage, modo === 'movil' ? true : false)
         } else { 
-            console.log('es diferente')
             oneData(data, modo === 'movil' ? true : false)
         }
     } 
@@ -174,7 +174,6 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     const onlySave = async (type: any, data: any, lenguaje: any, newLenguaje: any) => {
         setBoardChange(data)
         if (oneDataTemplate.length === 0) {
-            console.log("oneDataTemplate: ", oneDataTemplate);
             setValidChange(1) 
             setLenguajeOld(lenguaje)
             handleCloseSave(true)
@@ -192,7 +191,6 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                 es_movil: changeTypeEdit === 1 ? true : false,
                 estado: 1,
             } 
-            console.log("dataTemplate: ", dataTemplate);
             const response: any = await postData('site/mobile/set', dataTemplate)
             response &&
                 swal({
@@ -242,7 +240,6 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     // obtenemos el template para modificar
     const oneData = async (item: any, type: boolean) => {
         const response = await getTemplate(item, type)    
-        console.log("response: ", response); 
         if (response.data.length > 0) {  
             setOneDataTemplate(response.data[0])
             if (response.data[0].contenido !== '[]') {
@@ -300,7 +297,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             es_movil: changeTypeEdit === 1 ? true : false,
             estado: 1,
         } 
-        console.log(dataTemplate)
+
         const response: any = await postData('site/mobile/set', dataTemplate)
         response &&
             swal({
@@ -408,7 +405,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         myBucket
             .putObject(params)
             .on('httpUploadProgress', async (evt) => {
-                console.log(Math.round((evt.loaded / evt.total) * 100))
+                // console.log(Math.round((evt.loaded / evt.total) * 100))
                 if (evt.loaded / evt.total === 1) {
                     const response: any = await postData('site/mobile/resource/add', fileResource)
                     setAllResource(appendData(allResources, response.data))

@@ -49,7 +49,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
         nodes.push({ text: `${data.typeList === "" ||data.typeList === undefined?  ` ` : `${i+1}. ` }${text}` });
       }
     }
-    console.log(nodes);
+    // console.log(nodes);
     return (nodes)
   }
   const destroyItem = (e: any) => {
@@ -68,6 +68,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       ref={referencia}
       data-handler-id={handlerId}
       className="d-flex cursor-grabbing"
+      onClick={() => setEditItem(data)}
     >
       <div
         className="p-1 py-1 d-flex align-items-center"
