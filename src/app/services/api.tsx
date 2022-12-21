@@ -20,7 +20,8 @@ export const updateLanguageMethod = 'language/update'
 export const notificationMethod = 'notifications'
 export const addNotificationMethod = 'notification/add'
 export const updateNotificationMethod = 'notification/update'
-export const deleteNotificationMethod = 'notification'
+export const deleteNotificationMethod = 'notification' 
+export const getTotalNotifications = 'notifications/getcount'
 export const getSitesActivesAndPublicatedMethod = 'site/sites/activesandpublicated'
 
 export const RoomsMethod = sitesMethod + '/rooms'
@@ -54,7 +55,9 @@ export const updateUserMethod = 'user/edit'
 export const deleteUserMethod = 'user'
 
 export const publishPI = 'site/publish/solo/point'
-export const publishSite = 'site/publish/solo/site'
+export const publishSite = 'site/publish/solo/site' 
+
+export const getDataReport = 'site/sites/reporte'
 
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {

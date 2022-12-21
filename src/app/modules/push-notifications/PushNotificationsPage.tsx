@@ -13,7 +13,8 @@ import {
     getSitesActivesAndPublicatedMethod,
     notificationMethod,
     postData,
-    updateNotificationMethod,
+    updateNotificationMethod, 
+    getTotalNotifications
 } from '../../services/api'
 import swal from 'sweetalert'
 import {useNavigate} from 'react-router-dom'
@@ -24,7 +25,9 @@ import { useAuth } from '../auth'
 import { DeleteImage } from '../deleteFile/delete-image'
 
 const PushNotificationsPage = () => {
-    const [showCardAddNotification, setShowCardAddNotification] = useState(false)
+    const [showCardAddNotification, setShowCardAddNotification] = useState(false) 
+    const [totalPages, setTotalPages] = useState(1) 
+    const [cantidadSite, setCantidadSite] = useState(0)
     const [cardUpdateNotification, setCardUpdateNotification] = useState({
         show: false,
         notification: {},
@@ -99,13 +102,18 @@ const PushNotificationsPage = () => {
         setOptionGetNotifications('programadas')
     }
 
-    const getNotificationsHistory = async () => {
+    const getNotificationsHistory = async () => { 
         const notificationsData: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber,
             quantity: '12',
         })
         setNotifications(notificationsData.data as Notification[])
-        setOptionGetNotifications('historial')
+        setOptionGetNotifications('historial') 
+
+        const coutsite: any = await getData(`${getTotalNotifications}`)
+        console.log("coutsite: ", coutsite);
+         
+        
 
         const countNextResults: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber + 1,
@@ -122,7 +130,11 @@ const PushNotificationsPage = () => {
                 previous: toggleButtonsPagination.previous,
                 next: false,
             })
-        }
+        } 
+
+        let pagesLength = Math.ceil(coutsite.count / 12)
+        console.log(pagesLength)
+        setTotalPages(pagesLength)
     }
 
     const [optionSort, setOptionSort] = useState('Orden descendente')
@@ -621,7 +633,9 @@ const PushNotificationsPage = () => {
                                         borderRadius: '5px',
                                     }}
                                 >
-                                    {`${pageNumber}`}
+                                    <h5 style={{fontSize: '13px'}}>
+                                        Página {pageNumber} de {totalPages}
+                                    </h5>
                                 </div>
 
                                 <Button
