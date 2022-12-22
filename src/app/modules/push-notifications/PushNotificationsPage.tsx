@@ -625,10 +625,9 @@ const PushNotificationsPage = () => {
                                 </Button>
 
                                 <div
-                                    className='d-flex align-items-center justify-content-center'
+                                    className='d-flex align-items-center justify-content-center px-4'
                                     style={{
-                                        width: '46px',
-                                        height: '46px',
+                                        height: '50px',
                                         backgroundColor: '#2B2B40',
                                         borderRadius: '5px',
                                     }}
