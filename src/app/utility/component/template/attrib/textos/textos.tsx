@@ -10,14 +10,14 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
 
     const changeSizeTitle = (data : any) => {
         let edit = {}
-
+        // console.log(data)
         if (data.typeList === 'list-group-points') {
          edit = { 
-             content: editItem.content.replace('list-group list-group-bg list-group-numbered', 'list-group-points').replace('list-group-item', 'add-item')
+             content: editItem.content.replace('list-group-numbered', 'list-group-points')
           }
         } else if (data.typeList === 'list-group-numbered' ) {
          edit = { 
-             content: editItem.content.replace('list-group-points', 'list-group list-group-bg list-group-numbered').replace('add-item', 'list-group-item')
+             content: editItem.content.replace('list-group-points', 'list-group-numbered')
           } 
          } else {
              edit = { ...data }

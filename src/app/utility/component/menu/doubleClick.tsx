@@ -9,18 +9,18 @@ type Model = {
 }
 
 const MenuDoubleClick: FC<Model> = ({ editItem, nameMenu, updateElement }) => {
-    
-    const changeSizeTitle = (e: any, data: any) => {
-       let edit = {}
 
-       if (data.typeList === 'list-group-points') {
-        edit = { 
-            content: editItem.content.replace('list-group list-group-bg list-group-numbered', 'list-group-points').replace('list-group-item', 'add-item')
-         }
-       } else if (data.typeList === 'list-group-numbered' ) {
-        edit = { 
-            content: editItem.content.replace('list-group-points', 'list-group list-group-bg list-group-numbered').replace('add-item', 'list-group-item')
-         } 
+    const changeSizeTitle = (e: any, data: any) => {
+        let edit = {}
+
+        if (data.typeList === 'list-group-points') {
+            edit = {
+                content: editItem.content.replace('list-group-numbered', 'list-group-points')
+            }
+        } else if (data.typeList === 'list-group-numbered') {
+            edit = {
+                content: editItem.content.replace('list-group-points', 'list-group-numbered')
+            }
         } else {
             edit = { ...data }
         }
