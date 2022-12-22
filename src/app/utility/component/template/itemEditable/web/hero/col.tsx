@@ -34,7 +34,11 @@ const NewCol: FC<Model> = ({
 
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'image',
-        drop: (item: any) => addElement(item.data),
+        drop: (item: any) => {
+            if(!["1-hero", "2-hero"].includes(item.data.type)){
+                addElement(item.data)
+            }
+        },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),

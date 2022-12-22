@@ -129,7 +129,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     const updateElement = (data: any) => {
         setEditItem(data)
         const content = board.filter((element:any) => { return element !== undefined; });
-        console.log(content, data, 'updateElement 131')
+        // console.log(content, data, 'updateElement 131')
         setBoard(updateData(content, data))
     }
     // Cambiar Lenguaje
