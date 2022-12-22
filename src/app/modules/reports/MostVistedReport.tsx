@@ -60,17 +60,16 @@ const sitesOptions = [
 ]
 
 const genresOptions = [
-    {value: 'Todos', label: 'Todos'},
-    {value: 'Mujer', label: 'Mujer'},
-    {value: 'Hombre', label: 'Hombre'},
-    {value: 'Indefinido', label: 'Indefinido'},
+    {value: 'Femenino', label: 'Femenino'},
+    {value: 'Masculino', label: 'Masculino'},
+    {value: 'Prefiero no decirlo', label: 'Prefiero no decirlo'},
 ]
 
 const yearsOldOptions = [
-    {value: 1, label: 'Todos'},
-    {value: 2, label: 'Menores de edad'},
-    {value: 3, label: 'Mayores de edad'},
-    {value: 4, label: 'Tercera edad'},
+    {value: 'Menor de edad', label: 'Menor de edad'},
+    {value: '18 a 30', label: '18 a 30'},
+    {value: '31 a 50', label: '31 a 50'},
+    {value: '51 en adelante', label: '51 en adelante'},
 ]
 
 const nacionalityOptions = [

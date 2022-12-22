@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useContext, useEffect, useState} from 'react'
 import {Col, Card, Button, Row, Modal, Form} from 'react-bootstrap'
 import {
     postData,
@@ -17,7 +17,7 @@ import {status} from '../../../../models/status'
 import UpImage from '../../../uploadFile/upload-image'
 import logo from '../../upload-image_03.jpg'
 import {CatalogLanguage} from '../../../../models/catalogLanguage'
-
+import { LoadingContext } from '../../../../utility/component/loading/context'
 import Select from 'react-select'
 import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
 import { DeleteImage } from '../../../deleteFile/delete-image'
@@ -76,7 +76,8 @@ const AddPoint = () => {
     const handleShow = () => setShow(true) //modal open qr
     const [show, setShow] = useState(false) //modal show qr
     const {state} = useLocation()
-    const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres)
+    const [datospuntoInteres, setdatosPuntoInteres] = useState(state as datosPuntoInteres) 
+    const {setShowLoad} = useContext(LoadingContext)
     const [sitio, setSitio] = useState({
         id_sitio: datospuntoInteres.id_sitio,
         nombre: '',
@@ -140,7 +141,8 @@ const AddPoint = () => {
     }
     //petitions----------------------------------------------------------------------------
     const addNewPoint = async (tipo: string) => {
-        // console.log(sitio)
+        // console.log(sitio) 
+        setShowLoad(true)
         if (sitio.nombre != '' && sitio.portada_path != '') {
             const res: any = await postData(addNewPointInteres, sitio)
             //    console.log(res)
@@ -149,7 +151,8 @@ const AddPoint = () => {
             })
         } else {
             alertNotNullInputs()
-        }
+        } 
+        setTimeout(() => setShowLoad(false), 1000)
     }
     const alertNotNullInputs = async () => {
         swal({
