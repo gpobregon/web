@@ -133,20 +133,22 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         setBoard(updateData(content, data))
     }
     // Cambiar Lenguaje
-    const changeLangegeSelect = (data: any) => { 
-        
+    const changeLangegeSelect = (data: any,select_idioma:any) => { 
         setChangeLaguage(data)
-        swal({
-            title: '¿Quiere guardar los cambios?',
-            icon: 'warning',
-            buttons: ['No', 'Sí'],
-        }).then(async (res) => {
-            if (res) {
-                onlySave(changeTypeEdit === 1 ? true : false, board, changeLaguage, data) 
-            } else {
-                oneData(data, changeTypeEdit === 1 ? true : false)
-            }
-        }) 
+        if (select_idioma === undefined) {
+            swal({
+                title: '¿Quiere gusdsadsardar los cambios?',
+                icon: 'warning',
+                buttons: ['No', 'Sí'],
+            }).then(async (res) => {
+                if (res) {
+                    onlySave(changeTypeEdit === 1 ? true : false, board, changeLaguage, data) 
+                } else {
+                    oneData(data, changeTypeEdit === 1 ? true : false)
+                }
+            }) 
+        }
+       
     }  
 
     const getChange = (data: any) => {
