@@ -137,7 +137,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         setChangeLaguage(data)
         if (select_idioma === undefined) {
             swal({
-                title: '¿Quiere gusdsadsardar los cambios?',
+                title: '¿Quiere guardar los cambios?',
                 icon: 'warning',
                 buttons: ['No', 'Sí'],
             }).then(async (res) => {
