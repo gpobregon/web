@@ -34,6 +34,7 @@ const Index = () => {
                     <Col lg={8}>
                         <Row>
                             <Col lg={changeTypeEdit === 1 ? 6 : 12} className="d-flex justify-content-center py-10 text-primary">
+                            {changeTypeEdit === 1 &&
                                 <div className="tooltip-container me-5">
                                     <Image
                                         alt="Logo"
@@ -46,18 +47,20 @@ const Index = () => {
                                         Maquetación Móvil
                                     </div>
                                 </div>
+                                    }
+                                    {changeTypeEdit === 2 &&
+                                    <>
                                 <div className="tooltip-container">
                                     <Image
                                         alt="Logo"
                                         className={`max-h-70px cursor-pointer tooltip-trigger`}
                                         src={toAbsoluteUrl(`/media/svg/iconsFigma/${changeTypeEdit === 2 ? 'Desktop-active.svg' : 'Desktop.svg'}`)}
                                         onClick={() => ChangeMode(2)}
-                                    />
+                                        />
                                     <div className="tooltip-one">
                                         Maquetación Web
                                     </div>
                                 </div>
-                                {changeTypeEdit === 2 &&
                                     <div className="ms-3">
                                         <Form.Check
                                             inline
@@ -77,6 +80,7 @@ const Index = () => {
                                             onChange={() => setSizeWeb('75')}
                                         />
                                     </div>
+                                    </>
                                 }
                             </Col>
                         </Row>
