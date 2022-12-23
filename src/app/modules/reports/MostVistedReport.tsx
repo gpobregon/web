@@ -73,9 +73,9 @@ const yearsOldOptions = [
 ]
 
 const nacionalityOptions = [
-    {value: 1, label: 'Todos'},
-    {value: 2, label: 'Nacionales'},
-    {value: 3, label: 'Extranjeros'}, 
+    {value: 'Todos', label: 'Todos'},
+    {value: 'Nacionales', label: 'Nacionales'},
+    {value: 'Extranjeros', label: 'Extranjeros'}, 
 ]
 
 const MostVistedReport = () => {

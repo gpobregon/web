@@ -1,9 +1,11 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
-import ResultUserReport from './components/ResultUserReport'
+import ResultUserReport from './components/ResultUserReport' 
+import { getData, getSitiosPublicados } from '../../services/api'
+import { PublishSite } from '../../models/publishSite'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -48,34 +50,53 @@ const customStyles = {
     }),
 }
 
-const animatedComponents = makeAnimated()
-
-const sitesOptions = [
-    {value: 1, label: 'Ejemplo 1'},
-    {value: 2, label: 'Ejemplo 2'},
-    {value: 3, label: 'Ejemplo 4'},
-    {value: 4, label: 'Ejemplo 5'},
-    {value: 5, label: 'Ejemplo 6'},
-    {value: 6, label: 'Ejemplo 7'},
-]
+const animatedComponents = makeAnimated() 
 
 const genresOptions = [
-    {value: 'Femenino', label: 'Femenino'},
-    {value: 'Masculino', label: 'Masculino'},
-    {value: 'Prefiero no decirlo', label: 'Prefiero no decirlo'},
+    {value: '0', label: 'Femenino'},
+    {value: '1', label: 'Masculino'},
+    {value: '2', label: 'Prefiero no decirlo'},
 ]
 
 const yearsOldOptions = [
-    {value: 'Menor de edad', label: 'Menor de edad'},
-    {value: '18 a 30', label: '18 a 30'},
-    {value: '31 a 50', label: '31 a 50'},
-    {value: '51 en adelante', label: '51 en adelante'},
+    {value: '0', label: 'Menor de edad'},
+    {value: '2', label: '18 a 30'},
+    {value: '3', label: '31 a 50'},
+    {value: '4', label: '51 en adelante'},
 ]
 
-const countryOptions = [{value: 'Guatemala', label: 'Guatemala'}]
+const countryOptions = [
+    {value: '0', label: 'Nacionales'},
+    {value: '1', label: 'Extranjeros'},  
+    {value: '2', label: 'Todos'},
+]
 
 const UserReport = () => { 
-    const [showResult, setShowResult] = useState(false)
+    const [showResult, setShowResult] = useState(false) 
+    let [publishSite, setPublishSite] = useState<PublishSite[]>([]) 
+    console.log("publishSite: ", publishSite); 
+
+
+    const getSite = async () => {
+        getPublishSites()
+    }
+    async function getPublishSites() {
+        const sites: any = await getData(getSitiosPublicados) 
+        console.log("sites: ", sites.data);
+        
+        sites.data.map((sit: any) => { 
+            publishSite.push({value: sit.id_sitio, label: sit.nombre})
+        })
+    }  
+
+    const sitesOption = 
+
+    useEffect(() => { 
+        getSite()
+      //getPublishSites()
+    }, [])
+    
+    
 
     const showResultComponent = () => {
         setShowResult(true)
@@ -122,7 +143,9 @@ const UserReport = () => {
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Sitio</Form.Label>
                                 <Select
-                                    options={sitesOptions}
+                                    //onMenuOpen={() => getSites()} 
+                                    name='sites' 
+                                    options={publishSite}
                                     styles={customStyles}
                                     components={animatedComponents}
                                 />
