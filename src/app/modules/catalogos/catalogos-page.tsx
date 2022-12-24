@@ -23,12 +23,13 @@ import {
     updateLanguageMethod,
 } from '../../services/api'
 import swal from 'sweetalert'
-import {Auth} from 'aws-amplify'
 import {Link, useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
 import {ConsoleLogger} from '@aws-amplify/core'
 import {LoadingContext} from '../../utility/component/loading/context'
+import {Amplify, Auth} from 'aws-amplify'
 import favicon from '../../../../public/manifest.json'
+import { useAuth } from '../auth'
 const alertLanguageDone = async () => {
     swal({
         text: 'Lenguaje creado',
@@ -359,7 +360,9 @@ const CatalogosPage = () => {
         }
     }
 
-    const showModalAddTag = () => {
+    const showModalAddTag = async () => {
+        await validateRole()
+
         if (permissionCreateTag) {
             setModalAddTag(true)
         } else {
@@ -370,7 +373,9 @@ const CatalogosPage = () => {
         }
     }
 
-    const showModalLanguage = () => {
+    const showModalLanguage = async () => {
+        await validateRole()
+
         if (permissionCreateLanguage) {
             setModalAddLanguage({show: true, language: {}})
         } else {
@@ -381,7 +386,9 @@ const CatalogosPage = () => {
         }
     }
 
-    const showModalUpdateTag = (catalogo: any) => {
+    const showModalUpdateTag = async (catalogo: any) => {
+        await validateRole()
+
         if (permissionEditTag) {
             setTag({
                 id_categoria: catalogo.id_categoria,
@@ -399,7 +406,9 @@ const CatalogosPage = () => {
         }
     }
 
-    const showModalUpdateIdioma = (language: any) => {
+    const showModalUpdateIdioma = async (language: any) => {
+        await validateRole()
+
         if (permissionEditLanguage) {
             setIdioma({
                 id_lenguaje: language.id_lenguaje,
@@ -464,25 +473,45 @@ const CatalogosPage = () => {
     const validateRole = async () => {
         setShowLoad(true)
 
-        Auth.currentUserInfo().then((user) => {
-            const filter = roles.filter((role) => {
-                return user.attributes['custom:role'] === role.nombre
-            })
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
 
-            if (filter[0]?.gestor_categorias_idiomas === false) {
-                navigate('/error/401', {replace: true})
-            } else {
-                setPermissionCreateLanguage(filter[0]?.idioma_crear)
-                setPermissionEditLanguage(filter[0]?.idioma_editar)
-                setPermissionDeleteLanguage(filter[0]?.idioma_eliminar)
+                if (filter[0]?.gestor_categorias_idiomas === false) {
+                    navigate('/error/401', {replace: true})
+                } else {
+                    setPermissionCreateLanguage(filter[0]?.idioma_crear)
+                    setPermissionEditLanguage(filter[0]?.idioma_editar)
+                    setPermissionDeleteLanguage(filter[0]?.idioma_eliminar)
 
-                setPermissionCreateTag(filter[0]?.categoria_crear)
-                setPermissionEditTag(filter[0]?.categoria_editar)
-                setPermissionDeleteTag(filter[0]?.categoria_eliminar)
+                    setPermissionCreateTag(filter[0]?.categoria_crear)
+                    setPermissionEditTag(filter[0]?.categoria_editar)
+                    setPermissionDeleteTag(filter[0]?.categoria_eliminar)
+                }
+            } catch (error) {
+                swal(
+                    'Se ha cambiado la contraseña de tu usuario',
+                    'Cierra sesión y vuelve a ingresar',
+                    'warning'
+                )
+                await forgotDevice()
             }
         })
 
         setTimeout(() => setShowLoad(false), 1000)
+    }
+
+    //para cerrar sesión despues de cambiar contraseña, no olvida el dispositivo :c
+    const {currentUser, logout} = useAuth()
+    const forgotDevice = async () => {
+        try {
+            logout()
+            await Amplify.Auth.forgetDevice()
+        } catch (error) {
+            console.log('no jalo', error)
+        }
     }
 
     useEffect(() => {
@@ -620,6 +649,7 @@ const CatalogosPage = () => {
                     setTag={setTag}
                     updateTag={updateTag}
                     deleteTag={deleteTag}
+                    validateRole={validateRole}
                     permissionDeleteTag={permissionDeleteTag}
                 />
             </Container>
@@ -635,8 +665,8 @@ const CatalogosPage = () => {
                 <Row className='mb-9'>
                     <div className='d-flex flex-row-reverse'>
                         <a
-                             style={{paddingLeft: 30}}
-                            href='https://mcd-archivos.s3.amazonaws.com/sitePages/GeoJSON/es+(1).json'
+                            style={{paddingLeft: 30}}
+                            href='https://mcd-archivos.s3.amazonaws.com/plantillasIdiomas/es.json'
                             download
                         >
                             <Button variant='primary' className='mt-md-0 mt-4'>
@@ -646,8 +676,7 @@ const CatalogosPage = () => {
                                 {' Descargar json'}
                             </Button>
                         </a>
-                    
-                    
+
                         <Button
                             variant='primary'
                             className='mt-md-0 mt-4'
@@ -689,6 +718,7 @@ const CatalogosPage = () => {
                     setIdioma={setIdioma}
                     updateIdioma={updateIdioma}
                     deleteIdioma={deleteIdioma}
+                    validateRole={validateRole}
                     permissionDeleteLanguage={permissionDeleteLanguage}
                 />
             </Container>

@@ -10,19 +10,30 @@ import {
     deleteNotificationMethod,
     getData,
     getRolesMethod,
+    getSitesActivesAndPublicatedMethod,
     notificationMethod,
     postData,
-    updateNotificationMethod,
+    updateNotificationMethod, 
+    getTotalNotifications
 } from '../../services/api'
 import swal from 'sweetalert'
 import {useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
-import {Auth} from 'aws-amplify'
-import { LoadingContext } from '../../utility/component/loading/context'
+import {Amplify, Auth} from 'aws-amplify'
+import {LoadingContext} from '../../utility/component/loading/context'
+import { useAuth } from '../auth'
+import { DeleteImage } from '../deleteFile/delete-image'
 
 const PushNotificationsPage = () => {
-    const [notifications, setNotifications] = useState<Notification[]>([])
+    const [showCardAddNotification, setShowCardAddNotification] = useState(false) 
+    const [totalPages, setTotalPages] = useState(1) 
+    const [cantidadSite, setCantidadSite] = useState(0)
+    const [cardUpdateNotification, setCardUpdateNotification] = useState({
+        show: false,
+        notification: {},
+    })
 
+    const [notifications, setNotifications] = useState<Notification[]>([])
     const [notification, setNotification] = useState({
         id_notificacion: 0,
         nombre: '',
@@ -31,7 +42,37 @@ const PushNotificationsPage = () => {
         fecha_hora_programada: '',
         tipo: 0,
         estado: 1,
+        id_sitio: null,
     })
+
+    interface Options {
+        value: number | null
+        label: string
+    }
+
+    const [optionsSites, setOptionsSites] = useState<Options[]>([])
+    const [valueSelect, setValueSelect] = useState<number | null | undefined>(null)
+    const [labelSelect, setLabelSelect] = useState<string | undefined>('Sin redirección')
+
+    const getSites = async () => {
+        const sitesResult: any = await getData(getSitesActivesAndPublicatedMethod)
+
+        let newOptions = sitesResult.allSites.map((site: any) => ({
+            value: site.id_sitio,
+            label: site.nombre,
+        }))
+
+        newOptions.unshift({value: null, label: 'Sin redirección'})
+
+        setOptionsSites(newOptions)
+
+        setValueSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.value)
+        setLabelSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.label)
+    }
+
+    useEffect(() => {
+        getSites()
+    }, [cardUpdateNotification])
 
     let dateNow = moment().toJSON()
 
@@ -42,6 +83,7 @@ const PushNotificationsPage = () => {
         fecha_hora_programada: dateNow,
         tipo: 0,
         estado: 1,
+        id_sitio: null,
     })
 
     const [optionGetNotifications, setOptionGetNotifications] = useState('programadas')
@@ -60,13 +102,18 @@ const PushNotificationsPage = () => {
         setOptionGetNotifications('programadas')
     }
 
-    const getNotificationsHistory = async () => {
+    const getNotificationsHistory = async () => { 
         const notificationsData: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber,
             quantity: '12',
         })
         setNotifications(notificationsData.data as Notification[])
-        setOptionGetNotifications('historial')
+        setOptionGetNotifications('historial') 
+
+        const coutsite: any = await getData(`${getTotalNotifications}`)
+        console.log("coutsite: ", coutsite);
+         
+        
 
         const countNextResults: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber + 1,
@@ -83,19 +130,19 @@ const PushNotificationsPage = () => {
                 previous: toggleButtonsPagination.previous,
                 next: false,
             })
-        }
+        } 
+
+        let pagesLength = Math.ceil(coutsite.count / 12)
+        console.log(pagesLength)
+        setTotalPages(pagesLength)
     }
 
     const [optionSort, setOptionSort] = useState('Orden descendente')
     const [resultIcon, setResultIcon] = useState('bi-sort-down')
 
-    const [showCardAddNotification, setShowCardAddNotification] = useState(false)
-    const [cardUpdateNotification, setCardUpdateNotification] = useState({
-        show: false,
-        notification: {},
-    })
+    const toggleCardAddNotification = async (value: any) => {
+        await validateRole()
 
-    const toggleCardAddNotification = (value: any) => {
         if (permissionCreateNotification) {
             setShowCardAddNotification(value)
             if (value === true) {
@@ -109,7 +156,11 @@ const PushNotificationsPage = () => {
         }
     }
 
-    const showCardUpdateNotification = (notification: any) => {
+    const showCardUpdateNotification = async (notification: any) => {
+        setValueSelect(null)
+        setLabelSelect('Sin redirección')
+        await validateRole()
+
         if (!permissionEditNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
                 title: 'No tienes permiso para editar una notificación programada',
@@ -126,6 +177,9 @@ const PushNotificationsPage = () => {
             return
         }
 
+        setValueSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.value)
+        setLabelSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.label)
+
         setCardUpdateNotification({show: true, notification})
         setNotification({
             id_notificacion: notification?.id_notificacion,
@@ -135,6 +189,7 @@ const PushNotificationsPage = () => {
             fecha_hora_programada: notification?.fecha_hora_programada,
             tipo: notification?.tipo,
             estado: 1,
+            id_sitio: notification?.id_sitio,
         })
     }
 
@@ -187,14 +242,13 @@ const PushNotificationsPage = () => {
                 fecha_hora_programada: dateNow,
                 tipo: 0,
                 estado: 1,
+                id_sitio: null,
             })
 
             swal({
                 text: 'Notificación creada',
                 icon: 'success',
             })
-
-            // sendPushNotification()
 
             setTimeout(chooseGetNotifications, 500)
             setTimeout(chooseGetNotifications, 1000)
@@ -212,6 +266,7 @@ const PushNotificationsPage = () => {
     }
 
     const updateNotification = async (notification: any) => {
+        console.log(notification)
         if (
             notification.nombre !== '' &&
             notification.descripcion !== '' &&
@@ -222,10 +277,23 @@ const PushNotificationsPage = () => {
             ).toISOString()
 
             await postData(updateNotificationMethod, notification)
+            setValueSelect(null)
+            setLabelSelect('Sin redirección')
             setCardUpdateNotification({
                 show: false,
                 notification: {},
             })
+            setNotification({
+                id_notificacion: 0,
+                nombre: '',
+                descripcion: '',
+                imagen_path: '',
+                fecha_hora_programada: '',
+                tipo: 0,
+                estado: 1,
+                id_sitio: null,
+            })
+
             chooseGetNotifications()
             setTimeout(chooseGetNotifications, 500)
             setTimeout(chooseGetNotifications, 1000)
@@ -237,6 +305,8 @@ const PushNotificationsPage = () => {
     }
 
     const deleteNotification = async (tag: any) => {
+        await validateRole()
+
         if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
                 title: 'No tienes permiso para eliminar una notificación programada',
@@ -255,7 +325,7 @@ const PushNotificationsPage = () => {
 
         await swal({
             title: '¿Estás seguro de eliminar esta notificación?',
-            icon: 'warning', 
+            icon: 'warning',
             dangerMode: true,
             buttons: ['No', 'Sí'],
         }).then((willDelete) => {
@@ -311,6 +381,8 @@ const PushNotificationsPage = () => {
     }
 
     const deleteSelectedNotification = async () => {
+        await validateRole()
+
         if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
                 title: 'No tienes permiso para eliminar notificaciones programadas',
@@ -405,12 +477,25 @@ const PushNotificationsPage = () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
         setExistRoles(true)
+    } 
+
+    //para cerrar sesión despues de cambiar contraseña, no olvida el dispositivo :c
+    const {currentUser, logout} = useAuth()
+    const forgotDevice = async () => {
+        try {
+            logout()
+            await Amplify.Auth.forgetDevice()
+        } catch (error) {
+            console.log('no jalo', error)
+        }
     }
 
-    const validateRole = async () => {
-        setShowLoad(true)
+    //fin
 
-        Auth.currentUserInfo().then((user) => {
+    const validateRole = async () => { 
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+        try {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
             })
@@ -428,9 +513,18 @@ const PushNotificationsPage = () => {
                 )
                 setPermissionDeleteNotificationHistory(filter[0]?.notificacion_historial_eliminar)
             }
-        })
+        } catch (error) {
+            swal(
+                'Se ha cambiado la contraseña de tu usuario',
+                'Cierra sesión y vuelve a ingresar',
+                'warning'
+            )
+            await forgotDevice()
+        } 
+    })
 
-        setTimeout(() => setShowLoad(false), 1000)
+    setTimeout(() => setShowLoad(false), 1000)
+        
     }
 
     useEffect(() => {
@@ -531,15 +625,16 @@ const PushNotificationsPage = () => {
                                 </Button>
 
                                 <div
-                                    className='d-flex align-items-center justify-content-center'
+                                    className='d-flex align-items-center justify-content-center px-4'
                                     style={{
-                                        width: '46px',
-                                        height: '46px',
+                                        height: '50px',
                                         backgroundColor: '#2B2B40',
                                         borderRadius: '5px',
                                     }}
                                 >
-                                    {`${pageNumber}`}
+                                    <h5 style={{fontSize: '13px'}}>
+                                        Página {pageNumber} de {totalPages}
+                                    </h5>
                                 </div>
 
                                 <Button
@@ -635,11 +730,13 @@ const PushNotificationsPage = () => {
                                             <Button
                                                 variant='outline-danger'
                                                 className='text-center'
-                                                onClick={() =>
+                                                onClick={() =>{
+                                                    DeleteImage('notificaciones',notification.imagen_path)
                                                     deleteNotification({
                                                         id_notificacion:
                                                             notification.id_notificacion,
                                                     })
+                                                }
                                                 }
                                             >
                                                 <i className='fs-2 bi-trash px-0 fw-bolder'></i>
@@ -666,6 +763,12 @@ const PushNotificationsPage = () => {
                     notification={notification}
                     setNotification={setNotification}
                     updateNotification={updateNotification}
+                    optionsSites={optionsSites}
+                    setOptionsSites={setOptionsSites}
+                    valueSelect={valueSelect}
+                    setValueSelect={setValueSelect}
+                    labelSelect={labelSelect}
+                    setLabelSelect={setLabelSelect}
                 />
             </div>
         </Container>

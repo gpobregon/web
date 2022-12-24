@@ -31,11 +31,12 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
         updateElement(item)
     }
 
-    const cropImage = async () => {
+    const cropImage = async () => { 
         changeResource()
         const img = dataURLtoFile(dataResource, editItemResource.nombre.replace('.jpg', ".png").replace('.jpeg', ".png"))
         const response = await uploadResource(img, 2)
-        changeSizeTitle({ url: response })
+        changeSizeTitle({ url: response }) 
+        setDataResource([])
     }
 
     const clearDataFormCarousel = () => {
@@ -82,6 +83,15 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
         }
 
     }, [editItemResource])
+
+    useEffect(() => {
+        if (editItem.type === 'image') {
+            setEditItemResource(editItem.url !== '' ? { url: editItem.url } : [] )
+        }
+            
+        }, [editItem])
+
+        // console.log(editItem)
 
     return (
         <div className="w-100 text-center" ref={drop2}>
@@ -160,7 +170,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                         </div>
                     </Col>
                     {
-                        editItemResource.nombre ?
+                        editItemResource.nombre || editItemResource.url ?
                             (<Fragment>
                                 <Col lg={12}>
                                     <div className="w-100">
@@ -220,7 +230,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                                 />
                             </Button>
                             <div className="tooltip-one">
-                                Cambiar Imagen
+                                Cambiar Video
                             </div>
                         </div>
                     </Row>
@@ -294,7 +304,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                     </Row>
                 </Fragment>
             }
-            <Row className="pt-5">
+            {/* <Row className="pt-5">
                 <Col lg={12}>
                     {
                         (editItem.type === 'video') &&
@@ -309,7 +319,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement, drop2, editItemResource,
                     }
 
                 </Col>
-            </Row>
+            </Row> */}
         </div>
     )
 }

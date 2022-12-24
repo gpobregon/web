@@ -15,6 +15,7 @@ type FormData = {
 
 const Index = () => {
     const { handleCloseSave, showSave, saveTemplate, language, oneDataTemplate, getTemplateClone, changeTypeEdit, templateToClone, setTemplateToClone } = useContext(ContentContext)
+    
 
     const { register, handleSubmit, formState: { errors }, reset, setValue, control, watch, clearErrors } = useForm<FormData>()
     const validarCheck = watch('clonar')
@@ -24,8 +25,8 @@ const Index = () => {
     }
 
     const setData = () => {
-        setValue('nombre', oneDataTemplate.nombre)
-        setValue('descripcion', oneDataTemplate.descripcion)
+        setValue('nombre', oneDataTemplate?.nombre || '')
+        setValue('descripcion', oneDataTemplate?.descripcion || '')
     }
 
     useEffect(() => {

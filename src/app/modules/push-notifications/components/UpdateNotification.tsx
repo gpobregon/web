@@ -1,10 +1,58 @@
-import React, {FC, useState} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import imgUpload from '../upload-image_03.jpg'
-import UpImage from '../../uploadFile/upload-image';
+import UpImage from '../../uploadFile/upload-image'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
-import {URLAWS} from '../../../services/api'
+import {getData, getSitesActivesAndPublicatedMethod, URLAWS} from '../../../services/api'
 import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+import makeAnimated from 'react-select/animated'
+import Select from 'react-select'
+import { DeleteImage } from '../../deleteFile/delete-image'
+
+const customStyles = {
+    control: (base: any, state: any) => ({
+        ...base,
+        background: 'transparent',
+        borderColor: state.isFocused ? '#474761' : '#323248',
+        borderRadius: 6.175,
+        color: '#92929F',
+        '&:hover': {
+            borderColor: '#323248',
+        },
+        '&:focus': {
+            borderColor: '#323248',
+        },
+        '&:active': {
+            borderColor: '#323248',
+        },
+    }),
+    input: (base: any, state: any) => ({
+        ...base,
+        color: '#92929f',
+    }),
+    option: (base: any, state: any) => ({
+        ...base,
+        background: state.isFocused ? '#009EF7' : '#323248',
+        color: state.isFocused ? '#fff' : '#92929F',
+        padding: 10,
+    }),
+    singleValue: (base: any) => ({
+        ...base,
+        color: '#fff',
+    }),
+    menu: (base: any) => ({
+        ...base,
+        borderRadius: 6.175,
+        background: '#323248',
+    }),
+    menuList: (base: any) => ({
+        ...base,
+        padding: 0,
+        borderRadius: 6.175,
+    }),
+}
+
+const animatedComponents = makeAnimated()
 
 const UpdateNotification: FC<any> = ({
     cardUpdateNotification,
@@ -12,6 +60,12 @@ const UpdateNotification: FC<any> = ({
     notification,
     setNotification,
     updateNotification,
+    optionsSites,
+    setOptionsSites,
+    valueSelect,
+    setValueSelect,
+    labelSelect,
+    setLabelSelect,
 }) => {
     const [scheduleNotification, setScheduleNotification] = useState(false)
     const [switchValue, setSwitchValue] = useState(notification?.tipo === 1 ? true : false)
@@ -31,6 +85,7 @@ const UpdateNotification: FC<any> = ({
                 fecha_hora_programada: dateNow,
                 tipo: 0,
                 estado: 1,
+                id_sitio: notification.id_sitio,
             })
         }
     }
@@ -44,6 +99,7 @@ const UpdateNotification: FC<any> = ({
             fecha_hora_programada: notification.fecha_hora_programada,
             tipo: notification.tipo,
             estado: 1,
+            id_sitio: notification.id_sitio,
         })
         if (image !== '') {
             setModalUploadIMG(false)
@@ -61,7 +117,29 @@ const UpdateNotification: FC<any> = ({
             fecha_hora_programada: dateNow,
             tipo: 0,
             estado: 1,
+            id_sitio: notification.id_sitio,
         })
+    }
+
+    interface Options {
+        value: number | null
+        label: string
+    }
+
+    const handleChange = (event: any) => {
+        setNotification({
+            id_notificacion: notification.id_notificacion,
+            nombre: notification.nombre,
+            descripcion: notification.descripcion,
+            imagen_path: notification.imagen_path,
+            fecha_hora_programada: notification.fecha_hora_programada,
+            tipo: notification.tipo,
+            estado: 1,
+            id_sitio: event.value,
+        })
+
+        setValueSelect(optionsSites.find((item: Options) => item.value == event.value)?.value)
+        setLabelSelect(optionsSites.find((item: Options) => item.value == event.value)?.label)
     }
 
     return (
@@ -125,6 +203,7 @@ const UpdateNotification: FC<any> = ({
                                 variant='outline-danger'
                                 className='text-center'
                                 onClick={() => {
+                                    DeleteImage('notificaciones',notification.imagen_path)
                                     setNotification({
                                         id_notificacion: notification.id_notificacion,
                                         nombre: notification.nombre,
@@ -133,6 +212,7 @@ const UpdateNotification: FC<any> = ({
                                         fecha_hora_programada: notification.fecha_hora_programada,
                                         tipo: notification.tipo,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }}
                             >
@@ -150,17 +230,16 @@ const UpdateNotification: FC<any> = ({
                             type='text'
                             name='titleNotification'
                             onChange={(e) => {
-                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
-                                    setNotification({
-                                        id_notificacion: notification.id_notificacion,
-                                        nombre: e.target.value,
-                                        descripcion: notification.descripcion,
-                                        imagen_path: notification.imagen_path,
-                                        fecha_hora_programada: notification.fecha_hora_programada,
-                                        tipo: notification.tipo,
-                                        estado: 1,
-                                    })
-                                }
+                                setNotification({
+                                    id_notificacion: notification.id_notificacion,
+                                    nombre: e.target.value,
+                                    descripcion: notification.descripcion,
+                                    imagen_path: notification.imagen_path,
+                                    fecha_hora_programada: notification.fecha_hora_programada,
+                                    tipo: notification.tipo,
+                                    estado: 1,
+                                    id_sitio: notification.id_sitio,
+                                })
                             }}
                         />
                     </Form.Group>
@@ -174,18 +253,31 @@ const UpdateNotification: FC<any> = ({
                             name='descriptionNotification'
                             style={{height: '100px'}}
                             onChange={(e) => {
-                                if (validateStringSinCaracteresEspeciales(e.target.value)) {
-                                    setNotification({
-                                        id_notificacion: notification.id_notificacion,
-                                        nombre: notification.nombre,
-                                        descripcion: e.target.value,
-                                        imagen_path: notification.imagen_path,
-                                        fecha_hora_programada: notification.fecha_hora_programada,
-                                        tipo: notification.tipo,
-                                        estado: 1,
-                                    })
-                                }
+                                setNotification({
+                                    id_notificacion: notification.id_notificacion,
+                                    nombre: notification.nombre,
+                                    descripcion: e.target.value,
+                                    imagen_path: notification.imagen_path,
+                                    fecha_hora_programada: notification.fecha_hora_programada,
+                                    tipo: notification.tipo,
+                                    estado: 1,
+                                    id_sitio: notification.id_sitio,
+                                })
                             }}
+                        />
+                    </Form.Group>
+
+                    <Form.Group className={'mb-9'}>
+                        <Form.Label>Redirección al presionar la notificación</Form.Label>
+                        <Select
+                            value={{
+                                value: valueSelect,
+                                label: labelSelect,
+                            }}
+                            options={optionsSites}
+                            styles={customStyles}
+                            components={animatedComponents}
+                            onChange={handleChange}
                         />
                     </Form.Group>
 
@@ -218,6 +310,7 @@ const UpdateNotification: FC<any> = ({
                                         fecha_hora_programada: e.target.value,
                                         tipo: 1,
                                         estado: 1,
+                                        id_sitio: notification.id_sitio,
                                     })
                                 }}
                             />
@@ -255,6 +348,7 @@ const UpdateNotification: FC<any> = ({
                                     fecha_hora_programada: dateNow,
                                     tipo: 0,
                                     estado: 1,
+                                    id_sitio: notification.id_sitio,
                                 })
 
                                 updateNotification(notification)
@@ -278,6 +372,7 @@ const UpdateNotification: FC<any> = ({
                                     fecha_hora_programada: notification.fecha_hora_programada,
                                     tipo: 1,
                                     estado: 1,
+                                    id_sitio: notification.id_sitio,
                                 })
 
                                 updateNotification(notification)
