@@ -4,8 +4,8 @@ import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 import ResultMostVisited from './components/ResultMostVisited'
-import { getData, getDataReport, getSitiosPublicados, postData } from '../../services/api'
-import { PublishSite } from '../../models/publishSite'
+import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
+import {PublishSite} from '../../models/publishSite'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -62,29 +62,27 @@ const sitesOptions = [
 ]
 
 const genresOptions = [
-    {value: 'Femenino', label: 'Femenino'},
-    {value: 'Masculino', label: 'Masculino'},
-    {value: 'Prefiero no decirlo', label: 'Prefiero no decirlo'},
+    {value: 1, label: 'Femenino'},
+    {value: 2, label: 'Masculino'},
+    {value: 3, label: 'Prefiero no decirlo'},
 ]
 
 const yearsOldOptions = [
-    {value: 'Menor de edad', label: 'Menor de edad'},
-    {value: '18 a 30', label: '18 a 30'},
-    {value: '31 a 50', label: '31 a 50'},
-    {value: '51 en adelante', label: '51 en adelante'},
+    {value: 1, label: 'Menor de edad'},
+    {value: 2, label: '18 a 30'},
+    {value: 3, label: '31 a 50'},
+    {value: 4, label: '51 en adelante'},
 ]
 
 const countryOptions = [
-    {value: 0, label: 'Nacionales'},
-    {value: 1, label: 'Extranjeros'},
-    {value: 2, label: 'Todos'},
+    {value: 1, label: 'Nacionales'},
+    {value: 2, label: 'Extranjeros'},
+    {value: 3, label: 'Todos'},
 ]
 
-
 const MostVistedReport = () => {
-    const [showResult, setShowResult] = useState(false)  
-    let [publishSite, setPublishSite] = useState<PublishSite[]>([])  
-    const [data, setData] = useState() 
+    const [showResult, setShowResult] = useState(false)
+    let [publishSite, setPublishSite] = useState<PublishSite[]>([])
     const [existUsers, setExistUsers] = useState(false)
 
     const [type, setType] = useState({
@@ -95,13 +93,31 @@ const MostVistedReport = () => {
         fecha_inicial: '',
         fecha_final: '',
         pais: 0,
-    })
+        calificacion: 4,
+    }) 
+    console.log("type: ", type);
 
+    const [data, setData] = useState([])
+     console.log('data: ', data)
     const typeReport = async (typee: any) => {
         const sit: any = await postData(getDataReport, typee)
-        setData(sit)
+        console.log("sit: ", sit);
+
+        let temp = []
+        
+
+        for (let i = 0; i < sit.length; i++) { 
+            console.log("sit: ", sit[i].data);
+            temp.push(sit[i].data)
+            // for (let e = 0; e <= sit[i].data.length; e++) {
+            //        console.log(sit[i].data[e])
+            //     temp.push(sit[i].data[e])
+            // }
+        }
+
+        setData(temp as [])
         showResultComponent()
-        console.log('sit: ', sit)
+        // console.log('sit: ', sit)
         setExistUsers(true)
     }
 
@@ -119,8 +135,8 @@ const MostVistedReport = () => {
 
     useEffect(() => {
         getSite()
-        //getPublishSites() 
-    }, []) 
+        //getPublishSites()
+    }, [])
 
     const handleChangeSitio = (event: any) => {
         setType({
@@ -131,6 +147,7 @@ const MostVistedReport = () => {
             fecha_inicial: type.fecha_inicial,
             fecha_final: type.fecha_final,
             pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -143,6 +160,7 @@ const MostVistedReport = () => {
             fecha_inicial: type.fecha_inicial,
             fecha_final: type.fecha_final,
             pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -155,6 +173,7 @@ const MostVistedReport = () => {
             fecha_inicial: type.fecha_inicial,
             fecha_final: type.fecha_final,
             pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -167,6 +186,7 @@ const MostVistedReport = () => {
             fecha_inicial: event.target.value,
             fecha_final: type.fecha_final,
             pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -179,6 +199,7 @@ const MostVistedReport = () => {
             fecha_inicial: type.fecha_inicial,
             fecha_final: event.target.value,
             pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -191,6 +212,7 @@ const MostVistedReport = () => {
             fecha_inicial: type.fecha_inicial,
             fecha_final: type.fecha_final,
             pais: event.value,
+            calificacion: type.calificacion,
         })
     }
 
@@ -321,7 +343,7 @@ const MostVistedReport = () => {
                 </div>
             </div>
 
-            <ResultMostVisited show={showResult} />
+            <ResultMostVisited show={showResult} data={data} site={type} />
         </Container>
     )
 }

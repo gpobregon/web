@@ -91,13 +91,14 @@ const UserReport = () => {
     // console.log('data: ', data)
     const typeReport = async (typee: any) => {
         const sit: any = await postData(getDataReport, typee)  
+        console.log("sit: ", sit);
 
 
         let temp = [] 
 
         for (let i = 0; i < sit.length; i++) {
             for (let e = 0; e < sit[i].data.length; e++) {
-            //   console.log(sit[i].data[e]) 
+               console.log(sit[i].data[e]) 
               temp.push(sit[i].data[e]) 
               
             }
