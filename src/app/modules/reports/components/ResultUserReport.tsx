@@ -1,13 +1,21 @@
-import React, {FC} from 'react'
-import { Button, Col, Form, Row, Table } from 'react-bootstrap'
+import React, {FC, useEffect, useState} from 'react'
+import {Button, Col, Form, Row, Table} from 'react-bootstrap'
+import {useParams} from 'react-router-dom'
 import Select from 'react-select/dist/declarations/src/Select'
+import {getData, getDataReport, getSitiosPublicados, getValue, postData} from '../../../services/api' 
+import Moment from 'moment'
+import { PublishSite } from '../../../models/publishSite'
 
-const ResultUserReport: FC<any> = ({show}) => {
-    let iterationRows = [1, 2, 3, 4, 5, 6];
+
+const ResultUserReport: FC<any> = ({show, data, site, name}) => { 
+    console.log("name: ", name);
+    console.log("site: ", site);
+    console.log("data en html: ", data); 
+
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
             <Row className='mb-7'>
-                <div className='text-left' style={{ paddingTop: 20 }} >
+                <div className='text-left' style={{paddingTop: 20}}>
                     <h3 className='text-dark mt-0'>Resultados de la busqueda</h3>
                 </div>
             </Row>
@@ -30,81 +38,18 @@ const ResultUserReport: FC<any> = ({show}) => {
                             }}
                         ></div>
                         <div>
-                            <h2 className=''>Museo de Arte Moderno</h2>
-                            <h6 className='text-muted'>17/07/2022 - 22/07/2022</h6>
+                            <h2 className=''>{name}</h2>
+                            <h6 className='text-muted'>{site.fecha_inicial} / {site.fecha_final}</h6>
                         </div>
                     </div>
-                    <hr style={{ border: '1px solid rgba(255 255 255)', color: '#FFF' }} />
+                    <hr style={{border: '1px solid rgba(255 255 255)', color: '#FFF'}} />
                 </div>
 
-                {/* <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'  style={{textAlign: 'center'}} > 
-                    <Row> 
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Foto</Form.Label>
-                            </Form.Group>
-                        </Col>    
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Usuario</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Última visita</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>País</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Género</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Edad</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-                    </Row> 
-
-                    <Row> 
-                        <Col lg={2} md={2} sm={3} > 
-                            <div className='d-flex align-items-center' > 
-                                <div
-                                    className='me-8'
-                                    style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        backgroundColor: '#a9a9a9',
-                                        borderRadius: '50%',
-                                    }}
-                                ></div>
-                            </div>
-                        </Col>    
-
-                        
-                    </Row>
-                </div> */}
-
                 <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
-                    <Table striped bordered hover variant="dark" className='align-middle'>
+                    <Table striped bordered hover variant='dark' className='align-middle'>
                         <thead>
                             <tr>
-                                <th>Foto</th>
+                                <th>Foto</th> 
                                 <th>Usuario</th>
                                 <th>Ultima visita</th>
                                 <th>País</th>
@@ -113,7 +58,7 @@ const ResultUserReport: FC<any> = ({show}) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {iterationRows.map((item) => (
+                            {data?.map((item: any) => (
                                 <tr>
                                     <td>
                                         <div
@@ -126,13 +71,12 @@ const ResultUserReport: FC<any> = ({show}) => {
                                         ></div>
                                     </td>
                                     <td>
-                                        <div>Mark</div>
-                                        <div className='text-muted' >example@gmail.com</div>
+                                        <div>{item.nombre}</div>
                                     </td>
-                                    <td className='text-muted' >12/08/2022</td>
-                                    <td className='text-muted' >Guatemala</td>
-                                    <td className='text-muted' >Masculino</td>
-                                    <td className='text-muted' >23</td>
+                                    <td className='text-muted'>{Moment(item.ultima_visita).format('DD/MM/YYYY')}</td>
+                                    <td className='text-muted'>{item.pais}</td>
+                                    <td className='text-muted'>{item.genero}</td>
+                                    <td className='text-muted'>{item.edad}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -143,4 +87,4 @@ const ResultUserReport: FC<any> = ({show}) => {
     )
 }
 
-export default ResultUserReport;
+export default ResultUserReport

@@ -311,6 +311,7 @@ const EditSite = () => {
     }
     async function getCategorys() {
         const category: any = await getData(categorysMethod)
+        console.log("category: ", category);
 
         category.map((cat: any) => {
             categorys.push({value: cat.id_categoria, label: cat.nombre})

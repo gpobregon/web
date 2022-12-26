@@ -1,8 +1,14 @@
-import React, {FC} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select/dist/declarations/src/Select'
+import { PublishSite } from '../../../models/publishSite'
+import { getData, getSitiosPublicados } from '../../../services/api'
 
-const ResultMostVisited: FC<any> = ({show}) => {
+const ResultMostVisited: FC<any> = ({show, data, site, name}) => { 
+    console.log("name: ", name);
+    console.log("data: ", data);
+    console.log("site: ", site);
+    
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
             <Row className='mb-7'>
@@ -29,119 +35,11 @@ const ResultMostVisited: FC<any> = ({show}) => {
                             }}
                         ></div>
                         <div>
-                            <h2 className=''>Museo de Arte Moderno</h2>
-                            <h6 className='text-muted'>17/07/2022 - 22/07/2022</h6>
+                            <h2 className=''>{name}</h2>
+                            <h6 className='text-muted'>{site.fecha_inicial} / {site.fecha_final}</h6>
                         </div>
                     </div>
                     <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
-                    {/* <Row className='mb-5'>
-                        <Col
-                            lg={3}
-                            md={3}
-                            sm={6}
-                            className='d-flex flex-column justify-content-between text-center py-5'
-                            style={{height: '165px'}}
-                        >
-                            <div
-                                className='d-flex justify-content-center align-items-center py-3 m-1'
-                                style={{backgroundColor: '#323248', borderRadius: '5px'}}
-                            >
-                                <h6 className='m-0'>Visitas</h6>
-                            </div>
-
-                            <div>
-                                <h6 className='mb-5'>Total de visitas</h6>
-                                <span>159</span>
-                            </div>
-                        </Col>
-
-                        <Col
-                            lg={3}
-                            md={3}
-                            sm={6}
-                            className='d-flex flex-column justify-content-between text-center py-5'
-                            style={{height: '165px'}}
-                        >
-                            <div
-                                className='d-flex justify-content-center align-items-center py-3 m-1'
-                                style={{backgroundColor: '#323248', borderRadius: '5px'}}
-                            >
-                                <h6 className='m-0'>Género</h6>
-                            </div>
-
-                            <div className='d-flex flex-wrap justify-content-around align-items-center'>
-                                <div>
-                                    <div className='mb-5'>Hombre</div>
-                                    <div>75</div>
-                                </div>
-                                <div>
-                                    <div className='mb-5'>Mujer</div>
-                                    <div>63</div>
-                                </div>
-                                <div>
-                                    <div className='mb-5'>Indefinido</div>
-                                    <div>21</div>
-                                </div>
-                            </div>
-                        </Col>
-
-                        <Col
-                            lg={3}
-                            md={3}
-                            sm={6}
-                            className='d-flex flex-column justify-content-between text-center py-5'
-                            style={{height: '165px'}}
-                        >
-                            <div
-                                className='d-flex justify-content-center align-items-center py-3 m-1'
-                                style={{backgroundColor: '#323248', borderRadius: '5px'}}
-                            >
-                                <h6 className='m-0'>Edad</h6>
-                            </div>
-                            <div className='d-flex flex-wrap justify-content-around align-items-center'>
-                                <div>
-                                    <div className='mb-5'>Menores de edad</div>
-                                    <div>26</div>
-                                </div>
-                                <div>
-                                    <div className='mb-5'>Mayores de edad</div>
-
-                                    <div>84</div>
-                                </div>
-                                <div>
-                                    <div className='mb-5'>Tercera edad</div>
-
-                                    <div>49</div>
-                                </div>
-                            </div>
-                        </Col>
-
-                        <Col
-                            lg={3}
-                            md={3}
-                            sm={6}
-                            className='d-flex flex-column justify-content-between text-center py-5'
-                            style={{height: '165px'}}
-                        >
-                            <div
-                                className='d-flex justify-content-center align-items-center py-3 m-1'
-                                style={{backgroundColor: '#323248', borderRadius: '5px'}}
-                            >
-                                <h6 className='m-0'>País</h6>
-                            </div>
-                            <div className='d-flex flex-wrap justify-content-around align-items-center'>
-                                <div>
-                                    <div className='mb-5'>Nacionales</div>
-                                    <div>111</div>
-                                </div>
-                                <div>
-                                    <div className='mb-5'>Extranjeros</div>
-                                    <div>48</div>
-                                </div>
-                            </div>
-                        </Col>
-                    </Row> */}
-
                     <Table bordered responsive className='text-center' size="sm" striped>
                         <thead>
                             <tr>
@@ -165,21 +63,25 @@ const ResultMostVisited: FC<any> = ({show}) => {
                                 
                                 <td>Nacionales</td>
                                 <td>Extranjeros</td>
-                            </tr>
-                            <tr>
-                                <td>159</td>
+                            </tr> 
+                            {data?.map((item: any)=>( 
+                                <tr>
+                                <td>{data[0].total_visitas}</td>
 
-                                <td>75</td>
-                                <td>63</td>
-                                <td>21</td>
+                                <td>{data[0].genero.hombre}</td>
+                                <td>{data[0].genero.mujer}</td>
+                                <td>{data[0].genero.indefinido}</td>
                                 
-                                <td>26</td>
-                                <td>84</td>
-                                <td>49</td>
+                                <td>{data[0].edad.menores}</td>
+                                <td>{data[0].edad.mayores}</td>
+                                <td>{data[0].edad.tercera_edad}</td>
                                 
-                                <td>111</td>
-                                <td>48</td>
+                                <td>{data[0].pais.nacional}</td>
+                                <td>{data[0].pais.internacional}</td>
                             </tr>
+
+                            ))}
+                            
                         </tbody>
                     </Table>
                 </div>

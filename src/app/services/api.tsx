@@ -57,7 +57,8 @@ export const deleteUserMethod = 'user'
 export const publishPI = 'site/publish/solo/point'
 export const publishSite = 'site/publish/solo/site' 
 
-export const getDataReport = 'site/sites/reporte'
+export const getDataReport = 'site/sites/reporte' 
+export const getSitiosPublicados = '/sitios/dynamo/publicado'
 
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {

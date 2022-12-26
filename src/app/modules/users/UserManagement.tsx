@@ -80,6 +80,7 @@ const UserManagement: FC<any> = ({show}) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
     const [users, setUsers] = useState<UserType[]>([])
+    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [modalAddUser, setModalAddUser] = useState(false)
     const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
