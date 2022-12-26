@@ -2,40 +2,47 @@ import React, {FC, useEffect, useState} from 'react'
 import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import {useParams} from 'react-router-dom'
 import Select from 'react-select/dist/declarations/src/Select'
-import {getData, getDataReport, getValue, postData} from '../../../services/api'
-import {UserReportModel} from '../UserReportModel'
+import {getData, getDataReport, getSitiosPublicados, getValue, postData} from '../../../services/api' 
+import Moment from 'moment'
+import { PublishSite } from '../../../models/publishSite'
 
-const ResultUserReport: FC<any> = ({show}) => {
-    const [existUsers, setExistUsers] = useState(false)
-    const [userReport, setUserReport] = useState<UserReportModel[]>([])
-    console.log('userReport: ', userReport)
-    const [filteredResults, setFilteredResults] = useState(userReport)
-    let iterationRows = [1, 2, 3, 4, 5, 6]
 
-    const [type, setType] = useState({
-        tipo_reporte: 'usuarios',
-    })
+const ResultUserReport: FC<any> = ({show, data, site}) => { 
+    let [publishSite, setPublishSite] = useState<PublishSite[]>([])
+    console.log("publishSite: ", publishSite);
+    console.log("site: ", site);
+    console.log("data en html: ", data); 
+    const [nameSite, setNameSite] = useState({ 
+        nombreSitio: ''
+    }) 
+    console.log("nameSite: ", nameSite);
 
-    const typeReport = async (typee: any) => {
-        setType({
-            tipo_reporte: 'usuarios',
+
+    const getSite = async () => {
+        getPublishSites()
+    }
+    async function getPublishSites() {
+        const sites: any = await getData(getSitiosPublicados)
+        // console.log('sites: ', sites.data)
+
+        sites.data.map((sit: any) => {
+            publishSite.push({value: sit.id_sitio, label: sit.nombre})
         })
-        const sit: any = await postData(getDataReport, typee)
-        console.log('sit: ', sit)
-        setExistUsers(true)
-        // let claves = Object.keys(sit)
-        // for (let i = 0; i < claves.length; i++) {
-        //     let clave = claves[i]
-        //     console.log('clave: ', clave)
-        // }
+    } 
 
-        // for (const property in sit) {
-        //     console.log(`${property}: ${sit[property]}`);
-        //   }
+    const findName =async () => {
+        getSite() 
+        const filter = publishSite.filter((item)=> site.id_sitio === item.value)
+        console.log("filter: ", filter); 
+        setNameSite({ 
+            nombreSitio: filter[0].label
+        })
     }
 
     useEffect(() => {
-        typeReport(type)
+        getSite() 
+        findName()
+        //getPublishSites() 
     }, [])
 
     return (
@@ -64,8 +71,8 @@ const ResultUserReport: FC<any> = ({show}) => {
                             }}
                         ></div>
                         <div>
-                            <h2 className=''>Museo de Arte Moderno</h2>
-                            <h6 className='text-muted'>17/07/2022 - 22/07/2022</h6>
+                            <h2 className=''>{nameSite.nombreSitio}</h2>
+                            <h6 className='text-muted'>{site.fecha_inicial} / {site.fecha_final}</h6>
                         </div>
                     </div>
                     <hr style={{border: '1px solid rgba(255 255 255)', color: '#FFF'}} />
@@ -75,7 +82,7 @@ const ResultUserReport: FC<any> = ({show}) => {
                     <Table striped bordered hover variant='dark' className='align-middle'>
                         <thead>
                             <tr>
-                                <th>Foto</th>
+                                <th>Foto</th> 
                                 <th>Usuario</th>
                                 <th>Ultima visita</th>
                                 <th>País</th>
@@ -84,7 +91,7 @@ const ResultUserReport: FC<any> = ({show}) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {iterationRows.map((item) => (
+                            {data?.map((item: any) => (
                                 <tr>
                                     <td>
                                         <div
@@ -97,13 +104,12 @@ const ResultUserReport: FC<any> = ({show}) => {
                                         ></div>
                                     </td>
                                     <td>
-                                        <div>Mark</div>
-                                        <div className='text-muted'>example@gmail.com</div>
+                                        <div>{item.nombre}</div>
                                     </td>
-                                    <td className='text-muted'>12/08/2022</td>
-                                    <td className='text-muted'>Guatemala</td>
-                                    <td className='text-muted'>Masculino</td>
-                                    <td className='text-muted'>23</td>
+                                    <td className='text-muted'>{Moment(item.ultima_visita).format('DD/MM/YYYY')}</td>
+                                    <td className='text-muted'>{item.pais}</td>
+                                    <td className='text-muted'>{item.genero}</td>
+                                    <td className='text-muted'>{item.edad}</td>
                                 </tr>
                             ))}
                         </tbody>

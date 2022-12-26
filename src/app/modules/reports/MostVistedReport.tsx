@@ -1,9 +1,11 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 import ResultMostVisited from './components/ResultMostVisited'
+import { getData, getDataReport, getSitiosPublicados, postData } from '../../services/api'
+import { PublishSite } from '../../models/publishSite'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -72,14 +74,125 @@ const yearsOldOptions = [
     {value: '51 en adelante', label: '51 en adelante'},
 ]
 
-const nacionalityOptions = [
-    {value: 'Todos', label: 'Todos'},
-    {value: 'Nacionales', label: 'Nacionales'},
-    {value: 'Extranjeros', label: 'Extranjeros'}, 
+const countryOptions = [
+    {value: 0, label: 'Nacionales'},
+    {value: 1, label: 'Extranjeros'},
+    {value: 2, label: 'Todos'},
 ]
 
+
 const MostVistedReport = () => {
-    const [showResult, setShowResult] = useState(false)
+    const [showResult, setShowResult] = useState(false)  
+    let [publishSite, setPublishSite] = useState<PublishSite[]>([])  
+    const [data, setData] = useState() 
+    const [existUsers, setExistUsers] = useState(false)
+
+    const [type, setType] = useState({
+        tipo_reporte: 'visitas',
+        id_sitio: 0,
+        genero: 0,
+        edad: 0,
+        fecha_inicial: '',
+        fecha_final: '',
+        pais: 0,
+    })
+
+    const typeReport = async (typee: any) => {
+        const sit: any = await postData(getDataReport, typee)
+        setData(sit)
+        showResultComponent()
+        console.log('sit: ', sit)
+        setExistUsers(true)
+    }
+
+    const getSite = async () => {
+        getPublishSites()
+    }
+    async function getPublishSites() {
+        const sites: any = await getData(getSitiosPublicados)
+        // console.log('sites: ', sites.data)
+
+        sites.data.map((sit: any) => {
+            publishSite.push({value: sit.id_sitio, label: sit.nombre})
+        })
+    }
+
+    useEffect(() => {
+        getSite()
+        //getPublishSites() 
+    }, []) 
+
+    const handleChangeSitio = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: event.value,
+            genero: type.genero,
+            edad: type.edad,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: type.fecha_final,
+            pais: type.pais,
+        })
+    }
+
+    const handleChangeGenero = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: event.value,
+            edad: type.edad,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: type.fecha_final,
+            pais: type.pais,
+        })
+    }
+
+    const handleChangeEdad = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: type.genero,
+            edad: event.value,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: type.fecha_final,
+            pais: type.pais,
+        })
+    }
+
+    const handleChangeFechaInicial = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: type.genero,
+            edad: type.edad,
+            fecha_inicial: event.target.value,
+            fecha_final: type.fecha_final,
+            pais: type.pais,
+        })
+    }
+
+    const handleChangeFechaFinal = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: type.genero,
+            edad: type.edad,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: event.target.value,
+            pais: type.pais,
+        })
+    }
+
+    const handleChangePais = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: type.genero,
+            edad: type.edad,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: type.fecha_final,
+            pais: event.value,
+        })
+    }
 
     const showResultComponent = () => {
         setShowResult(true)
@@ -125,9 +238,12 @@ const MostVistedReport = () => {
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Sitio</Form.Label>
                                 <Select
-                                    options={sitesOptions}
+                                    //onMenuOpen={() => getSites()}
+                                    name='sites'
+                                    options={publishSite}
                                     styles={customStyles}
                                     components={animatedComponents}
+                                    onChange={handleChangeSitio}
                                 />
                             </Form.Group>
                         </Col>
@@ -138,6 +254,7 @@ const MostVistedReport = () => {
                                     options={genresOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
+                                    onChange={handleChangeGenero}
                                 />
                             </Form.Group>
                         </Col>
@@ -148,6 +265,7 @@ const MostVistedReport = () => {
                                     options={yearsOldOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
+                                    onChange={handleChangeEdad}
                                 />
                             </Form.Group>
                         </Col>
@@ -157,23 +275,32 @@ const MostVistedReport = () => {
                         <Col lg={2} md={2} sm={3}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Fecha inicial</Form.Label>
-                                <Form.Control type='date' name='startDate' />
+                                <Form.Control
+                                    type='date'
+                                    name='startDate'
+                                    onChange={handleChangeFechaInicial}
+                                />
                             </Form.Group>
                         </Col>
                         <Col lg={2} md={2} sm={3}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Fecha final</Form.Label>
-                                <Form.Control type='date' name='endDate' />
+                                <Form.Control
+                                    type='date'
+                                    name='endDate'
+                                    onChange={handleChangeFechaFinal}
+                                />
                             </Form.Group>
                         </Col>
                         <Col lg={4} md={4} sm={6}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>País</Form.Label>
                                 <Select
-                                    options={nacionalityOptions}
+                                    options={countryOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
                                     className={'mb-4'}
+                                    onChange={handleChangePais}
                                 />
                             </Form.Group>
                         </Col>
@@ -181,7 +308,8 @@ const MostVistedReport = () => {
                             <Button
                                 variant='primary'
                                 className='mt-4'
-                                onClick={() => showResultComponent()}
+                                onClick={() => typeReport(type)}
+                                // onClick={() => showResultComponent()}
                             >
                                 <span className='menu-icon me-0'>
                                     <i className={`bi-search fs-2`}></i>

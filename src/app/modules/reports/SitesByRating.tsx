@@ -1,10 +1,11 @@
-import React, {useState, useRef} from 'react'  
+import React, {useState, useRef, useEffect} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Form, Row, Overlay, Container} from 'react-bootstrap'
-import {Link} from 'react-router-dom' 
+import {Link} from 'react-router-dom'
 import ResultSitestByRating from './components/ResultSitesByRating'
-
+import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
+import {PublishSite} from '../../models/publishSite'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -46,18 +47,18 @@ const customStyles = {
         ...base,
         padding: 0,
         borderRadius: 6.175,
-    }), 
-}  
+    }),
+}
 
-// const toggleOptionSort = () => { 
-//     miBoton:active { 
-//         padding: 30px; 
-//         background: gray; 
-//         color: white; 
+// const toggleOptionSort = () => {
+//     miBoton:active {
+//         padding: 30px;
+//         background: gray;
+//         color: white;
 //     }
 // }
 
-const animatedComponents = makeAnimated()  
+const animatedComponents = makeAnimated()
 
 const sitesOptions = [
     {value: 1, label: 'Ejemplo 1'},
@@ -68,19 +69,47 @@ const sitesOptions = [
     {value: 6, label: 'Ejemplo 7'},
 ]
 
+const SitesByRating = () => {
+    const [showResult, setShowResult] = useState(false) 
+    const [marcado, setMarcado] = useState(true)
+    let [publishSite, setPublishSite] = useState<PublishSite[]>([]) 
 
+    const [type, setType] = useState({
+        tipo_reporte: 'puntuacion',
+        id_sitio: 0,
+        fecha_inicial: '',
+        fecha_final: '',
+    })
 
+    const typeReport = async (typee: any) => {
+        const sit: any = await postData(getDataReport, typee)
+        showResultComponent()
+        console.log('sit: ', sit)
+    }
 
+    const getSite = async () => {
+        getPublishSites()
+    }
+    async function getPublishSites() {
+        const sites: any = await getData(getSitiosPublicados)
+        // console.log('sites: ', sites.data)
 
-const SitesByRating = ()=>{  
-    const [showResult, setShowResult] = useState(false)
+        sites.data.map((sit: any) => {
+            publishSite.push({value: sit.id_sitio, label: sit.nombre})
+        })
+    }
+
+    useEffect(() => {
+        getSite()
+        //getPublishSites()
+    }, [])
 
     const showResultComponent = () => {
         setShowResult(true)
     }
 
-    return( 
-        <Container fluid> 
+    return (
+        <Container fluid>
             <div
                 className=''
                 style={{
@@ -98,87 +127,128 @@ const SitesByRating = ()=>{
                         <h1 className='m-0'>Reporte de sitios por Califiación</h1>
                     </div>
                 </div>
-            </div> 
+            </div>
 
             <Row className='my-9'>
                 <div className='text-left'>
                     <h3 className='text-dark mt-0'>Filtros de búsqueda</h3>
                     <h5 className='text-muted mb-0'>Reportes - Sitios por calificación</h5>
                 </div>
-            </Row> 
+            </Row>
 
-            <div     //aquí empieza el rectangulo
+            <div //aquí empieza el rectangulo
                 className=''
                 style={{
                     backgroundColor: '#1E1E2D',
                     borderRadius: '5px',
-                }}>
-              
-                <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>  
-                    <Row className='mb-5'> 
+                }}
+            >
+                <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
+                    <Row className='mb-5'>
                         <Col lg={4} md={4} sm={6}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Sitio</Form.Label>
                                 <Select
-                                    options={sitesOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
+                                    options={publishSite}
+                                    //onChange={handleChangeSitio}
                                 />
                             </Form.Group>
-                        </Col> 
+                        </Col>
 
-                        <Col lg={2} md={2} sm={3}> 
+                        <Col lg={2} md={2} sm={3}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Fecha inicial</Form.Label>
                                 <Form.Control type='date' name='startDate' />
                             </Form.Group>
-                        </Col>  
+                        </Col>
 
-                        <Col lg={2} md={2} sm={3}> 
+                        <Col lg={2} md={2} sm={3}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Fecha inicial</Form.Label>
                                 <Form.Control type='date' name='endDate' />
                             </Form.Group>
-                        </Col>  
+                        </Col>
 
-                        <Col lg={4} md={4} sm={6}> 
+                        <Col lg={4} md={4} sm={6}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Calificacion:</Form.Label> 
-                                <br/>
-                                <i className="bi bi-emoji-angry " style={{fontSize: 30, cursor: 'pointer', color: '#009EF7' }}></i>  
-                                <i className="bi bi-emoji-frown" style={{fontSize: 30, paddingLeft: 20, cursor: 'pointer'  }} ></i> 
-                                <i className="bi bi-emoji-smile" style={{fontSize: 30, paddingLeft: 20, cursor: 'pointer'  }} ></i> 
-                                <i className="bi bi-emoji-laughing" style={{fontSize: 30, paddingLeft: 20, cursor: 'pointer'  }} ></i>
+                                <Form.Label>Calificacion:</Form.Label>
+                                <br />
+                                <div className='d-flex justify-content-start'>
+                                    <button
+                                        // className='btn btn-primary-outline' 
+                                        className={
+                                            marcado == false
+                                                ? 'btn btn-primary-outline fa-solid bi-emoji-frown fs-1 background-button'
+                                                : 'btn btn-primary-outline fa-solid bi-emoji-frown fs-1 background-button'
+                                        }
+                                        style={{color: '#92929F'}}
+                                    >
+                                        {/* <i
+                                            className='bi bi-emoji-frown'
+                                            style={{
+                                                fontSize: 30,
+                                                paddingLeft: 20,
+                                                cursor: 'pointer',
+                                            }}
+                                        ></i> */}
+                                    </button>
+
+                                    <button
+                                        className='btn btn-primary-outline'
+                                        style={{backgroundColor: 'transparent'}}
+                                    >
+                                        <i
+                                            className='bi bi-emoji-smile'
+                                            style={{
+                                                fontSize: 30,
+                                                paddingLeft: 20,
+                                                cursor: 'pointer',
+                                            }}
+                                        ></i>
+                                    </button>
+
+                                    <button
+                                        className='btn btn-primary-outline'
+                                        style={{backgroundColor: 'transparent'}}
+                                    >
+                                        <i
+                                            className='bi bi-emoji-laughing'
+                                            style={{
+                                                fontSize: 30,
+                                                paddingLeft: 20,
+                                                cursor: 'pointer',
+                                            }}
+                                        ></i>
+                                    </button>
+                                </div>
                             </Form.Group>
-                        </Col>  
-                        
-                         
+                        </Col>
+                    </Row>
 
-                        
-
-                    </Row> 
-
-                    <Row> 
+                    <Row>
                         <Col lg={4} md={4} sm={6} className='d-flex align-items-center'>
-                            <Button variant='primary' className='mt-4' onClick={() => showResultComponent()} >
+                            <Button
+                                variant='primary'
+                                className='mt-4'
+                                onClick={() => showResultComponent()}
+                            >
                                 <span className='menu-icon me-0'>
                                     <i className={`bi-search fs-2`}></i>
                                 </span>
                                 {' Buscar'}
                             </Button>
-                        </Col> 
-                        
+                        </Col>
                     </Row>
-
                 </div>
-            </div> 
-            
+            </div>
+
             <div>
-                <ResultSitestByRating show={showResult}  />
+                <ResultSitestByRating show={showResult} />
             </div>
         </Container>
     )
 }
 
-
-export default SitesByRating;
+export default SitesByRating
