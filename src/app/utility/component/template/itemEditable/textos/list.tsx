@@ -46,7 +46,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       let text = children[i].childNodes[0].nodeValue;
       if (text) {
         
-        nodes.push({ text: `${data.typeList === "" ||data.typeList === undefined?  ` ` : `${i+1}. ` }${text}` });
+        nodes.push({ text: `${text}` });
       }
     }
     // console.log(nodes);

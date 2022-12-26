@@ -14,7 +14,7 @@ const Index = () => {
             <div>
                 <DropdownButton id="dropdown-item-button" size="sm" variant="dark" className="text-white px-8" title={ changeLaguage.length !== 0 ? changeLaguage.label : 'Seleccione un Idioma' }>
                     {
-                        language.map((item : any, index: number) => <Dropdown.Item key={index} as="button" onClick={() => changeLangegeSelect(item)}>{ item.label }</Dropdown.Item> )
+                        language.map((item : any, index: number) => <Dropdown.Item key={index} as="button" onClick={() => changeLangegeSelect(item,changeLaguage.length)}>{ item.label }</Dropdown.Item> )
                     }
                     
                 </DropdownButton>
