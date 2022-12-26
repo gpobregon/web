@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom'
 import ResultUserReport from './components/ResultUserReport'
 import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
+import swal from 'sweetalert'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -87,28 +88,49 @@ const UserReport = () => {
     })
     console.log('type: ', type) 
 
+    const [name, setName] = useState([])
     const [data, setData] = useState([])
     // console.log('data: ', data)
-    const typeReport = async (typee: any) => {
-        const sit: any = await postData(getDataReport, typee)  
-        console.log("sit: ", sit);
+    const typeReport = async (typee: any) => { 
+        if ( 
+            type.id_sitio != 0 &&
+            type.fecha_inicial != '' &&
+            type.fecha_final != '' &&
+            type.genero != 0 &&
+            type.edad != 0 &&
+            type.pais != 0
+        ) {
+            const sit: any = await postData(getDataReport, typee)  
+            setName(sit[0].nombre_sitio)
+    
+    
+            let temp = [] 
+    
+            for (let i = 0; i < sit.length; i++) {
+                for (let e = 0; e < sit[i].data.length; e++) {
+                   console.log(sit[i].data[e]) 
+                  temp.push(sit[i].data[e]) 
+                  
+                }
+              } 
+    
+            setData (temp as [])
+            showResultComponent()
+            // console.log('sit: ', sit)
+            setExistUsers(true)
+        } else {
+            alertNotNullInputs()
+        }
+       
+    } 
 
-
-        let temp = [] 
-
-        for (let i = 0; i < sit.length; i++) {
-            for (let e = 0; e < sit[i].data.length; e++) {
-               console.log(sit[i].data[e]) 
-              temp.push(sit[i].data[e]) 
-              
-            }
-          } 
-
-        setData (temp as [])
-        showResultComponent()
-        // console.log('sit: ', sit)
-        setExistUsers(true)
+    const alertNotNullInputs = async () => {
+        swal({
+            text: '¡Faltan campos por completar!',
+            icon: 'warning',
+        })
     }
+
 
     // useEffect(() => {
     //     typeReport(type)
@@ -338,7 +360,7 @@ const UserReport = () => {
             </div>
 
             <div>
-                <ResultUserReport show={showResult} data={data} site={type} />
+                <ResultUserReport show={showResult} data={data} site={type} name={name}/>
             </div>
         </Container>
     )

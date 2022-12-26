@@ -7,43 +7,10 @@ import Moment from 'moment'
 import { PublishSite } from '../../../models/publishSite'
 
 
-const ResultUserReport: FC<any> = ({show, data, site}) => { 
-    let [publishSite, setPublishSite] = useState<PublishSite[]>([])
-    console.log("publishSite: ", publishSite);
+const ResultUserReport: FC<any> = ({show, data, site, name}) => { 
+    console.log("name: ", name);
     console.log("site: ", site);
     console.log("data en html: ", data); 
-    const [nameSite, setNameSite] = useState({ 
-        nombreSitio: ''
-    }) 
-    console.log("nameSite: ", nameSite);
-
-
-    const getSite = async () => {
-        getPublishSites()
-    }
-    async function getPublishSites() {
-        const sites: any = await getData(getSitiosPublicados)
-        // console.log('sites: ', sites.data)
-
-        sites.data.map((sit: any) => {
-            publishSite.push({value: sit.id_sitio, label: sit.nombre})
-        })
-    } 
-
-    const findName =async () => {
-        getSite() 
-        const filter = publishSite.filter((item)=> site.id_sitio === item.value)
-        console.log("filter: ", filter); 
-        setNameSite({ 
-            nombreSitio: filter[0].label
-        })
-    }
-
-    useEffect(() => {
-        getSite() 
-        findName()
-        //getPublishSites() 
-    }, [])
 
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
@@ -71,7 +38,7 @@ const ResultUserReport: FC<any> = ({show, data, site}) => {
                             }}
                         ></div>
                         <div>
-                            <h2 className=''>{nameSite.nombreSitio}</h2>
+                            <h2 className=''>{name}</h2>
                             <h6 className='text-muted'>{site.fecha_inicial} / {site.fecha_final}</h6>
                         </div>
                     </div>

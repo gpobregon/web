@@ -4,44 +4,11 @@ import Select from 'react-select/dist/declarations/src/Select'
 import { PublishSite } from '../../../models/publishSite'
 import { getData, getSitiosPublicados } from '../../../services/api'
 
-const ResultMostVisited: FC<any> = ({show, data, site}) => { 
+const ResultMostVisited: FC<any> = ({show, data, site, name}) => { 
+    console.log("name: ", name);
     console.log("data: ", data);
-    let [publishSite, setPublishSite] = useState<PublishSite[]>([])
-    console.log("publishSite: ", publishSite);
     console.log("site: ", site);
-    // console.log("data en html: ", data[0].edad.mayores); 
-    const [nameSite, setNameSite] = useState({ 
-        nombreSitio: ''
-    }) 
-    console.log("nameSite: ", nameSite);
-
-
-    const getSite = async () => {
-        getPublishSites()
-    }
-    async function getPublishSites() {
-        const sites: any = await getData(getSitiosPublicados)
-        // console.log('sites: ', sites.data)
-
-        sites.data.map((sit: any) => {
-            publishSite.push({value: sit.id_sitio, label: sit.nombre})
-        })
-    } 
-
-    const findName =async () => {
-        getSite() 
-        const filter = publishSite.filter((item)=> site.id_sitio === item.value)
-        console.log("filter: ", filter); 
-        setNameSite({ 
-            nombreSitio: filter[0].label
-        })
-    }
-
-    useEffect(() => {
-        getSite() 
-        findName()
-        //getPublishSites() 
-    }, [])
+    
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
             <Row className='mb-7'>
@@ -68,8 +35,8 @@ const ResultMostVisited: FC<any> = ({show, data, site}) => {
                             }}
                         ></div>
                         <div>
-                            <h2 className=''>Museo de Arte Moderno</h2>
-                            <h6 className='text-muted'>17/07/2022 - 22/07/2022</h6>
+                            <h2 className=''>{name}</h2>
+                            <h6 className='text-muted'>{site.fecha_inicial} / {site.fecha_final}</h6>
                         </div>
                     </div>
                     <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
