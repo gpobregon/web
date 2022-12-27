@@ -1,3 +1,4 @@
+import moment from 'moment'
 import React, {FC, useEffect, useState} from 'react'
 import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select/dist/declarations/src/Select'
@@ -46,7 +47,9 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                         </div>
                         <div>
                             <h2 className=''>{name}</h2>
-                            <h6 className='text-muted'>{site.fecha_inicial} / {site.fecha_final}</h6>
+                            <h6 className='text-muted'>
+                                {moment(site.fecha_inicial).format('DD/MM/YYYY')} - {moment(site.fecha_final).format('DD/MM/YYYY')} 
+                            </h6>
                         </div>
                     </div>
                     <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
@@ -65,7 +68,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
 
                                 <td>Hombre</td>
                                 <td>Mujer</td>
-                                <td>Indefinido</td>
+                                <td>Prefiero no decirlo</td>
 
                                 <td>Menores de edad</td>
                                 <td>Mayores de edad</td>

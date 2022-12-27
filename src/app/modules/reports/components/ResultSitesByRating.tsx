@@ -1,3 +1,4 @@
+import moment from 'moment'
 import React, {FC} from 'react'
 import {Button, Col, Form, Row} from 'react-bootstrap'
 import Select from 'react-select/dist/declarations/src/Select'
@@ -44,7 +45,7 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo}) => {
                         <div>
                             <h2 className=''>{name}</h2>
                             <h6 className='text-muted'>
-                                {site.fecha_inicial} / {site.fecha_final}
+                            {moment(site.fecha_inicial).format('DD/MM/YYYY')} - {moment(site.fecha_final).format('DD/MM/YYYY')}
                             </h6>
                         </div>
                     </div>

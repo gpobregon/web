@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
@@ -6,7 +6,8 @@ import {Link} from 'react-router-dom'
 import ResultUserReport from './components/ResultUserReport'
 import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
-import swal from 'sweetalert'
+import swal from 'sweetalert' 
+import { LoadingContext } from '../../utility/component/loading/context'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -55,14 +56,16 @@ const animatedComponents = makeAnimated()
 const genresOptions = [
     {value: 1, label: 'Femenino'},
     {value: 2, label: 'Masculino'},
-    {value: 3, label: 'Prefiero no decirlo'},
+    {value: 3, label: 'Prefiero no decirlo'}, 
+    {value: 4, label: 'Todos los generos'},
 ]
 
 const yearsOldOptions = [
     {value: 1, label: 'Menor de edad'},
     {value: 2, label: '18 a 30'},
     {value: 3, label: '31 a 50'},
-    {value: 4, label: '51 en adelante'},
+    {value: 4, label: '51 en adelante'}, 
+    {value: 5, label: 'todas las edades'}, 
 ]
 
 const countryOptions = [
@@ -71,7 +74,8 @@ const countryOptions = [
     {value: 3, label: 'Todos'},
 ]
 
-const UserReport = () => {
+const UserReport = () => { 
+    const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([])
     // console.log("publishSite: ", publishSite);
@@ -83,49 +87,52 @@ const UserReport = () => {
         edad: 0,
         fecha_inicial: '',
         fecha_final: '',
-        pais: 0, 
+        pais: 0,
         calificacion: 4,
     })
-    console.log('type: ', type) 
+    console.log('type: ', type)
 
     const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
     const [data, setData] = useState([])
     // console.log('data: ', data)
-    const typeReport = async (typee: any) => { 
-        if ( 
+    const typeReport = async (typee: any) => {
+        if (
             type.id_sitio != 0 &&
             type.fecha_inicial != '' &&
             type.fecha_final != '' &&
             type.genero != 0 &&
             type.edad != 0 &&
             type.pais != 0
-        ) {
-            const sit: any = await postData(getDataReport, typee)  
-            console.log("sit: ", sit);
-            setName(sit[0].nombre_sitio) 
-            setPhoto(sit[0].imagen)
-    
-    
-            let temp = [] 
-    
-            for (let i = 0; i < sit.length; i++) {
-                for (let e = 0; e < sit[i].data.length; e++) {
-                   console.log(sit[i].data[e]) 
-                  temp.push(sit[i].data[e]) 
-                  
+        )
+            if (type.fecha_inicial >= type.fecha_final) { 
+                swal('Fechas incorrectas', 'Por favor introduce una fecha inicial menor que la final', 'error')
+            } else { 
+                setShowLoad(true)
+                const sit: any = await postData(getDataReport, typee)
+                console.log('sit: ', sit)
+                setName(sit[0].nombre_sitio)
+                setPhoto(sit[0].imagen)
+
+                let temp = []
+
+                for (let i = 0; i < sit.length; i++) {
+                    for (let e = 0; e < sit[i].data.length; e++) {
+                        console.log(sit[i].data[e])
+                        temp.push(sit[i].data[e])
+                    }
                 }
-              } 
-    
-            setData (temp as [])
-            showResultComponent()
-            // console.log('sit: ', sit)
-            setExistUsers(true)
-        } else {
+
+                setData(temp as [])
+                showResultComponent()
+                // console.log('sit: ', sit)
+                setExistUsers(true) 
+                setTimeout(() => setShowLoad(false), 1000)
+            }
+        else {
             alertNotNullInputs()
         }
-       
-    } 
+    }
 
     const alertNotNullInputs = async () => {
         swal({
@@ -133,7 +140,6 @@ const UserReport = () => {
             icon: 'warning',
         })
     }
-
 
     // useEffect(() => {
     //     typeReport(type)
@@ -153,7 +159,7 @@ const UserReport = () => {
 
     useEffect(() => {
         getSite()
-        //getPublishSites() 
+        //getPublishSites()
     }, [])
 
     const showResultComponent = () => {
@@ -168,8 +174,8 @@ const UserReport = () => {
             edad: type.edad,
             fecha_inicial: type.fecha_inicial,
             fecha_final: type.fecha_final,
-            pais: type.pais, 
-            calificacion: type.calificacion
+            pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -181,8 +187,8 @@ const UserReport = () => {
             edad: type.edad,
             fecha_inicial: type.fecha_inicial,
             fecha_final: type.fecha_final,
-            pais: type.pais, 
-            calificacion: type.calificacion
+            pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -194,8 +200,8 @@ const UserReport = () => {
             edad: event.value,
             fecha_inicial: type.fecha_inicial,
             fecha_final: type.fecha_final,
-            pais: type.pais, 
-            calificacion: type.calificacion
+            pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -207,8 +213,8 @@ const UserReport = () => {
             edad: type.edad,
             fecha_inicial: event.target.value,
             fecha_final: type.fecha_final,
-            pais: type.pais, 
-            calificacion: type.calificacion
+            pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -220,8 +226,8 @@ const UserReport = () => {
             edad: type.edad,
             fecha_inicial: type.fecha_inicial,
             fecha_final: event.target.value,
-            pais: type.pais, 
-            calificacion: type.calificacion
+            pais: type.pais,
+            calificacion: type.calificacion,
         })
     }
 
@@ -233,8 +239,8 @@ const UserReport = () => {
             edad: type.edad,
             fecha_inicial: type.fecha_inicial,
             fecha_final: type.fecha_final,
-            pais: event.value, 
-            calificacion: type.calificacion
+            pais: event.value,
+            calificacion: type.calificacion,
         })
     }
 
@@ -363,7 +369,13 @@ const UserReport = () => {
             </div>
 
             <div>
-                <ResultUserReport show={showResult} data={data} site={type} name={name} photo={photo}/>
+                <ResultUserReport
+                    show={showResult}
+                    data={data}
+                    site={type}
+                    name={name}
+                    photo={photo}
+                />
             </div>
         </Container>
     )

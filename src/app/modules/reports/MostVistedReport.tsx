@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
@@ -6,7 +6,8 @@ import {Link} from 'react-router-dom'
 import ResultMostVisited from './components/ResultMostVisited'
 import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
-import swal from 'sweetalert'
+import swal from 'sweetalert' 
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -65,14 +66,16 @@ const sitesOptions = [
 const genresOptions = [
     {value: 1, label: 'Femenino'},
     {value: 2, label: 'Masculino'},
-    {value: 3, label: 'Prefiero no decirlo'},
+    {value: 3, label: 'Prefiero no decirlo'}, 
+    {value: 4, label: 'Todos los generos'},
 ]
 
 const yearsOldOptions = [
     {value: 1, label: 'Menor de edad'},
     {value: 2, label: '18 a 30'},
     {value: 3, label: '31 a 50'},
-    {value: 4, label: '51 en adelante'},
+    {value: 4, label: '51 en adelante'}, 
+    {value: 5, label: 'Todas las edades'}
 ]
 
 const countryOptions = [
@@ -81,7 +84,8 @@ const countryOptions = [
     {value: 3, label: 'Todos'},
 ]
 
-const MostVistedReport = () => {
+const MostVistedReport = () => { 
+    const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([])
     const [existUsers, setExistUsers] = useState(false)
@@ -111,29 +115,40 @@ const MostVistedReport = () => {
             type.edad != 0 &&
             type.pais != 0
         ) {
-            const sit: any = await postData(getDataReport, typee)
-            setName(sit[0].nombre_sitio)
-            setPhoto(sit[0].imagen) 
-            
-            let temp = []
+            if (type.fecha_inicial >= type.fecha_final) {
+                swal(
+                    'Fechas incorrectas',
+                    'Por favor introduce una fecha inicial menor que la final',
+                    'error'
+                )
+            } else { 
+                setShowLoad(true)
+                const sit: any = await postData(getDataReport, typee)
+                console.log('sit: ', sit)
+                setName(sit[0].nombre_sitio)
+                setPhoto(sit[0].imagen)
 
-            for (let i = 0; i < sit.length; i++) {
-                console.log('sit: ', sit[i].data)
-                temp.push(sit[i].data)
-                // for (let e = 0; e <= sit[i].data.length; e++) {
-                //        console.log(sit[i].data[e])
-                //     temp.push(sit[i].data[e])
-                // }
+                let temp = []
+
+                for (let i = 0; i < sit.length; i++) {
+                    console.log('sit: ', sit[i].data)
+                    temp.push(sit[i].data)
+                    // for (let e = 0; e <= sit[i].data.length; e++) {
+                    //        console.log(sit[i].data[e])
+                    //     temp.push(sit[i].data[e])
+                    // }
+                }
+
+                setData(temp as [])
+                showResultComponent()
+                // console.log('sit: ', sit)
+                setExistUsers(true) 
+                setTimeout(() => setShowLoad(false), 1000)
             }
-
-            setData(temp as [])
-            showResultComponent()
-            // console.log('sit: ', sit)
-            setExistUsers(true)
-        } else { 
+        } else {
             alertNotNullInputs()
         }
-    } 
+    }
 
     const alertNotNullInputs = async () => {
         swal({
@@ -364,7 +379,13 @@ const MostVistedReport = () => {
                 </div>
             </div>
 
-            <ResultMostVisited show={showResult} data={data} site={type} name={name} photo={photo} />
+            <ResultMostVisited
+                show={showResult}
+                data={data}
+                site={type}
+                name={name}
+                photo={photo}
+            />
         </Container>
     )
 }
