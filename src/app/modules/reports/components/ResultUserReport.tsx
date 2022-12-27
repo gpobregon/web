@@ -2,15 +2,20 @@ import React, {FC, useEffect, useState} from 'react'
 import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import {useParams} from 'react-router-dom'
 import Select from 'react-select/dist/declarations/src/Select'
-import {getData, getDataReport, getSitiosPublicados, getValue, postData} from '../../../services/api' 
+import {
+    getData,
+    getDataReport,
+    getSitiosPublicados,
+    getValue,
+    postData,
+} from '../../../services/api'
 import Moment from 'moment'
-import { PublishSite } from '../../../models/publishSite'
+import {PublishSite} from '../../../models/publishSite'
 
-
-const ResultUserReport: FC<any> = ({show, data, site, name}) => { 
-    console.log("name: ", name);
-    console.log("site: ", site);
-    console.log("data en html: ", data); 
+const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
+    console.log('name: ', name)
+    console.log('site: ', site)
+    console.log('data en html: ', data)
 
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
@@ -36,10 +41,22 @@ const ResultUserReport: FC<any> = ({show, data, site, name}) => {
                                 backgroundColor: '#a9a9a9',
                                 borderRadius: '50%',
                             }}
-                        ></div>
+                        >
+                            <img
+                                src={photo}
+                                style={{
+                                    width: '60px',
+                                    height: '60px',
+                                    objectFit: 'cover',
+                                    borderRadius: '50%',
+                                }}
+                            />
+                        </div>
                         <div>
                             <h2 className=''>{name}</h2>
-                            <h6 className='text-muted'>{site.fecha_inicial} / {site.fecha_final}</h6>
+                            <h6 className='text-muted'>
+                                {site.fecha_inicial} / {site.fecha_final}
+                            </h6>
                         </div>
                     </div>
                     <hr style={{border: '1px solid rgba(255 255 255)', color: '#FFF'}} />
@@ -49,7 +66,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name}) => {
                     <Table striped bordered hover variant='dark' className='align-middle'>
                         <thead>
                             <tr>
-                                <th>Foto</th> 
+                                <th>Foto</th>
                                 <th>Usuario</th>
                                 <th>Ultima visita</th>
                                 <th>País</th>
@@ -73,7 +90,9 @@ const ResultUserReport: FC<any> = ({show, data, site, name}) => {
                                     <td>
                                         <div>{item.nombre}</div>
                                     </td>
-                                    <td className='text-muted'>{Moment(item.ultima_visita).format('DD/MM/YYYY')}</td>
+                                    <td className='text-muted'>
+                                        {Moment(item.ultima_visita).format('DD/MM/YYYY')}
+                                    </td>
                                     <td className='text-muted'>{item.pais}</td>
                                     <td className='text-muted'>{item.genero}</td>
                                     <td className='text-muted'>{item.edad}</td>
