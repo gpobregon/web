@@ -4,9 +4,9 @@ import Select from 'react-select/dist/declarations/src/Select'
 import { PublishSite } from '../../../models/publishSite'
 import { getData, getSitiosPublicados } from '../../../services/api'
 
-const ResultMostVisited: FC<any> = ({show, data, site, name}) => { 
+const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => { 
     console.log("name: ", name);
-    console.log("data: ", data);
+    console.log("data: ", data); 
     console.log("site: ", site);
     
     return (
@@ -33,7 +33,17 @@ const ResultMostVisited: FC<any> = ({show, data, site, name}) => {
                                 backgroundColor: '#a9a9a9',
                                 borderRadius: '50%',
                             }}
-                        ></div>
+                        > 
+                         <img
+                                src={photo}
+                                style={{
+                                    width: '60px',
+                                    height: '60px',
+                                    objectFit: 'cover',
+                                    borderRadius: '50%',
+                                }}
+                            />
+                        </div>
                         <div>
                             <h2 className=''>{name}</h2>
                             <h6 className='text-muted'>{site.fecha_inicial} / {site.fecha_final}</h6>

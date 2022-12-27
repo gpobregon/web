@@ -89,6 +89,7 @@ const SitesByRating = () => {
     })
     console.log('type: ', type)
 
+    const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
     const [data, setData] = useState([])
     console.log('data: ', data)
@@ -101,7 +102,8 @@ const SitesByRating = () => {
         ) {
             const sit: any = await postData(getDataReport, typee)
             console.log('sit: ', sit)
-            setName(sit[0].nombre_sitio)
+            setName(sit[0].nombre_sitio) 
+            setPhoto(sit[0].imagen) 
             let temp = []
 
             for (let i = 0; i < sit.length; i++) {
@@ -400,7 +402,7 @@ const SitesByRating = () => {
             </div>
 
             <div>
-                <ResultSitestByRating show={showResult} data={data} site={type} name={name} />
+                <ResultSitestByRating show={showResult} data={data} site={type} name={name} photo={photo}/>
             </div>
         </Container>
     )

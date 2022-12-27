@@ -98,6 +98,7 @@ const MostVistedReport = () => {
     })
     console.log('type: ', type)
 
+    const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
     const [data, setData] = useState([])
     console.log('data: ', data)
@@ -112,7 +113,8 @@ const MostVistedReport = () => {
         ) {
             const sit: any = await postData(getDataReport, typee)
             setName(sit[0].nombre_sitio)
-
+            setPhoto(sit[0].imagen) 
+            
             let temp = []
 
             for (let i = 0; i < sit.length; i++) {
@@ -362,7 +364,7 @@ const MostVistedReport = () => {
                 </div>
             </div>
 
-            <ResultMostVisited show={showResult} data={data} site={type} name={name} />
+            <ResultMostVisited show={showResult} data={data} site={type} name={name} photo={photo} />
         </Container>
     )
 }

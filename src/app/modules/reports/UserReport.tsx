@@ -88,6 +88,7 @@ const UserReport = () => {
     })
     console.log('type: ', type) 
 
+    const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
     const [data, setData] = useState([])
     // console.log('data: ', data)
@@ -101,7 +102,9 @@ const UserReport = () => {
             type.pais != 0
         ) {
             const sit: any = await postData(getDataReport, typee)  
-            setName(sit[0].nombre_sitio)
+            console.log("sit: ", sit);
+            setName(sit[0].nombre_sitio) 
+            setPhoto(sit[0].imagen)
     
     
             let temp = [] 
@@ -360,7 +363,7 @@ const UserReport = () => {
             </div>
 
             <div>
-                <ResultUserReport show={showResult} data={data} site={type} name={name}/>
+                <ResultUserReport show={showResult} data={data} site={type} name={name} photo={photo}/>
             </div>
         </Container>
     )

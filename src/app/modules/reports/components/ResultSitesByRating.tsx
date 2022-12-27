@@ -2,7 +2,7 @@ import React, {FC} from 'react'
 import {Button, Col, Form, Row} from 'react-bootstrap'
 import Select from 'react-select/dist/declarations/src/Select'
 
-const ResultSitesByRating: FC<any> = ({show, data, site, name}) => {
+const ResultSitesByRating: FC<any> = ({show, data, site, name, photo}) => {
     console.log('name: ', name)
     console.log('site: ', site)
     console.log('data: ', data)
@@ -30,7 +30,17 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name}) => {
                                 backgroundColor: '#a9a9a9',
                                 borderRadius: '50%',
                             }}
-                        ></div>
+                        > 
+                        <img
+                                src={photo}
+                                style={{
+                                    width: '60px',
+                                    height: '60px',
+                                    objectFit: 'cover',
+                                    borderRadius: '50%',
+                                }}
+                            />
+                        </div>
                         <div>
                             <h2 className=''>{name}</h2>
                             <h6 className='text-muted'>
