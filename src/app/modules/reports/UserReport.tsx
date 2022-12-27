@@ -63,7 +63,8 @@ const yearsOldOptions = [
     {value: 1, label: 'Menor de edad'},
     {value: 2, label: '18 a 30'},
     {value: 3, label: '31 a 50'},
-    {value: 4, label: '51 en adelante'},
+    {value: 4, label: '51 en adelante'}, 
+    {value: 5, label: 'todas las edades'}
 ]
 
 const countryOptions = [
