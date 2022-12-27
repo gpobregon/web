@@ -66,7 +66,8 @@ const sitesOptions = [
 const genresOptions = [
     {value: 1, label: 'Femenino'},
     {value: 2, label: 'Masculino'},
-    {value: 3, label: 'Prefiero no decirlo'},
+    {value: 3, label: 'Prefiero no decirlo'}, 
+    {value: 4, label: 'Todos los generos'},
 ]
 
 const yearsOldOptions = [
@@ -74,7 +75,7 @@ const yearsOldOptions = [
     {value: 2, label: '18 a 30'},
     {value: 3, label: '31 a 50'},
     {value: 4, label: '51 en adelante'}, 
-    {value: 5, label: 'todas las edades'}
+    {value: 5, label: 'Todas las edades'}
 ]
 
 const countryOptions = [
