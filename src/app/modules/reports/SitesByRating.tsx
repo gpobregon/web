@@ -99,27 +99,35 @@ const SitesByRating = () => {
             type.fecha_inicial != '' &&
             type.fecha_final != '' &&
             type.calificacion != 0
-        ) {
-            const sit: any = await postData(getDataReport, typee)
-            console.log("sit: ", sit);
-            console.log('sit: ', sit)
-            setName(sit[0].nombre_sitio) 
-            setPhoto(sit[0].imagen) 
-            let temp = []
+        )
+            if (type.fecha_inicial >= type.fecha_final) {
+                swal(
+                    'Fechas incorrectas',
+                    'Por favor introduce una fecha inicial menor que la final',
+                    'error'
+                )
+            } else {
+                const sit: any = await postData(getDataReport, typee)
+                console.log('sit: ', sit)
+                console.log('sit: ', sit)
+                setName(sit[0].nombre_sitio)
+                setPhoto(sit[0].imagen)
+                let temp = []
 
-            for (let i = 0; i < sit.length; i++) {
-                console.log('sit: ', sit[i].data)
-                temp.push(sit[i].data)
-                // for (let e = 0; e <= sit[i].data.length; e++) {
-                //        console.log(sit[i].data[e])
-                //     temp.push(sit[i].data[e])
-                // }
+                for (let i = 0; i < sit.length; i++) {
+                    console.log('sit: ', sit[i].data)
+                    temp.push(sit[i].data)
+                    // for (let e = 0; e <= sit[i].data.length; e++) {
+                    //        console.log(sit[i].data[e])
+                    //     temp.push(sit[i].data[e])
+                    // }
+                }
+
+                setData(temp as [])
+                showResultComponent()
+                // console.log('sit: ', sit)
             }
-
-            setData(temp as [])
-            showResultComponent()
-            // console.log('sit: ', sit)
-        } else { 
+        else {
             alertNotNullInputs()
         }
     }
@@ -403,7 +411,13 @@ const SitesByRating = () => {
             </div>
 
             <div>
-                <ResultSitestByRating show={showResult} data={data} site={type} name={name} photo={photo}/>
+                <ResultSitestByRating
+                    show={showResult}
+                    data={data}
+                    site={type}
+                    name={name}
+                    photo={photo}
+                />
             </div>
         </Container>
     )
