@@ -101,6 +101,7 @@ const SitesByRating = () => {
             type.calificacion != 0
         ) {
             const sit: any = await postData(getDataReport, typee)
+            console.log("sit: ", sit);
             console.log('sit: ', sit)
             setName(sit[0].nombre_sitio) 
             setPhoto(sit[0].imagen) 

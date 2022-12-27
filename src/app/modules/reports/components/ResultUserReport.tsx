@@ -55,7 +55,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                         <div>
                             <h2 className=''>{name}</h2>
                             <h6 className='text-muted'>
-                                {site.fecha_inicial} / {site.fecha_final}
+                            {Moment(site.fecha_inicial).format('DD/MM/YYYY')} - {Moment(site.fecha_final).format('DD/MM/YYYY')}
                             </h6>
                         </div>
                     </div>
