@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useState, useRef, useEffect, useContext} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Form, Row, Overlay, Container} from 'react-bootstrap'
@@ -6,7 +6,8 @@ import {Link} from 'react-router-dom'
 import ResultSitestByRating from './components/ResultSitesByRating'
 import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
-import swal from 'sweetalert'
+import swal from 'sweetalert' 
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -70,7 +71,8 @@ const sitesOptions = [
     {value: 6, label: 'Ejemplo 7'},
 ]
 
-const SitesByRating = () => {
+const SitesByRating = () => { 
+    const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     const [marcadoMalo, setMarcadoMalo] = useState(false)
     const [marcadoBueno, setMarcadoBueno] = useState(false)
@@ -106,7 +108,8 @@ const SitesByRating = () => {
                     'Por favor introduce una fecha inicial menor que la final',
                     'error'
                 )
-            } else {
+            } else { 
+                setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
                 console.log('sit: ', sit)
                 console.log('sit: ', sit)
@@ -125,7 +128,8 @@ const SitesByRating = () => {
 
                 setData(temp as [])
                 showResultComponent()
-                // console.log('sit: ', sit)
+                // console.log('sit: ', sit) 
+                setTimeout(() => setShowLoad(false), 1000)
             }
         else {
             alertNotNullInputs()

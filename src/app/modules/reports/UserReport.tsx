@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
@@ -6,7 +6,8 @@ import {Link} from 'react-router-dom'
 import ResultUserReport from './components/ResultUserReport'
 import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
-import swal from 'sweetalert'
+import swal from 'sweetalert' 
+import { LoadingContext } from '../../utility/component/loading/context'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -71,7 +72,8 @@ const countryOptions = [
     {value: 3, label: 'Todos'},
 ]
 
-const UserReport = () => {
+const UserReport = () => { 
+    const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([])
     // console.log("publishSite: ", publishSite);
@@ -103,7 +105,8 @@ const UserReport = () => {
         )
             if (type.fecha_inicial >= type.fecha_final) { 
                 swal('Fechas incorrectas', 'Por favor introduce una fecha inicial menor que la final', 'error')
-            } else {
+            } else { 
+                setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
                 console.log('sit: ', sit)
                 setName(sit[0].nombre_sitio)
@@ -121,7 +124,8 @@ const UserReport = () => {
                 setData(temp as [])
                 showResultComponent()
                 // console.log('sit: ', sit)
-                setExistUsers(true)
+                setExistUsers(true) 
+                setTimeout(() => setShowLoad(false), 1000)
             }
         else {
             alertNotNullInputs()
