@@ -68,7 +68,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
 
                                 <td>Hombre</td>
                                 <td>Mujer</td>
-                                <td>Indefinido</td>
+                                <td>Prefiero no decirlo</td>
 
                                 <td>Menores de edad</td>
                                 <td>Mayores de edad</td>
