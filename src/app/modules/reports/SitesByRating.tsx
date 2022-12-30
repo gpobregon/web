@@ -3,11 +3,12 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Form, Row, Overlay, Container} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
-import ResultSitestByRating from './components/ResultSitesByRating'
+import ResultSitestByRating from './components/ResultSitesByRating' 
+import UsersResultByRating from './components/UsersResultSitesByRating'
 import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
-import swal from 'sweetalert' 
-import { LoadingContext } from '../../utility/component/loading/context'
+import swal from 'sweetalert'
+import {LoadingContext} from '../../utility/component/loading/context'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -71,12 +72,13 @@ const sitesOptions = [
     {value: 6, label: 'Ejemplo 7'},
 ]
 
-const SitesByRating = () => { 
+const SitesByRating = () => {
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     const [marcadoMalo, setMarcadoMalo] = useState(false)
     const [marcadoBueno, setMarcadoBueno] = useState(false)
-    const [marcadoExcelente, setMarcadoExcelente] = useState(false)
+    const [marcadoExcelente, setMarcadoExcelente] = useState(false) 
+    const [marcadoTodos, setMarcadoTodos] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([])
 
     const [type, setType] = useState({
@@ -93,7 +95,9 @@ const SitesByRating = () => {
 
     const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
-    const [data, setData] = useState([])
+    const [data, setData] = useState([]) 
+    const [users, setUsers] = useState([])
+     console.log("users: ", users);
     console.log('data: ', data)
     const typeReport = async (typee: any) => {
         if (
@@ -108,27 +112,25 @@ const SitesByRating = () => {
                     'Por favor introduce una fecha inicial menor que la final',
                     'error'
                 )
-            } else { 
+            } else {
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                console.log('sit: ', sit)
-                console.log('sit: ', sit)
+                console.log('sit: ', sit) 
                 setName(sit[0].nombre_sitio)
                 setPhoto(sit[0].imagen)
                 let temp = []
-
+                let temp2 = []
                 for (let i = 0; i < sit.length; i++) {
-                    console.log('sit: ', sit[i].data)
-                    temp.push(sit[i].data)
-                    // for (let e = 0; e <= sit[i].data.length; e++) {
-                    //        console.log(sit[i].data[e])
-                    //     temp.push(sit[i].data[e])
-                    // }
+                    temp.push(sit[i].data)  
+                    for (let e = 0; e < sit[i].usuarios.length; e++) {
+                           console.log(sit[i].usuarios[e])
+                           temp2.push(sit[i].usuarios[e])
+                    }
                 }
-
-                setData(temp as [])
+                setData(temp as [])  
+                setUsers(temp2 as [])
                 showResultComponent()
-                // console.log('sit: ', sit) 
+                // console.log('sit: ', sit)
                 setTimeout(() => setShowLoad(false), 1000)
             }
         else {
@@ -298,7 +300,8 @@ const SitesByRating = () => {
                                             })
                                             setMarcadoMalo(true)
                                             setMarcadoBueno(false)
-                                            setMarcadoExcelente(false)
+                                            setMarcadoExcelente(false) 
+                                            setMarcadoTodos(false)
                                         }}
                                         style={{
                                             color: marcadoMalo ? '#009ef7' : '#92929F',
@@ -348,7 +351,8 @@ const SitesByRating = () => {
                                             })
                                             setMarcadoBueno(true)
                                             setMarcadoMalo(false)
-                                            setMarcadoExcelente(false)
+                                            setMarcadoExcelente(false) 
+                                            setMarcadoTodos(false)
                                         }}
                                         style={{
                                             color: marcadoBueno ? '#009ef7' : '#92929F',
@@ -368,7 +372,7 @@ const SitesByRating = () => {
 
                                     <button
                                         className={
-                                            marcadoBueno == false
+                                            marcadoExcelente == false
                                                 ? 'btn btn-primary-outline fa-solid bi-emoji-laughing fs-1 background-button'
                                                 : 'btn btn-primary-outline fa-solid bi-emoji-laughing fs-1 background-button'
                                         }
@@ -385,7 +389,8 @@ const SitesByRating = () => {
                                             })
                                             setMarcadoExcelente(true)
                                             setMarcadoMalo(false)
-                                            setMarcadoBueno(false)
+                                            setMarcadoBueno(false) 
+                                            setMarcadoTodos(false)
                                         }}
                                         style={{
                                             color: marcadoExcelente ? '#009ef7' : '#92929F',
@@ -393,6 +398,31 @@ const SitesByRating = () => {
                                             marginRight: '4px',
                                         }}
                                     ></button>
+
+                                    <button 
+                                    className='btn btn-primary-outline background-button'
+                                        onClick={() => {
+                                            setType({
+                                                tipo_reporte: type.tipo_reporte,
+                                                id_sitio: type.id_sitio,
+                                                genero: type.genero,
+                                                edad: type.edad,
+                                                fecha_inicial: type.fecha_inicial,
+                                                fecha_final: type.fecha_final,
+                                                pais: type.pais,
+                                                calificacion: 4,
+                                            }) 
+                                            setMarcadoExcelente(false)
+                                            setMarcadoMalo(false)
+                                            setMarcadoBueno(false) 
+                                            setMarcadoTodos(true)
+                                        }} 
+                                        style={{
+                                            color: marcadoTodos ? '#009ef7' : '#92929F',
+                                            display: 'flex',
+                                            marginRight: '4px',
+                                        }}
+                                    >Ver todos</button>
                                 </div>
                             </Form.Group>
                         </Col>
@@ -421,7 +451,13 @@ const SitesByRating = () => {
                     site={type}
                     name={name}
                     photo={photo}
-                />
+                /> 
+
+                <UsersResultByRating  
+                    show={showResult} 
+                    users={users}
+                />                        
+
             </div>
         </Container>
     )
