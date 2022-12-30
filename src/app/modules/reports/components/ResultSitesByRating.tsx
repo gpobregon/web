@@ -1,129 +1,180 @@
 import moment from 'moment'
 import React, {FC} from 'react'
-import {Button, Col, Form, Row} from 'react-bootstrap'
+import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select/dist/declarations/src/Select'
 
 const ResultSitesByRating: FC<any> = ({show, data, site, name, photo}) => {
-    console.log('name: ', name)
-    console.log('site: ', site)
-    console.log('data: ', data)
+    // console.log('name: ', name)
+    // console.log('site: ', site)
+    // console.log('data: ', data)
     return (
-        <div style={show == false ? {display: 'none'} : {display: 'block'}}>
-            <Row className='mb-7' style={{paddingTop: 20}}>
-                <div className='text-left'>
-                    <h3 className='text-dark mt-0'>Resultados de la busqueda</h3>
-                </div>
-            </Row>
-            <div
-                className=''
-                style={{
-                    backgroundColor: '#1E1E2D',
-                    borderRadius: '5px',
-                }}
-            >
-                <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
-                    <div className='d-flex align-items-center'>
-                        <div
-                            className='me-8'
-                            style={{
-                                width: '60px',
-                                height: '60px',
-                                backgroundColor: '#a9a9a9',
-                                borderRadius: '50%',
-                            }}
-                        > 
-                        <img
-                                src={photo}
+        <>
+            <div style={show == false ? {display: 'none'} : {display: 'block'}}>
+                <Row className='mb-7' style={{paddingTop: 20}}>
+                    <div className='text-left'>
+                        <h3 className='text-dark mt-0'>Resultados de la busqueda</h3>
+                    </div>
+                </Row>
+                <div
+                    className=''
+                    style={{
+                        backgroundColor: '#1E1E2D',
+                        borderRadius: '5px',
+                    }}
+                >
+                    <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
+                        <div className='d-flex align-items-center'>
+                            <div
+                                className='me-8'
                                 style={{
                                     width: '60px',
                                     height: '60px',
-                                    objectFit: 'cover',
+                                    backgroundColor: '#a9a9a9',
                                     borderRadius: '50%',
                                 }}
-                            />
+                            >
+                                <img
+                                    src={photo}
+                                    style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        objectFit: 'cover',
+                                        borderRadius: '50%',
+                                    }}
+                                />
+                            </div>
+                            <div>
+                                <h2 className=''>{name}</h2>
+                                <h6 className='text-muted'>
+                                    {moment(site.fecha_inicial).format('DD/MM/YYYY')} -{' '}
+                                    {moment(site.fecha_final).format('DD/MM/YYYY')}
+                                </h6>
+                            </div>
                         </div>
-                        <div>
-                            <h2 className=''>{name}</h2>
-                            <h6 className='text-muted'>
-                            {moment(site.fecha_inicial).format('DD/MM/YYYY')} - {moment(site.fecha_final).format('DD/MM/YYYY')}
-                            </h6>
-                        </div>
+                        <hr style={{border: '1px solid rgba(255 255 255)', color: '#FFF'}} />
                     </div>
-                    <hr style={{border: '1px solid rgba(255 255 255)', color: '#FFF'}} />
-                </div>
 
-                <div
-                    className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'
-                    style={{textAlign: 'center'}}
-                >
-                    <Row className='mb-5'>
-                        <Col lg={3} md={3} sm={4}>
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Total de visitas</Form.Label>
-                            </Form.Group>
-                        </Col>
-
-                        <Col lg={3} md={3} sm={4}>
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <i
-                                    className='bi bi-emoji-frown'
-                                    style={{fontSize: 20, paddingRight: 10}}
-                                ></i>
-                                <Form.Label>Pésima</Form.Label>
-                            </Form.Group>
-                        </Col>
-
-                        <Col lg={3} md={3} sm={4}>
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <i
-                                    className='bi bi-emoji-smile'
-                                    style={{fontSize: 20, paddingRight: 10}}
-                                ></i>
-                                <Form.Label>Buena</Form.Label>
-                            </Form.Group>
-                        </Col>
-
-                        <Col lg={3} md={3} sm={4}>
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <i
-                                    className='bi bi-emoji-smile'
-                                    style={{fontSize: 20, paddingRight: 10}}
-                                ></i>
-                                <Form.Label>Excelente</Form.Label>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-
-                    {data?.map((item: any) => (
-                        <Row>
+                    <div
+                        className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'
+                        style={{textAlign: 'center'}}
+                    >
+                        <Row className='mb-5'>
                             <Col lg={3} md={3} sm={4}>
                                 <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                    <Form.Label>{data[0].total_visitas}</Form.Label>
+                                    <Form.Label>Total de visitas</Form.Label>
                                 </Form.Group>
                             </Col>
 
                             <Col lg={3} md={3} sm={4}>
                                 <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                    <Form.Label>{data[0].pesima}</Form.Label>
+                                    <i
+                                        className='bi bi-emoji-frown'
+                                        style={{fontSize: 20, paddingRight: 10}}
+                                    ></i>
+                                    <Form.Label>Pésima</Form.Label>
                                 </Form.Group>
                             </Col>
 
                             <Col lg={3} md={3} sm={4}>
                                 <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                    <Form.Label>{data[0].buena}</Form.Label>
+                                    <i
+                                        className='bi bi-emoji-smile'
+                                        style={{fontSize: 20, paddingRight: 10}}
+                                    ></i>
+                                    <Form.Label>Buena</Form.Label>
                                 </Form.Group>
                             </Col>
 
                             <Col lg={3} md={3} sm={4}>
                                 <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                    <Form.Label>{data[0].excelente}</Form.Label>
+                                    <i
+                                        className='bi bi-emoji-smile'
+                                        style={{fontSize: 20, paddingRight: 10}}
+                                    ></i>
+                                    <Form.Label>Excelente</Form.Label>
                                 </Form.Group>
                             </Col>
                         </Row>
-                    ))}
+
+                        {data?.map((item: any) => (
+                            <Row>
+                                <Col lg={3} md={3} sm={4}>
+                                    <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
+                                        <Form.Label>{data[0].total_visitas}</Form.Label>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col lg={3} md={3} sm={4}>
+                                    <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
+                                        <Form.Label>{data[0].pesima}</Form.Label>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col lg={3} md={3} sm={4}>
+                                    <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
+                                        <Form.Label>{data[0].buena}</Form.Label>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col lg={3} md={3} sm={4}>
+                                    <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
+                                        <Form.Label>{data[0].excelente}</Form.Label>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+
+            {/* <div style={show == false ? {display: 'none'} : {display: 'block'}}>
+                <div
+                    className=''
+                    style={{
+                        backgroundColor: '#1E1E2D',
+                        borderRadius: '5px',
+                    }}
+                >
+                    <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
+                        <Table striped bordered hover variant='dark' className='align-middle'>
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Usuario</th>
+                                    <th>Ultima visita</th>
+                                    <th>País</th>
+                                    <th>Genero</th>
+                                    <th>Edad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data?.map((item: any) => (
+                                    <tr>
+                                        <td>
+                                            <div
+                                                style={{
+                                                    width: '40px',
+                                                    height: '40px',
+                                                    backgroundColor: '#a9a9a9',
+                                                    borderRadius: '50%',
+                                                }}
+                                            ></div>
+                                        </td>
+                                        <td>
+                                            <div>nombre</div>
+                                        </td>
+                                        <td className='text-muted'>apellido</td>
+                                        <td className='text-muted'>genero</td>
+                                        <td className='text-muted'>comentario</td>
+                                        <td className='text-muted'>puntuacion</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </div>
+                </div>
+            </div> */}
+        </>
     )
 }
 
