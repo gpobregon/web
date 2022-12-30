@@ -39,6 +39,7 @@ import {
     validateStringSoloNumeros,
 } from '../validarCadena/validadorCadena'
 import {KTSVG} from '../../../_metronic/helpers'
+import { DeleteImage } from '../deleteFile/delete-image'
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
     (item) => ({label: item, value: item})
 ) 
@@ -135,7 +136,7 @@ const ConfSite = () => {
         estado: 0,
         creado: new Date(),
         editado: new Date(),
-        categorias: [{id_categoria: 1, nombre: 's', estado: 0}],
+        categorias: [{id_categoria: 0, nombre: '', estado: 0}],
         id_municipio: 1,
         favorito: false,
         publicado: false,
@@ -149,7 +150,7 @@ const ConfSite = () => {
         publicar_movil: false, 
         nombre_usuario_edito: '',
     }) 
-    //console.log("site: ", site);  
+    console.log("site: ", site);
 
     // obtener usuario que editó
     const [dataUser, setDataUser] = useState({
@@ -254,7 +255,9 @@ const ConfSite = () => {
             site.geoY != '' &&
             site.ubicacion != '' &&
             site.portada_path != '' &&
-            site.geo_json != ''
+            site.geo_json != '' && 
+            site.categorias.length >= 1  && 
+            site.categorias[0].id_categoria != 0
         ) {
             const sit: any = await postData(sitesMethod + '/add', sitee)
             console.log(sit)
@@ -525,7 +528,8 @@ const ConfSite = () => {
                                                 <Link
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
-                                                    onClick={() =>
+                                                    onClick={() =>{
+                                                        DeleteImage('sitePages',site.portada_path)
                                                         setSite({
                                                             id_sitio: site.id_sitio,
                                                             nombre: site.nombre,
@@ -551,6 +555,7 @@ const ConfSite = () => {
                                                             publicar_movil: site.publicar_movil,
                                                             nombre_usuario_edito: dataUser.name,
                                                         })
+                                                    }
                                                     }
                                                 ></Link>
                                             </Col>

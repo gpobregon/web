@@ -1,10 +1,12 @@
-import React, {FC} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import {Col, Card, Button, Row} from 'react-bootstrap'
 import {Site} from '../../../models/site'
-import {getData, sitesMethod, deleteData} from '../../../services/api'
+import {getData, sitesMethod, deleteData, postData} from '../../../services/api'
 import swal from 'sweetalert'
 import SitiosPage from '../SitiosPage'
 import {Link, useNavigate} from 'react-router-dom'
+import {Auth} from 'aws-amplify'
+import {userInfo} from 'os'
 
 type sitio = {
     id_sitio: number
@@ -33,10 +35,89 @@ type sitio = {
     permissionDeleteSite: boolean
     geo_json: string
     cercania_activa: boolean
+    bloqueado_por_edicion: boolean
+    bloqueado_por_edicion_id: string
+    bloqueado_por_edicion_nombre: string
 }
 
 const Sitio: FC<sitio> = (props) => {
+    //console.log('props: ', props)
     const navigate = useNavigate()
+
+    const [idSitioState, setIdSitioState] = useState({
+        idSite: props.id_sitio,
+        nombreSite: props.nombre,
+        idUserEditing: props.bloqueado_por_edicion_id,
+        bloqueado: props.bloqueado_por_edicion, 
+        nombreUsuario: props.bloqueado_por_edicion_nombre
+    })
+
+    //console.log('idSitioState: ', idSitioState)
+
+    // obtener usuario que editó
+    const [dataUser, setDataUser] = useState({
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
+        id: '',
+    })
+    //console.log('dataUser: ', dataUser)
+
+    const getUser = async () => {
+        Auth.currentUserInfo().then((user) => {
+            setDataUser({
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
+                descripcion: '',
+                id: user.attributes.sub,
+            })
+        })
+    }
+
+    const AllowAccess = async () => {
+        await props.validateRole()
+
+        if (props.permissionEditSite) {
+            if (idSitioState.bloqueado == null || idSitioState.bloqueado == false) {
+                // setIdSitioState({
+                //     idSite: props.id_sitio,
+                //     nombreSite: props.nombre,
+                //     idUserEditing: dataUser.id,
+                //     bloqueado: true, 
+                //     nombreUsuario: dataUser.name,
+                // }) 
+                await postData(sitesMethod, {bloqueado_por_edicion: true})
+                navigate(`/sitios/editSite/${props.id_sitio}`)
+            } else {
+                if (idSitioState.idUserEditing == dataUser.id) {
+                    navigate(`/sitios/editSite/${props.id_sitio}`)
+                } else {
+                    swal({
+                        title: `Este sitio está siendo editado por '${props.bloqueado_por_edicion_nombre}'`,
+                        icon: 'warning',
+                    })
+                }
+            }
+        } else {
+            swal({
+                title: 'No tienes permiso para editar un sitio',
+                icon: 'warning',
+            })
+        }
+    }
+
+    useEffect(() => {
+        getUser()
+    }, [])
+
     const deleteSites = async () => {
         await props.validateRole()
 
@@ -47,13 +128,23 @@ const Sitio: FC<sitio> = (props) => {
                 buttons: ['No', 'Sí'],
             }).then(async (res) => {
                 if (res) {
-                    await deleteData(sitesMethod, {id_sitio: props.id_sitio})
+                    console.log(props)
+                    if(!props.favorito){
+                        await deleteData(sitesMethod, {id_sitio: props.id_sitio})
                     swal({
                         text: 'Se elimino con éxito',
                         icon: 'success',
                         timer: 2000,
                     })
                     navigate('/')
+                }else{
+                    swal({
+                        title:'Error',
+                        text: 'No se puede eliminar un sitio Destacado, Intenta con otro sitio',
+                        icon: 'error',
+                        timer: 2000,
+                    })
+                }
                     //  window.location.reload(); //reload page
                 }
             })
@@ -117,21 +208,7 @@ const Sitio: FC<sitio> = (props) => {
                     className='d-flex flex-row'
                     style={{justifyContent: 'space-between', marginTop: '-40px'}}
                 >
-                    <Button
-                        style={{width: '47%'}}
-                        onClick={async (event) => {
-                            await props.validateRole()
-
-                            if (props.permissionEditSite) {
-                                navigate(`/sitios/editSite/${props.id_sitio}`)
-                            } else {
-                                swal({
-                                    title: 'No tienes permiso para editar un sitio',
-                                    icon: 'warning',
-                                })
-                            }
-                        }}
-                    >
+                    <Button style={{width: '47%'}} onClick={AllowAccess}>
                         <i className='bi bi-pencil-square'></i>
                         Editar
                     </Button>

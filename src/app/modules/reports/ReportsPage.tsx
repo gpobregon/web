@@ -160,34 +160,6 @@ const ReportsPage = () => {
                             </Card>
                         </Link>
                     </Col>
-
-                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>
-                        <Link to=''>
-                            <Card
-                                className='d-flex justify-content-center align-items-center p-5'
-                                style={{
-                                    height: 270,
-                                }}
-                            >
-                                <Card.Title
-                                    className='mb-4'
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <span className='menu-ico'>
-                                        <i
-                                            className='bi bi-file-earmark-text text-white'
-                                            style={{fontSize: 64}}
-                                        ></i>
-                                    </span>
-                                </Card.Title>
-                                <Card.Subtitle className='mb-4 fs-3'>Otro reporte</Card.Subtitle>
-                            </Card>
-                        </Link>
-                    </Col>
                 </Row>
             </Container>
         </>

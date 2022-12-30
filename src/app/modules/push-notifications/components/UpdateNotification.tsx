@@ -7,6 +7,7 @@ import {getData, getSitesActivesAndPublicatedMethod, URLAWS} from '../../../serv
 import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 import makeAnimated from 'react-select/animated'
 import Select from 'react-select'
+import { DeleteImage } from '../../deleteFile/delete-image'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -202,6 +203,7 @@ const UpdateNotification: FC<any> = ({
                                 variant='outline-danger'
                                 className='text-center'
                                 onClick={() => {
+                                    DeleteImage('notificaciones',notification.imagen_path)
                                     setNotification({
                                         id_notificacion: notification.id_notificacion,
                                         nombre: notification.nombre,

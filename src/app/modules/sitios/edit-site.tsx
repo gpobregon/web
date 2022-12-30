@@ -40,6 +40,7 @@ import Interes from './components/sitios-interes/sala-interes'
 import {QRCodeCanvas} from 'qrcode.react'
 import logo from './upload-image_03.jpg'
 import UpImage from '../uploadFile/upload-image'
+import {DeleteImage} from '../deleteFile/delete-image'
 import {ModelOperation} from '@aws-amplify/datastore'
 import {
     validateStringSinCaracteresEspeciales,
@@ -106,8 +107,75 @@ const animatedComponents = makeAnimated()
 const EditSite = () => {
     //const { toogleSave, discardChange } = useContext(ContentContext)
     const {setShowLoad} = useContext(LoadingContext)
+    const [loadingSite, setloadingSite] = useState(true)
     const {id} = useParams()
     const {state} = useLocation()
+    const [botonActivo, setbotonActivo] = useState(false)
+
+    // obtener usuario que editó
+    const [dataUser, setDataUser] = useState({
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
+        id: '',
+    })
+
+    const [dataUserHeader, setDataUserHeader] = useState({
+        email: '',
+        name: '',
+        phoneNumber: '',
+        lastname: '',
+        imageProfile: '',
+        role: '',
+        descripcion: '',
+        id: '',
+    })
+    //console.log("dataUserHeader: ", dataUserHeader);
+
+    const getUserForHeader = async () => {
+        tryCharging()
+        Auth.currentUserInfo().then(async (user) => {
+            setDataUserHeader({
+                email: user.attributes.email,
+                name: user.attributes.name,
+                phoneNumber: user.attributes['custom:phoneNumber'],
+                lastname: user.attributes['custom:lastname'],
+                imageProfile: user.attributes['custom:imageProfile'],
+                role: user.attributes['custom:role'],
+                descripcion: '',
+                id: user.attributes.sub,
+            })
+
+            // console.log('dataUserId: ', dataUser.id)
+            // console.log('dataUserName: ', dataUser.name)
+            // console.log('site dentro de get: ', site)
+        })
+    }
+
+    const getUser = async () => {
+        tryCharging()
+        Auth.currentUserInfo().then(async (user) => {
+            // setDataUser({
+            //     email: user.attributes.email,
+            //     name: user.attributes.name,
+            //     phoneNumber: user.attributes['custom:phoneNumber'],
+            //     lastname: user.attributes['custom:lastname'],
+            //     imageProfile: user.attributes['custom:imageProfile'],
+            //     role: user.attributes['custom:role'],
+            //     descripcion: '',
+            //     id: user.attributes.sub,
+            // })
+
+            // console.log('dataUserId: ', dataUser.id)
+            // console.log('dataUserName: ', dataUser.name)
+            // console.log('site dentro de get: ', site)
+            await saveLocked(true, user.attributes.sub, user.attributes.name)
+        })
+    }
 
     const [site, setSite] = useState<Site>({
         id_sitio: 0,
@@ -134,7 +202,11 @@ const EditSite = () => {
         qr_image_path: '',
         publicar_web: false,
         publicar_movil: false,
+        bloqueado_por_edicion: false,
+        bloqueado_por_edicion_id: '',
+        bloqueado_por_edicion_nombre: '',
     })
+    console.log('site: ', site)
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -147,9 +219,21 @@ const EditSite = () => {
     const [unbicacionBucket, setUbicacionBucket] = useState('')
     const [ArchivoPermitido, setArchivoPermitido] = useState('')
     const [mostrarCategorias, setmostrarCategorias] = useState<any>()
+    const [paraCargar, setParaCargar] = useState(false)
+    const tryCharging = () => {
+        setParaCargar(true)
+    }
+
     const getSite = async () => {
         const sitio: any = await getValue(sitesMethod, Number(id))
-        setSite(sitio.site)
+        setSite({
+            ...sitio.site,
+        })
+
+        //setSite(sitio.site)
+        //getUser() 
+        console.log('------------site dentro del get-----------------: ', site)
+
         let aux = sitio.site.geo_json
         let auxSplit = aux.split('/')
         setNombreJson(auxSplit[auxSplit.length - 1])
@@ -162,12 +246,47 @@ const EditSite = () => {
             label: cat.nombre,
         }))
 
-        setmostrarCategorias(mostrarCategorys)
+        setmostrarCategorias(mostrarCategorys) 
+        await getUser()
+        setloadingSite(false)
     }
-    useEffect(() => {
-        getSite()
-        //  console.log(state)
-    }, [])
+
+    //metodo para guarda automaticamente el bloqueo del sitio
+    const saveLocked = async (bloqueado_por_edicion: boolean, idUser: string, nameUser: string) => {
+        site.bloqueado_por_edicion = bloqueado_por_edicion
+        site.bloqueado_por_edicion_id = idUser
+        site.bloqueado_por_edicion_nombre = nameUser
+        if (site.id_sitio != 0) {
+            const sit: any = await postData(updateSiteMethod, site) 
+            setSite({
+                ...site,
+            })
+        }
+        //console.log('Save automatico: ', site)
+        
+        //console.log('despues del Save automatico: ', site)
+
+        // window.location.href = "../sitios";
+    }
+    //console.log("site: ", site);
+    //fin
+
+    //para verificar si el sitio esta bloqueado
+    const verifySite = async () => {
+        if ((site.bloqueado_por_edicion = false)) {
+            setbotonActivo(false)
+        } else {
+            setbotonActivo(true)
+        }
+    }
+
+    // useEffect(() => {
+    //      //getSite()
+    //     // saveLocked(site)
+
+    //     //  console.log(state)
+    // }, [paraCargar])
+
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
         favorito: site.favorito,
@@ -192,6 +311,7 @@ const EditSite = () => {
     }
     async function getCategorys() {
         const category: any = await getData(categorysMethod)
+        console.log("category: ", category);
 
         category.map((cat: any) => {
             categorys.push({value: cat.id_categoria, label: cat.nombre})
@@ -213,20 +333,72 @@ const EditSite = () => {
         })
     }
 
+    const alertNotNullInputCategories = async (data: any) => {
+        let keys = Object.keys(data),
+            msg = ''
+
+        for (let key of keys) {
+            if (data[key] != 0 && data[key] >= 1) continue
+            msg += `El campo ${key} es obligatorio\n`
+        }
+        msg.trim()
+
+        swal({
+            text: msg,
+            icon: 'warning',
+        })
+    }
+
+    const alertNotNullInputsObj = async (data: any) => {
+        let keys = Object.keys(data),
+            msg = ''
+
+        for (let key of keys) {
+            if (
+                data[key] !== null &&
+                data[key] !== undefined &&
+                data[key] !== 0 &&
+                data[key] !== ''
+            )
+                continue
+            msg += `El campo ${key} es obligatorio\n`
+        }
+
+        msg.trim()
+
+        swal({
+            text: msg,
+            icon: 'warning',
+        })
+    }
     //methods to post data to api------------------------------------------------------
 
     async function postSite(sitee: any) {
-        if (
-            site.nombre != '' &&
-            site.geoX != '' &&
-            site.geoY != '' &&
-            site.ubicacion != '' &&
-            site.categorias.length > 0
-        ) {
-            saveChanges(sitee)
-        } else {
-            alertNotNullInputs()
+        if (site.categorias.length >= 1 && site.categorias[0].id_categoria != 0) {
+            if (
+                site.nombre != '' &&
+                site.geoX != '' &&
+                site.geoY != '' &&
+                site.ubicacion != '' &&
+                site.categorias.length >= 1 &&
+                site.categorias[0].id_categoria != 0
+            ) {
+                saveChanges(sitee)
+            } else {
+                alertNotNullInputsObj({
+                    nombre: site.nombre,
+                    geoX: site.geoX,
+                    geoY: site.geoY,
+                    ubicación: site.ubicacion,
+                    categorias: site.categorias,
+                })
+            }
+        } else { 
+            alertNotNullInputCategories({
+                categorias: site.categorias,
+            })
         }
+        
     }
 
     const publishTypeSite = async () => {
@@ -248,30 +420,6 @@ const EditSite = () => {
         }
     }
 
-    // obtener usuario que editó
-    const [dataUser, setDataUser] = useState({
-        email: '',
-        name: '',
-        phoneNumber: '',
-        lastname: '',
-        imageProfile: '',
-        role: '',
-        descripcion: '',
-    })
-    const getUser = async () => {
-        Auth.currentUserInfo().then((user) => {
-            setDataUser({
-                email: user.attributes.email,
-                name: user.attributes.name,
-                phoneNumber: user.attributes['custom:phoneNumber'],
-                lastname: user.attributes['custom:lastname'],
-                imageProfile: user.attributes['custom:imageProfile'],
-                role: user.attributes['custom:role'],
-                descripcion: '',
-            })
-        })
-    }
-
     //methods to post data to api------------------------------------------------------
 
     async function postSiteMaquetar(sitee: any, tipo: string) {
@@ -290,9 +438,6 @@ const EditSite = () => {
         }
     }
 
-    async function postDefault(route: string, object: any) {
-        const sit: any = await postData(route, object)
-    }
     const changeStatus = async (
         favorito: boolean,
         publicado: boolean,
@@ -338,7 +483,7 @@ const EditSite = () => {
             status.publicar_movil = publicarMovil
         } else {
             setShowLoad(true)
-            await postData(statesMethod, {
+            const response = await postData(statesMethod, {
                 id_sitio: site.id_sitio,
                 favorito: favorito,
                 publicado: publicado,
@@ -347,6 +492,8 @@ const EditSite = () => {
                 publicar_web: publicarWeb,
                 publicar_movil: publicarMovil,
             })
+            setShowLoad(false)
+            if (response === null) return
             status.oculto = oculto
             status.publicado = publicado
             status.favorito = favorito
@@ -372,15 +519,19 @@ const EditSite = () => {
                 oculto: status.oculto,
                 geo_json: site.geo_json,
                 cercania_activa: status.cercania_activa,
-                nombre_usuario_edito: dataUser.name,
+                nombre_usuario_edito: dataUserHeader.name,
                 qr_path: site.qr_path,
                 telefono: site.telefono,
                 website: site.website,
                 qr_image_path: site.website,
                 publicar_web: status.publicar_web,
                 publicar_movil: status.publicar_movil,
+                bloqueado_por_edicion: site.bloqueado_por_edicion,
+                bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
+                bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
             })
-            setShowLoad(false)
+            console.log('site 447: ', site)
+            setbotonActivo(true)
         }
     }
 
@@ -414,19 +565,14 @@ const EditSite = () => {
                     timer: 2000,
                 })
                 const sit: any = await postData(updateSiteMethod, sitee)
+                navigate('/sitios')
                 console.log(sit)
                 // window.location.href = "../sitios";
             }
         })
     }
 
-    const [categoria, setcategoria] = useState([
-        {
-            id_categoria: 1,
-            nombre: '',
-            estado: 0,
-        },
-    ])
+    //esto es para las etiquetas
     const handleChange = (event: any) => {
         setmostrarCategorias(event.target)
         var arrtempo: [
@@ -461,14 +607,19 @@ const EditSite = () => {
             oculto: status.oculto,
             geo_json: site.geo_json,
             cercania_activa: status.cercania_activa,
-            nombre_usuario_edito: dataUser.name,
+            nombre_usuario_edito: dataUserHeader.name,
             qr_path: site.qr_path,
             telefono: site.telefono,
             website: site.website,
             qr_image_path: site.website,
             publicar_web: status.publicar_web,
             publicar_movil: status.publicar_movil,
+            bloqueado_por_edicion: site.bloqueado_por_edicion,
+            bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
+            bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
         })
+        console.log('site 565: ', site)
+        setbotonActivo(true)
         // console.log(site)
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
@@ -565,12 +716,36 @@ const EditSite = () => {
 
     // * Fin restricción por rol
 
+    //method para desbloquear sitio con Boton
+    const unlockSite = async () => {
+        setSite({
+            ...site,
+            bloqueado_por_edicion: false,
+            bloqueado_por_edicion_id: '',
+            bloqueado_por_edicion_nombre: '',
+        })
+        console.log('site 671: ', site)
+        let converterToFalse = site
+
+        converterToFalse.bloqueado_por_edicion = false
+        console.log('converterToFalse: ', converterToFalse)
+
+        await postSite(site)
+        console.log('site: ', site)
+        // swal("Desbloqueado" ,"Por favor guarde cambios antes de salir", "info");
+    }
+
     useEffect(() => {
         setShowLoad(true)
         getRoles()
         validateRole()
-        getUser()
     }, [existRoles])
+
+    useEffect(() => {
+        // getUser()
+        getSite()
+        getUserForHeader()
+    }, [loadingSite])
 
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
         ['e', 'E'].includes(e.key) && e.preventDefault()
@@ -865,10 +1040,28 @@ const EditSite = () => {
                 </div>
             </div>
             <br />
-            <h1 style={{color: 'white', fontSize: '18px'}}>Configuración del sitio</h1>
-            <h5 style={{color: '#565674', fontSize: '14px'}}>
-                Lista de Sitios - Configuración del Sitio
-            </h5>
+            <div>
+                <div className='d-flex justify-content-between'>
+                    <div>
+                        <h1 style={{color: 'white', fontSize: '18px'}}>Configuración del sitio</h1>
+                        <h5 style={{color: '#565674', fontSize: '14px'}}>
+                            Lista de Sitios - Configuración del Sitio
+                        </h5>
+                    </div>
+                    <Button
+                        variant='primary'
+                        className='mt-md-0 mt-4'
+                        // disabled={!botonActivo}
+                        onClick={() => unlockSite()}
+                    >
+                        <span className='menu-icon me-0'>
+                            <i className={`bi bi-unlock-fill fs-1 `}></i>
+                        </span>
+                        {'Desbloquear sitio'}
+                    </Button>
+                </div>
+            </div>
+
             <br />
             <div className='row'>
                 <div className='card centrado'>
@@ -907,20 +1100,6 @@ const EditSite = () => {
                                                         setArchivoPermitido('image/*')
                                                         setUbicacionBucket('sitePages')
                                                         setModalupIMG(true)
-                                                    }}
-                                                ></Link>
-                                            </Col>
-                                            <Col>
-                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                            </Col>
-                                            <Col>
-                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                            </Col>
-                                            <Col>
-                                                <Link
-                                                    className='bi bi-trash background-button text-danger'
-                                                    to={''}
-                                                    onClick={() =>
                                                         setSite({
                                                             id_sitio: site.id_sitio,
                                                             nombre: site.nombre,
@@ -939,15 +1118,73 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
-                                                            nombre_usuario_edito: dataUser.name,
+                                                            nombre_usuario_edito:
+                                                                dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
+                                                            bloqueado_por_edicion:
+                                                                site.bloqueado_por_edicion,
+                                                            bloqueado_por_edicion_id:
+                                                                site.bloqueado_por_edicion_id,
+                                                            bloqueado_por_edicion_nombre:
+                                                                site.bloqueado_por_edicion_nombre,
                                                         })
-                                                    }
+                                                        setbotonActivo(true)
+                                                    }}
+                                                ></Link>
+                                            </Col>
+                                            <Col>
+                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                            </Col>
+                                            <Col>
+                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                            </Col>
+                                            <Col>
+                                                <Link
+                                                    className='bi bi-trash background-button text-danger'
+                                                    to={''}
+                                                    onClick={() => {
+                                                        DeleteImage('sitePages',site.portada_path)
+                                                        setSite({
+                                                            id_sitio: site.id_sitio,
+                                                            nombre: site.nombre,
+                                                            descripcion: site.descripcion,
+                                                            ubicacion: site.ubicacion,
+                                                            geoX: site.geoX,
+                                                            geoY: site.geoY,
+                                                            portada_path: '',
+                                                            estado: site.estado,
+                                                            creado: site.creado,
+                                                            editado: site.editado,
+                                                            categorias: site.categorias,
+                                                            id_municipio: site.id_municipio,
+                                                            favorito: status.favorito,
+                                                            publicado: status.publicado,
+                                                            oculto: status.oculto,
+                                                            geo_json: site.geo_json,
+                                                            cercania_activa: status.cercania_activa,
+                                                            nombre_usuario_edito:
+                                                                dataUserHeader.name,
+                                                            qr_path: site.qr_path,
+                                                            telefono: site.telefono,
+                                                            website: site.website,
+                                                            qr_image_path: site.website,
+                                                            publicar_web: status.publicar_web,
+                                                            publicar_movil: status.publicar_movil,
+                                                            bloqueado_por_edicion:
+                                                                site.bloqueado_por_edicion,
+                                                            bloqueado_por_edicion_id:
+                                                                site.bloqueado_por_edicion_id,
+                                                            bloqueado_por_edicion_nombre:
+                                                                site.bloqueado_por_edicion_nombre,
+                                                        })
+                                                        setbotonActivo(true)
+                                                      
+                                                    }}
                                                 ></Link>
                                             </Col>
                                         </Row>
@@ -992,14 +1229,21 @@ const EditSite = () => {
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
                                                     cercania_activa: status.cercania_activa,
-                                                    nombre_usuario_edito: dataUser.name,
+                                                    nombre_usuario_edito: dataUserHeader.name,
                                                     qr_path: site.qr_path,
                                                     telefono: site.telefono,
                                                     website: site.website,
                                                     qr_image_path: site.website,
                                                     publicar_web: status.publicar_web,
                                                     publicar_movil: status.publicar_movil,
+                                                    bloqueado_por_edicion:
+                                                        site.bloqueado_por_edicion,
+                                                    bloqueado_por_edicion_id:
+                                                        site.bloqueado_por_edicion_id,
+                                                    bloqueado_por_edicion_nombre:
+                                                        site.bloqueado_por_edicion_nombre,
                                                 })
+                                                setbotonActivo(true)
                                             }
                                         }}
                                     ></input>
@@ -1041,14 +1285,22 @@ const EditSite = () => {
                                                             oculto: status.oculto,
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
-                                                            nombre_usuario_edito: dataUser.name,
+                                                            nombre_usuario_edito:
+                                                                dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
+                                                            bloqueado_por_edicion:
+                                                                site.bloqueado_por_edicion,
+                                                            bloqueado_por_edicion_id:
+                                                                site.bloqueado_por_edicion_id,
+                                                            bloqueado_por_edicion_nombre:
+                                                                site.bloqueado_por_edicion_nombre,
                                                         })
+                                                        setbotonActivo(true)
                                                     }
                                                 }}
                                             />
@@ -1090,14 +1342,21 @@ const EditSite = () => {
                                                             geo_json: site.geo_json,
                                                             cercania_activa: status.cercania_activa,
                                                             nombre_usuario_edito:
-                                                                site.nombre_usuario_edito,
+                                                                dataUserHeader.name,
                                                             qr_path: site.qr_path,
                                                             telefono: site.telefono,
                                                             website: site.website,
                                                             qr_image_path: site.website,
                                                             publicar_web: status.publicar_web,
                                                             publicar_movil: status.publicar_movil,
+                                                            bloqueado_por_edicion:
+                                                                site.bloqueado_por_edicion,
+                                                            bloqueado_por_edicion_id:
+                                                                site.bloqueado_por_edicion_id,
+                                                            bloqueado_por_edicion_nombre:
+                                                                site.bloqueado_por_edicion_nombre,
                                                         })
+                                                        setbotonActivo(true)
                                                     }
                                                 }}
                                             />
@@ -1134,14 +1393,20 @@ const EditSite = () => {
                                                 oculto: status.oculto,
                                                 geo_json: site.geo_json,
                                                 cercania_activa: status.cercania_activa,
-                                                nombre_usuario_edito: dataUser.name,
+                                                nombre_usuario_edito: dataUserHeader.name,
                                                 qr_path: site.qr_path,
                                                 telefono: site.telefono,
                                                 website: site.website,
                                                 qr_image_path: site.website,
                                                 publicar_web: status.publicar_web,
                                                 publicar_movil: status.publicar_movil,
+                                                bloqueado_por_edicion: site.bloqueado_por_edicion,
+                                                bloqueado_por_edicion_id:
+                                                    site.bloqueado_por_edicion_id,
+                                                bloqueado_por_edicion_nombre:
+                                                    site.bloqueado_por_edicion_nombre,
                                             })
+                                            setbotonActivo(true)
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
@@ -1177,14 +1442,21 @@ const EditSite = () => {
                                                     oculto: status.oculto,
                                                     geo_json: site.geo_json,
                                                     cercania_activa: status.cercania_activa,
-                                                    nombre_usuario_edito: dataUser.name,
+                                                    nombre_usuario_edito: dataUserHeader.name,
                                                     qr_path: site.qr_path,
                                                     telefono: e.target.value,
                                                     website: site.website,
                                                     qr_image_path: site.website,
                                                     publicar_web: status.publicar_web,
                                                     publicar_movil: status.publicar_movil,
+                                                    bloqueado_por_edicion:
+                                                        site.bloqueado_por_edicion,
+                                                    bloqueado_por_edicion_id:
+                                                        site.bloqueado_por_edicion_id,
+                                                    bloqueado_por_edicion_nombre:
+                                                        site.bloqueado_por_edicion_nombre,
                                                 })
+                                                setbotonActivo(true)
                                             }
                                         }}
                                     ></input>
@@ -1219,14 +1491,20 @@ const EditSite = () => {
                                                 oculto: status.oculto,
                                                 geo_json: site.geo_json,
                                                 cercania_activa: status.cercania_activa,
-                                                nombre_usuario_edito: dataUser.name,
+                                                nombre_usuario_edito: dataUserHeader.name,
                                                 qr_path: site.qr_path,
                                                 telefono: site.telefono,
                                                 website: e.target.value,
                                                 qr_image_path: site.website,
                                                 publicar_web: status.publicar_web,
                                                 publicar_movil: status.publicar_movil,
+                                                bloqueado_por_edicion: site.bloqueado_por_edicion,
+                                                bloqueado_por_edicion_id:
+                                                    site.bloqueado_por_edicion_id,
+                                                bloqueado_por_edicion_nombre:
+                                                    site.bloqueado_por_edicion_nombre,
                                             })
+                                            setbotonActivo(true)
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
@@ -1316,10 +1594,7 @@ const EditSite = () => {
                                         </div>
                                         <br></br>
                                         <div className='row text-center'>
-                                            <i
-                                                className=' fa-solid fa-mobile-screen-button text-info fa-10x 
-                        text-center '
-                                            ></i>
+                                            <i className=' fa-solid fa-mobile-screen-button text-info fa-10x text-center '></i>
                                         </div>
                                         <br></br>
                                         <br />

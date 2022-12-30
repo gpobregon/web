@@ -13,7 +13,8 @@ import {
     getSitesActivesAndPublicatedMethod,
     notificationMethod,
     postData,
-    updateNotificationMethod,
+    updateNotificationMethod, 
+    getTotalNotifications
 } from '../../services/api'
 import swal from 'sweetalert'
 import {useNavigate} from 'react-router-dom'
@@ -21,9 +22,12 @@ import {roleManager} from '../../models/roleManager'
 import {Amplify, Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
 import { useAuth } from '../auth'
+import { DeleteImage } from '../deleteFile/delete-image'
 
 const PushNotificationsPage = () => {
-    const [showCardAddNotification, setShowCardAddNotification] = useState(false)
+    const [showCardAddNotification, setShowCardAddNotification] = useState(false) 
+    const [totalPages, setTotalPages] = useState(1) 
+    const [cantidadSite, setCantidadSite] = useState(0)
     const [cardUpdateNotification, setCardUpdateNotification] = useState({
         show: false,
         notification: {},
@@ -98,13 +102,18 @@ const PushNotificationsPage = () => {
         setOptionGetNotifications('programadas')
     }
 
-    const getNotificationsHistory = async () => {
+    const getNotificationsHistory = async () => { 
         const notificationsData: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber,
             quantity: '12',
         })
         setNotifications(notificationsData.data as Notification[])
-        setOptionGetNotifications('historial')
+        setOptionGetNotifications('historial') 
+
+        const coutsite: any = await getData(`${getTotalNotifications}`)
+        console.log("coutsite: ", coutsite);
+         
+        
 
         const countNextResults: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber + 1,
@@ -121,7 +130,11 @@ const PushNotificationsPage = () => {
                 previous: toggleButtonsPagination.previous,
                 next: false,
             })
-        }
+        } 
+
+        let pagesLength = Math.ceil(coutsite.count / 12)
+        console.log(pagesLength)
+        setTotalPages(pagesLength)
     }
 
     const [optionSort, setOptionSort] = useState('Orden descendente')
@@ -612,15 +625,16 @@ const PushNotificationsPage = () => {
                                 </Button>
 
                                 <div
-                                    className='d-flex align-items-center justify-content-center'
+                                    className='d-flex align-items-center justify-content-center px-4'
                                     style={{
-                                        width: '46px',
-                                        height: '46px',
+                                        height: '50px',
                                         backgroundColor: '#2B2B40',
                                         borderRadius: '5px',
                                     }}
                                 >
-                                    {`${pageNumber}`}
+                                    <h5 style={{fontSize: '13px'}}>
+                                        Página {pageNumber} de {totalPages}
+                                    </h5>
                                 </div>
 
                                 <Button
@@ -716,11 +730,13 @@ const PushNotificationsPage = () => {
                                             <Button
                                                 variant='outline-danger'
                                                 className='text-center'
-                                                onClick={() =>
+                                                onClick={() =>{
+                                                    DeleteImage('notificaciones',notification.imagen_path)
                                                     deleteNotification({
                                                         id_notificacion:
                                                             notification.id_notificacion,
                                                     })
+                                                }
                                                 }
                                             >
                                                 <i className='fs-2 bi-trash px-0 fw-bolder'></i>

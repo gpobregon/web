@@ -1,9 +1,13 @@
-import React, {useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 import ResultMostVisited from './components/ResultMostVisited'
+import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
+import {PublishSite} from '../../models/publishSite'
+import swal from 'sweetalert' 
+import { LoadingContext } from '../../utility/component/loading/context'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -60,27 +64,193 @@ const sitesOptions = [
 ]
 
 const genresOptions = [
-    {value: 'Todos', label: 'Todos'},
-    {value: 'Mujer', label: 'Mujer'},
-    {value: 'Hombre', label: 'Hombre'},
-    {value: 'Indefinido', label: 'Indefinido'},
+    {value: 1, label: 'Femenino'},
+    {value: 2, label: 'Masculino'},
+    {value: 3, label: 'Prefiero no decirlo'}, 
+    {value: 4, label: 'Todos los generos'},
 ]
 
 const yearsOldOptions = [
-    {value: 1, label: 'Todos'},
-    {value: 2, label: 'Menores de edad'},
-    {value: 3, label: 'Mayores de edad'},
-    {value: 4, label: 'Tercera edad'},
+    {value: 1, label: 'Menor de edad'},
+    {value: 2, label: '18 a 30'},
+    {value: 3, label: '31 a 50'},
+    {value: 4, label: '51 en adelante'}, 
+    {value: 5, label: 'Todas las edades'}
 ]
 
-const nacionalityOptions = [
-    {value: 1, label: 'Todos'},
-    {value: 2, label: 'Nacionales'},
-    {value: 3, label: 'Extranjeros'},
+const countryOptions = [
+    {value: 1, label: 'Nacionales'},
+    {value: 2, label: 'Extranjeros'},
+    {value: 3, label: 'Todos'},
 ]
 
-const MostVistedReport = () => {
+const MostVistedReport = () => { 
+    const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
+    let [publishSite, setPublishSite] = useState<PublishSite[]>([])
+    const [existUsers, setExistUsers] = useState(false)
+
+    const [type, setType] = useState({
+        tipo_reporte: 'visitas',
+        id_sitio: 0,
+        genero: 0,
+        edad: 0,
+        fecha_inicial: '',
+        fecha_final: '',
+        pais: 0,
+        calificacion: 4,
+    })
+    console.log('type: ', type)
+
+    const [photo, setPhoto] = useState([])
+    const [name, setName] = useState([])
+    const [data, setData] = useState([])
+    console.log('data: ', data)
+    const typeReport = async (typee: any) => {
+        if (
+            type.id_sitio != 0 &&
+            type.fecha_inicial != '' &&
+            type.fecha_final != '' &&
+            type.genero != 0 &&
+            type.edad != 0 &&
+            type.pais != 0
+        ) {
+            if (type.fecha_inicial >= type.fecha_final) {
+                swal(
+                    'Fechas incorrectas',
+                    'Por favor introduce una fecha inicial menor que la final',
+                    'error'
+                )
+            } else { 
+                setShowLoad(true)
+                const sit: any = await postData(getDataReport, typee)
+                console.log('sit: ', sit)
+                setName(sit[0].nombre_sitio)
+                setPhoto(sit[0].imagen)
+
+                let temp = []
+
+                for (let i = 0; i < sit.length; i++) {
+                    console.log('sit: ', sit[i].data)
+                    temp.push(sit[i].data)
+                    // for (let e = 0; e <= sit[i].data.length; e++) {
+                    //        console.log(sit[i].data[e])
+                    //     temp.push(sit[i].data[e])
+                    // }
+                }
+
+                setData(temp as [])
+                showResultComponent()
+                // console.log('sit: ', sit)
+                setExistUsers(true) 
+                setTimeout(() => setShowLoad(false), 1000)
+            }
+        } else {
+            alertNotNullInputs()
+        }
+    }
+
+    const alertNotNullInputs = async () => {
+        swal({
+            text: '¡Faltan campos por completar!',
+            icon: 'warning',
+        })
+    }
+
+    const getSite = async () => {
+        getPublishSites()
+    }
+    async function getPublishSites() {
+        const sites: any = await getData(getSitiosPublicados)
+        // console.log('sites: ', sites.data)
+
+        sites.data.map((sit: any) => {
+            publishSite.push({value: sit.id_sitio, label: sit.nombre})
+        })
+    }
+
+    useEffect(() => {
+        getSite()
+        //getPublishSites()
+    }, [])
+
+    const handleChangeSitio = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: event.value,
+            genero: type.genero,
+            edad: type.edad,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: type.fecha_final,
+            pais: type.pais,
+            calificacion: type.calificacion,
+        })
+    }
+
+    const handleChangeGenero = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: event.value,
+            edad: type.edad,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: type.fecha_final,
+            pais: type.pais,
+            calificacion: type.calificacion,
+        })
+    }
+
+    const handleChangeEdad = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: type.genero,
+            edad: event.value,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: type.fecha_final,
+            pais: type.pais,
+            calificacion: type.calificacion,
+        })
+    }
+
+    const handleChangeFechaInicial = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: type.genero,
+            edad: type.edad,
+            fecha_inicial: event.target.value,
+            fecha_final: type.fecha_final,
+            pais: type.pais,
+            calificacion: type.calificacion,
+        })
+    }
+
+    const handleChangeFechaFinal = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: type.genero,
+            edad: type.edad,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: event.target.value,
+            pais: type.pais,
+            calificacion: type.calificacion,
+        })
+    }
+
+    const handleChangePais = (event: any) => {
+        setType({
+            tipo_reporte: type.tipo_reporte,
+            id_sitio: type.id_sitio,
+            genero: type.genero,
+            edad: type.edad,
+            fecha_inicial: type.fecha_inicial,
+            fecha_final: type.fecha_final,
+            pais: event.value,
+            calificacion: type.calificacion,
+        })
+    }
 
     const showResultComponent = () => {
         setShowResult(true)
@@ -126,9 +296,12 @@ const MostVistedReport = () => {
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Sitio</Form.Label>
                                 <Select
-                                    options={sitesOptions}
+                                    //onMenuOpen={() => getSites()}
+                                    name='sites'
+                                    options={publishSite}
                                     styles={customStyles}
                                     components={animatedComponents}
+                                    onChange={handleChangeSitio}
                                 />
                             </Form.Group>
                         </Col>
@@ -139,6 +312,7 @@ const MostVistedReport = () => {
                                     options={genresOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
+                                    onChange={handleChangeGenero}
                                 />
                             </Form.Group>
                         </Col>
@@ -149,6 +323,7 @@ const MostVistedReport = () => {
                                     options={yearsOldOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
+                                    onChange={handleChangeEdad}
                                 />
                             </Form.Group>
                         </Col>
@@ -158,23 +333,32 @@ const MostVistedReport = () => {
                         <Col lg={2} md={2} sm={3}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Fecha inicial</Form.Label>
-                                <Form.Control type='date' name='startDate' />
+                                <Form.Control
+                                    type='date'
+                                    name='startDate'
+                                    onChange={handleChangeFechaInicial}
+                                />
                             </Form.Group>
                         </Col>
                         <Col lg={2} md={2} sm={3}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>Fecha final</Form.Label>
-                                <Form.Control type='date' name='endDate' />
+                                <Form.Control
+                                    type='date'
+                                    name='endDate'
+                                    onChange={handleChangeFechaFinal}
+                                />
                             </Form.Group>
                         </Col>
                         <Col lg={4} md={4} sm={6}>
                             <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                 <Form.Label>País</Form.Label>
                                 <Select
-                                    options={nacionalityOptions}
+                                    options={countryOptions}
                                     styles={customStyles}
                                     components={animatedComponents}
                                     className={'mb-4'}
+                                    onChange={handleChangePais}
                                 />
                             </Form.Group>
                         </Col>
@@ -182,7 +366,8 @@ const MostVistedReport = () => {
                             <Button
                                 variant='primary'
                                 className='mt-4'
-                                onClick={() => showResultComponent()}
+                                onClick={() => typeReport(type)}
+                                // onClick={() => showResultComponent()}
                             >
                                 <span className='menu-icon me-0'>
                                     <i className={`bi-search fs-2`}></i>
@@ -194,7 +379,13 @@ const MostVistedReport = () => {
                 </div>
             </div>
 
-            <ResultMostVisited show={showResult} />
+            <ResultMostVisited
+                show={showResult}
+                data={data}
+                site={type}
+                name={name}
+                photo={photo}
+            />
         </Container>
     )
 }

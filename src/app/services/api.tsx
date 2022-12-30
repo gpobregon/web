@@ -1,6 +1,7 @@
+import swal from 'sweetalert'
 export const URLAWS = 'https://mcd-archivos.s3.amazonaws.com/'
-// const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
- const URL='https://ezah7sxfbh.execute-api.us-east-1.amazonaws.com/qa'
+const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
+// const URL='https://ezah7sxfbh.execute-api.us-east-1.amazonaws.com/qa'
 // const URL = 'https://57de-190-148-50-142.ngrok.io/dev2'
 
 export const sitesMethod = 'site'
@@ -19,7 +20,8 @@ export const updateLanguageMethod = 'language/update'
 export const notificationMethod = 'notifications'
 export const addNotificationMethod = 'notification/add'
 export const updateNotificationMethod = 'notification/update'
-export const deleteNotificationMethod = 'notification'
+export const deleteNotificationMethod = 'notification' 
+export const getTotalNotifications = 'notifications/getcount'
 export const getSitesActivesAndPublicatedMethod = 'site/sites/activesandpublicated'
 
 export const RoomsMethod = sitesMethod + '/rooms'
@@ -53,7 +55,10 @@ export const updateUserMethod = 'user/edit'
 export const deleteUserMethod = 'user'
 
 export const publishPI = 'site/publish/solo/point'
-export const publishSite = 'site/publish/solo/site'
+export const publishSite = 'site/publish/solo/site' 
+
+export const getDataReport = 'site/sites/reporte' 
+export const getSitiosPublicados = '/sitios/dynamo/publicado'
 
 export const getData = async (route: string) => {
     return new Promise((resolve, reject) => {
@@ -88,17 +93,26 @@ export const deleteData = async (route: string, object: any) => {
 }
 
 export const postData = async (route: string, object: any) => {
-    console.log(object)
-    console.log(route)
+    // console.log(object)
+    // console.log(route)
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}`, {method: 'POST', mode: 'cors', body: JSON.stringify(object)})
-            .then((response) => response.json())
+            .then((response) => {
+                //Si la respuesta es diferente de 200, entonces lanza un error
+                if (!response.ok) throw Error('Ocurrió un error')    
+                return response.json();}
+            )
             .then((data) => {
                 resolve(data)
             })
             .catch((err) => {
-                resolve(null)
-                console.log(err.message)
+                resolve(null)       
+                swal({
+                    title: 'Error',
+                    text: err.message,
+                    icon: 'error',
+                    timer: 2000,
+                })                  
             })
     })
 }

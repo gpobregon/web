@@ -9,26 +9,25 @@ type Model = {
 }
 
 const MenuDoubleClick: FC<Model> = ({ editItem, nameMenu, updateElement }) => {
-    
-    const changeSizeTitle = (e: any, data: any) => {
-       let edit = {}
 
-       if (data.typeList === '') {
-        edit = { 
-            content: editItem.content.replace('list-group list-group-bg list-group-numbered', 'add-class1').replace('list-group-item', 'add-item')
-         }
-       } else if (data.typeList === 'list-group-numbered' ) {
-        edit = { 
-            content: editItem.content.replace('add-class1', 'list-group list-group-bg list-group-numbered').replace('add-item', 'list-group-item')
-         } 
+    const changeSizeTitle = (e: any, data: any) => {
+        let edit = {}
+
+        if (data.typeList === 'list-group-points') {
+            edit = {
+                content: editItem.content.replace('list-group-numbered', 'list-group-points')
+            }
+        } else if (data.typeList === 'list-group-numbered') {
+            edit = {
+                content: editItem.content.replace('list-group-points', 'list-group-numbered')
+            }
         } else {
             edit = { ...data }
         }
-
-        e.stopPropagation();
         const item = {
             ...editItem,
-            ...edit
+            ...edit,
+            typeList: data.typeList
         }
         updateElement(item)
     }
@@ -66,7 +65,7 @@ const MenuDoubleClick: FC<Model> = ({ editItem, nameMenu, updateElement }) => {
                 <Item className="d-flex justify-content-center">
                     <ButtonGroup aria-label="Basic example" size="sm">
                         <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { typeList: 'list-group-numbered' })} ><i className="bi bi-list-ol" /></Button>
-                        <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { typeList: '' })} ><i className="bi bi-list-ul" /></Button>
+                        <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { typeList: 'list-group-points' })} ><i className="bi bi-list-ul" /></Button>
                     </ButtonGroup>
                 </Item>
             }
