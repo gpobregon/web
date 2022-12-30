@@ -169,8 +169,8 @@ const UserManagement: FC<any> = ({show}) => {
 
         return new Promise((resolve, reject) => {
             AWS.config.update({
-                accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-                secretAccessKey: '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',
+                accessKeyId: 'AKIAT3ANXPJIACFL5367',
+                secretAccessKey: '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',
             })
             let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.listUsers(params, (err, data) => {
@@ -190,8 +190,8 @@ const UserManagement: FC<any> = ({show}) => {
 
     const updateUsuarios = async () => {
         AWS.config.update({
-            accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-            secretAccessKey: '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',
+            accessKeyId: 'AKIAT3ANXPJIACFL5367',
+            secretAccessKey: '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',
         })
         let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
         console.log('cognito: ', cognito)
