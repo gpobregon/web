@@ -143,10 +143,12 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             }).then(async (res) => {
                 if (res) {
                     onlySave(changeTypeEdit === 1 ? true : false, board, changeLaguage, data) 
-                } else {
+                } else {                  
                     oneData(data, changeTypeEdit === 1 ? true : false)
                 }
             }) 
+        }else{
+            oneData(data, changeTypeEdit === 1 ? true : false)
         }
        
     }  
