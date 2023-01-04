@@ -237,12 +237,30 @@ const Interes: FC<id_sitio> = (props) => {
         setNewFruitItem(e.target.value)
     }
 
-    //handle new item addition
-    // const handleAddItem = () => {
-    // 	const _fruitItems = [...puntoInteres]
-    // 	_fruitItems.push(newFruitItem)
-    // 	setPuntoInteres(_fruitItems)
-    // }
+    //drag and drop salas
+    const dragItemSalas = React.useRef<any>(null)
+    const dragOverItemSalas = React.useRef<any>(null)
+    const handleSortSalas = async () => {
+        //duplicate items
+        let _fruitItems = [...room]
+
+        //remove and save the dragged item content
+        const draggedItemContent = _fruitItems.splice(dragItemSalas.current, 1)[0]
+
+        //switch the position
+        _fruitItems.splice(dragOverItemSalas.current, 0, draggedItemContent)
+
+        //reset the position ref
+        dragItemSalas.current = null
+        dragOverItemSalas.current = null
+
+        //update the actual array
+        setRooms(_fruitItems)
+        console.log(_fruitItems)
+    }
+
+    //fin drag and drop salas
+    
 
     // * Restricción por rol
     const {setShowLoad} = useContext(LoadingContext)
@@ -268,8 +286,6 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const validateRole = async () => {
-        setShowLoad(true)
-
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -291,11 +307,10 @@ const Interes: FC<id_sitio> = (props) => {
             }
         })
 
-        setTimeout(() => setShowLoad(false), 1000)
+      
     }
 
     useEffect(() => {
-        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
@@ -320,6 +335,22 @@ const Interes: FC<id_sitio> = (props) => {
                                         role='group'
                                         aria-label='Basic example'
                                         key={index}
+                                        draggable
+                                        onDragStart={async () => {
+                                            await validateRole()
+
+                                            if (!permissionSortPoint) {
+                                                swal({
+                                                    title: 'No tienes permiso para ordenar puntos de interés',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
+                                            dragItemSalas.current = index
+                                        }}
+                                        onDragEnter={(e) => (dragOverItemSalas.current = index)}
+                                        onDragEnd={handleSortSalas}
+                                        onDragOver={(e) => e.preventDefault()}
                                     >
                                         <Button
                                             variant='outline-dark'
