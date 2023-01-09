@@ -61,6 +61,7 @@ export const getDataReport = 'site/sites/reporte'
 export const getSitiosPublicados = '/sitios/dynamo/publicado'
 
 export const getData = async (route: string) => {
+    console.log(route)
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}/`, {method: 'GET', mode: 'cors'})
             .then((response) => response.json())

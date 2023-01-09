@@ -206,7 +206,6 @@ const EditSite = () => {
         bloqueado_por_edicion_id: '',
         bloqueado_por_edicion_nombre: '',
     })
-    console.log('site: ', site)
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -232,7 +231,7 @@ const EditSite = () => {
 
         //setSite(sitio.site)
         //getUser() 
-        console.log('------------site dentro del get-----------------: ', site)
+        // console.log('------------site dentro del get-----------------: ', site)
 
         let aux = sitio.site.geo_json
         let auxSplit = aux.split('/')
@@ -311,7 +310,7 @@ const EditSite = () => {
     }
     async function getCategorys() {
         const category: any = await getData(categorysMethod)
-        console.log("category: ", category);
+        // console.log("category: ", category);
 
         category.map((cat: any) => {
             categorys.push({value: cat.id_categoria, label: cat.nombre})
