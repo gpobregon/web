@@ -1,9 +1,11 @@
 import moment from 'moment'
-import React, {FC, useState} from 'react'
-import { Row, Table} from 'react-bootstrap'
+import React, {FC, useEffect, useRef, useState} from 'react'
+import {Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import PDF from '../ExportReport/PDF'
+import { useDownloadExcel } from 'react-export-table-to-excel';
+import { Auth } from 'aws-amplify'
 
 const animatedComponents = makeAnimated()
 const customStyles = {
@@ -53,23 +55,63 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
     // console.log('name: ', name)
     // console.log('data: ', data)
     // console.log('site: ', site)
-    const optionsWithIcons = [{
-        value: 1,
-        label: 'PDF',
-    },{
-        value: 2,
-        label:"Excel"
-    }]
-    
-    var datos=Object.assign({},{rows:data[0]},{name:name},{portada_path:photo},{tipo:"Más visitados"},{site:site})
-    const handleChangeLanguage = (event: any) => {
-      console.log('event: ', event)
-      setShowPDF(true)
-    }
+    const tableRef = useRef(null);
     const [showPDF, setShowPDF] = useState(false) //modal show qr
     const handleClose = () => setShowPDF(false) //modal close qr
+    var date_report = new Date()
+    var date_report_format = moment(date_report).format('DD/MM/YYYY')
+    var hour_report_format = moment(date_report).format('HH:mm:ss')
+    const [user, setDataUser] = useState({
+        name: '',
+        lastName: '',
+    })
+
+   
+    const optionsWithIcons = [
+        {
+            value: 1,
+            label: 'PDF',
+        },
+        {
+            value: 2,
+            label: 'Excel',
+        },
+    ]
+
+    var datos = Object.assign(
+        {},
+        {rows: data[0]},
+        {name: name},
+        {portada_path: photo},
+        {tipo: 'Más visitados'},
+        {site: site}
+    )
+    const handleChangeLanguage = (event: any) => {
+        console.log('event: ', event)
+        if (event.value == 1) {
+            setShowPDF(true)
+        } else if (event.value == 2) {
+            onDownload()
+        }
+    }
+
+    const { onDownload } = useDownloadExcel({
+        currentTableRef: tableRef.current,
+        filename: `[${site.id_sitio}]MasVisitados-${name}.xlsx`,
+        sheet: 'Hoja 1',
+    })
+
+    useEffect(() => {
+        Auth.currentUserInfo().then((user) => {
+            setDataUser({
+                name: user.attributes.name,
+                lastName: user.attributes['custom:lastname'],
+            })
+        })
+    }, [])
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
+           
             <Row className='mb-7'>
                 <div className='text-left'>
                     <h3 className='text-dark mt-0'>Resultados de la busqueda</h3>
@@ -112,19 +154,19 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                         </div>
                         <div className='col-xs-4 col-md-4 col-lg-4 py-5 px-9'>
                             <div className='d-flex justify-content-end'>
-                            <Select
-                            options={optionsWithIcons}
-                            styles={customStyles}
-                            components={animatedComponents}
-                            className={'mb-4'}
-                            onChange={handleChangeLanguage}
-                            placeholder='Exportar'
-                        />
+                                <Select
+                                    options={optionsWithIcons}
+                                    styles={customStyles}
+                                    components={animatedComponents}
+                                    className={'mb-4'}
+                                    onChange={handleChangeLanguage}
+                                    placeholder='Exportar'
+                                />
                             </div>
                         </div>
                     </Row>
                     <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
-                    <Table bordered responsive className='text-center' size='sm' striped>
+                    <Table bordered responsive className='text-center' size='sm' striped ref={tableRef}>
                         <thead>
                             <tr>
                                 <th>Visitas</th>
@@ -148,7 +190,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                                 <td>Nacionales</td>
                                 <td>Extranjeros</td>
                             </tr>
-                            {data?.map((item: any,index:any) => (
+                            {data?.map((item: any, index: any) => (
                                 <tr key={index}>
                                     <td>{data[0].total_visitas}</td>
 
@@ -164,16 +206,23 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                                     <td>{data[0].pais.internacional}</td>
                                 </tr>
                             ))}
+                            
                         </tbody>
+                        <tr>
+                       
+                        </tr>
+                        <tr>
+                        <th colSpan={9}>Reporte generado el {date_report_format} a las {hour_report_format} por{' '}
+                                {user.name} {user.lastName}.</th>
+                                </tr>
+
+                              
+                       
+                           
                     </Table>
                 </div>
             </div>
-                    <PDF
-                     show={showPDF}
-                     onClose={handleClose}
-                     DATA={datos}
-                    />
-           
+            <PDF show={showPDF} onClose={handleClose} DATA={datos} />
         </div>
     )
 }
