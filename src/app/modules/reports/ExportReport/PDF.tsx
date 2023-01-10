@@ -31,23 +31,19 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
             <Modal.Body>
                 <PDFViewer style={styles.viewer}>
                     <Document>
-                        <Page size='A4' style={styles.page}>
-                            <Text style={styles.title}>{DATA.name}</Text>
-                            <Text style={styles.title}>ID sitio: {DATA.site.id_sitio}</Text>
-                            <Text style={styles.title}>Filtro: {DATA.tipo}</Text>
-                            <Text style={styles.title}>
-                                Fechas consultadas:{' '}
-                                {moment(DATA.site.fecha_inicial).format('DD/MM/YYYY')} al{' '}
+                        <Page size='A4' style={styles.page} orientation={'landscape'}>
+                        <Text style={styles.title}>{DATA.name}({DATA.site.id_sitio})</Text>     
+                            <Text style={styles.detalle}>{DATA.tipo} del
+                            {' '}{moment(DATA.site.fecha_inicial).format('DD/MM/YYYY')} al{' '}
                                 {moment(DATA.site.fecha_final).format('DD/MM/YYYY')}
-                            </Text>
-
+                            </Text>                       
                             <View style={styles.table}>
                                 <View style={styles.section}>
                                     <View style={{flexDirection: 'column', paddingHorizontal: 20}}>
                                         <Text style={styles.titleRowsTable}>Visitas</Text>
-                                        <Text style={styles.titleRowsTable}>Total</Text>
+                                        <Text style={styles.titleRowsTable}>Total visitas</Text>
                                         <Text style={styles.titleRowsTable}>
-                                            {DATA.rows.total_visitas}
+                                            {DATA.rows?.total_visitas}
                                         </Text>
                                     </View>
                                     <View
@@ -73,7 +69,7 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                                             >
                                                 <Text style={styles.titleRowsTable}>Hombre</Text>
                                                 <Text style={styles.titleRowsTable}>
-                                                    {DATA.rows.genero.hombre}
+                                                    {DATA.rows?.genero.hombre} 
                                                 </Text>
                                             </View>
                                             <View
@@ -86,7 +82,7 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                                             >
                                                 <Text style={styles.titleRowsTable}>Mujer</Text>
                                                 <Text style={styles.titleRowsTable}>
-                                                    {DATA.rows.genero.mujer}
+                                                    {DATA.rows?.genero.mujer}
                                                 </Text>
                                             </View>
                                             <View
@@ -97,9 +93,11 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                                                     textAlign: 'center',
                                                 }}
                                             >
-                                                <Text style={styles.titleRowsTable}>PND</Text>
                                                 <Text style={styles.titleRowsTable}>
-                                                    {DATA.rows.genero.indefinido}
+                                                    Sin género
+                                                </Text>
+                                                <Text style={styles.titleRowsTable}>
+                                                    {DATA.rows?.genero.indefinido}
                                                 </Text>
                                             </View>
                                         </View>
@@ -126,7 +124,7 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                                             >
                                                 <Text style={styles.titleRowsTable}>Menor</Text>
                                                 <Text style={styles.titleRowsTable}>
-                                                    {DATA.rows.edad.menores}
+                                                    {DATA.rows?.edad.menores}
                                                 </Text>
                                             </View>
                                             <View
@@ -139,7 +137,7 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                                             >
                                                 <Text style={styles.titleRowsTable}>Mayor</Text>
                                                 <Text style={styles.titleRowsTable}>
-                                                    {DATA.rows.edad.mayores}
+                                                    {DATA.rows?.edad.mayores}
                                                 </Text>
                                             </View>
                                             <View
@@ -152,7 +150,7 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                                             >
                                                 <Text style={styles.titleRowsTable}>Tercera</Text>
                                                 <Text style={styles.titleRowsTable}>
-                                                    {DATA.rows.edad.tercera_edad}
+                                                    {DATA.rows?.edad.tercera_edad}
                                                 </Text>
                                             </View>
                                         </View>
@@ -168,7 +166,14 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                                         }}
                                     >
                                         <Text style={styles.titleRowsTable}>País</Text>
-                                        <View style={{flexDirection: 'row'}}>
+                                        <View
+                                            style={{
+                                                flexDirection: 'row',
+                                                alignContent: 'center',
+                                                alignItems: 'center',
+                                                textAlign: 'center',
+                                            }}
+                                        >
                                             <View
                                                 style={{
                                                     flexDirection: 'column',
@@ -179,7 +184,7 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                                             >
                                                 <Text style={styles.titleRowsTable}>Nacional</Text>
                                                 <Text style={styles.titleRowsTable}>
-                                                    {DATA.rows.pais.nacional}
+                                                    {DATA.rows?.pais.nacional}
                                                 </Text>
                                             </View>
                                             <View
@@ -190,30 +195,22 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                                                     textAlign: 'center',
                                                 }}
                                             >
-                                                <Text style={styles.titleRowsTable}>Extranjero</Text>
                                                 <Text style={styles.titleRowsTable}>
-                                                    {DATA.rows.pais.internacional}
+                                                    Extranjero
+                                                </Text>
+                                                <Text style={styles.titleRowsTable}>
+                                                    {DATA.rows?.pais.internacional}
                                                 </Text>
                                             </View>
                                         </View>
                                     </View>
                                 </View>
-                                {/* <View style={styles.section}>
-                                    <Text style={styles.titleRowsTable}>Total Visitas</Text>
-                                    <Text style={styles.titleRowsTable}>H</Text>
-                                    <Text style={styles.titleRowsTable}>M</Text>
-                                    <Text style={styles.titleRowsTable}>PND</Text>
-                                    <Text style={styles.titleRowsTable}>ME</Text>
-                                    <Text style={styles.titleRowsTable}>MA</Text>
-                                    <Text style={styles.titleRowsTable}>TE</Text>
-                                    <Text style={styles.titleRowsTable}>NA</Text>
-                                    <Text style={styles.titleRowsTable}>EX</Text>
-                                </View> */}
+                               
                             </View>
 
-                            <Text style={styles.title}>
-                                Reporte generado: {date_report_format} {hour_report_format} por{' '}
-                                {user.name} {user.lastName}{' '}
+                            <Text style={styles.generadoPor}>
+                                Reporte generado el {date_report_format} a las {hour_report_format} por{' '}
+                                {user.name} {user.lastName}.
                             </Text>
                         </Page>
                     </Document>
@@ -236,9 +233,10 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     title: {
-        fontSize: 16,
-        margin: 5,
+        fontSize: 18,
+        marginBottom: 35,
         paddingHorizontal: 20,
+        textAlign: 'center',
     },
     titleRowsTable: {
         fontSize: 14,
@@ -246,14 +244,24 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         alignContent: 'center',
         justifyContent: 'center',
+        fontWeight: 'bold',
     },
     table: {
         flexDirection: 'column',
         margin: 25,
-
         border: '1px solid black',
         alignContent: 'center',
         justifyContent: 'center',
+    },
+    generadoPor: {
+        fontSize: 12,
+        marginVertical: -20,
+        paddingHorizontal: 35,
+    },
+    detalle:{
+        fontSize: 14,
+        marginBottom: -20,
+        paddingHorizontal: 35,
     },
 })
 

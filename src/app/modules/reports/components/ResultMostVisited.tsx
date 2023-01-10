@@ -118,6 +118,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                             components={animatedComponents}
                             className={'mb-4'}
                             onChange={handleChangeLanguage}
+                            placeholder='Exportar'
                         />
                             </div>
                         </div>

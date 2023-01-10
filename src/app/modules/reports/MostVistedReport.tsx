@@ -161,15 +161,17 @@ const MostVistedReport = () => {
         getPublishSites()
     }
     async function getPublishSites() {
+        setShowLoad(true)
         const sites: any = await getData(getSitiosPublicados)
         // console.log('sites: ', sites.data)
-
+        
         sites.data.map((sit: any) => {
             publishSite.push({value: sit.id_sitio, label: sit.nombre})
         })
+        setShowLoad(false)
     }
 
-    useEffect(() => {
+    useEffect(() => {   
         getSite()
         //getPublishSites()
     }, [])
