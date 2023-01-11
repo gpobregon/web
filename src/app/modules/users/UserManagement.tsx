@@ -68,19 +68,10 @@ const customStyles = {
 
 const animatedComponents = makeAnimated()
 
-//esto me retorna el email del usuario con el que estoy logueado
-// const getEmail = ()=>{
-//     Auth.currentAuthenticatedUser().then((user) => {
-//         console.log('user email = ' + user.attributes.email + ' ' + user.attributes.name  );
-//       });
-// }
-
-// getEmail()
 const UserManagement: FC<any> = ({show}) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
     const [users, setUsers] = useState<UserType[]>([])
-    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [modalAddUser, setModalAddUser] = useState(false)
     const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
@@ -175,7 +166,6 @@ const UserManagement: FC<any> = ({show}) => {
             let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.listUsers(params, (err, data) => {
                 if (err) {
-                    console.log(err)
                     reject(err)
                 } else {
                     resolve(data)
@@ -194,42 +184,29 @@ const UserManagement: FC<any> = ({show}) => {
             secretAccessKey: '5YEKUpLfQ/qYK50cTqM5e8wSmf+tPRhLXvsVFEjN',
         })
         let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
-        console.log('cognito: ', cognito)
         try {
-            cognito.adminUpdateUserAttributes(
-                {
-                    UserAttributes: [
-                        {
-                            Name: 'custom:role',
-                            Value: String(dataSelect.role),
-                        },
-                    ],
-                    UserPoolId: awsconfig.userPoolId,
-                    Username: dataSelect.user,
-                },
-                function (err, data) {
-                    if (err) console.log(err, err.stack) // an error occurred
-                    else console.log(data)
-                }
-            )
+            cognito.adminUpdateUserAttributes({
+                UserAttributes: [
+                    {
+                        Name: 'custom:role',
+                        Value: String(dataSelect.role),
+                    },
+                ],
+                UserPoolId: awsconfig.userPoolId,
+                Username: dataSelect.user,
+            })
 
             const filter = roles.filter((item) => {
                 return dataSelect.role === item.nombre
             })
-            console.log('filter: ', filter)
-
             let objeto = {
                 id_usuario: users[0].Username,
                 id_rol: filter[0].id_rol,
                 foto: user.imageProfile,
             }
 
-            await postData(updateUserMethod, objeto).then((data) => {
-                console.log(data)
-            })
-        } catch (err) {
-            console.log('err: ', err)
-        }
+            await postData(updateUserMethod, objeto)
+        } catch (err) {}
         getUsers()
     }
 

@@ -27,7 +27,6 @@ const ReportsPage = () => {
             logout()
             await Amplify.Auth.forgetDevice()
         } catch (error) {
-            console.log('no jalo', error)
         }
     }
 

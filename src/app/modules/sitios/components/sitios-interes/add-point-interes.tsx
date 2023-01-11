@@ -91,12 +91,7 @@ const AddPoint = () => {
         publicar_web: false,
         publicar_movil: false,
     }) 
-    console.log("sitio: ", sitio);
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
-    // useEffect(() => {
-    //   console.log(sitio)
-    // }, []);
-
     const [status, setStatus] = useState<status>({
         id_sitio: 0,
         favorito: true,
@@ -141,11 +136,9 @@ const AddPoint = () => {
     }
     //petitions----------------------------------------------------------------------------
     const addNewPoint = async (tipo: string) => {
-        // console.log(sitio) 
         setShowLoad(true)
         if (sitio.nombre != '' && sitio.portada_path != '') {
             const res: any = await postData(addNewPointInteres, sitio)
-            //    console.log(res)
             navigate(`/template/punto/${sitio.id_sitio}/${tipo}/${res.point.id_punto}`, {
                 state: sitio,
             })
@@ -189,7 +182,6 @@ const AddPoint = () => {
             publicar_movil: sitio.publicar_movil,
         })
 
-        // console.log(sitio)
         if (imagen != '') {
             setModalupIMG(false)
         }
@@ -199,7 +191,6 @@ const AddPoint = () => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        // console.log(language)
     }
 
     const languagesOptions = languages?.map((language) => ({
@@ -207,10 +198,6 @@ const AddPoint = () => {
         label: language.nombre,
     }))
 
-    // const handleChangeLanguage = (event: any) => {
-    //     sitio.id_lenguaje = event.value
-    //     // console.log(sitio)
-    // } 
 
     const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
     return (
@@ -311,12 +298,6 @@ const AddPoint = () => {
                                     disabled
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
-                                    onClick={() => {
-                                        // console.log('site')
-                                        // saveChanges();
-                                        // console.log(site)
-                                        // navigate('/site')
-                                    }}
                                     style={{color: '#4F4B4B', display: 'flex', marginRight: '4px'}}
                                 ></Button>
 
@@ -646,12 +627,6 @@ const AddPoint = () => {
                                             <Button
                                                 onClick={() => {
                                                     addNewPoint('movil')
-                                                    // console.log(sitio)
-                                                    // window.location.href = "../sitios";
-
-                                                    // console.log(
-                                                    //     'creado con el boton de sitio mobil'
-                                                    // )
                                                 }}
                                                 className='btn btn-info col-md-12 col-sm-12 col-lg-12'
                                             >

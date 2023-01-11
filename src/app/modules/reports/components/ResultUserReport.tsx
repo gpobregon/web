@@ -13,10 +13,6 @@ import Moment from 'moment'
 import {PublishSite} from '../../../models/publishSite'
 
 const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
-    console.log('name: ', name)
-    console.log('site: ', site)
-    console.log('data en html: ', data)
-
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
             <Row className='mb-7'>

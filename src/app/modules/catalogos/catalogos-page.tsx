@@ -510,7 +510,6 @@ const CatalogosPage = () => {
             logout()
             await Amplify.Auth.forgetDevice()
         } catch (error) {
-            console.log('no jalo', error)
         }
     }
 

@@ -3,11 +3,10 @@ import imgUpload from '../upload-image_03.jpg'
 import UpImage from '../../uploadFile/upload-image'
 import moment from 'moment'
 import {Button, Card, Col, Form} from 'react-bootstrap'
-import {getData, getSitesActivesAndPublicatedMethod, URLAWS} from '../../../services/api'
-import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
+import {URLAWS} from '../../../services/api'
 import makeAnimated from 'react-select/animated'
 import Select from 'react-select'
-import { DeleteImage } from '../../deleteFile/delete-image'
+import {DeleteImage} from '../../deleteFile/delete-image'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -66,8 +65,9 @@ const UpdateNotification: FC<any> = ({
     setValueSelect,
     labelSelect,
     setLabelSelect,
+    scheduleNotification,
+    setScheduleNotification,
 }) => {
-    const [scheduleNotification, setScheduleNotification] = useState(false)
     const [switchValue, setSwitchValue] = useState(notification?.tipo === 1 ? true : false)
 
     let dateNow = moment().toJSON()
@@ -76,7 +76,18 @@ const UpdateNotification: FC<any> = ({
     const toggleScheduleInputs = () => {
         setSwitchValue(!switchValue)
         setScheduleNotification(!scheduleNotification)
-        if (scheduleNotification === true) {
+        if (!scheduleNotification) {
+            setNotification({
+                id_notificacion: notification.id_notificacion,
+                nombre: notification.nombre,
+                descripcion: notification.descripcion,
+                imagen_path: notification.imagen_path,
+                fecha_hora_programada: notification.fecha_hora_programada,
+                tipo: 1,
+                estado: 1,
+                id_sitio: notification.id_sitio,
+            })
+        } else {
             setNotification({
                 id_notificacion: notification.id_notificacion,
                 nombre: notification.nombre,
@@ -203,7 +214,7 @@ const UpdateNotification: FC<any> = ({
                                 variant='outline-danger'
                                 className='text-center'
                                 onClick={() => {
-                                    DeleteImage('notificaciones',notification.imagen_path)
+                                    DeleteImage('notificaciones', notification.imagen_path)
                                     setNotification({
                                         id_notificacion: notification.id_notificacion,
                                         nombre: notification.nombre,

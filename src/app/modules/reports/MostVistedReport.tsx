@@ -123,17 +123,11 @@ const MostVistedReport = () => {
                 let temp = []
 
                 for (let i = 0; i < sit.length; i++) {
-                    console.log('sit: ', sit[i].data)
                     temp.push(sit[i].data)
-                    // for (let e = 0; e <= sit[i].data.length; e++) {
-                    //        console.log(sit[i].data[e])
-                    //     temp.push(sit[i].data[e])
-                    // }
                 }
 
                 setData(temp as [])
                 showResultComponent()
-                // console.log('sit: ', sit)
                 setExistUsers(true) 
                 setShowLoad(false)
                 // setTimeout(() => setShowLoad(false), 1000)
@@ -156,7 +150,6 @@ const MostVistedReport = () => {
     async function getPublishSites() {
         setShowLoad(true)
         const sites: any = await getData(getSitiosPublicados)
-        // console.log('sites: ', sites.data)
         
         sites.data.map((sit: any) => {
             publishSite.push({value: sit.id_sitio, label: sit.nombre})

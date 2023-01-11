@@ -6,8 +6,8 @@ import {Link} from 'react-router-dom'
 import ResultUserReport from './components/ResultUserReport'
 import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
-import swal from 'sweetalert' 
-import { LoadingContext } from '../../utility/component/loading/context'
+import swal from 'sweetalert'
+import {LoadingContext} from '../../utility/component/loading/context'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -56,7 +56,7 @@ const animatedComponents = makeAnimated()
 const genresOptions = [
     {value: 1, label: 'Femenino'},
     {value: 2, label: 'Masculino'},
-    {value: 3, label: 'Prefiero no decirlo'}, 
+    {value: 3, label: 'Prefiero no decirlo'},
     {value: 4, label: 'Todos los generos'},
 ]
 
@@ -64,8 +64,8 @@ const yearsOldOptions = [
     {value: 1, label: 'Menor de edad'},
     {value: 2, label: '18 a 30'},
     {value: 3, label: '31 a 50'},
-    {value: 4, label: '51 en adelante'}, 
-    {value: 5, label: 'todas las edades'}, 
+    {value: 4, label: '51 en adelante'},
+    {value: 5, label: 'todas las edades'},
 ]
 
 const countryOptions = [
@@ -74,11 +74,10 @@ const countryOptions = [
     {value: 3, label: 'Todos'},
 ]
 
-const UserReport = () => { 
+const UserReport = () => {
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([])
-    // console.log("publishSite: ", publishSite);
     const [existUsers, setExistUsers] = useState(false)
     const [type, setType] = useState({
         tipo_reporte: 'usuarios',
@@ -90,12 +89,9 @@ const UserReport = () => {
         pais: 0,
         calificacion: 4,
     })
-    console.log('type: ', type)
-
     const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
     const [data, setData] = useState([])
-    // console.log('data: ', data)
     const typeReport = async (typee: any) => {
         if (
             type.id_sitio != 0 &&
@@ -105,12 +101,15 @@ const UserReport = () => {
             type.edad != 0 &&
             type.pais != 0
         )
-            if (type.fecha_inicial >= type.fecha_final) { 
-                swal('Fechas incorrectas', 'Por favor introduce una fecha inicial menor que la final', 'error')
-            } else { 
+            if (type.fecha_inicial >= type.fecha_final) {
+                swal(
+                    'Fechas incorrectas',
+                    'Por favor introduce una fecha inicial menor que la final',
+                    'error'
+                )
+            } else {
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                console.log('sit: ', sit)
                 setName(sit[0].nombre_sitio)
                 setPhoto(sit[0].imagen)
 
@@ -118,15 +117,13 @@ const UserReport = () => {
 
                 for (let i = 0; i < sit.length; i++) {
                     for (let e = 0; e < sit[i].data.length; e++) {
-                        console.log(sit[i].data[e])
                         temp.push(sit[i].data[e])
                     }
                 }
 
                 setData(temp as [])
                 showResultComponent()
-                // console.log('sit: ', sit)
-                setExistUsers(true) 
+                setExistUsers(true)
                 setTimeout(() => setShowLoad(false), 1000)
             }
         else {
@@ -150,7 +147,6 @@ const UserReport = () => {
     }
     async function getPublishSites() {
         const sites: any = await getData(getSitiosPublicados)
-        // console.log('sites: ', sites.data)
 
         sites.data.map((sit: any) => {
             publishSite.push({value: sit.id_sitio, label: sit.nombre})

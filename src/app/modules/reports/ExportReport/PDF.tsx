@@ -6,8 +6,6 @@ import {Auth} from 'aws-amplify'
 import {saveAs} from 'file-saver'
 
 const PDF: FC<any> = ({show, onClose, DATA}) => {
-    console.log('🚀 ~ file: pdf.tsx:7 ~ DATA', DATA)
-
     var date_report = new Date()
     var date_report_format = moment(date_report).format('DD/MM/YYYY')
     var hour_report_format = moment(date_report).format('HH:mm:ss')

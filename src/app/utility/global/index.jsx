@@ -17,7 +17,6 @@ export function appendData(all, data) {
 }
 
 export const setDataList = (el) => {
-    // console.log(interpretHTML(el))
     const L = el.firstChild.getElementsByTagName('li')
     let Array = []
     for (let i = 0; i < L.length; i++) {

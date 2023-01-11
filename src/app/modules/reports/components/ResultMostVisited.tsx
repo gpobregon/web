@@ -137,7 +137,6 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
     )
 
     const handleChangeLanguage = (event: any) => {
-        console.log('event: ', event)
         if (event.value == 1) {
             setShowPDF(true)
         } else if (event.value == 2) {

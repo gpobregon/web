@@ -21,7 +21,6 @@ const HeaderUserMenu: FC = () => {
             logout()
             await  Amplify.Auth.forgetDevice();
         } catch (error) {
-            console.log("no jalo", error)
         }
 
     }
@@ -35,9 +34,6 @@ const HeaderUserMenu: FC = () => {
                 lastname: user.attributes['custom:lastname'],
                 imageProfile: user.attributes['custom:imageProfile'],
             })
-            //console.log(user.attributes['custom:phoneNumber']);
-            //console.log(JSON.stringify(user.attributes))
-            //console.log(user)
         })
     } 
 

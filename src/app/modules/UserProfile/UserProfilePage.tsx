@@ -25,7 +25,7 @@ import {
     validateStringPhoneNumberAlert,
     validateStringSoloNumeros,
 } from '../validarCadena/validadorCadena'
-import { useAuth } from '../auth'
+import {useAuth} from '../auth'
 
 interface Profile {
     fileImage: any
@@ -50,9 +50,7 @@ const UserProfilePage = () => {
     })
     const [showUpdateButton, setShowUpdateButton] = useState(true)
     const [users, setUsers] = useState<UserType[]>([])
-    // console.log("users: ", users);
     const [roles, setRoles] = useState<roleManager[]>([])
-    //console.log("roles: ", roles);
     const [existUsers, setExistUsers] = useState(false)
     const [existRoles, setExistRoles] = useState(false)
     const [dataUser, setDataUser] = useState({
@@ -79,9 +77,6 @@ const UserProfilePage = () => {
         setRoles(role.data as roleManager[])
         setExistRoles(true)
     }
-    // console.log(getRoles())
-    //console.log("roles: ", roles);
-
     //esto me retorna el email del usuario con el que estoy logueado
 
     const getEmail = async () => {
@@ -110,16 +105,11 @@ const UserProfilePage = () => {
         })
     }
 
-    console.log('dataUser: ', dataUser) 
+    const getDivices = async () => {
+        const devices = await Amplify.Auth.fetchDevices()
+    }
 
-
-    const getDivices = async ()=>{  
-        const devices = await Amplify.Auth.fetchDevices(); 
-        console.log("devices adentro: ", devices);
-    }  
-
-
-    useEffect(() => { 
+    useEffect(() => {
         getDivices()
         getRoles()
         getEmail()
@@ -146,7 +136,6 @@ const UserProfilePage = () => {
 
     const onClickUpdate = async () => {
         setShowUpdateButton(false)
-        console.log(form)
     }
 
     let [profile, setProfile] = useState({
@@ -245,17 +234,13 @@ const UserProfilePage = () => {
         if (data.oldPassword != '' && data.newPassword != '') {
             if (data.newPassword == data.confirmPassword) {
                 const user = await Auth.currentAuthenticatedUser()
-                console.log('user: ', user)
                 try {
                     Auth.currentAuthenticatedUser()
                         .then((user) => {
                             return Auth.changePassword(user, data.oldPassword, data.newPassword)
                         })
-                        .then((data) => changePasswordDone()) 
-                        .catch((err) => console.log(err))
-                } catch (error) {
-                    console.log(error)
-                }
+                        .then((data) => changePasswordDone())
+                } catch (error) {}
             } else {
                 swal('Las contraseñas no son iguales', 'Intentalo de nuevo', 'warning')
             }
@@ -266,18 +251,16 @@ const UserProfilePage = () => {
                 Confirmar_Contraseña: data.confirmPassword,
             })
         }
-    }  
+    }
 
     const {currentUser, logout} = useAuth()
-    const outSessionDevices = async ()=>{ 
-        try { 
-            changePasswordMethod () 
-            await  Amplify.Auth.forgetDevice(); 
-            await Auth.signOut({ global: true }); 
+    const outSessionDevices = async () => {
+        try {
+            changePasswordMethod()
+            await Amplify.Auth.forgetDevice()
+            await Auth.signOut({global: true})
             await logout()
-        } catch (error) {
-            console.log(error)
-        }
+        } catch (error) {}
     }
 
     const showModalPassword = () => {
