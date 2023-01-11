@@ -207,7 +207,6 @@ const RoleManagement: FC<any> = ({show}) => {
 
                     setTimeout(() => (document.location.href = '/usuarios/role-management'), 750)
                 } else {
-                    console.log('deleteInfo: ', deleteInfo)
                     swal({
                         title: 'Error al eliminar rol',
                         text: `Este rol esta siendo usado por usuarios`,
@@ -218,7 +217,6 @@ const RoleManagement: FC<any> = ({show}) => {
                 }
             }
         } catch (error) {
-            console.log(error)
         }
 
         // await deleteData(deleteRoleMethod, role)
@@ -228,11 +226,6 @@ const RoleManagement: FC<any> = ({show}) => {
         //     icon: 'success',
         // })
     }
-
-    for (let rol of roles) {
-        console.log(rol)
-    }
-    console.log('----------------------------------------')
 
     let navigate = useNavigate()
     const {setShowLoad} = useContext(LoadingContext)
@@ -271,11 +264,6 @@ const RoleManagement: FC<any> = ({show}) => {
     //Esto se hizo con el fin de que cuando se guarde un check box hijo tambien se guarde automaticamente el padre
     //Pero la función en realidad viene desde el back
     const comprobarCategorias = () => {
-        console.log(
-            !stateRole.categoria_crear &&
-                !stateRole.categoria_editar &&
-                !stateRole.categoria_eliminar
-        )
         if (
             !stateRole.categoria_crear &&
             !stateRole.categoria_editar &&
@@ -289,7 +277,6 @@ const RoleManagement: FC<any> = ({show}) => {
                 id_rol: role.id_rol,
                 gestor_categorias_idiomas: true,
             }))
-            console.log(stateRole.gestor_categorias_idiomas)
         } else {
             setStateRole((role) => ({
                 ...role,
@@ -300,14 +287,12 @@ const RoleManagement: FC<any> = ({show}) => {
     }
 
     const comprobarOffline = () => {
-        console.log(!stateRole.offline_sitios && !stateRole.offline_puntos)
         if (!stateRole.offline_sitios && !stateRole.offline_puntos) {
             setStateRole((role) => ({
                 ...role,
                 id_rol: role.id_rol,
                 gestor_offline: true,
             }))
-            console.log(stateRole.gestor_offline)
         } else {
             setStateRole((role) => ({
                 ...role,
@@ -353,7 +338,6 @@ const RoleManagement: FC<any> = ({show}) => {
                 id_rol: role.id_rol,
                 gestor_sitios: true,
             }))
-            console.log(stateRole.gestor_sitios)
         } else {
             setStateRole((role) => ({
                 ...role,
@@ -376,7 +360,6 @@ const RoleManagement: FC<any> = ({show}) => {
                 id_rol: role.id_rol,
                 gestor_notificaciones: true,
             }))
-            console.log(stateRole.gestor_notificaciones)
         } else {
             setStateRole((role) => ({
                 ...role,
@@ -401,7 +384,6 @@ const RoleManagement: FC<any> = ({show}) => {
                 id_rol: role.id_rol,
                 gestor_usuarios: true,
             }))
-            console.log(stateRole.gestor_usuarios)
         } else {
             setStateRole((role) => ({
                 ...role,

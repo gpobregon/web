@@ -52,9 +52,6 @@ const customStyles = {
 }
 
 const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
-    // console.log('name: ', name)
-    // console.log('data: ', data)
-    // console.log('site: ', site)
     const tableRef = useRef(null);
     const [showPDF, setShowPDF] = useState(false) //modal show qr
     const handleClose = () => setShowPDF(false) //modal close qr
@@ -87,7 +84,6 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
         {site: site}
     )
     const handleChangeLanguage = (event: any) => {
-        console.log('event: ', event)
         if (event.value == 1) {
             setShowPDF(true)
         } else if (event.value == 2) {

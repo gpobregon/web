@@ -3,7 +3,7 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Form, Row, Overlay, Container} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
-import ResultSitestByRating from './components/ResultSitesByRating' 
+import ResultSitestByRating from './components/ResultSitesByRating'
 import UsersResultByRating from './components/UsersResultSitesByRating'
 import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
@@ -77,7 +77,7 @@ const SitesByRating = () => {
     const [showResult, setShowResult] = useState(false)
     const [marcadoMalo, setMarcadoMalo] = useState(false)
     const [marcadoBueno, setMarcadoBueno] = useState(false)
-    const [marcadoExcelente, setMarcadoExcelente] = useState(false) 
+    const [marcadoExcelente, setMarcadoExcelente] = useState(false)
     const [marcadoTodos, setMarcadoTodos] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([])
 
@@ -91,14 +91,11 @@ const SitesByRating = () => {
         pais: 0,
         calificacion: 0,
     })
-    console.log('type: ', type)
 
     const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
-    const [data, setData] = useState([]) 
+    const [data, setData] = useState([])
     const [users, setUsers] = useState([])
-     console.log("users: ", users);
-    console.log('data: ', data)
     const typeReport = async (typee: any) => {
         if (
             type.id_sitio != 0 &&
@@ -115,22 +112,19 @@ const SitesByRating = () => {
             } else {
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                console.log('sit: ', sit) 
                 setName(sit[0].nombre_sitio)
                 setPhoto(sit[0].imagen)
                 let temp = []
                 let temp2 = []
                 for (let i = 0; i < sit.length; i++) {
-                    temp.push(sit[i].data)  
+                    temp.push(sit[i].data)
                     for (let e = 0; e < sit[i].usuarios.length; e++) {
-                           console.log(sit[i].usuarios[e])
-                           temp2.push(sit[i].usuarios[e])
+                        temp2.push(sit[i].usuarios[e])
                     }
                 }
-                setData(temp as [])  
+                setData(temp as [])
                 setUsers(temp2 as [])
                 showResultComponent()
-                // console.log('sit: ', sit)
                 setTimeout(() => setShowLoad(false), 1000)
             }
         else {
@@ -143,7 +137,6 @@ const SitesByRating = () => {
     }
     async function getPublishSites() {
         const sites: any = await getData(getSitiosPublicados)
-        // console.log('sites: ', sites.data)
 
         sites.data.map((sit: any) => {
             publishSite.push({value: sit.id_sitio, label: sit.nombre})
@@ -300,7 +293,7 @@ const SitesByRating = () => {
                                             })
                                             setMarcadoMalo(true)
                                             setMarcadoBueno(false)
-                                            setMarcadoExcelente(false) 
+                                            setMarcadoExcelente(false)
                                             setMarcadoTodos(false)
                                         }}
                                         style={{
@@ -351,7 +344,7 @@ const SitesByRating = () => {
                                             })
                                             setMarcadoBueno(true)
                                             setMarcadoMalo(false)
-                                            setMarcadoExcelente(false) 
+                                            setMarcadoExcelente(false)
                                             setMarcadoTodos(false)
                                         }}
                                         style={{
@@ -389,7 +382,7 @@ const SitesByRating = () => {
                                             })
                                             setMarcadoExcelente(true)
                                             setMarcadoMalo(false)
-                                            setMarcadoBueno(false) 
+                                            setMarcadoBueno(false)
                                             setMarcadoTodos(false)
                                         }}
                                         style={{
@@ -399,8 +392,8 @@ const SitesByRating = () => {
                                         }}
                                     ></button>
 
-                                    <button 
-                                    className='btn btn-primary-outline background-button'
+                                    <button
+                                        className='btn btn-primary-outline background-button'
                                         onClick={() => {
                                             setType({
                                                 tipo_reporte: type.tipo_reporte,
@@ -411,18 +404,20 @@ const SitesByRating = () => {
                                                 fecha_final: type.fecha_final,
                                                 pais: type.pais,
                                                 calificacion: 4,
-                                            }) 
+                                            })
                                             setMarcadoExcelente(false)
                                             setMarcadoMalo(false)
-                                            setMarcadoBueno(false) 
+                                            setMarcadoBueno(false)
                                             setMarcadoTodos(true)
-                                        }} 
+                                        }}
                                         style={{
                                             color: marcadoTodos ? '#009ef7' : '#92929F',
                                             display: 'flex',
                                             marginRight: '4px',
                                         }}
-                                    >Ver todos</button>
+                                    >
+                                        Ver todos
+                                    </button>
                                 </div>
                             </Form.Group>
                         </Col>
@@ -451,13 +446,9 @@ const SitesByRating = () => {
                     site={type}
                     name={name}
                     photo={photo}
-                /> 
+                />
 
-                <UsersResultByRating  
-                    show={showResult} 
-                    users={users}
-                />                        
-
+                <UsersResultByRating show={showResult} users={users} />
             </div>
         </Container>
     )

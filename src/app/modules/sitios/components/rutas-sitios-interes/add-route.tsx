@@ -26,7 +26,7 @@ import {roleManager} from '../../../../models/roleManager'
 import {Auth} from 'aws-amplify'
 import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
 import {LoadingContext} from '../../../../utility/component/loading/context'
-import { DeleteImage } from '../../../deleteFile/delete-image'
+import {DeleteImage} from '../../../deleteFile/delete-image'
 type datosPuntoInteres2 = {
     id_punto: number
     lenguajes: [
@@ -89,9 +89,7 @@ const AddRoute = () => {
         })
         setruta(route)
         setagregrarPaso(route.pasos)
-        // console.log(route)
 
-        // console.log(getimg)
         if (getimg.imagen_ref1 === '' && getimg.imagen_ref2 === '' && getimg.imagen_ref3 === '') {
             setGetimg({
                 id_punto_a: puntos.id_punto_a,
@@ -122,14 +120,8 @@ const AddRoute = () => {
             if (getimg.imagen_ref3 === null) {
                 getimg.imagen_ref3 = ''
             }
-            // console.log(getimg)
             await postData(addImagePrincipal, imgprincipal)
             await postData(addImages, getimg)
-            // } else {
-            //     swal('Error', 'Falta agregar alguna imagen', 'error')
-            //     return
-            // }
-
             await postData(addPasos, {
                 id_punto_a: ruta?.id_punto_a,
                 id_punto_b: ruta?.id_punto_b,
@@ -154,17 +146,8 @@ const AddRoute = () => {
         } else {
             swal('Error', 'Falta seleccionar el lenguaje', 'error')
         }
-        // const g = await postData(addImages, imganes)
-        // const a = await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
-        // console.log(imganes)
-        // console.log(imgprincipal)
-        // console.log(agregrarPaso)
-        // console.log(a)
-        // var newArray = arrayimagenes.filter((item) => item.id_image !== 1);
-        // console.log(newArray);
     }
 
-    const [id, setId] = useState<number>(0)
     const [numeroImg, setnumeroImg] = useState<number>(0)
     const [contador, setContador] = useState<number>(0)
     const navigate = useNavigate()
@@ -189,7 +172,6 @@ const AddRoute = () => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        // console.log(language)
     }
     const languagesOptions = languages?.map((language) => ({
         value: language.id_lenguaje,
@@ -252,7 +234,6 @@ const AddRoute = () => {
         lenguajes.id_lenguaje = e.value
         setagregrarPaso([])
         await obtenerRuta()
-        // console.log(lenguajes.id_lenguaje)
     }
     // termina seleccionar idioma de la guia ==============================
 
@@ -283,13 +264,6 @@ const AddRoute = () => {
     }
     const addNewPaso = async () => {
         const a: any = await postData(addPasos, {
-            id_punto_a: puntos.id_punto_a,
-            id_punto_b: puntos.id_punto_b,
-            pasos: agregrarPaso,
-            id_lenguaje: lenguajes.id_lenguaje,
-        })
-        console.log(a)
-        console.log({
             id_punto_a: puntos.id_punto_a,
             id_punto_b: puntos.id_punto_b,
             pasos: agregrarPaso,
@@ -742,7 +716,10 @@ const AddRoute = () => {
                                                                             })
                                                                             return
                                                                         }
-                                                                        DeleteImage('sitePages/routes',imgprincipal.img_principal)
+                                                                        DeleteImage(
+                                                                            'sitePages/routes',
+                                                                            imgprincipal.img_principal
+                                                                        )
                                                                         imgprincipal.img_principal =
                                                                             ''
                                                                     }}
@@ -849,7 +826,10 @@ const AddRoute = () => {
                                                                                     })
                                                                                     return
                                                                                 }
-                                                                                DeleteImage('sitePages/routes', getimg.imagen_ref1)
+                                                                                DeleteImage(
+                                                                                    'sitePages/routes',
+                                                                                    getimg.imagen_ref1
+                                                                                )
                                                                                 getimg.imagen_ref1 =
                                                                                     ''
                                                                             }}
@@ -943,7 +923,10 @@ const AddRoute = () => {
                                                                                     })
                                                                                     return
                                                                                 }
-                                                                                DeleteImage('sitePages/routes', getimg.imagen_ref2)
+                                                                                DeleteImage(
+                                                                                    'sitePages/routes',
+                                                                                    getimg.imagen_ref2
+                                                                                )
                                                                                 getimg.imagen_ref2 =
                                                                                     ''
                                                                             }}
@@ -1039,7 +1022,10 @@ const AddRoute = () => {
                                                                                     })
                                                                                     return
                                                                                 }
-                                                                                DeleteImage('sitePages/routes', getimg.imagen_ref3)
+                                                                                DeleteImage(
+                                                                                    'sitePages/routes',
+                                                                                    getimg.imagen_ref3
+                                                                                )
                                                                                 getimg.imagen_ref3 =
                                                                                     ''
                                                                             }}

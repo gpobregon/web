@@ -56,7 +56,6 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG,ubicacionBucket,tipoArchivo
                 }
             })
             .send((err) => {
-                if (err) console.log(err)
             })
     }
     function delay(ms: number) {

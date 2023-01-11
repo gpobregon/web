@@ -93,7 +93,6 @@ const Interes: FC<id_sitio> = (props) => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        // console.log(language)
     }
 
     useEffect(() => {
@@ -105,12 +104,10 @@ const Interes: FC<id_sitio> = (props) => {
         const rooms: any = await postData(RoomsMethod, props)
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
-        // console.log(rooms.salas)
     }
 
     const seteatPuntoInteres = (interes: any) => {
         setPuntoInteres(interes)
-        // console.log(puntoInteres)
     }
 
     const addNewRoom = async (createRoom: any) => {
@@ -131,7 +128,6 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const showModalUpdateRoom = () => {
-        console.log(upRoom)
         setModalUpdateRoom(true)
     }
 
@@ -161,7 +157,6 @@ const Interes: FC<id_sitio> = (props) => {
         }
     }
     const deletePointInteres = (id_punto: number, id_sitio: number) => {
-        // console.log(id_punto,id_sitio,idsala)
         swal({
             title: '¿Estas seguro de Eliminar este punto de interes ?',
             icon: 'warning',
@@ -169,13 +164,6 @@ const Interes: FC<id_sitio> = (props) => {
         }).then(async (res) => {
             if (res) {
                 await deleteData(delPointInteres, {
-                    id_punto: id_punto,
-                    id_lenguaje: 1,
-                    id_sitio: id_sitio,
-                    id_guia: idsala,
-                    estado: 0,
-                })
-                console.log({
                     id_punto: id_punto,
                     id_lenguaje: 1,
                     id_sitio: id_sitio,
@@ -228,9 +216,7 @@ const Interes: FC<id_sitio> = (props) => {
 
         //update the actual array
         setPuntoInteres(_fruitItems)
-        // console.log(_fruitItems)
         const a = await postData(OrderPointOfInterest, {puntos: _fruitItems})
-        console.log(a)
     }
     //handle name change
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -256,11 +242,9 @@ const Interes: FC<id_sitio> = (props) => {
 
         //update the actual array
         setRooms(_fruitItems)
-        console.log(_fruitItems)
     }
 
     //fin drag and drop salas
-    
 
     // * Restricción por rol
     const {setShowLoad} = useContext(LoadingContext)
@@ -306,8 +290,6 @@ const Interes: FC<id_sitio> = (props) => {
                 setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
             }
         })
-
-      
     }
 
     useEffect(() => {
@@ -693,8 +675,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                             {
                                                                                 id_punto:
                                                                                     punto.id_punto,
-                                                                                es_visible:
-                                                                                    true,
+                                                                                es_visible: true,
                                                                             }
                                                                         ))
                                                                     punto.es_portada_de_sitio =
@@ -793,8 +774,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                             //         }
                                                             //     }
                                                             // }
-                                                            // console.log(punto.lenguajes)
-                                                            // console.log(lenaguajeDefault)
                                                             // const languageEscogido =
                                                             //     punto.lenguajes.map(
                                                             //         (language) => ({
@@ -802,7 +781,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                             //             label: lenaguajeDefault,
                                                             //         })
                                                             //     )
-                                                            // console.log(languageEscogido)
                                                             navigate(
                                                                 `/sitios/edit-point-interes/${punto.id_sitio}/${punto.id_punto}`,
                                                                 {
@@ -849,7 +827,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 })
                                                                 return
                                                             }
-                                                            // console.log(punto.es_portada_de_sitio)
                                                             deletePointInteres(
                                                                 punto.id_punto,
                                                                 punto.id_sitio
