@@ -24,7 +24,7 @@ import React from 'react'
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
 import {LoadingContext} from '../../../../utility/component/loading/context'
-import { setMaxListeners } from 'node:process'
+import {setMaxListeners} from 'node:process'
 type datosPuntoInteres = {
     id_punto: number
     lenguajes: [
@@ -80,35 +80,14 @@ const SalaRutas: FC<id_punto_a> = (props) => {
             if (data.length === 0) {
                 setRutas([{id_punto: 0}])
             }
-        } catch (e: any) {
-            console.log(e.message)
-        }
-        // console.log(data);
-        // for (let i = 0; i < puntoInteres.length; i++) {
-        //     for (let j = 0; j < data.length; j++) {
-        //         if (puntoInteres[i].id_punto === data[j].id_punto) {
-
-        //             puntoInteres[i].rutaActiva = true
-        //         } else {
-        //             if (puntoInteres[i].rutaActiva) {
-
-        //             } else {
-        //                 puntoInteres[i].rutaActiva = false
-        //             }
-        //         }
-        //     }
-
-        // }
-        // console.log(puntoInteres);
+        } catch (e: any) {}
     }
 
     const getSalas = async () => {
         const rooms: any = await postData(RoomsMethod, {id_sitio: props.id_sitio})
         await getRutas()
-        // console.log(rooms);
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
-        // setVistaPrevia(false)
     }
     const seteatPuntoInteres = (interes: any) => {
         setPuntoInteres(interes)
@@ -174,7 +153,6 @@ const SalaRutas: FC<id_punto_a> = (props) => {
 
         //update the actual array
         setPuntoInteres(_fruitItems)
-        // console.log(_fruitItems)
         await postData(OrderPointOfInterest, {puntos: _fruitItems})
     }
     const agregarRuta = async (puntoa: number, puntob: number) => {
@@ -430,7 +408,7 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                         }}
                                                                         onClick={async () => {
                                                                             await validateRole()
-                                                                            
+
                                                                             if (
                                                                                 !permissionDeleteRoutePoint
                                                                             ) {
@@ -440,7 +418,6 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                 })
                                                                                 return
                                                                             }
-                                                                            // console.log(punto.es_portada_de_sitio)
                                                                             eliminarRuta(
                                                                                 punto.id_punto
                                                                             )

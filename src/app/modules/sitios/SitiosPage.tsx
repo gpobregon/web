@@ -44,7 +44,6 @@ const SitiosPage = () => {
         const cantidadSitiosPorPagina = '24'
         const site: any = await postData(sitesMethod, {page: pageNumber, quantity: cantidadSitiosPorPagina})
         const coutsite: any = await getData(`${sitesMethod}/count`)
-        // console.log(site)
 
         setCantidadSite(coutsite.count)
         setFilterSites(site.site as Site[])
@@ -66,7 +65,6 @@ const SitiosPage = () => {
         }
 
         let pagesLength = Math.ceil(coutsite.count / Number(cantidadSitiosPorPagina))
-        // console.log(pagesLength)
         setTotalPages(pagesLength)
     }
 
@@ -74,7 +72,6 @@ const SitiosPage = () => {
         const numAscending = [...sites].sort((a, b) => moment(a.creado).diff(b.creado))
         setSites(numAscending)
         setFilterSites(numAscending)
-        console.log(numAscending)
         setEstado(false)
         setUp(false)
     }
@@ -83,7 +80,6 @@ const SitiosPage = () => {
         const numDescending = [...sites].sort((a, b) => moment(b.creado).diff(a.creado))
         setSites(numDescending)
         setFilterSites(numDescending)
-        console.log(numDescending)
         setEstado(true)
         setUp(true)
     }
@@ -164,7 +160,6 @@ const SitiosPage = () => {
             logout()
             await Amplify.Auth.forgetDevice()
         } catch (error) {
-            console.log('no jalo', error)
         }
     }
 

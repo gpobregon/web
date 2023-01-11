@@ -132,7 +132,6 @@ const AddUserEmergency: FC<any> = ({show, onClose}) => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
     }
-    // console.log(getRoles())
 
     useEffect(() => {
         getRoles()
@@ -183,7 +182,6 @@ const AddUserEmergency: FC<any> = ({show, onClose}) => {
                                 enabled: false,
                             },
                         })
-                        console.log('user: ', user)
                         const filter = roles.filter((item) => {
                             return user.role === item.nombre
                         })
@@ -192,14 +190,10 @@ const AddUserEmergency: FC<any> = ({show, onClose}) => {
                             id_rol: filter[0].id_rol,
                             foto: user.imageProfile,
                         }
-                        await postData(addUserMethod, objeto).then((data) => {
-                            console.log(data)
-                        })
+                        await postData(addUserMethod, objeto)
 
-                        // alertUserDone()
                         document.location.href = '/auth'
                     } catch (error) {
-                        console.log('error signing up:', error)
                         swal(
                             'Contraseña o email invalidos',
                             'Recuerda escribir una contraseña que incluya un signo especial, una letra minuscula, una letra mayuscula y un minimo de 6 caracteres en total',

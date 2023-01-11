@@ -109,14 +109,12 @@ export function Login() {
                 return user
         } catch (error) {
             alertNotNullInputs()
-            console.log(error)
             return null
         }
     }
 
     const getDivices = async () => {
         const devices = await Amplify.Auth.fetchDevices()
-        console.log(devices)
     }
 
     useEffect(() => {

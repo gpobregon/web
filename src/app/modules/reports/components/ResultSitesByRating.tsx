@@ -4,9 +4,6 @@ import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select/dist/declarations/src/Select'
 
 const ResultSitesByRating: FC<any> = ({show, data, site, name, photo}) => {
-    // console.log('name: ', name)
-    // console.log('site: ', site)
-    // console.log('data: ', data)
     return (
         <>
             <div style={show == false ? {display: 'none'} : {display: 'block'}}>

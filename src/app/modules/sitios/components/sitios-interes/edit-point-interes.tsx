@@ -31,7 +31,7 @@ import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/vali
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
 import {LoadingContext} from '../../../../utility/component/loading/context'
-import { DeleteImage } from '../../../deleteFile/delete-image'
+import {DeleteImage} from '../../../deleteFile/delete-image'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -109,7 +109,6 @@ const EditPoint = () => {
 
     const ObtenerPuntoInteres = async () => {
         const punto: any = await postData(getPuntoInteres, {id_punto: Number(id_punto)})
-        console.log("punto: ", punto);
         setNombreSalas(punto.sala_nombre)
         setSitio({
             id_punto: Number(id_punto),
@@ -131,9 +130,7 @@ const EditPoint = () => {
             publicar_web: punto.publicar_web,
             publicar_movil: punto.publicar_movil,
         })
-        // console.log(punto)
     }
-    // console.log('sitio', sitio)
     const changeOculto = async (oculto: boolean) => {
         await postData(statePointInteres, {
             id_punto: id_punto,
@@ -200,7 +197,6 @@ const EditPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                // console.log(sitios)
                 navigate(`/sitios/editSite/${id_sitio}`)
             }
         })
@@ -232,33 +228,12 @@ const EditPoint = () => {
 
     const updatePoint = async () => {
         await postData(updatePointInteres, sitio)
-        
-        // console.log(updatePoint)
-        // console.log(sitio)
     }
 
-    // const getSites = async () => {
-    //     const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
-    //     setSitios(site.site)
-    // }
     //obtener lenguajes-------------------------------------------------------------------------------------
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
-    // let lenaguajeDefault = ''
-    // for (let i = 0; i < languages.length; i++) {
-    //     if (languages[i].id_lenguaje === sitio.id_lenguaje[0].value) {
-    //         // setLenaguajeDefault(languages[i].descripcion)
-
-    //         lenaguajeDefault = languages[i].nombre
-    //     }
-    // }
-
-    // const languageEscogido = sitio.id_lenguaje?.map((language) => ({
-    //     value: language.value,
-    //     label: lenaguajeDefault,
-    // }))
-
-    const publishTypePoint = async (publicar_movil:boolean,publicar_web:boolean) => {
+    const publishTypePoint = async (publicar_movil: boolean, publicar_web: boolean) => {
         if (publicar_movil === true && publicar_web === true) {
             await postData(publishPI, {
                 id_punto: sitio.id_punto,
@@ -280,7 +255,6 @@ const EditPoint = () => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        // console.log(language)
     }
 
     const languagesOptions = languages?.map((language) => ({
@@ -297,13 +271,11 @@ const EditPoint = () => {
     // const handleChangeLanguage = async (event: any) => {
     //     const result = sitio.lenguajes?.filter((language) => language.id_lenguaje === event.value)
     //     if (result[0]?.descripcion) {
-    //         // console.log(event.value)
     //         setDescripcion(result[0]?.descripcion)
     //         setMostrarDescripcion(true)
     //         sitio.descripcion = descripcion
     //         sitio.id_lenguaje = event.value
     //         sitio.id_lenguaje_anterior = event.value
-    //         // console.log(sitio)
     //     } else {
     //         setDescripcion('')
     //         swal({
@@ -338,7 +310,6 @@ const EditPoint = () => {
     //         })
     //     }
 
-    //     // console.log(descripcion)
     // }
 
     // UPLOAD IMAGE-------------------------------------------------------------------------
@@ -560,7 +531,7 @@ const EditPoint = () => {
                                     id='center2'
                                     onClick={async () => {
                                         await validateRole()
-                                        
+
                                         if (!permissionPostPoint) {
                                             swal({
                                                 title: 'No tienes permiso para publicar cambios de un punto de interés',
@@ -593,13 +564,14 @@ const EditPoint = () => {
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
 
-                                        publishTypePoint(!sitio.publicar_movil,sitio.publicar_web)
+                                        publishTypePoint(!sitio.publicar_movil, sitio.publicar_web)
                                         setSitio({...sitio, publicar_movil: !sitio.publicar_movil})
                                     }}
                                     className={'btn-secondary fa-solid fa-mobile background-button'}
                                     id='center2'
                                     style={{
-                                        color: sitio.publicar_movil== false ?  '#92929F': '#009ef7',
+                                        color:
+                                            sitio.publicar_movil == false ? '#92929F' : '#009ef7',
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
@@ -611,7 +583,7 @@ const EditPoint = () => {
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
                                         // sitio.publicar_web=!sitio.publicar_web
-                                        publishTypePoint(sitio.publicar_movil,!sitio.publicar_web)
+                                        publishTypePoint(sitio.publicar_movil, !sitio.publicar_web)
                                         setSitio({...sitio, publicar_web: !sitio.publicar_web})
                                     }}
                                     className={
@@ -619,7 +591,7 @@ const EditPoint = () => {
                                     }
                                     id='center2'
                                     style={{
-                                        color: sitio.publicar_web== false ?  '#92929F': '#009ef7',
+                                        color: sitio.publicar_web == false ? '#92929F' : '#009ef7',
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
@@ -682,8 +654,11 @@ const EditPoint = () => {
                                                 <Link
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
-                                                    onClick={() =>{
-                                                        DeleteImage('sitePages/puntosInteres',sitio.portada_path)
+                                                    onClick={() => {
+                                                        DeleteImage(
+                                                            'sitePages/puntosInteres',
+                                                            sitio.portada_path
+                                                        )
                                                         setSitio({
                                                             id_punto: sitio.id_punto,
                                                             id_sitio: sitio.id_sitio,
@@ -707,8 +682,7 @@ const EditPoint = () => {
                                                             publicar_web: sitio.publicar_web,
                                                             publicar_movil: sitio.publicar_movil,
                                                         })
-                                                    }
-                                                    }
+                                                    }}
                                                 ></Link>
                                             </Col>
                                         </Row>
@@ -965,7 +939,7 @@ const EditPoint = () => {
                                             <Button
                                                 onClick={async () => {
                                                     await validateRole()
-                                                    
+
                                                     if (!permissionMockPoint) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar un punto de interés',
@@ -1012,7 +986,7 @@ const EditPoint = () => {
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                                                 onClick={async () => {
                                                     await validateRole()
-                                                    
+
                                                     if (!permissionMockPoint) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar un punto de interés',

@@ -132,7 +132,6 @@ const AddUser: FC<any> = ({show, onClose}) => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
     }
-    // console.log(getRoles())
 
     useEffect(() => {
         getRoles()
@@ -183,7 +182,6 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                 enabled: false,
                             },
                         })
-                        console.log('user: ', user)
                         const filter = roles.filter((item) => {
                             return user.role === item.nombre
                         })
@@ -192,15 +190,11 @@ const AddUser: FC<any> = ({show, onClose}) => {
                             id_rol: filter[0].id_rol,
                             foto: user.imageProfile,
                         }
-                        await postData(addUserMethod, objeto).then((data) => {
-                            console.log(data)
-                        })
+                        await postData(addUserMethod, objeto)
 
-                        // alertUserDone()
                         onClose()
                         document.location.href = '/usuarios/user-management'
                     } catch (error) {
-                        console.log('error signing up:', error)
                         swal(
                             'Contraseña o email invalidos',
                             'Recuerda escribir una contraseña que incluya un signo especial, una letra minuscula, una letra mayuscula y un minimo de 6 caracteres en total',
@@ -235,9 +229,10 @@ const AddUser: FC<any> = ({show, onClose}) => {
             phoneNumber: user.phoneNumber,
             imageProfile: user.imageProfile,
         })
-    } 
+    }
 
-    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault();
+    const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
+        ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()
 
     return (
         <>
@@ -349,15 +344,15 @@ const AddUser: FC<any> = ({show, onClose}) => {
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
                                 <Form.Label>{'Teléfono'}</Form.Label>
-                                <Form.Control 
+                                <Form.Control
                                     value={user.phoneNumber}
                                     type='text'
-                                    pattern='/^-?\d+\.?\d*$/' 
+                                    pattern='/^-?\d+\.?\d*$/'
                                     maxLength={8}
                                     autoComplete='off'
-                                    className='mb-4' 
+                                    className='mb-4'
                                     onChange={(e) => {
-                                        if ( validateStringSoloNumeros(e.target.value)) {
+                                        if (validateStringSoloNumeros(e.target.value)) {
                                             setUser({
                                                 username: user.username,
                                                 password: user.password,
@@ -368,9 +363,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                                 phoneNumber: e.target.value,
                                                 imageProfile: user.imageProfile,
                                             })
-                                        } 
+                                        }
                                         setTouchedPhoneInput(true)
-                                        setValidPhone( validateStringSoloNumeros(e.target.value))
+                                        setValidPhone(validateStringSoloNumeros(e.target.value))
                                     }}
                                 />
                                 {validPhone && touchedPhoneInput ? (
@@ -387,8 +382,11 @@ const AddUser: FC<any> = ({show, onClose}) => {
 
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
-                                <Form.Label>{'Contraseña '}</Form.Label> 
-                                <p>*Debe tener por lo menos 6 caracteres, con letras mayúsculas, letras minúsculas, números y almenos un caracter especial*</p>
+                                <Form.Label>{'Contraseña '}</Form.Label>
+                                <p>
+                                    *Debe tener por lo menos 6 caracteres, con letras mayúsculas,
+                                    letras minúsculas, números y almenos un caracter especial*
+                                </p>
                                 <Form.Control
                                     type='password'
                                     className={'mb-4'}
