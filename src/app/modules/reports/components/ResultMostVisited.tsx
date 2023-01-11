@@ -4,8 +4,11 @@ import {Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import PDF from '../ExportReport/PDF'
-import { useDownloadExcel } from 'react-export-table-to-excel';
-import { Auth } from 'aws-amplify'
+import {useDownloadExcel} from 'react-export-table-to-excel'
+import {Auth} from 'aws-amplify'
+
+import {Grid, GridCell, GridColumn, GridToolbar} from '@progress/kendo-react-grid'
+import {ExcelExport} from '@progress/kendo-react-excel-export'
 
 const animatedComponents = makeAnimated()
 const customStyles = {
@@ -55,7 +58,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
     // console.log('name: ', name)
     // console.log('data: ', data)
     // console.log('site: ', site)
-    const tableRef = useRef(null);
+    const tableRef = useRef(null)
     const [showPDF, setShowPDF] = useState(false) //modal show qr
     const handleClose = () => setShowPDF(false) //modal close qr
     var date_report = new Date()
@@ -66,7 +69,6 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
         lastName: '',
     })
 
-   
     const optionsWithIcons = [
         {
             value: 1,
@@ -78,6 +80,37 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
         },
     ]
 
+    const genresOptions: {[key: number]: string} = {
+        1: 'Femenino',
+        2: 'Masculino',
+        3: 'Prefiero no decirlo',
+        4: 'Todos los generos',
+    }
+
+    const yearsOldOptions: {[key: number]: string} = {
+        1: 'Menor de edad',
+        2: '18 a 30',
+        3: '31 a 50',
+        4: '51 en adelante',
+        5: 'Todas las edades',
+    }
+    const countryOptions: {[key: number]: string} = {
+        1: 'Nacional',
+        2: 'Extranjero',
+        3: 'Todos los paises',
+    }
+   
+    if (typeof site.pais === 'number') {
+        site.pais = countryOptions[site.pais]
+    }
+    if( typeof site.edad === 'number'){
+        site.edad = yearsOldOptions[site.edad]
+    }
+    if( typeof site.genero === 'number'){
+        site.genero = genresOptions[site.genero]
+    }
+    
+
     var datos = Object.assign(
         {},
         {rows: data[0]},
@@ -86,16 +119,33 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
         {tipo: 'Más visitados'},
         {site: site}
     )
+    var datos1 = Object.assign(
+        [{}],
+        [
+            {
+                total_visits: data[0]?.total_visitas,
+                hombre: data[0]?.genero.hombre,
+                mujer: data[0]?.genero.mujer,
+                indefinido: data[0]?.genero.indefinido,
+                menores: data[0]?.edad.menores,
+                mayores: data[0]?.edad.mayores,
+                tercera_edad: data[0]?.edad.tercera_edad,
+                nacional: data[0]?.pais.nacional,
+                internacional: data[0]?.pais.internacional,
+            },
+        ]
+    )
+
     const handleChangeLanguage = (event: any) => {
         console.log('event: ', event)
         if (event.value == 1) {
             setShowPDF(true)
         } else if (event.value == 2) {
-            onDownload()
+            excelExport()
         }
     }
 
-    const { onDownload } = useDownloadExcel({
+    const {onDownload} = useDownloadExcel({
         currentTableRef: tableRef.current,
         filename: `[${site.id_sitio}]MasVisitados-${name}.xlsx`,
         sheet: 'Hoja 1',
@@ -109,9 +159,17 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
             })
         })
     }, [])
+
+    const _export = React.useRef<ExcelExport | null>(null)
+
+    const excelExport = () => {
+        if (_export.current !== null) {
+            _export.current.save()
+        }
+    }
+
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
-           
             <Row className='mb-7'>
                 <div className='text-left'>
                     <h3 className='text-dark mt-0'>Resultados de la busqueda</h3>
@@ -166,7 +224,14 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                         </div>
                     </Row>
                     <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
-                    <Table bordered responsive className='text-center' size='sm' striped ref={tableRef}>
+                    {/* <Table
+                        bordered
+                        responsive
+                        className='text-center'
+                        size='sm'
+                        striped
+                        ref={tableRef}
+                    >
                         <thead>
                             <tr>
                                 <th>Visitas</th>
@@ -206,20 +271,56 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                                     <td>{data[0].pais.internacional}</td>
                                 </tr>
                             ))}
-                            
                         </tbody>
+                        <tr></tr>
                         <tr>
-                       
+                            <th colSpan={9}>
+                                Reporte generado el {date_report_format} a las {hour_report_format}{' '}
+                                por {user.name} {user.lastName}.
+                            </th>
                         </tr>
-                        <tr>
-                        <th colSpan={9}>Reporte generado el {date_report_format} a las {hour_report_format} por{' '}
-                                {user.name} {user.lastName}.</th>
-                                </tr>
-
-                              
-                       
-                           
-                    </Table>
+                    </Table> */}
+                    <div className='d-flex justify-content-center'>
+                        <ExcelExport
+                            data={datos1}
+                            ref={_export}
+                            fileName={`[${site.id_sitio}]MasVisitados-${name}.xlsx`}
+                        >
+                            <Grid data={datos1} style={{textAlign: 'center'}} resizable={true}>
+                                <GridColumn
+                                    field='total_visits'
+                                    title='Total de visitas'
+                                    width='120px'
+                                />
+                                <GridColumn title='Género'>
+                                    <GridColumn field='hombre' title='Hombre' width='100px' />
+                                    <GridColumn field='mujer' title='Mujer' width='100px' />
+                                    <GridColumn
+                                        field='indefinido'
+                                        title='Prefiero no decirlo'
+                                        width='150px'
+                                    />
+                                </GridColumn>
+                                <GridColumn title='Edad'>
+                                    <GridColumn field='menores' title='Menores' width='100px' />
+                                    <GridColumn field='mayores' title='Mayores' width='100px' />
+                                    <GridColumn
+                                        field='tercera_edad'
+                                        title='Tercera edad'
+                                        width='100px'
+                                    />
+                                </GridColumn>
+                                <GridColumn title='País'>
+                                    <GridColumn field='nacional' title='Nacionales' width='100px' />
+                                    <GridColumn
+                                        field='internacional'
+                                        title='Extranjeros'
+                                        width='100px'
+                                    />
+                                </GridColumn>
+                            </Grid>
+                        </ExcelExport>
+                    </div>
                 </div>
             </div>
             <PDF show={showPDF} onClose={handleClose} DATA={datos} />

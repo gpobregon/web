@@ -203,6 +203,12 @@ const PDF: FC<any> = ({show, onClose, DATA}) => {
                     Reporte generado el {date_report_format} a las {hour_report_format} por{' '}
                     {user.name} {user.lastName}.
                 </Text>
+                <Text style={styles.filtros}>
+                    Filtros aplicados**{'\n'}
+                    {'  '} {DATA.site.pais}{'\n'}
+                    {'  '} {DATA.site.edad}{'\n'}
+                    {'  '} {DATA.site.genero}{'\n'}
+                </Text>
             </Page>
         </Document>
     )
@@ -269,9 +275,14 @@ const styles = StyleSheet.create({
     },
     detalle: {
         fontSize: 14,
-        marginBottom: -20,
+        top: 25,
         paddingHorizontal: 35,
     },
+    filtros:{
+        fontSize: 9,
+        top: 25,
+        paddingHorizontal: 35,
+    }
 })
 
 export default PDF

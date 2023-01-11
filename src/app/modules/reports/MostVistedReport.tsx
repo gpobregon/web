@@ -54,14 +54,6 @@ const customStyles = {
 
 const animatedComponents = makeAnimated()
 
-const sitesOptions = [
-    {value: 1, label: 'Ejemplo 1'},
-    {value: 2, label: 'Ejemplo 2'},
-    {value: 3, label: 'Ejemplo 4'},
-    {value: 4, label: 'Ejemplo 5'},
-    {value: 5, label: 'Ejemplo 6'},
-    {value: 6, label: 'Ejemplo 7'},
-]
 
 const genresOptions = [
     {value: 1, label: 'Femenino'},
@@ -100,12 +92,12 @@ const MostVistedReport = () => {
         pais: 0,
         calificacion: 4,
     })
-    console.log('type: ', type)
+   
 
     const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
     const [data, setData] = useState([])
-    console.log('data: ', data)
+   
     const typeReport = async (typee: any) => {
         if (
             type.id_sitio != 0 &&
@@ -124,7 +116,7 @@ const MostVistedReport = () => {
             } else { 
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                console.log('sit: ', sit)
+                // console.log('sit: ', sit)
                 setName(sit[0].nombre_sitio)
                 setPhoto(sit[0].imagen)
 
@@ -143,7 +135,8 @@ const MostVistedReport = () => {
                 showResultComponent()
                 // console.log('sit: ', sit)
                 setExistUsers(true) 
-                setTimeout(() => setShowLoad(false), 1000)
+                setShowLoad(false)
+                // setTimeout(() => setShowLoad(false), 1000)
             }
         } else {
             alertNotNullInputs()
