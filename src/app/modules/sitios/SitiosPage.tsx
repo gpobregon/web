@@ -41,7 +41,8 @@ const SitiosPage = () => {
     }
 
     const getSites = async () => {
-        const site: any = await postData(sitesMethod, {page: pageNumber, quantity: '8'})
+        const cantidadSitiosPorPagina = '24'
+        const site: any = await postData(sitesMethod, {page: pageNumber, quantity: cantidadSitiosPorPagina})
         const coutsite: any = await getData(`${sitesMethod}/count`)
         // console.log(site)
 
@@ -50,7 +51,7 @@ const SitiosPage = () => {
         setSites(site.site as Site[])
         const countNextResults: any = await postData(sitesMethod, {
             page: pageNumber + 1,
-            quantity: '8',
+            quantity: cantidadSitiosPorPagina,
         })
         if (countNextResults.site.length == 0) {
             setToggleButtonsPagination({
@@ -64,7 +65,7 @@ const SitiosPage = () => {
             })
         }
 
-        let pagesLength = Math.ceil(coutsite.count / 8)
+        let pagesLength = Math.ceil(coutsite.count / Number(cantidadSitiosPorPagina))
         // console.log(pagesLength)
         setTotalPages(pagesLength)
     }

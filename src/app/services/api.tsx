@@ -57,9 +57,11 @@ export const deleteUserMethod = 'user'
 export const publishPI = 'site/publish/solo/point'
 export const publishSite = 'site/publish/solo/site' 
 
-export const getDataReport = 'site/sites/reporte'
+export const getDataReport = 'site/sites/reporte' 
+export const getSitiosPublicados = '/sitios/dynamo/publicado'
 
 export const getData = async (route: string) => {
+    console.log(route)
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}/`, {method: 'GET', mode: 'cors'})
             .then((response) => response.json())
@@ -92,8 +94,8 @@ export const deleteData = async (route: string, object: any) => {
 }
 
 export const postData = async (route: string, object: any) => {
-    // console.log(object)
-    // console.log(route)
+    console.log(object)
+    console.log(route)
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}`, {method: 'POST', mode: 'cors', body: JSON.stringify(object)})
             .then((response) => {

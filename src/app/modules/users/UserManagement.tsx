@@ -80,6 +80,7 @@ const UserManagement: FC<any> = ({show}) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
     const [users, setUsers] = useState<UserType[]>([])
+    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [modalAddUser, setModalAddUser] = useState(false)
     const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
@@ -168,8 +169,8 @@ const UserManagement: FC<any> = ({show}) => {
 
         return new Promise((resolve, reject) => {
             AWS.config.update({
-                accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-                secretAccessKey: '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',
+                accessKeyId: 'AKIAT3ANXPJIACFL5367',
+                secretAccessKey: '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',
             })
             let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.listUsers(params, (err, data) => {
@@ -189,8 +190,8 @@ const UserManagement: FC<any> = ({show}) => {
 
     const updateUsuarios = async () => {
         AWS.config.update({
-            accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-            secretAccessKey: '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',
+            accessKeyId: 'AKIAT3ANXPJIACFL5367',
+            secretAccessKey: '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',
         })
         let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
         console.log('cognito: ', cognito)
