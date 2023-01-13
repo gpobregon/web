@@ -28,6 +28,7 @@ const AttrText: FC<Model> = ({
     setEditItemResource,
 }) => {
     const [dataResource, setDataResource] = useState([])
+    const [extensionAllow, setExtensionAllow] = useState(false)
     const titulo = useRef<HTMLInputElement>(null)
     const descripcion = useRef<HTMLInputElement>(null)
     const changeSizeTitle = (data: {}) => {
@@ -95,9 +96,29 @@ const AttrText: FC<Model> = ({
         }
     }, [editItemResource])
 
+    var extensionesValidas = '.png, .gif, .jpeg, .jpg, .jfif'
     useEffect(() => {
-        if (editItem.type === 'image') {
-            setEditItemResource(editItem.url !== '' ? {url: editItem.url} : [])
+        var extension = editItem.url?.substring(editItem.url?.lastIndexOf('.') + 1).toLowerCase()
+        var extensionValida: number = extensionesValidas.indexOf(extension)
+        if (editItem.type === 'image' ) {  
+            if (extensionValida > 0) {
+            
+                setEditItemResource({url: editItem.url} )
+                setExtensionAllow(true)
+
+            } else {
+                setExtensionAllow(false)
+                // if(editItem.url){
+                //     swal({
+                //         title: 'Error!',
+                //         text: `La imagen debe tener una de las siguientes extensiones ${extensionesValidas}`,
+                //         icon: 'error',
+                //     })
+                // }
+                editItem.url = ''
+                setEditItemResource([])
+               
+            }
         }
     }, [editItem])
 
@@ -168,14 +189,14 @@ const AttrText: FC<Model> = ({
                             </div>
                         </div>
                     </Col>
-                    {editItemResource.nombre || editItemResource.url ? (
+                    {editItemResource.nombre || editItemResource.url && extensionAllow ? (
                         <Fragment>
                             <Col lg={12}>
-                                <div className='w-100'>
-                                    <CropImage
+                                <div className='w-100'>                                 
+                                        <CropImage
                                         editItemResource={editItemResource}
                                         setDataResource={setDataResource}
-                                    />
+                                        />
                                 </div>
                             </Col>
                             <Col lg={12}>
