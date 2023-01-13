@@ -54,8 +54,8 @@ const MenuDoubleClick: FC<Model> = ({ editItem, nameMenu, updateElement }) => {
                     <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { textAling: 'text-center' })} ><i className="bi bi-text-center" /></Button>
                     <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { textAling: 'text-end' })} ><i className="bi bi-justify-right" /></Button>
                     <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { textAling: 'text-justify' })} ><i className="bi bi-justify" /></Button>
-                    <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { fontWeight: editItem.fontWeight === 'fw-normal' ? 'fw-bolder' : 'fw-normal' })} ><i className="bi bi-type-bold" /></Button>
-                    <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { fontFamily: editItem.fontFamily === 'fw-normal' ? 'fst-italic' : 'fw-normal' })} ><i className="bi bi-type-italic" /></Button>
+                    <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { fontWeight: editItem.fontWeight === 'fw-normal' || editItem.fontWeight === undefined ? 'fw-bolder' : 'fw-normal' })} ><i className="bi bi-type-bold" /></Button>
+                    <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { fontFamily: editItem.fontFamily === 'fw-normal' || editItem.fontWeight === undefined ? 'fst-italic' : 'fw-normal' })} ><i className="bi bi-type-italic" /></Button>
                     <Button variant="secondary" onClick={(e: any) => changeSizeTitle(e, { textDecoration: editItem.textDecoration ? '' : 'text-decoration-underline' })} ><i className="bi bi-type-underline" /></Button>
                 </ButtonGroup>
             </Item>
