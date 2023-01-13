@@ -1484,11 +1484,6 @@ const EditSite = () => {
                                                 alignItems: 'flex-start',
                                                 justifyContent: 'center',
                                             }}
-                                            onClick={() => {
-                                                setArchivoPermitido('.geojson')
-                                                setUbicacionBucket('sitePages/GeoJSON')
-                                                setModalupIMG(true)
-                                            }}
                                         >
                                             <div
                                                 style={{
@@ -1508,14 +1503,20 @@ const EditSite = () => {
                                                 >
                                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
 
-                                                    <div>
+                                                    <div>                                                        
                                                         {site.geo_json === ''
                                                             ? 'Subir GeoJSON'
-                                                            : nombreJson}
+                                                            :  <a href={site.geo_json} target="_blank" rel="noopener noreferrer">{nombreJson}</a>}
                                                     </div>
                                                 </div>
 
-                                                <div>
+                                                <div
+                                                    onClick={() => {
+                                                        setArchivoPermitido('.geojson')
+                                                        setUbicacionBucket('sitePages/GeoJSON')
+                                                        setModalupIMG(true)
+                                                    }}
+                                                >
                                                     <KTSVG
                                                         path='/media/icons/duotune/general/gen035.svg'
                                                         className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
