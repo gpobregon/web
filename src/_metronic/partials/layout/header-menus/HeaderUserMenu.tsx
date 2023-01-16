@@ -14,15 +14,13 @@ const HeaderUserMenu: FC = () => {
         phoneNumber: '',
         lastname: '',
         imageProfile: '',
-    }) 
+    })
 
-    const forgotDevice = async () =>{ 
+    const forgotDevice = async () => {
         try {
             logout()
-            await  Amplify.Auth.forgetDevice();
-        } catch (error) {
-        }
-
+            await Amplify.Auth.forgetDevice()
+        } catch (error) {}
     }
 
     const getEmail = () => {
@@ -35,11 +33,11 @@ const HeaderUserMenu: FC = () => {
                 imageProfile: user.attributes['custom:imageProfile'],
             })
         })
-    } 
+    }
 
     useEffect(() => {
-      getEmail()
-  }, [])
+        getEmail()
+    }, [])
 
     return (
         <div
@@ -50,6 +48,9 @@ const HeaderUserMenu: FC = () => {
                 <div className='menu-content d-flex align-items-center px-3'>
                     <div className='symbol symbol-50px me-5'>
                         <img alt='Logo' src={dataUser.imageProfile} />
+                    </div>
+                    <div className='symbol symbol-50px me-5'>
+                        {dataUser.name} {dataUser.lastname}
                     </div>
                 </div>
             </div>

@@ -1493,6 +1493,11 @@ const EditSite = () => {
                                                     alignItems: 'center',
                                                     justifyContent: 'space-between',
                                                 }}
+                                                onClick={() => {
+                                                    setArchivoPermitido('.geojson')
+                                                    setUbicacionBucket('sitePages/GeoJSON')
+                                                    setModalupIMG(true)
+                                                }}
                                             >
                                                 <div
                                                     style={{
@@ -1510,12 +1515,7 @@ const EditSite = () => {
                                                     </div>
                                                 </div>
 
-                                                <div
-                                                    onClick={() => {
-                                                        setArchivoPermitido('.geojson')
-                                                        setUbicacionBucket('sitePages/GeoJSON')
-                                                        setModalupIMG(true)
-                                                    }}
+                                                <div           
                                                 >
                                                     <KTSVG
                                                         path='/media/icons/duotune/general/gen035.svg'
