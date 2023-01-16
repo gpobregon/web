@@ -111,14 +111,6 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
     }
     
 
-    var datos = Object.assign(
-        {},
-        {rows: data[0]},
-        {name: name},
-        {portada_path: photo},
-        {tipo: 'Más visitados'},
-        {site: site}
-    )
     var datos1 = Object.assign(
         [{}],
         [
@@ -134,11 +126,19 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                 internacional: data[0]?.pais.internacional,
             },
         ]
-    )
-
+        )
+        var datos = Object.assign(
+            {},
+            {rows: datos1},
+            {name: name},
+            {portada_path: photo},
+            {tipo: 'Más visitados'},
+            {site: site}
+        )
+        
     const handleChangeLanguage = (event: any) => {
         if (event.value == 1) {
-            setShowPDF(true)
+            PDF(datos)
         } else if (event.value == 2) {
             excelExport()
         }
@@ -322,7 +322,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                     </div>
                 </div>
             </div>
-            <PDF show={showPDF} onClose={handleClose} DATA={datos} />
+           
         </div>
     )
 }

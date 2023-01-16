@@ -51,6 +51,7 @@
     "html-to-image": "^1.10.4",
     "immutability-helper": "^3.1.1",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.28",
     "line-awesome": "1.3.0",
     "mdb-react-ui-kit": "^4.1.0",
     "moment": "^2.29.4",
