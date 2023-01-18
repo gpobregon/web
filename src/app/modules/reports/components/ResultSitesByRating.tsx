@@ -1,9 +1,97 @@
 import moment from 'moment'
 import React, {FC} from 'react'
 import {Button, Col, Form, Row, Table} from 'react-bootstrap'
-import Select from 'react-select/dist/declarations/src/Select'
+import Select from 'react-select'
+import makeAnimated from 'react-select/animated'
 
-const ResultSitesByRating: FC<any> = ({show, data, site, name, photo}) => {
+import PDF from '../ExportReport/PDF'
+
+const animatedComponents = makeAnimated()
+const customStyles = {
+    control: (base: any, state: any) => ({
+        ...base,
+        background: 'transparent',
+        borderColor: state.isFocused ? '#474761' : '#323248',
+        borderRadius: 6.175,
+        color: '#92929F',
+        '&:hover': {
+            borderColor: '#323248',
+        },
+        '&:focus': {
+            borderColor: '#323248',
+        },
+        '&:active': {
+            borderColor: '#323248',
+        },
+    }),
+    input: (base: any, state: any) => ({
+        ...base,
+        color: '#92929f',
+    }),
+    option: (base: any, state: any) => ({
+        ...base,
+        background: state.isFocused ? '#009EF7' : '#323248',
+        color: state.isFocused ? '#fff' : '#92929F',
+        padding: 10,
+    }),
+    singleValue: (base: any) => ({
+        ...base,
+        color: '#fff',
+    }),
+    menu: (base: any) => ({
+        ...base,
+        borderRadius: 6.175,
+        background: '#323248',
+    }),
+    menuList: (base: any) => ({
+        ...base,
+        padding: 0,
+        borderRadius: 6.175,
+    }),
+}
+
+const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => {
+    const optionsWithIcons = [
+        {
+            value: 1,
+            label: 'PDF',
+        },
+        {
+            value: 2,
+            label: 'Excel',
+        },
+    ]
+
+    const calificaciones: {[key: number]: string} = {
+        1: 'Pésima',
+        2: 'Buena',
+        3: 'Excelente',
+        4: 'Todas las calificaciones',
+    }
+    if (typeof site.calificacion === 'number') {
+        site.tipocalificacion = calificaciones[site.calificacion]
+    }
+    
+
+    var datos = Object.assign(
+        {},
+        {calificaciones: data[0]},
+        {name: name},
+        {portada_path: photo},
+        {tipo: 'Calificaciones'},
+        {site: site},
+        {users: users}
+    )
+
+    const handleChangeLanguage = (event: any) => {
+        if (event.value == 1) {
+            PDF(datos)
+        } else if (event.value == 2) {
+            // excelExport()
+        }
+    }
+
+ 
     return (
         <>
             <div style={show == false ? {display: 'none'} : {display: 'block'}}>
@@ -40,14 +128,27 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo}) => {
                                     }}
                                 />
                             </div>
-                            <div>
+                            <div className='col-xs-9 col-md-9 col-lg-9 py-5 '>
                                 <h2 className=''>{name}</h2>
                                 <h6 className='text-muted'>
                                     {moment(site.fecha_inicial).format('DD/MM/YYYY')} -{' '}
                                     {moment(site.fecha_final).format('DD/MM/YYYY')}
                                 </h6>
                             </div>
+                            <div className='col-xs-2 col-md-2 col-lg-2 py-5'>
+                                <div className='d-flex justify-content-end'>
+                                    <Select
+                                        options={optionsWithIcons}
+                                        styles={customStyles}
+                                        components={animatedComponents}
+                                        className={'mb-4'}
+                                        onChange={handleChangeLanguage}
+                                        placeholder='Exportar'
+                                    />
+                                </div>
+                            </div>
                         </div>
+
                         <hr style={{border: '1px solid rgba(255 255 255)', color: '#FFF'}} />
                     </div>
 
