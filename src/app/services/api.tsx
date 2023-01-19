@@ -91,6 +91,8 @@ export const deleteData = async (route: string, object: any) => {
 }
 
 export const postData = async (route: string, object: any) => {
+    console.log(object)
+    console.log(route)
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}`, {method: 'POST', mode: 'cors', body: JSON.stringify(object)})
             .then((response) => {

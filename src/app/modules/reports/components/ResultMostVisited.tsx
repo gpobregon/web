@@ -1,14 +1,13 @@
 import moment from 'moment'
-import React, {FC, useEffect, useRef, useState} from 'react'
+import React, {FC, useCallback, useEffect, useRef, useState} from 'react'
 import {Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import PDF from '../ExportReport/PDF'
-import {useDownloadExcel} from 'react-export-table-to-excel'
 import {Auth} from 'aws-amplify'
 
-import {Grid, GridCell, GridColumn, GridToolbar} from '@progress/kendo-react-grid'
-import {ExcelExport} from '@progress/kendo-react-excel-export'
+import {saveAs} from 'file-saver'
+import {read, utils, writeFileXLSX} from 'xlsx'
 
 const animatedComponents = makeAnimated()
 const customStyles = {
@@ -58,9 +57,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
     // console.log('name: ', name)
     // console.log('data: ', data)
     // console.log('site: ', site)
-    const tableRef = useRef(null)
-    const [showPDF, setShowPDF] = useState(false) //modal show qr
-    const handleClose = () => setShowPDF(false) //modal close qr
+
     var date_report = new Date()
     var date_report_format = moment(date_report).format('DD/MM/YYYY')
     var hour_report_format = moment(date_report).format('HH:mm:ss')
@@ -99,17 +96,16 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
         2: 'Extranjero',
         3: 'Todos los paises',
     }
-   
+
     if (typeof site.pais === 'number') {
-        site.pais = countryOptions[site.pais]
+        site.tipopais = countryOptions[site.pais]
     }
-    if( typeof site.edad === 'number'){
-        site.edad = yearsOldOptions[site.edad]
+    if (typeof site.edad === 'number') {
+        site.tipoedad = yearsOldOptions[site.edad]
     }
-    if( typeof site.genero === 'number'){
-        site.genero = genresOptions[site.genero]
+    if (typeof site.genero === 'number') {
+        site.tipogenero = genresOptions[site.genero]
     }
-    
 
     var datos1 = Object.assign(
         [{}],
@@ -126,29 +122,23 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                 internacional: data[0]?.pais.internacional,
             },
         ]
-        )
-        var datos = Object.assign(
-            {},
-            {rows: datos1},
-            {name: name},
-            {portada_path: photo},
-            {tipo: 'Más visitados'},
-            {site: site}
-        )
-        
+    )
+    var datos = Object.assign(
+        {},
+        {rows: datos1},
+        {name: name},
+        {portada_path: photo},
+        {tipo: 'Más visitados'},
+        {site: site}
+    )
+
     const handleChangeLanguage = (event: any) => {
         if (event.value == 1) {
             PDF(datos)
         } else if (event.value == 2) {
-            excelExport()
+            exportFile()
         }
     }
-
-    const {onDownload} = useDownloadExcel({
-        currentTableRef: tableRef.current,
-        filename: `[${site.id_sitio}]MasVisitados-${name}.xlsx`,
-        sheet: 'Hoja 1',
-    })
 
     useEffect(() => {
         Auth.currentUserInfo().then((user) => {
@@ -159,14 +149,51 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
         })
     }, [])
 
-    const _export = React.useRef<ExcelExport | null>(null)
+    /* get live table and export to XLSX */
+    const exportFile = useCallback(() => {
+        // const ws1 = utils.json_to_sheet(pres);
+        //colocar encabezado en el excel
+        var ws = utils.aoa_to_sheet([
+            ['MINISTERIO DE CULTURA Y DEPORTES'],
+            [`Sitios ${datos.tipo}`],
+            [
+                `Filtro: Pais: ${datos.site.tipopais} - Edad: ${datos.site.tipoedad} - Genero: ${datos.site.tipogenero}`,
+            ],
+            [`Periodo consultado: ${datos.site.fecha_inicial} - ${datos.site.fecha_final}`],
+            [`Sitio: ${datos.name} (${datos.site.id_sitio})`],
+        ])
 
-    const excelExport = () => {
-        if (_export.current !== null) {
-            _export.current.save()
-        }
-    }
+        //colocar datos en tabla el excel
+        const wb = utils.book_new()
+        utils.sheet_add_json(ws, datos1, {
+            origin: 'A8',
+            cellStyles: true,
+        })
 
+        utils.sheet_add_aoa(
+            ws,
+            [
+                [
+                    'Total Visitas',
+                    'Hombre',
+                    'Mujer',
+                    'Sin sexo',
+                    'Menor edad',
+                    'Mayores edad',
+                    'Tercera edad',
+                    'Nacional',
+                    'Internacional',
+                ],
+            ],
+            {origin: 'A8'}
+        )
+
+        utils.book_append_sheet(wb, ws, 'Data')
+
+        writeFileXLSX(wb, `[${datos.site.id_sitio}]${datos.tipo}-${datos.name}.xlsx`, {
+            Props: {Author: `${user.name} ${user.lastName}`},
+        })
+    }, [datos1])
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
             <Row className='mb-7'>
@@ -223,14 +250,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                         </div>
                     </Row>
                     <hr style={{border: '1px solid rgba(86, 86, 116, 0.1)'}} />
-                    {/* <Table
-                        bordered
-                        responsive
-                        className='text-center'
-                        size='sm'
-                        striped
-                        ref={tableRef}
-                    >
+                    <Table bordered responsive className='text-center' size='sm' striped>
                         <thead>
                             <tr>
                                 <th>Visitas</th>
@@ -272,14 +292,14 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                             ))}
                         </tbody>
                         <tr></tr>
-                        <tr>
+                        {/* <tr>
                             <th colSpan={9}>
                                 Reporte generado el {date_report_format} a las {hour_report_format}{' '}
                                 por {user.name} {user.lastName}.
                             </th>
-                        </tr>
-                    </Table> */}
-                    <div className='d-flex justify-content-center'>
+                        </tr> */}
+                    </Table>
+                    {/* <div className='d-flex justify-content-center'>
                         <ExcelExport
                             data={datos1}
                             ref={_export}
@@ -319,10 +339,9 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                                 </GridColumn>
                             </Grid>
                         </ExcelExport>
-                    </div>
+                    </div> */}
                 </div>
             </div>
-           
         </div>
     )
 }

@@ -125,7 +125,7 @@ const SitesByRating = () => {
                 setData(temp as [])
                 setUsers(temp2 as [])
                 showResultComponent()
-                setTimeout(() => setShowLoad(false), 1000)
+                setShowLoad(false)
             }
         else {
             alertNotNullInputs()
@@ -136,11 +136,13 @@ const SitesByRating = () => {
         getPublishSites()
     }
     async function getPublishSites() {
+        setShowLoad(true)
         const sites: any = await getData(getSitiosPublicados)
 
         sites.data.map((sit: any) => {
             publishSite.push({value: sit.id_sitio, label: sit.nombre})
         })
+        setShowLoad(false)
     }
 
     useEffect(() => {
@@ -446,6 +448,7 @@ const SitesByRating = () => {
                     site={type}
                     name={name}
                     photo={photo}
+                    users={users}
                 />
 
                 <UsersResultByRating show={showResult} users={users} />
