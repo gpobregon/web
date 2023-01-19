@@ -23,7 +23,6 @@ const CodeRegister = () => {
                 navigate('/auth', {replace: true})
             } catch (error) {
                 swal('Hubo un error al confimar tu correo', 'Inténtalo de nuevo', 'error')
-                console.log('error confirming sign up', error)
             }
         } else {
             swal('Campos inválidos', 'Por favor ingresa correctamente los campos', 'warning')

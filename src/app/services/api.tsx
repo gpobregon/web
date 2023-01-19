@@ -20,7 +20,7 @@ export const updateLanguageMethod = 'language/update'
 export const notificationMethod = 'notifications'
 export const addNotificationMethod = 'notification/add'
 export const updateNotificationMethod = 'notification/update'
-export const deleteNotificationMethod = 'notification' 
+export const deleteNotificationMethod = 'notification'
 export const getTotalNotifications = 'notifications/getcount'
 export const getSitesActivesAndPublicatedMethod = 'site/sites/activesandpublicated'
 
@@ -55,9 +55,9 @@ export const updateUserMethod = 'user/edit'
 export const deleteUserMethod = 'user'
 
 export const publishPI = 'site/publish/solo/point'
-export const publishSite = 'site/publish/solo/site' 
+export const publishSite = 'site/publish/solo/site'
 
-export const getDataReport = 'site/sites/reporte' 
+export const getDataReport = 'site/sites/reporte'
 export const getSitiosPublicados = '/sitios/dynamo/publicado'
 
 export const getData = async (route: string) => {
@@ -69,7 +69,6 @@ export const getData = async (route: string) => {
             })
             .catch((err) => {
                 resolve(null)
-                console.log(err.message)
             })
     })
 }
@@ -87,32 +86,29 @@ export const deleteData = async (route: string, object: any) => {
             })
             .catch((err) => {
                 resolve(null)
-                console.log(err.message)
             })
     })
 }
 
 export const postData = async (route: string, object: any) => {
-    console.log(object)
-    console.log(route)
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}`, {method: 'POST', mode: 'cors', body: JSON.stringify(object)})
             .then((response) => {
                 //Si la respuesta es diferente de 200, entonces lanza un error
-                if (!response.ok) throw Error('Ocurrió un error')    
-                return response.json();}
-            )
+                if (!response.ok) throw Error('Ocurrió un error')
+                return response.json()
+            })
             .then((data) => {
                 resolve(data)
             })
             .catch((err) => {
-                resolve(null)       
+                resolve(null)
                 swal({
                     title: 'Error',
                     text: err.message,
                     icon: 'error',
                     timer: 2000,
-                })                  
+                })
             })
     })
 }
@@ -126,7 +122,6 @@ export const getValue = async (route: string, id: number) => {
             })
             .catch((err) => {
                 resolve(null)
-                console.log(err.message)
             })
     })
 }

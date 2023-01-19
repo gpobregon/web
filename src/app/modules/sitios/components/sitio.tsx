@@ -41,18 +41,15 @@ type sitio = {
 }
 
 const Sitio: FC<sitio> = (props) => {
-    //console.log('props: ', props)
     const navigate = useNavigate()
 
     const [idSitioState, setIdSitioState] = useState({
         idSite: props.id_sitio,
         nombreSite: props.nombre,
         idUserEditing: props.bloqueado_por_edicion_id,
-        bloqueado: props.bloqueado_por_edicion, 
-        nombreUsuario: props.bloqueado_por_edicion_nombre
+        bloqueado: props.bloqueado_por_edicion,
+        nombreUsuario: props.bloqueado_por_edicion_nombre,
     })
-
-    //console.log('idSitioState: ', idSitioState)
 
     // obtener usuario que editó
     const [dataUser, setDataUser] = useState({
@@ -65,7 +62,6 @@ const Sitio: FC<sitio> = (props) => {
         descripcion: '',
         id: '',
     })
-    //console.log('dataUser: ', dataUser)
 
     const getUser = async () => {
         Auth.currentUserInfo().then((user) => {
@@ -91,9 +87,9 @@ const Sitio: FC<sitio> = (props) => {
                 //     idSite: props.id_sitio,
                 //     nombreSite: props.nombre,
                 //     idUserEditing: dataUser.id,
-                //     bloqueado: true, 
+                //     bloqueado: true,
                 //     nombreUsuario: dataUser.name,
-                // }) 
+                // })
                 await postData(sitesMethod, {bloqueado_por_edicion: true})
                 navigate(`/sitios/editSite/${props.id_sitio}`)
             } else {
@@ -128,23 +124,22 @@ const Sitio: FC<sitio> = (props) => {
                 buttons: ['No', 'Sí'],
             }).then(async (res) => {
                 if (res) {
-                    console.log(props)
-                    if(!props.favorito){
+                    if (!props.favorito) {
                         await deleteData(sitesMethod, {id_sitio: props.id_sitio})
-                    swal({
-                        text: 'Se elimino con éxito',
-                        icon: 'success',
-                        timer: 2000,
-                    })
-                    navigate('/')
-                }else{
-                    swal({
-                        title:'Error',
-                        text: 'No se puede eliminar un sitio Destacado, Intenta con otro sitio',
-                        icon: 'error',
-                        timer: 2000,
-                    })
-                }
+                        swal({
+                            text: 'Se elimino con éxito',
+                            icon: 'success',
+                            timer: 2000,
+                        })
+                        navigate('/')
+                    } else {
+                        swal({
+                            title: 'Error',
+                            text: 'No se puede eliminar un sitio Destacado, Intenta con otro sitio',
+                            icon: 'error',
+                            timer: 2000,
+                        })
+                    }
                     //  window.location.reload(); //reload page
                 }
             })

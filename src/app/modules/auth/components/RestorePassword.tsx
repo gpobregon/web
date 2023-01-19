@@ -13,7 +13,6 @@ export function RestorePassword() {
     if (email){ 
         email = JSON.parse(email)
     } 
-    console.log(email)
 
     const forgotPasswordSubmit = async () => {
         if (data.password != '' && data.passwordConfirm != '' && data.code != '') {
@@ -26,7 +25,6 @@ export function RestorePassword() {
                     }
                 } catch (error) {
                     swal('Hubo un error al cambiar tu contraseña', 'Inténtalo de nuevo', 'error')
-                    console.log('error confirming changing password', error)
                 }
             } else {
                 swal('Las contraseñas no son iguales', 'Intentalo de nuevo', 'warning')

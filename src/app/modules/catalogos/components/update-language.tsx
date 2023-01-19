@@ -136,7 +136,7 @@ const UpdateLanguage: FC<any> = ({
                                     <div>
                                         {nameMovil !== ''
                                             ? nameMovil
-                                            : idioma?.json_movil?.split('/').pop()}
+                                            : <a href={idioma?.json_movil} target="_blank" rel="noopener noreferrer">{idioma?.json_movil?.split('/').pop()}</a>}
                                     </div>
                                 </div>
 
@@ -185,7 +185,7 @@ const UpdateLanguage: FC<any> = ({
                                     <div>
                                         {nameWeb !== ''
                                             ? nameWeb
-                                            : idioma?.json_web?.split('/').pop()}
+                                            : <a href={idioma?.json_movil} target="_blank" rel="noopener noreferrer">{idioma?.json_web?.split('/').pop()}</a>}
                                     </div>
                                 </div>
 

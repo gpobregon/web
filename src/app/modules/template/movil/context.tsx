@@ -129,7 +129,6 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     const updateElement = (data: any) => {
         setEditItem(data)
         const content = board.filter((element:any) => { return element !== undefined; });
-        // console.log(content, data, 'updateElement 131')
         setBoard(updateData(content, data))
     }
     // Cambiar Lenguaje
@@ -143,13 +142,11 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             }).then(async (res) => {
                 if (res) {
                     onlySave(changeTypeEdit === 1 ? true : false, board, changeLaguage, data) 
-                } else {                  
-                    oneData(data, changeTypeEdit === 1 ? true : false)
-                }
+                } 
             }) 
-        }else{
-            oneData(data, changeTypeEdit === 1 ? true : false)
         }
+            oneData(data, changeTypeEdit === 1 ? true : false)
+        
        
     }  
 
@@ -409,7 +406,6 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         myBucket
             .putObject(params)
             .on('httpUploadProgress', async (evt) => {
-                // console.log(Math.round((evt.loaded / evt.total) * 100))
                 if (evt.loaded / evt.total === 1) {
                     const response: any = await postData('site/mobile/resource/add', fileResource)
                     setAllResource(appendData(allResources, response.data))
@@ -433,7 +429,6 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                         text: 'El recurso no fue almacenado',
                         icon: 'danger',
                     })
-                    console.log(err)
                     setShowLoad(false)
                 }
             })
@@ -505,7 +500,6 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             tipo === 1 ? setAllResource(items) : setAllResourceElement(items)
             setShowLoad(false)
         } catch (error) {
-            console.log(error)
         }
     }
 

@@ -134,7 +134,6 @@ const EditSite = () => {
         descripcion: '',
         id: '',
     })
-    //console.log("dataUserHeader: ", dataUserHeader);
 
     const getUserForHeader = async () => {
         tryCharging()
@@ -149,30 +148,12 @@ const EditSite = () => {
                 descripcion: '',
                 id: user.attributes.sub,
             })
-
-            // console.log('dataUserId: ', dataUser.id)
-            // console.log('dataUserName: ', dataUser.name)
-            // console.log('site dentro de get: ', site)
         })
     }
 
     const getUser = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
-            // setDataUser({
-            //     email: user.attributes.email,
-            //     name: user.attributes.name,
-            //     phoneNumber: user.attributes['custom:phoneNumber'],
-            //     lastname: user.attributes['custom:lastname'],
-            //     imageProfile: user.attributes['custom:imageProfile'],
-            //     role: user.attributes['custom:role'],
-            //     descripcion: '',
-            //     id: user.attributes.sub,
-            // })
-
-            // console.log('dataUserId: ', dataUser.id)
-            // console.log('dataUserName: ', dataUser.name)
-            // console.log('site dentro de get: ', site)
             await saveLocked(true, user.attributes.sub, user.attributes.name)
         })
     }
@@ -206,7 +187,6 @@ const EditSite = () => {
         bloqueado_por_edicion_id: '',
         bloqueado_por_edicion_nombre: '',
     })
-    console.log('site: ', site)
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -230,10 +210,6 @@ const EditSite = () => {
             ...sitio.site,
         })
 
-        //setSite(sitio.site)
-        //getUser() 
-        console.log('------------site dentro del get-----------------: ', site)
-
         let aux = sitio.site.geo_json
         let auxSplit = aux.split('/')
         setNombreJson(auxSplit[auxSplit.length - 1])
@@ -246,7 +222,7 @@ const EditSite = () => {
             label: cat.nombre,
         }))
 
-        setmostrarCategorias(mostrarCategorys) 
+        setmostrarCategorias(mostrarCategorys)
         await getUser()
         setloadingSite(false)
     }
@@ -257,18 +233,12 @@ const EditSite = () => {
         site.bloqueado_por_edicion_id = idUser
         site.bloqueado_por_edicion_nombre = nameUser
         if (site.id_sitio != 0) {
-            const sit: any = await postData(updateSiteMethod, site) 
+            const sit: any = await postData(updateSiteMethod, site)
             setSite({
                 ...site,
             })
         }
-        //console.log('Save automatico: ', site)
-        
-        //console.log('despues del Save automatico: ', site)
-
-        // window.location.href = "../sitios";
     }
-    //console.log("site: ", site);
     //fin
 
     //para verificar si el sitio esta bloqueado
@@ -279,13 +249,6 @@ const EditSite = () => {
             setbotonActivo(true)
         }
     }
-
-    // useEffect(() => {
-    //      //getSite()
-    //     // saveLocked(site)
-
-    //     //  console.log(state)
-    // }, [paraCargar])
 
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
@@ -307,11 +270,9 @@ const EditSite = () => {
             publicar_web: sitio.publicar_web,
             publicar_movil: sitio.publicar_movil,
         })
-        // console.log(status)
     }
     async function getCategorys() {
         const category: any = await getData(categorysMethod)
-        console.log("category: ", category);
 
         category.map((cat: any) => {
             categorys.push({value: cat.id_categoria, label: cat.nombre})
@@ -393,12 +354,11 @@ const EditSite = () => {
                     categorias: site.categorias,
                 })
             }
-        } else { 
+        } else {
             alertNotNullInputCategories({
                 categorias: site.categorias,
             })
         }
-        
     }
 
     const publishTypeSite = async () => {
@@ -530,7 +490,6 @@ const EditSite = () => {
                 bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
                 bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
             })
-            console.log('site 447: ', site)
             setbotonActivo(true)
         }
     }
@@ -566,8 +525,6 @@ const EditSite = () => {
                 })
                 const sit: any = await postData(updateSiteMethod, sitee)
                 navigate('/sitios')
-                console.log(sit)
-                // window.location.href = "../sitios";
             }
         })
     }
@@ -588,7 +545,6 @@ const EditSite = () => {
             arrtempo.push({id_categoria: cat.value, nombre: cat.label, estado: 1})
         })
 
-        console.log(arrtempo)
         setSite({
             id_sitio: site.id_sitio,
             nombre: site.nombre,
@@ -618,9 +574,7 @@ const EditSite = () => {
             bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
             bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
         })
-        console.log('site 565: ', site)
         setbotonActivo(true)
-        // console.log(site)
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
@@ -724,15 +678,11 @@ const EditSite = () => {
             bloqueado_por_edicion_id: '',
             bloqueado_por_edicion_nombre: '',
         })
-        console.log('site 671: ', site)
         let converterToFalse = site
 
         converterToFalse.bloqueado_por_edicion = false
-        console.log('converterToFalse: ', converterToFalse)
 
         await postSite(site)
-        console.log('site: ', site)
-        // swal("Desbloqueado" ,"Por favor guarde cambios antes de salir", "info");
     }
 
     useEffect(() => {
@@ -1148,7 +1098,7 @@ const EditSite = () => {
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
                                                     onClick={() => {
-                                                        DeleteImage('sitePages',site.portada_path)
+                                                        DeleteImage('sitePages', site.portada_path)
                                                         setSite({
                                                             id_sitio: site.id_sitio,
                                                             nombre: site.nombre,
@@ -1183,7 +1133,6 @@ const EditSite = () => {
                                                                 site.bloqueado_por_edicion_nombre,
                                                         })
                                                         setbotonActivo(true)
-                                                      
                                                     }}
                                                 ></Link>
                                             </Col>
@@ -1535,11 +1484,6 @@ const EditSite = () => {
                                                 alignItems: 'flex-start',
                                                 justifyContent: 'center',
                                             }}
-                                            onClick={() => {
-                                                setArchivoPermitido('.geojson')
-                                                setUbicacionBucket('sitePages/GeoJSON')
-                                                setModalupIMG(true)
-                                            }}
                                         >
                                             <div
                                                 style={{
@@ -1548,6 +1492,11 @@ const EditSite = () => {
                                                     flexDirection: 'row',
                                                     alignItems: 'center',
                                                     justifyContent: 'space-between',
+                                                }}
+                                                onClick={() => {
+                                                    setArchivoPermitido('.geojson')
+                                                    setUbicacionBucket('sitePages/GeoJSON')
+                                                    setModalupIMG(true)
                                                 }}
                                             >
                                                 <div
@@ -1559,14 +1508,15 @@ const EditSite = () => {
                                                 >
                                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
 
-                                                    <div>
+                                                    <div>                                                        
                                                         {site.geo_json === ''
                                                             ? 'Subir GeoJSON'
-                                                            : nombreJson}
+                                                            :  <a href={site.geo_json} target="_blank" rel="noopener noreferrer">{nombreJson}</a>}
                                                     </div>
                                                 </div>
 
-                                                <div>
+                                                <div           
+                                                >
                                                     <KTSVG
                                                         path='/media/icons/duotune/general/gen035.svg'
                                                         className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'

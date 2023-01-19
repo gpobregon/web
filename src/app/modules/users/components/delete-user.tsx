@@ -6,12 +6,9 @@ import Auth from '@aws-amplify/auth'
 import {CognitoUser} from 'amazon-cognito-identity-js'
 
 import {awsconfig} from '../../../../aws-exports'
-import * as AWS from 'aws-sdk' 
+import * as AWS from 'aws-sdk'
 
-import { 
-    deleteData,
-    deleteUserMethod
-} from '../../../services/api'
+import {deleteData, deleteUserMethod} from '../../../services/api'
 
 import {
     ListUsersResponse,
@@ -23,9 +20,7 @@ import swal from 'sweetalert'
 async function deleteUser() {
     try {
         const result = await Auth.deleteUser()
-        console.log(result)
     } catch (error) {
-        console.log('Error deleting user', error)
     }
 }
 
@@ -59,15 +54,6 @@ const handleDeleteCognitoUser = async () => {
         // do stuff after deletion
     })
 }
-
-//   var params = {
-//     UserPoolId: 'STRING_VALUE', /* required */
-//     Username: 'STRING_VALUE' /* required */
-//   };
-//   cognitoidentityserviceprovider.adminDeleteUser(params, function(err, data) {
-//     if (err) console.log(err, err.stack); // an error occurred
-//     else     console.log(data);           // successful response
-//   });
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -113,9 +99,7 @@ const customStyles = {
 }
 
 const DeleteUser: FC<any> = ({show, onClose, user}) => {
-    console.log("user hook: ", user);
     const [users, setUsers] = useState<UserType[]>([])
-    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [params, setParams] = useState({name: ''})
 
@@ -129,7 +113,6 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
             let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.listUsers(params, (err, data) => {
                 if (err) {
-                    console.log(err)
                     reject(err)
                 } else {
                     resolve(data)
@@ -139,7 +122,7 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                 }
             })
         })
-    }  
+    }
 
     const [dataUser, setDataUser] = useState({
         email: '',
@@ -151,7 +134,7 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
         descripcion: '',
     })
 
-    //esto me retorna el email del usuario con el que estoy logueado 
+    //esto me retorna el email del usuario con el que estoy logueado
     const getEmail = async () => {
         Auth.currentUserInfo().then((user) => {
             setDataUser({
@@ -164,20 +147,18 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                 descripcion: '',
             })
         })
-    }  
+    }
 
-    console.log('dataUser: ', dataUser)
-    useEffect(() => { 
+    useEffect(() => {
         getEmail()
     }, [])
 
-    const deleteUsuarios = async () => { 
+    const deleteUsuarios = async () => {
         var params = {
-           
             UserPoolId: awsconfig.userPoolId /* required */,
             Username: user.Attributes[4].Value /* required */,
-        } 
-        
+        }
+
         if (dataUser.email == user.Attributes[4].Value) {
             swal('Acción denegada', 'No puedes eliminar tu propio usuario', 'warning')
         } else {
@@ -185,20 +166,18 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                 let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
                 cognito.adminDeleteUser(params, (err, data) => {
                     if (err) {
-                        console.log(err)
                         reject(err)
                     } else {
                         resolve(data)
                     }
-                })   
-                    let objeto = {id_usuario: user.Username}
-                    
-                 await deleteData(deleteUserMethod, objeto) 
-                 setTimeout(() => document.location.href = '/usuarios/user-management', 750)
-            }) 
+                })
+                let objeto = {id_usuario: user.Username}
+
+                await deleteData(deleteUserMethod, objeto)
+                setTimeout(() => (document.location.href = '/usuarios/user-management'), 750)
+            })
         }
-    } 
-    console.log("user: ", user);
+    }
 
     return (
         <>
@@ -252,7 +231,6 @@ const DeleteUser: FC<any> = ({show, onClose, user}) => {
                         variant='btn btn-light-danger btn-active-danger'
                         onClick={() => {
                             deleteUsuarios()
-                            
                         }}
                     >
                         {'Eliminar '}

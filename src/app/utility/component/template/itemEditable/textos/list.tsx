@@ -27,8 +27,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const [dataSelect, setDataSelect] = useState<any>([])
 
   const changeText = (e: any) => {
-    // console.log(e.target.value);
-    
     const edit = {
       ...data,
       content: e.target.value,
@@ -49,7 +47,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
         nodes.push({ text: `${text}` });
       }
     }
-    // console.log(nodes);
     return (nodes)
   }
   const destroyItem = (e: any) => {
