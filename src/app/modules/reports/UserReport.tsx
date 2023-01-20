@@ -108,17 +108,20 @@ const UserReport = () => {
                     'error'
                 )
             } else {
-                setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
                 setName(sit[0]?.nombre_sitio)
                 setPhoto(sit[0]?.imagen)
 
-                let temp = []
-
-                for (let i = 0; i < sit.length; i++) {
-                    for (let e = 0; e < sit[i].data.length; e++) {
-                        temp.push(sit[i].data[e])
+                    for (let i = 0; i < sit.length; i++) {
+                        for (let e = 0; e < sit[i].data.length; e++) {
+                            temp.push(sit[i].data[e])
+                        }
                     }
+
+                    setData(temp as [])
+                    showResultComponent()
+                    setExistUsers(true)
+                    setTimeout(() => setShowLoad(false), 1000)
                 }
 
                 setData(temp as [])
