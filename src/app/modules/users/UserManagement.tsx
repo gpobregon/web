@@ -308,15 +308,15 @@ const UserManagement: FC<any> = ({show}) => {
                                     className='form-control form-control-solid w-250px ps-14'
                                     placeholder='Buscar'
                                     onChange={async (event) => {
-                                        await validateRole()
+                                        // await validateRole()
 
-                                        if (!permissionSearchUsers) {
-                                            swal({
-                                                title: 'No tienes permiso para buscar usuario',
-                                                icon: 'warning',
-                                            })
-                                            return
-                                        }
+                                        // if (!permissionSearchUsers) {
+                                        //     swal({
+                                        //         title: 'No tienes permiso para buscar usuario',
+                                        //         icon: 'warning',
+                                        //     })
+                                        //     return
+                                        // }
                                         searchItems(event.target.value)
                                     }}
                                 />
