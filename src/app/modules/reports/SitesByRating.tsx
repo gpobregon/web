@@ -155,6 +155,7 @@ const SitesByRating = () => {
     }
 
     const handleChangeSitio = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: event.value,
@@ -168,6 +169,7 @@ const SitesByRating = () => {
     }
 
     const handleChangeFechaInicial = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -181,6 +183,7 @@ const SitesByRating = () => {
     }
 
     const handleChangeFechaFinal = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -216,7 +219,7 @@ const SitesByRating = () => {
                                 <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
                             </Button>
                         </Link>
-                        <h1 className='m-0'>Reporte de sitios por Califiación</h1>
+                        <h1 className='m-0'>Reporte de sitios por Calificación</h1>
                     </div>
                 </div>
             </div>

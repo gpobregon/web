@@ -71,8 +71,8 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {data?.map((item: any) => (
-                                <tr>
+                            {data?.map((item: any ) => (
+                                <tr key={item}>
                                     <td>
                                         <div
                                             style={{
@@ -84,14 +84,14 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                                         ></div>
                                     </td>
                                     <td>
-                                        <div>{item.nombre}</div>
+                                        <div>{item?.nombre}</div>
                                     </td>
                                     <td className='text-muted'>
-                                        {Moment(item.ultima_visita).format('DD/MM/YYYY')}
+                                        {Moment(item?.ultima_visita).format('DD/MM/YYYY')}
                                     </td>
-                                    <td className='text-muted'>{item.pais}</td>
-                                    <td className='text-muted'>{item.genero}</td>
-                                    <td className='text-muted'>{item.edad}</td>
+                                    <td className='text-muted'>{item?.pais}</td>
+                                    <td className='text-muted'>{item?.genero}</td>
+                                    <td className='text-muted'>{item?.edad}</td>
                                 </tr>
                             ))}
                         </tbody>

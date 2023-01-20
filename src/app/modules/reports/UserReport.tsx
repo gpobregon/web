@@ -78,7 +78,7 @@ const UserReport = () => {
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([])
-    const [existUsers, setExistUsers] = useState(false)
+    
     const [type, setType] = useState({
         tipo_reporte: 'usuarios',
         id_sitio: 0,
@@ -110,8 +110,8 @@ const UserReport = () => {
             } else {
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                setName(sit[0].nombre_sitio)
-                setPhoto(sit[0].imagen)
+                setName(sit[0]?.nombre_sitio)
+                setPhoto(sit[0]?.imagen)
 
                 let temp = []
 
@@ -122,9 +122,14 @@ const UserReport = () => {
                 }
 
                 setData(temp as [])
-                showResultComponent()
-                setExistUsers(true)
-                setTimeout(() => setShowLoad(false), 1000)
+                if (temp.length > 0) {
+                    setShowResult(true)
+                } else {
+                    swal('No hay datos', 'No hay datos para mostrar', 'error')
+                    setShowResult(false)
+                }
+            
+                 setShowLoad(false)
             }
         else {
             alertNotNullInputs()
@@ -163,6 +168,7 @@ const UserReport = () => {
     }
 
     const handleChangeSitio = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: event.value,
@@ -176,6 +182,7 @@ const UserReport = () => {
     }
 
     const handleChangeGenero = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -189,6 +196,7 @@ const UserReport = () => {
     }
 
     const handleChangeEdad = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -202,6 +210,7 @@ const UserReport = () => {
     }
 
     const handleChangeFechaInicial = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -215,6 +224,7 @@ const UserReport = () => {
     }
 
     const handleChangeFechaFinal = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -228,6 +238,7 @@ const UserReport = () => {
     }
 
     const handleChangePais = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,

@@ -43,10 +43,10 @@ const PDF = (data: any) => {
         doc.internal.pageSize.height - 10
     )
 
-    if (data.tipo === 'Más visitados') {
-        doc.text(data.site?.tipogenero, 15, 37)
-        doc.text(data.site?.tipoedad, 15, 42)
-        doc.text(data.site?.tipopais, 15, 47)
+    if (data.tipo === 'Visitas por sitio') {
+        doc.text('Genero: '+data.site?.tipogenero, 15, 37)
+        doc.text('Edad: '+data.site?.tipoedad, 15, 42)
+        doc.text('Nacionalidad: '+data.site?.tipopais, 15, 47)
         doc.text('Fecha inicial: ' + data.site.fecha_inicial, 10, 54)
         doc.text('Fecha final: ' + data.site.fecha_final, 10, 59)
     } else if (data.tipo === 'Calificaciones') {
@@ -63,7 +63,7 @@ const PDF = (data: any) => {
 export default PDF
 
 const tabla = (data: any, doc: any) => {
-    if (data.tipo === 'Más visitados') {
+    if (data.tipo === 'Visitas por sitio') {
         return autoTable(doc, {
             startY: 65,
             head: [
@@ -132,7 +132,7 @@ const tablaUsers = (data: any, doc: any) => {
         ],
         body: 
             data.users.map((user: any) => {
-                var str=user.comentario.substring(0, 25);
+                var str=user.comentario.substring(0, 50);
 
                 return [
                     user.nombre,

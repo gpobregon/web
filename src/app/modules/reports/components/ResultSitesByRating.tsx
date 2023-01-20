@@ -1,8 +1,10 @@
+import { Auth } from 'aws-amplify'
 import moment from 'moment'
-import React, {FC} from 'react'
+import React, {FC, useCallback, useEffect, useState} from 'react'
 import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
+import { utils, writeFileXLSX } from 'xlsx'
 
 import PDF from '../ExportReport/PDF'
 
@@ -51,6 +53,22 @@ const customStyles = {
 }
 
 const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => {
+
+    const [user, setDataUser] = useState({
+        name: '',
+        lastName: '',
+    })
+
+    useEffect(() => {
+        Auth.currentUserInfo().then((user) => {
+            setDataUser({
+                name: user.attributes.name,
+                lastName: user.attributes['custom:lastname'],
+            })
+        })
+    }, [])
+
+
     const optionsWithIcons = [
         {
             value: 1,
@@ -87,9 +105,84 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
         if (event.value == 1) {
             PDF(datos)
         } else if (event.value == 2) {
-            // excelExport()
+            exportFile()
         }
     }
+
+    const exportFile = useCallback(() => {
+        // const ws1 = utils.json_to_sheet(pres);
+        //colocar encabezado en el excel
+        var ws = utils.aoa_to_sheet([
+            ['MINISTERIO DE CULTURA Y DEPORTES'],
+            [`Reporte: ${datos.tipo}`],
+            [
+                `Filtro: Calificacion: ${datos.site.tipocalificacion}`,
+            ],
+            [`Periodo consultado: ${datos.site.fecha_inicial} - ${datos.site.fecha_final}`],
+            [`Sitio: ${datos.name} (${datos.site.id_sitio})`],
+        ])
+
+        //colocar datos en tabla el excel Calficaciones generales
+        const wb = utils.book_new()
+        utils.sheet_add_json(ws, data, {
+            origin: 'A8',
+            cellStyles: true,
+        })
+
+        utils.sheet_add_aoa(
+            ws,
+            [
+                [
+                    'Total Visitas',
+                    'Pésima',
+                    'Buena',
+                    'Excelente',
+                ],
+            ],
+            {origin: 'A8'}
+        )
+
+        utils.book_append_sheet(wb, ws, 'Califiaciones Generales')
+
+        //colocar datos en tabla el excel Calficaciones por usuario
+        const ws2 = utils.aoa_to_sheet([
+            ['MINISTERIO DE CULTURA Y DEPORTES'],
+            [`Reporte: ${datos.tipo}`],
+            [
+                `Filtro: Calificacion: ${datos.site.tipocalificacion}`,
+            ],
+            [`Periodo consultado: ${datos.site.fecha_inicial} - ${datos.site.fecha_final}`],
+            [`Sitio: ${datos.name} (${datos.site.id_sitio})`],
+        ])
+
+     
+        utils.sheet_add_json(ws2, datos.users, {
+            origin: 'A8',
+            cellStyles: true,
+        })
+
+        utils.sheet_add_aoa(
+            ws2,
+            [
+                [
+                    'Nombre',
+                    'Apellido',
+                    'Genero',
+                    'País',
+                    "Comentario", 
+                    "Puntuación",
+                ],
+            ],
+            {origin: 'A8'}
+        )
+
+        utils.book_append_sheet(wb, ws2, 'Califiaciones por usuario')
+
+
+        writeFileXLSX(wb, `[${datos.site.id_sitio}]${datos.tipo}-${datos.name}.xlsx`, {
+            Props: {Author: `${user.name} ${user.lastName}`},
+        })
+    }, [datos])
 
  
     return (

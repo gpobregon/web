@@ -259,7 +259,7 @@ const MostVistedReport = () => {
                                 <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
                             </Button>
                         </Link>
-                        <h1 className='m-0'>Reporte de sitios mas visitados</h1>
+                        <h1 className='m-0'>Reporte de visitas por sitio</h1>
                     </div>
                 </div>
             </div>
