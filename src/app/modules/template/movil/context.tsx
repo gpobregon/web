@@ -91,7 +91,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             addElement(item.data)
         },
         collect: (monitor) => ({
-            isOver: monitor.isOver(),
+            isOver: !!monitor.isOver(),
             isOverCurrent: monitor.isOver({shallow: true}),
         }),
     }))
