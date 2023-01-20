@@ -1,9 +1,6 @@
-import {Page, Text, View, Document, StyleSheet, PDFViewer, Image, pdf} from '@react-pdf/renderer'
-import React, {useState, FC, useEffect} from 'react'
-import {Button, Modal} from 'react-bootstrap'
 import moment from 'moment'
 import {Auth} from 'aws-amplify'
-import {saveAs} from 'file-saver'
+import Moment from 'moment'
 import {jsPDF} from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
@@ -108,11 +105,27 @@ const tabla = (data: any, doc: any) => {
                 // ...
             ],
         })
+    }else if (data.tipo === 'usuarios') {
+        return autoTable(doc, {
+            startY: 55,
+            head: [['Usuario', 'Genero', 'País', 'Edad', 'Ultima visita']],
+            body: 
+            data.rows.map((user: any) => {
+                return [
+                    user.nombre,
+                    user.genero,
+                    user.pais,
+                    user.edad,
+                    Moment(user.ultima_visita).format('DD/MM/YYYY'),
+                ]
+            }),
+                // ...
+            
+        })
     }
 }
 
 const tablaUsers = (data: any, doc: any) => {
-    let bodyData = []
 
     data.users.map((user: any) => {
       
