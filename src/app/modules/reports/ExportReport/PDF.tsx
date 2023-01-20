@@ -40,7 +40,7 @@ const PDF = (data: any) => {
         doc.internal.pageSize.height - 10
     )
 
-    if (data.tipo === 'Visitas por sitio') {
+    if (data.tipo === 'Visitas por sitio' || data.tipo === 'usuarios') {
         doc.text('Genero: '+data.site?.tipogenero, 15, 37)
         doc.text('Edad: '+data.site?.tipoedad, 15, 42)
         doc.text('Nacionalidad: '+data.site?.tipopais, 15, 47)
@@ -107,7 +107,7 @@ const tabla = (data: any, doc: any) => {
         })
     }else if (data.tipo === 'usuarios') {
         return autoTable(doc, {
-            startY: 55,
+            startY: 65,
             head: [['Usuario', 'Genero', 'País', 'Edad', 'Ultima visita']],
             body: 
             data.rows.map((user: any) => {

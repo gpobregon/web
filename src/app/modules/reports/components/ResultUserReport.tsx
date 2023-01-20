@@ -28,6 +28,36 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
         },
     ]
 
+    const genresOptions: {[key: number]: string} = {
+        1: 'Femenino',
+        2: 'Masculino',
+        3: 'Prefiero no decirlo',
+        4: 'Todos los generos',
+    }
+
+    const yearsOldOptions: {[key: number]: string} = {
+        1: 'Menor de edad',
+        2: '18 a 30',
+        3: '31 a 50',
+        4: '51 en adelante',
+        5: 'Todas las edades',
+    }
+    const countryOptions: {[key: number]: string} = {
+        1: 'Nacional',
+        2: 'Extranjero',
+        3: 'Todos los paises',
+    }
+
+    if (typeof site.pais === 'number') {
+        site.tipopais = countryOptions[site.pais]
+    }
+    if (typeof site.edad === 'number') {
+        site.tipoedad = yearsOldOptions[site.edad]
+    }
+    if (typeof site.genero === 'number') {
+        site.tipogenero = genresOptions[site.genero]
+    }
+
     var datos = Object.assign(
         {},
         {rows: data},
@@ -59,7 +89,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
         //colocar encabezado en el excel
         var ws = utils.aoa_to_sheet([
             ['MINISTERIO DE CULTURA Y DEPORTES'],
-            [`Sitios ${datos.tipo}`],
+            [`${datos.tipo} por sitio`],
             [
                 `Filtro: Pais: ${datos.site.tipopais} - Edad: ${datos.site.tipoedad} - Genero: ${datos.site.tipogenero}`,
             ],
@@ -69,7 +99,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
 
         //colocar datos en tabla el excel
         const wb = utils.book_new()
-        utils.sheet_add_json(ws, datos, {
+        utils.sheet_add_json(ws, data, {
             origin: 'A8',
             cellStyles: true,
         })
@@ -78,26 +108,22 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
             ws,
             [
                 [
-                    'Total Visitas',
-                    'Hombre',
-                    'Mujer',
-                    'Sin sexo',
-                    'Menor edad',
-                    'Mayores edad',
-                    'Tercera edad',
-                    'Nacional',
-                    'Internacional',
+                    'Usuario',
+                    'Ultima visita',
+                    'País',
+                    'Genero',
+                    'Edad',
                 ],
             ],
             {origin: 'A8'}
         )
 
-        utils.book_append_sheet(wb, ws, 'Data')
+        utils.book_append_sheet(wb, ws, 'Usuarios')
 
         writeFileXLSX(wb, `[${datos.site.id_sitio}]${datos.tipo}-${datos.name}.xlsx`, {
             Props: {Author: `${user.name} ${user.lastName}`},
         })
-    }, [datos])
+    }, [data])
 
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
@@ -170,7 +196,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                         </thead>
                         <tbody>
                             {data?.map((item: any ) => (
-                                <tr key={item}>
+                                <tr >
                                     <td>
                                         <div
                                             style={{
