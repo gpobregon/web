@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC } from "react";
+import { FC, useState, useCallback } from "react";
 import { Row } from 'react-bootstrap'
 import NewCol from './col'
 import { Menu, Item, useContextMenu } from "react-contexify";
@@ -19,18 +19,29 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, se
 
   const { show } = useContextMenu({ id: "menu-id" });
   const { show: showMenu2 } = useContextMenu({ id: "menu-custom" });
-
+  const [forbidDrag, setForbidDrag] = useState(false)
   const destroyItem = (e: any) => {
     removeItem(e.triggerEvent.target.id);
     setEditItem([])
   }
 
+  
+  const onToggleForbidDrag = useCallback(() => {
+    setForbidDrag(!forbidDrag)
+  }, [forbidDrag, setForbidDrag])
+  
   return (
     <div
-      ref={referencia}
+      ref={!forbidDrag ? referencia : null}
       data-handler-id={handlerId}
       className="d-flex cursor-grabbing"
     >
+      <input
+        type="checkbox"
+        className="position-absolute mt-5 ms-3"
+        checked={forbidDrag}
+        onChange={onToggleForbidDrag}
+      />
       <div onContextMenu={show} onDoubleClick={showMenu2} className="p-1 py-1 d-flex align-items-center">
         <i id={data.id} className="bi bi-grip-vertical fa-2x" />
       </div>
