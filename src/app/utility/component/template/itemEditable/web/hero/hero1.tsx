@@ -34,7 +34,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, se
     <div
       ref={!forbidDrag ? referencia : null}
       data-handler-id={handlerId}
-      className="d-flex cursor-grabbing"
+      className="d-flex cursor-grabbing py-5 my-5"
     >
       <input
         type="checkbox"

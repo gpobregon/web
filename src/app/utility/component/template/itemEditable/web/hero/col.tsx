@@ -153,7 +153,7 @@ const NewCol: FC<Model> = ({
     }, [count2])
 
     return (
-        <Col className='border border-opacity-10 py-5 my-5' lg={lg} style={{minHeight: '100px'}} ref={drop}>
+        <Col className='border border-opacity-10' lg={lg} style={{minHeight: '100px'}} ref={drop}>
             {sectionData.map((item: any, index: number) => {
                 return (
                     <div key={index}>
