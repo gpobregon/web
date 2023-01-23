@@ -104,11 +104,7 @@ const SitesByRating = () => {
             type.calificacion != 0
         )
             if (type.fecha_inicial >= type.fecha_final) {
-                swal(
-                    'Fechas incorrectas',
-                    'Por favor introduce una fecha inicial menor que la final',
-                    'error'
-                )
+               errorDate()
             } else {
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
@@ -201,7 +197,15 @@ const SitesByRating = () => {
             text: '¡Faltan campos por completar!',
             icon: 'warning',
         })
+    } 
+
+    const errorDate = async () => {
+        swal({
+            text: 'Fechas incorrectas',
+            icon: 'warning',
+        })
     }
+
 
     return (
         <Container fluid>
