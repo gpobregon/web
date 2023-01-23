@@ -95,8 +95,14 @@ const MostVistedReport = () => {
    
 
     const [photo, setPhoto] = useState([])
-    const [name, setName] = useState([])
+    const [name, setName] = useState([]) 
+    const [date, setDate] = useState({ 
+        fecha_inicial: '',
+        fecha_final: '',
+    }) 
+    console.log("date: ", date);
     const [data, setData] = useState([])
+    console.log("data: ", data);
    
     const typeReport = async (typee: any) => {
         if (
@@ -108,15 +114,16 @@ const MostVistedReport = () => {
             type.pais != 0
         ) {
             if (type.fecha_inicial >= type.fecha_final) {
-                swal(
-                    'Fechas incorrectas',
-                    'Por favor introduce una fecha inicial menor que la final',
-                    'error'
-                )
+                errorDate()
             } else { 
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                // console.log('sit: ', sit)
+                console.log("typee: ", typee);
+                 console.log('sit: ', sit) 
+                setDate({  
+                    fecha_inicial: typee.fecha_inicial,
+                    fecha_final: typee.fecha_final,
+                })
                 setName(sit[0].nombre_sitio)
                 setPhoto(sit[0].imagen)
 
@@ -140,6 +147,13 @@ const MostVistedReport = () => {
     const alertNotNullInputs = async () => {
         swal({
             text: '¡Faltan campos por completar!',
+            icon: 'warning',
+        })
+    } 
+
+    const errorDate = async () => {
+        swal({
+            text: 'Fechas incorrectas',
             icon: 'warning',
         })
     }
@@ -371,7 +385,8 @@ const MostVistedReport = () => {
                 show={showResult}
                 data={data}
                 site={type}
-                name={name}
+                name={name} 
+                date={date}
                 photo={photo}
             />
         </Container>

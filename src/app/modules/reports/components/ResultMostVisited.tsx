@@ -53,7 +53,7 @@ const customStyles = {
     }),
 }
 
-const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
+const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
     // console.log('name: ', name)
     // console.log('data: ', data)
     // console.log('site: ', site)
@@ -232,8 +232,8 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
                         <div className='col-xs-8 col-md-8 col-lg-8 py-5 px-9'>
                             <h2 className=''>{name}</h2>
                             <h6 className='text-muted'>
-                                {moment(site.fecha_inicial).format('DD/MM/YYYY')} -{' '}
-                                {moment(site.fecha_final).format('DD/MM/YYYY')}
+                                {moment(date.fecha_inicial).format('DD/MM/YYYY')} -{' '}
+                                {moment(date.fecha_final).format('DD/MM/YYYY')}
                             </h6>
                         </div>
                         <div className='col-xs-4 col-md-4 col-lg-4 py-5 px-9'>
