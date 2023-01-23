@@ -516,7 +516,11 @@ const EditPoint = () => {
                                         sitio.es_visible = !sitio.es_visible
                                         changeOculto(sitio.es_visible)
                                     }}
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
+                                    style={{
+                                        color: sitio.es_visible ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
                                 ></Button>
                                 <Button
                                     className='btn-secondary fa-solid fa-xmark background-button'
@@ -555,7 +559,11 @@ const EditPoint = () => {
                                             : 'btn-secondary fa-solid fa-upload background-button'
                                     }
                                     id='center2'
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
+                                    style={{
+                                        color: sitio.publicado ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
                                 ></Button>
                                 <Button
                                     onClick={() => {
