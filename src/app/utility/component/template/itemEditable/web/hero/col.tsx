@@ -37,10 +37,12 @@ const NewCol: FC<Model> = ({
         drop: (item: any) => {
             if (!['1-hero', '2-hero'].includes(item.data.type)) {
                 addElement(item.data)
+                
             }
         },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
+            canDrop: monitor.canDrop()
         }),
     }))
 
@@ -69,6 +71,7 @@ const NewCol: FC<Model> = ({
     )
     const moveCard = useCallback(
         (dragIndex: number, hoverIndex: number) => {
+            console.log(dragIndex, hoverIndex, 'Col')
             setItems2((prevCards: any) =>
                 update(prevCards, {
                     $splice: [
@@ -77,15 +80,7 @@ const NewCol: FC<Model> = ({
                     ],
                 })
             )
-            //   const { card, index } = findCard(id)
-            //   setItems2(
-            //     update(items2, {
-            //       $splice: [
-            //         [index, 1],
-            //         [atIndex, 0, card],
-            //       ],
-            //     }),
-            //   )
+
             setCount2((count2: number) => (count2 = 1))
         },
         [findCard, items2, setItems2]

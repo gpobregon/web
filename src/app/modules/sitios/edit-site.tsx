@@ -846,7 +846,11 @@ const EditSite = () => {
                                             status.publicar_movil
                                         )
                                     }}
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
+                                    style={{
+                                        color: !status.oculto ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
                                 ></Button>
                                 <Button
                                     className='btn-secondary fa-solid fa-xmark background-button'
@@ -902,7 +906,11 @@ const EditSite = () => {
                                             : 'btn-secondary fa-solid fa-upload background-button'
                                     }
                                     id='center2'
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
+                                    style={{
+                                        color: status.publicado ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
                                 ></Button>
                                 <Button
                                     onClick={() => {
@@ -981,7 +989,11 @@ const EditSite = () => {
                                             : 'btn-secondary fa-solid bi-cursor-fill background-button'
                                     }
                                     id='center2'
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
+                                    style={{
+                                        color: status.cercania_activa ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
                                 ></Button>
                                 {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
                             </ul>

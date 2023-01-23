@@ -22,7 +22,7 @@ const ResultSitesByRating: FC<any> = ({show, users}) => {
                                     <th>Apellido</th>
                                     <th>Genero</th>
                                     <th>País</th>
-                                    <th>puntuacion</th>
+                                    <th>Puntuación</th>
                                     <th>Comentario</th>
                                 </tr>
                             </thead>

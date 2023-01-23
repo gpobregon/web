@@ -1,9 +1,6 @@
-import {Page, Text, View, Document, StyleSheet, PDFViewer, Image, pdf} from '@react-pdf/renderer'
-import React, {useState, FC, useEffect} from 'react'
-import {Button, Modal} from 'react-bootstrap'
 import moment from 'moment'
 import {Auth} from 'aws-amplify'
-import {saveAs} from 'file-saver'
+import Moment from 'moment'
 import {jsPDF} from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
@@ -43,10 +40,10 @@ const PDF = (data: any) => {
         doc.internal.pageSize.height - 10
     )
 
-    if (data.tipo === 'Más visitados') {
-        doc.text(data.site?.tipogenero, 15, 37)
-        doc.text(data.site?.tipoedad, 15, 42)
-        doc.text(data.site?.tipopais, 15, 47)
+    if (data.tipo === 'Visitas por sitio' || data.tipo === 'usuarios') {
+        doc.text('Genero: '+data.site?.tipogenero, 15, 37)
+        doc.text('Edad: '+data.site?.tipoedad, 15, 42)
+        doc.text('Nacionalidad: '+data.site?.tipopais, 15, 47)
         doc.text('Fecha inicial: ' + data.site.fecha_inicial, 10, 54)
         doc.text('Fecha final: ' + data.site.fecha_final, 10, 59)
     } else if (data.tipo === 'Calificaciones') {
@@ -63,7 +60,7 @@ const PDF = (data: any) => {
 export default PDF
 
 const tabla = (data: any, doc: any) => {
-    if (data.tipo === 'Más visitados') {
+    if (data.tipo === 'Visitas por sitio') {
         return autoTable(doc, {
             startY: 65,
             head: [
@@ -108,11 +105,27 @@ const tabla = (data: any, doc: any) => {
                 // ...
             ],
         })
+    }else if (data.tipo === 'usuarios') {
+        return autoTable(doc, {
+            startY: 65,
+            head: [['Usuario', 'Genero', 'País', 'Edad', 'Ultima visita']],
+            body: 
+            data.rows.map((user: any) => {
+                return [
+                    user.nombre,
+                    user.genero,
+                    user.pais,
+                    user.edad,
+                    Moment(user.ultima_visita).format('DD/MM/YYYY'),
+                ]
+            }),
+                // ...
+            
+        })
     }
 }
 
 const tablaUsers = (data: any, doc: any) => {
-    let bodyData = []
 
     data.users.map((user: any) => {
       
@@ -132,7 +145,7 @@ const tablaUsers = (data: any, doc: any) => {
         ],
         body: 
             data.users.map((user: any) => {
-                var str=user.comentario.substring(0, 25);
+                var str=user.comentario.substring(0, 50);
 
                 return [
                     user.nombre,

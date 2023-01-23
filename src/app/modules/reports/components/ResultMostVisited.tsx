@@ -128,7 +128,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo}) => {
         {rows: datos1},
         {name: name},
         {portada_path: photo},
-        {tipo: 'Más visitados'},
+        {tipo: 'Visitas por sitio'},
         {site: site}
     )
 

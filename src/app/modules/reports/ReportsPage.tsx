@@ -124,7 +124,7 @@ const ReportsPage = () => {
                                     </span>
                                 </Card.Title>
                                 <Card.Subtitle className='mb-4 fs-3'>
-                                    Sitios más visitados
+                                    Visitas por sitio
                                 </Card.Subtitle>
                             </Card>
                         </Link>

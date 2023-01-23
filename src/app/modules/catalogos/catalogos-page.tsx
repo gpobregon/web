@@ -29,7 +29,7 @@ import {ConsoleLogger} from '@aws-amplify/core'
 import {LoadingContext} from '../../utility/component/loading/context'
 import {Amplify, Auth} from 'aws-amplify'
 import favicon from '../../../../public/manifest.json'
-import { useAuth } from '../auth'
+import {useAuth} from '../auth'
 const alertLanguageDone = async () => {
     swal({
         text: 'Lenguaje creado',
@@ -509,8 +509,7 @@ const CatalogosPage = () => {
         try {
             logout()
             await Amplify.Auth.forgetDevice()
-        } catch (error) {
-        }
+        } catch (error) {}
     }
 
     useEffect(() => {
@@ -665,14 +664,29 @@ const CatalogosPage = () => {
                     <div className='d-flex flex-row-reverse'>
                         <a
                             style={{paddingLeft: 30}}
-                            href='https://mcd-archivos.s3.amazonaws.com/plantillasIdiomas/es.json'
-                            download
+                            href={'https://mcd-archivos.s3.amazonaws.com/plantillasIdiomas/plantailla_es_website1.json'}
+                            target='_blank'
+                            rel='noopener noreferrer'
                         >
                             <Button variant='primary' className='mt-md-0 mt-4'>
                                 <span className='menu-icon me-0  '>
                                     <i className={`bi bi-file-earmark-arrow-down fs-2`}></i>
                                 </span>
-                                {' Descargar json'}
+                                {' Descargar json web'}
+                            </Button>
+                        </a>
+
+                        <a
+                            style={{paddingLeft: 30}}
+                            href={'https://mcd-archivos.s3.amazonaws.com/plantillasIdiomas/plantilla_es_movil1.json'}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                        >
+                            <Button variant='primary' className='mt-md-0 mt-4'>
+                                <span className='menu-icon me-0  '>
+                                    <i className={`bi bi-file-earmark-arrow-down fs-2`}></i>
+                                </span>
+                                {' Descargar json movil'}
                             </Button>
                         </a>
 
