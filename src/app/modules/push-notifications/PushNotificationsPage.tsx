@@ -378,7 +378,7 @@ const PushNotificationsPage = () => {
     }
 
     const deleteSelectedNotification = async () => {
-        await validateRole()
+        // await validateRole()
 
         if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
@@ -395,7 +395,6 @@ const PushNotificationsPage = () => {
             })
             return
         }
-
         if (arrayDeleteNotifications.length === 0) {
             swal({
                 title: 'Selecciona notificaciones para eliminar',
@@ -408,6 +407,8 @@ const PushNotificationsPage = () => {
                 buttons: ['No', 'Sí'],
             }).then((willDelete) => {
                 if (willDelete) {
+                    setShowLoad(true)
+                    
                     for (let i = 0; i < arrayDeleteNotifications.length; i++) {
                         deleteData(deleteNotificationMethod, {
                             id_notificacion: parseInt(arrayDeleteNotifications[i]),
@@ -417,15 +418,12 @@ const PushNotificationsPage = () => {
                         title: 'Se han eliminado las notificaciones',
                         icon: 'success',
                     })
+                    arrayDeleteNotifications.length = 0
+
+                    setTimeout(chooseGetNotifications, 500)
+                    setShowLoad(false)
                 }
             })
-
-            setTimeout(chooseGetNotifications, 500)
-            setTimeout(chooseGetNotifications, 1000)
-            setTimeout(chooseGetNotifications, 2000)
-            setTimeout(chooseGetNotifications, 3000)
-
-            arrayDeleteNotifications.length = 0
         }
     }
 
@@ -482,8 +480,7 @@ const PushNotificationsPage = () => {
         try {
             logout()
             await Amplify.Auth.forgetDevice()
-        } catch (error) {
-        }
+        } catch (error) {}
     }
 
     //fin
