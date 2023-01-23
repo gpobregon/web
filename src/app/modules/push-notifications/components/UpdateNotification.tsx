@@ -192,7 +192,7 @@ const UpdateNotification: FC<any> = ({
                                 <br />
                                 <span>Resolución: 1920x1080</span>
                                 <br />
-                                <span>Tamaño max: 5MB</span>
+                                <span>Tamaño max: 1MB</span>
                             </div>
                         </div>
 
