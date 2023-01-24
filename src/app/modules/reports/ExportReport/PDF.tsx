@@ -27,18 +27,14 @@ const PDF = (data: any) => {
     doc.line(10, 15, 200, 15)
 
     doc.setFontSize(10)
-
+    
     doc.text('Reporte:  ' + data.tipo, 10, 25)
 
     doc.text('Filtros: ', 10, 32)
 
     tabla(data, doc)
 
-    doc.text(
-        `Reporte generado el ${date_report_format} a las ${hour_report_format}.`,
-        20,
-        doc.internal.pageSize.height - 10
-    )
+  
 
     if (data.tipo === 'Visitas por sitio' || data.tipo === 'usuarios') {
         doc.text('Genero: '+data.site?.tipogenero, 15, 37)
@@ -53,6 +49,19 @@ const PDF = (data: any) => {
         doc.addPage()
         tablaUsers(data, doc)
     }
+
+    const pageSize = doc.getNumberOfPages()
+    for (let i = 1; i <= pageSize; i++) {
+        doc.setPage(i)
+        doc.text(`${i}`, doc.internal.pageSize.width - 10, 10 )
+    }
+    doc.setPage(pageSize)
+    doc.text(
+        `Reporte generado el ${date_report_format} a las ${hour_report_format}.`,
+        20,
+        doc.internal.pageSize.height - 10
+    )
+
 
     doc.save(`[${data.site.id_sitio}]${data.tipo}-${data.name}.pdf`)
 }

@@ -290,6 +290,7 @@ const SitesByRating = () => {
                                                 : 'btn btn-primary-outline fa-solid bi-emoji-frown fs-1 background-button'
                                         }
                                         onClick={() => {
+                                            setShowResult(false)
                                             setType({
                                                 tipo_reporte: type.tipo_reporte,
                                                 id_sitio: type.id_sitio,
@@ -341,6 +342,7 @@ const SitesByRating = () => {
                                                 : 'btn btn-primary-outline fa-solid bi-emoji-smile fs-1 background-button'
                                         }
                                         onClick={() => {
+                                            setShowResult(false)
                                             setType({
                                                 tipo_reporte: type.tipo_reporte,
                                                 id_sitio: type.id_sitio,
@@ -379,6 +381,7 @@ const SitesByRating = () => {
                                                 : 'btn btn-primary-outline fa-solid bi-emoji-laughing fs-1 background-button'
                                         }
                                         onClick={() => {
+                                            setShowResult(false)
                                             setType({
                                                 tipo_reporte: type.tipo_reporte,
                                                 id_sitio: type.id_sitio,
@@ -404,6 +407,7 @@ const SitesByRating = () => {
                                     <button
                                         className='btn btn-primary-outline background-button'
                                         onClick={() => {
+                                            setShowResult(false)
                                             setType({
                                                 tipo_reporte: type.tipo_reporte,
                                                 id_sitio: type.id_sitio,
