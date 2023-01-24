@@ -37,7 +37,6 @@ export function ForgotPassword() {
                 'Verifica si haz ingresado un email registrado',
                 'error'
             )
-            console.log('error confirming sign up', error)
         }
     }
 

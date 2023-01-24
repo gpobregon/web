@@ -3,8 +3,13 @@
 import {Element} from './data'
 
 export function updateData(allData, oneData) {
-    let all = allData.map((u) => (u.id !== oneData.id ? u : oneData))
-    return all
+
+    let all = allData.map((u) => u && (u.id !== oneData.id ? u : oneData)
+    )
+    const results = all.filter(element => {
+        return element !== undefined;
+      });
+    return results
 }
 
 export function appendData(all, data) {
@@ -12,7 +17,6 @@ export function appendData(all, data) {
 }
 
 export const setDataList = (el) => {
-    // console.log(interpretHTML(el))
     const L = el.firstChild.getElementsByTagName('li')
     let Array = []
     for (let i = 0; i < L.length; i++) {

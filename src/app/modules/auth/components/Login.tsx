@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import {Form, Button} from 'react-bootstrap'
 import {Amplify, Auth} from 'aws-amplify'
@@ -55,6 +55,13 @@ const alertPasswordNoEnviado = async () => {
         icon: 'warning',
     })
 }
+
+const alertDevices = async () => {
+    swal({
+        text: '¡No pueden haber más de 5 dispositivos conectados a esta cuenta!',
+        icon: 'warning',
+    })
+}
 interface State {
     amount: string
     password: string
@@ -91,19 +98,28 @@ export function Login() {
     const login = async (email: string, password: string) => {
         try {
             const user = await Auth.signIn(email, password)
-            if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-                setChangePassword(true)
-            }
-            setUser(user)
-            setCurrentUser(user)
-            saveAuth(user)
-            return user
+            const devices = await Amplify.Auth.fetchDevices()
+                await Amplify.Auth.rememberDevice()
+                if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
+                    setChangePassword(true)
+                }
+                setUser(user)
+                setCurrentUser(user)
+                saveAuth(user)
+                return user
         } catch (error) {
             alertNotNullInputs()
-            console.log(error)
             return null
         }
     }
+
+    const getDivices = async () => {
+        const devices = await Amplify.Auth.fetchDevices()
+    }
+
+    useEffect(() => {
+        getDivices()
+    }, [])
 
     const onChangePassword = async () => {
         try {
@@ -147,7 +163,8 @@ export function Login() {
     }
 
     const passwordValidation = () => {
-        const regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g
+        const regEx =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ])[A-Za-z\d¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ]{8,}$/g
         if (regEx.test(password)) {
             handleSubmit(true)
         } else if (!regEx.test(password) && password !== '') {

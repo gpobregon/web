@@ -1,10 +1,12 @@
-import {Auth} from 'aws-amplify'
 import React, {useContext, useEffect, useState} from 'react'
 import {Container, Col, Row, Card} from 'react-bootstrap'
 import {Link, useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
 import {getData, getRolesMethod} from '../../services/api'
-import { LoadingContext } from '../../utility/component/loading/context'
+import {LoadingContext} from '../../utility/component/loading/context'
+import {Amplify, Auth} from 'aws-amplify'
+import {useAuth} from '../auth'
+import swal from 'sweetalert'
 
 const ReportsPage = () => {
     let navigate = useNavigate()
@@ -18,16 +20,36 @@ const ReportsPage = () => {
         setExistRoles(true)
     }
 
+    //para cerrar sesión despues de cambiar contraseña, no olvida el dispositivo :c
+    const {currentUser, logout} = useAuth()
+    const forgotDevice = async () => {
+        try {
+            logout()
+            await Amplify.Auth.forgetDevice()
+        } catch (error) {
+        }
+    }
+
+    //fin
+
     const validateRole = async () => {
         setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
 
-        Auth.currentUserInfo().then((user) => {
-            const filter = roles.filter((role) => {
-                return user.attributes['custom:role'] === role.nombre
-            })
-
-            if (filter[0]?.gestor_reportes === false) {
-                navigate('/error/401', {replace: true})
+                if (filter[0]?.gestor_reportes === false) {
+                    navigate('/error/401', {replace: true})
+                }
+            } catch (error) {
+                swal(
+                    'Se ha cambiado la contraseña de tu usuario',
+                    'Cierra sesión y vuelve a ingresar',
+                    'warning'
+                )
+                await forgotDevice()
             }
         })
 
@@ -102,7 +124,7 @@ const ReportsPage = () => {
                                     </span>
                                 </Card.Title>
                                 <Card.Subtitle className='mb-4 fs-3'>
-                                    Sitios más visitados
+                                    Visitas por sitio
                                 </Card.Subtitle>
                             </Card>
                         </Link>
@@ -134,34 +156,6 @@ const ReportsPage = () => {
                                 <Card.Subtitle className='mb-4 fs-3'>
                                     Sitios por calificación
                                 </Card.Subtitle>
-                            </Card>
-                        </Link>
-                    </Col>
-
-                    <Col sm='4' md='3' style={{cursor: 'pointer'}}>
-                        <Link to=''>
-                            <Card
-                                className='d-flex justify-content-center align-items-center p-5'
-                                style={{
-                                    height: 270,
-                                }}
-                            >
-                                <Card.Title
-                                    className='mb-4'
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <span className='menu-ico'>
-                                        <i
-                                            className='bi bi-file-earmark-text text-white'
-                                            style={{fontSize: 64}}
-                                        ></i>
-                                    </span>
-                                </Card.Title>
-                                <Card.Subtitle className='mb-4 fs-3'>Otro reporte</Card.Subtitle>
                             </Card>
                         </Link>
                     </Col>

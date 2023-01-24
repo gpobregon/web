@@ -8,9 +8,10 @@ import moment from 'moment'
 import logo from './upload-image_03.jpg'
 import QRCode from 'qrcode.react'
 import {roleManager} from '../../models/roleManager'
-import {Auth} from 'aws-amplify'
+import {Amplify, Auth} from 'aws-amplify'
 import swal from 'sweetalert'
-import { LoadingContext } from '../../utility/component/loading/context'
+import {LoadingContext} from '../../utility/component/loading/context'
+import {useAuth} from '../auth'
 
 const SitiosPage = () => {
     const [sites, setSites] = useState<Site[]>([])
@@ -40,16 +41,16 @@ const SitiosPage = () => {
     }
 
     const getSites = async () => {
-        const site: any = await postData(sitesMethod, {page: pageNumber, quantity: '8'})
+        const cantidadSitiosPorPagina = '24'
+        const site: any = await postData(sitesMethod, {page: pageNumber, quantity: cantidadSitiosPorPagina})
         const coutsite: any = await getData(`${sitesMethod}/count`)
-        // console.log(site)
-        
+
         setCantidadSite(coutsite.count)
         setFilterSites(site.site as Site[])
         setSites(site.site as Site[])
         const countNextResults: any = await postData(sitesMethod, {
             page: pageNumber + 1,
-            quantity: '8',
+            quantity: cantidadSitiosPorPagina,
         })
         if (countNextResults.site.length == 0) {
             setToggleButtonsPagination({
@@ -62,10 +63,8 @@ const SitiosPage = () => {
                 next: false,
             })
         }
-       
-        
-        let pagesLength = Math.ceil(coutsite.count / 8)
-        // console.log(pagesLength)
+
+        let pagesLength = Math.ceil(coutsite.count / Number(cantidadSitiosPorPagina))
         setTotalPages(pagesLength)
     }
 
@@ -73,7 +72,6 @@ const SitiosPage = () => {
         const numAscending = [...sites].sort((a, b) => moment(a.creado).diff(b.creado))
         setSites(numAscending)
         setFilterSites(numAscending)
-        console.log(numAscending)
         setEstado(false)
         setUp(false)
     }
@@ -82,7 +80,6 @@ const SitiosPage = () => {
         const numDescending = [...sites].sort((a, b) => moment(b.creado).diff(a.creado))
         setSites(numDescending)
         setFilterSites(numDescending)
-        console.log(numDescending)
         setEstado(true)
         setUp(true)
     }
@@ -156,24 +153,46 @@ const SitiosPage = () => {
         setExistRoles(true)
     }
 
+    //para cerrar sesión despues de cambiar contraseña, no olvida el dispositivo :c
+    const {currentUser, logout} = useAuth()
+    const forgotDevice = async () => {
+        try {
+            logout()
+            await Amplify.Auth.forgetDevice()
+        } catch (error) {
+        }
+    }
+
+    //fin
+
     const validateRole = async () => {
-        setShowLoad(true)
-
-        Auth.currentUserInfo().then((user) => {
-            const filter = roles.filter((role) => {
-                return user.attributes['custom:role'] === role.nombre
+        
+            setShowLoad(true)
+            Auth.currentUserInfo().then(async (user) => {  
+                try {
+                    const filter = roles.filter((role) => {
+                        return user.attributes['custom:role'] === role.nombre
+                    })
+    
+                    if (filter[0]?.gestor_sitios === false) {
+                        navigate('/error/401', {replace: true})
+                    } else {
+                        setPermissionCreateSite(filter[0]?.sitio_crear)
+                        setPermissionEditSite(filter[0]?.sitio_editar)
+                        setPermissionDeleteSite(filter[0]?.sitio_eliminar)
+                    }
+                } catch (error) {
+                    swal(
+                        'Se ha cambiado la contraseña de tu usuario',
+                        'Cierra sesión y vuelve a ingresar',
+                        'warning'
+                    )
+                    await forgotDevice()
+                }
+                
             })
-
-            if (filter[0]?.gestor_sitios === false) {
-                navigate('/error/401', {replace: true})
-            } else {
-                setPermissionCreateSite(filter[0]?.sitio_crear)
-                setPermissionEditSite(filter[0]?.sitio_editar)
-                setPermissionDeleteSite(filter[0]?.sitio_eliminar)
-            }
-        })
-
-        setTimeout(() => setShowLoad(false), 1000)
+            setTimeout(() => setShowLoad(false), 1000)
+        
     }
 
     useEffect(() => {
@@ -270,7 +289,9 @@ const SitiosPage = () => {
                 </div>
                 <Button
                     className='btn btn-primary'
-                    onClick={() => {
+                    onClick={async () => {
+                        await validateRole()
+
                         if (!permissionCreateSite) {
                             swal({
                                 title: 'No tienes permiso para crear un sitio',
@@ -290,6 +311,7 @@ const SitiosPage = () => {
                     <Sitio
                         {...sitio}
                         key={sitio.id_sitio.toString()}
+                        validateRole={validateRole}
                         permissionEditSite={permissionEditSite}
                         permissionDeleteSite={permissionDeleteSite}
                     />
@@ -315,7 +337,9 @@ const SitiosPage = () => {
                                 verticalAlign: 'middle',
                                 textAlign: 'center',
                             }}
-                            onClick={() => {
+                            onClick={async () => {
+                                await validateRole()
+
                                 if (!permissionCreateSite) {
                                     swal({
                                         title: 'No tienes permiso para crear un sitio',

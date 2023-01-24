@@ -16,7 +16,6 @@ const CropDemo: FC<Model> = ({ editItemResource, setDataResource }) => {
     const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
     const previewCanvasRef = useRef<HTMLCanvasElement>(null)
     const imgRef = useRef<HTMLImageElement>(null)
-  
    useEffect(() => {
     if (editItemResource.url &&  
         imgRef.current && 
@@ -36,12 +35,13 @@ const CropDemo: FC<Model> = ({ editItemResource, setDataResource }) => {
 
     return (
       <Fragment>
+     
         <ReactCrop crop={crop} onChange={c => setCrop(c)} onComplete={(c) => setCompletedCrop(c)}>
           <img
             ref={imgRef}
             alt=""
             className="w-80" 
-            src={editItemResource.url ? editItemResource.url : ''}
+            src={editItemResource.url ? `${editItemResource.url}?not-from-cache-please` : ''}
             crossOrigin="anonymous"
           />
         </ReactCrop>

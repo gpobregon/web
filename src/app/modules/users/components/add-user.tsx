@@ -10,6 +10,7 @@ import {
     validateStringPhoneNumber,
     validateStringPhoneNumberAlert,
     validateStringSinCaracteresEspeciales,
+    validateStringSoloNumeros,
 } from '../../validarCadena/validadorCadena'
 import {roleManager} from '../../../models/roleManager'
 import {addUserMethod, getData, getRolesMethod, postData} from '../../../services/api'
@@ -131,7 +132,6 @@ const AddUser: FC<any> = ({show, onClose}) => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
     }
-    // console.log(getRoles())
 
     useEffect(() => {
         getRoles()
@@ -153,11 +153,11 @@ const AddUser: FC<any> = ({show, onClose}) => {
             user.phoneNumber != ''
         ) {
             const regExPassword =
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ])[A-Za-z\d¡!¿?@#$%^&*=+/\\|()\-\_`´~<>,.:;'"\[\]\{\} ]{8,}$/g
             if (regExPassword.test(user.password) == false) {
                 swal(
                     'La contraseña no es válida',
-                    'La contraseña debe de contener:\n• Al menos una letra mayúscula, una minúscula, un número y un caracter especial (@$!%*?&)\n• Tener al menos un total de 8 caracteres\n',
+                    'La contraseña debe de contener:\n• Al menos una letra mayúscula, una minúscula, un número y un caracter especial (!@#$%&*?)\n• Tener al menos un total de 8 caracteres\n',
                     'warning'
                 )
                 return
@@ -182,7 +182,6 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                 enabled: false,
                             },
                         })
-                        console.log('user: ', user)
                         const filter = roles.filter((item) => {
                             return user.role === item.nombre
                         })
@@ -191,15 +190,11 @@ const AddUser: FC<any> = ({show, onClose}) => {
                             id_rol: filter[0].id_rol,
                             foto: user.imageProfile,
                         }
-                        await postData(addUserMethod, objeto).then((data) => {
-                            console.log(data)
-                        })
+                        await postData(addUserMethod, objeto)
 
-                        // alertUserDone()
                         onClose()
                         document.location.href = '/usuarios/user-management'
                     } catch (error) {
-                        console.log('error signing up:', error)
                         swal(
                             'Contraseña o email invalidos',
                             'Recuerda escribir una contraseña que incluya un signo especial, una letra minuscula, una letra mayuscula y un minimo de 6 caracteres en total',
@@ -235,6 +230,9 @@ const AddUser: FC<any> = ({show, onClose}) => {
             imageProfile: user.imageProfile,
         })
     }
+
+    const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
+        ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()
 
     return (
         <>
@@ -347,14 +345,14 @@ const AddUser: FC<any> = ({show, onClose}) => {
                             <Form.Group>
                                 <Form.Label>{'Teléfono'}</Form.Label>
                                 <Form.Control
-                                    type='number'
+                                    value={user.phoneNumber}
+                                    type='text'
                                     pattern='/^-?\d+\.?\d*$/'
+                                    maxLength={8}
                                     autoComplete='off'
                                     className='mb-4'
                                     onChange={(e) => {
-                                        setTouchedPhoneInput(true)
-
-                                        if (validateStringPhoneNumber(e.target.value)) {
+                                        if (validateStringSoloNumeros(e.target.value)) {
                                             setUser({
                                                 username: user.username,
                                                 password: user.password,
@@ -366,7 +364,8 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                                 imageProfile: user.imageProfile,
                                             })
                                         }
-                                        setValidPhone(validateStringPhoneNumber(e.target.value))
+                                        setTouchedPhoneInput(true)
+                                        setValidPhone(validateStringSoloNumeros(e.target.value))
                                     }}
                                 />
                                 {validPhone && touchedPhoneInput ? (
@@ -383,7 +382,11 @@ const AddUser: FC<any> = ({show, onClose}) => {
 
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
-                                <Form.Label>{'Contraseña'}</Form.Label>
+                                <Form.Label>{'Contraseña '}</Form.Label>
+                                <p>
+                                    *Debe tener por lo menos 6 caracteres, con letras mayúsculas,
+                                    letras minúsculas, números y almenos un caracter especial*
+                                </p>
                                 <Form.Control
                                     type='password'
                                     className={'mb-4'}

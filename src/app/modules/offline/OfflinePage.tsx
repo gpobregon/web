@@ -5,9 +5,10 @@ import {initialQueryState, KTSVG, useDebounce} from '../../../_metronic/helpers'
 import {getData, getRolesMethod, postData} from '../../services/api'
 import {OfflinePartWithContent} from '../../models/offline-config'
 import {roleManager} from '../../models/roleManager'
-import {Auth} from 'aws-amplify'
 import swal from 'sweetalert'
-import { LoadingContext } from '../../utility/component/loading/context'
+import {LoadingContext} from '../../utility/component/loading/context'
+import {Amplify, Auth} from 'aws-amplify'
+import {useAuth} from '../auth'
 
 const OfflineManagement: FC<any> = ({show}) => {
     const {setShowLoad} = useContext(LoadingContext)
@@ -19,10 +20,9 @@ const OfflineManagement: FC<any> = ({show}) => {
     let [arr, setArr] = useState<any[]>([])
     let [arrWithRows, setArrWithRows] = useState<any[]>([])
     const [partes, setPartes] = useState<any[]>([])
-    let alt_permisOfflineSites:boolean = true;
-    let alt_permisOfflinePoints:boolean = true;
+    let alt_permisOfflineSites: boolean = true
+    let alt_permisOfflinePoints: boolean = true
 
-    
     let navigate = useNavigate()
     const [roles, setRoles] = useState<roleManager[]>([])
     const [existRoles, setExistRoles] = useState(false)
@@ -30,50 +30,27 @@ const OfflineManagement: FC<any> = ({show}) => {
     const [permissionOfflineSites, setPermissionOfflineSites] = useState(true)
     const [permissionOfflinePoints, setPermissionOfflinePoints] = useState(true)
 
-
     async function getOfflineParts() {
         listParts = []
         arr = []
         arrWithRows = []
         const parts: any = await getData(url_get)
-        // // console.log(parts);
 
         var p = parts.map((cat: any) => {
             let contenidos = []
             for (var i = 0; i < cat.tipos_contenido.length; i++) {
-                // console.log("CAT TIPOS CONTENIDO");
-                
-                // console.log(cat.tipos_contenido[i]);
-                // console.log("TIENE PERMSO?");
-                // console.log("NORMS");
-                
-                // console.log(permissionOfflineSites);
-                // console.log(permissionOfflinePoints);
-                
-                // console.log("ALTS");
-                
-                // console.log(alt_permisOfflineSites);
-                // console.log(alt_permisOfflinePoints);
-                
-                                
-                // console.log(cat.tipos_contenido[i].nombre === 'Sitios' && !permissionOfflineSites);
-                // console.log(cat.tipos_contenido[i].nombre === 'Puntos de interés' && !permissionOfflinePoints);
-                
-                
-                
                 contenidos.push({
                     id_type: cat.tipos_contenido[i].id_type,
                     nombre: cat.tipos_contenido[i].nombre,
                     checked: cat.tipos_contenido[i].checked,
                     estado: cat.tipos_contenido[i].estado,
-                    disabled: (cat.tipos_contenido[i].nombre === 'Sitios' && permissionOfflineSites) 
-                    || 
-                    (cat.tipos_contenido[i].nombre === 'Puntos de interés' && permissionOfflinePoints)
+                    disabled:
+                        (cat.tipos_contenido[i].nombre === 'Sitios' && permissionOfflineSites) ||
+                        (cat.tipos_contenido[i].nombre === 'Puntos de interés' &&
+                            permissionOfflinePoints),
                 })
             }
-            // console.log("CONTENIDOOOOOS");
-            // // console.log(contenidos);
-            
+
             listParts.push({
                 id_part: cat.id_part,
                 nombre: cat.nombre,
@@ -100,8 +77,7 @@ const OfflineManagement: FC<any> = ({show}) => {
                                 color: '#C7C7C7',
                             }}
                             inline
-                            disabled={t.disabled
-                            }
+                            disabled={t.disabled}
                             id={t.id_type}
                             label={t.nombre}
                             checked={t.checked}
@@ -125,18 +101,11 @@ const OfflineManagement: FC<any> = ({show}) => {
                                 }
 
                                 e.target.checked = !e.target.checked
-                                // for(var i=0;i<listParts.length;i++){
-                                //     for(var j=0;j<listParts.at(i)!.tipos_contenido.length;j++){
-                                //         // console.log("C");
-                                //         if(listParts.at(i)!.tipos_contenido.at(j)!.id_type==Number(e.target.id)){
-                                //             listParts.at(i)!.tipos_contenido.at(j)!.checked = !listParts.at(i)!.tipos_contenido.at(j)!.checked
                                 var indexType = m.tipos_contenido.findIndex(
                                     (b) => b.id_type == e.target.id
                                 )
                                 var indexPart = listParts.findIndex((b) => b.id_part == m.id_part)
                                 var x2 = m.tipos_contenido.at(indexType)
-                                // // console.log(x);
-                                // // console.log(x2);
                                 listParts.at(indexPart)!.tipos_contenido.at(indexType)!.checked =
                                     !listParts.at(indexPart)!.tipos_contenido.at(indexType)!.checked
 
@@ -155,12 +124,7 @@ const OfflineManagement: FC<any> = ({show}) => {
                     </Col>
                 )
                 arr.push(x)
-                // // console.log("ADADSDAS");
-
-                // // console.log(arr);
             })
-            // arrWithRows.push(arr[0])
-            // for(var i =1;i<arr.length;i=i+3){
 
             let x = (
                 <div
@@ -186,34 +150,43 @@ const OfflineManagement: FC<any> = ({show}) => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
         setExistRoles(true)
-
     }
+
+    //para cerrar sesión despues de cambiar contraseña, no olvida el dispositivo :c
+    const {currentUser, logout} = useAuth()
+    const forgotDevice = async () => {
+        try {
+            logout()
+            await Amplify.Auth.forgetDevice()
+        } catch (error) {
+        }
+    }
+
+    //fin
 
     const validateRole = async () => {
         setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
 
-        Auth.currentUserInfo().then((user) => {
-            // console.log(user)
-            const filter = roles.filter((role) => {
-                return user.attributes['custom:role'] === role.nombre
-            })
-            // console.log("FILTER");
-            
-            // console.log(filter);
-            
-            if (filter[0]?.gestor_offline === false) {
-                navigate('/error/401', {replace: true})
-            } else {
-                alt_permisOfflineSites = filter[0]?.offline_sitios;
-                alt_permisOfflinePoints = filter[0]?.offline_puntos;
-                // console.log("ALT SETS");
-                // console.log(alt_permisOfflineSites);
-                // console.log(alt_permisOfflinePoints);
-                
-                setPermissionOfflineSites(filter[0]?.offline_sitios)
-                setPermissionOfflinePoints(filter[0]?.offline_puntos)
-                //getOfflineParts(alt_permisOfflineSites,alt_permisOfflinePoints)
-
+                if (filter[0]?.gestor_offline === false) {
+                    navigate('/error/401', {replace: true})
+                } else {
+                    alt_permisOfflineSites = filter[0]?.offline_sitios
+                    alt_permisOfflinePoints = filter[0]?.offline_puntos
+                    setPermissionOfflineSites(filter[0]?.offline_sitios)
+                    setPermissionOfflinePoints(filter[0]?.offline_puntos)
+                }
+            } catch (error) {
+                swal(
+                    'Se ha cambiado la contraseña de tu usuario',
+                    'Cierra sesión y vuelve a ingresar',
+                    'warning'
+                )
+                await forgotDevice()
             }
         })
 
@@ -225,13 +198,11 @@ const OfflineManagement: FC<any> = ({show}) => {
         getRoles()
         getOfflineParts()
         validateRole()
-    }, [existRoles, listParts,permissionOfflineSites,permissionOfflinePoints])
+    }, [existRoles, listParts, permissionOfflineSites, permissionOfflinePoints])
 
     useEffect(() => {
         listParts = []
         getRoles()
-//        getOfflineParts()
-        // // console.log(listParts);
     }, [listParts])
 
     return (

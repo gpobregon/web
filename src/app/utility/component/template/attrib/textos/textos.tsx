@@ -10,14 +10,13 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
 
     const changeSizeTitle = (data : any) => {
         let edit = {}
-
-        if (data.typeList === '') {
+        if (data.typeList === 'list-group-points') {
          edit = { 
-             content: editItem.content.replace('list-group list-group-bg list-group-numbered', 'add-class1').replace('list-group-item', 'add-item')
+             content: editItem.content.replace('list-group-numbered', 'list-group-points')
           }
         } else if (data.typeList === 'list-group-numbered' ) {
          edit = { 
-             content: editItem.content.replace('add-class1', 'list-group list-group-bg list-group-numbered').replace('add-item', 'list-group-item')
+             content: editItem.content.replace('list-group-points', 'list-group-numbered')
           } 
          } else {
              edit = { ...data }
@@ -85,7 +84,7 @@ const AttrText: FC<Model> = ({ editItem, updateElement }) => {
                             <Col className="text-center pt-5">
                                 <ButtonGroup aria-label="Basic example" size="sm">
                                     <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ typeList: 'list-group-numbered' })} ><i className="bi bi-list-ol"/></Button>
-                                    <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ typeList: '' })} ><i className="bi bi-list-ul"/></Button>
+                                    <Button variant="secondary" onClick={(e : {}) => changeSizeTitle({ typeList: 'list-group-points' })} ><i className="bi bi-list-ul"/></Button>
                                 </ButtonGroup>
                             </Col>
                         </Row>

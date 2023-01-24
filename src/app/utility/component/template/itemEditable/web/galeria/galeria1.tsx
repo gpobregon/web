@@ -44,7 +44,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, moveCard, se
 
   const addResourceGaleria = (item: any) => {
     const data = item.item
-    console.log(data.tipo)
     if(data.tipo.includes('image')) {
     setAddResource((addResource: []) => [...addResource, { ...data, id: generateRandomString(7) }])
     setCount((count: number) => count = 1)

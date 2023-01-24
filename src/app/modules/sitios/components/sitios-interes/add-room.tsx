@@ -9,7 +9,7 @@ const AddRoom: FC<any> = ({show, onClose, addRoom, id_sitio}) => {
         descripcion: '',
         tipo: true,
     })
-
+    
     return (
         <>
             <Modal show={show} onHide={onClose}>

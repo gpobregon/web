@@ -27,7 +27,6 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
   const [dataSelect, setDataSelect] = useState<any>([])
 
   const changeText = (e: any) => {
-    
     const edit = {
       ...data,
       content: e.target.value,
@@ -44,7 +43,8 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
     for (let i = 0; i < children.length; i++) {
       let text = children[i].childNodes[0].nodeValue;
       if (text) {
-        nodes.push({ text: `${data.typeList === "" ? '* ' : `${i+=1}. ` }${text}` });
+        
+        nodes.push({ text: `${text}` });
       }
     }
     return (nodes)
@@ -65,6 +65,7 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
       ref={referencia}
       data-handler-id={handlerId}
       className="d-flex cursor-grabbing"
+      onClick={() => setEditItem(data)}
     >
       <div
         className="p-1 py-1 d-flex align-items-center"
@@ -83,7 +84,8 @@ const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem,
         nameMenu={nameMenu}
         editItem={data}
       />
-      <ContentEditable
+      <ContentEditable 
+        contentEditable = {true}
         id={data.id}
         className={`p-1 lex-shrink-1 w-100 editable ${data.size} ${data.textAling} ${data.fontWeight} ${data.fontFamily} ${data.textDecoration}`}
         html={`${data.content}`} // innerHTML of the editable div

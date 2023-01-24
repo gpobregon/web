@@ -80,6 +80,7 @@ const Interes: FC<id_sitio> = (props) => {
             id_sitio: idsitio,
             id_sala: idsala,
         })
+
         setPuntoInteres([])
         setRooms([])
         swal({
@@ -92,7 +93,6 @@ const Interes: FC<id_sitio> = (props) => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        // console.log(language)
     }
 
     useEffect(() => {
@@ -104,12 +104,10 @@ const Interes: FC<id_sitio> = (props) => {
         const rooms: any = await postData(RoomsMethod, props)
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
-        // console.log(rooms.salas)
     }
 
     const seteatPuntoInteres = (interes: any) => {
         setPuntoInteres(interes)
-        // console.log(puntoInteres)
     }
 
     const addNewRoom = async (createRoom: any) => {
@@ -130,7 +128,6 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const showModalUpdateRoom = () => {
-        console.log(upRoom)
         setModalUpdateRoom(true)
     }
 
@@ -160,7 +157,6 @@ const Interes: FC<id_sitio> = (props) => {
         }
     }
     const deletePointInteres = (id_punto: number, id_sitio: number) => {
-        // console.log(id_punto,id_sitio,idsala)
         swal({
             title: '¿Estas seguro de Eliminar este punto de interes ?',
             icon: 'warning',
@@ -168,13 +164,6 @@ const Interes: FC<id_sitio> = (props) => {
         }).then(async (res) => {
             if (res) {
                 await deleteData(delPointInteres, {
-                    id_punto: id_punto,
-                    id_lenguaje: 1,
-                    id_sitio: id_sitio,
-                    id_guia: idsala,
-                    estado: 0,
-                })
-                console.log({
                     id_punto: id_punto,
                     id_lenguaje: 1,
                     id_sitio: id_sitio,
@@ -227,21 +216,35 @@ const Interes: FC<id_sitio> = (props) => {
 
         //update the actual array
         setPuntoInteres(_fruitItems)
-        // console.log(_fruitItems)
         const a = await postData(OrderPointOfInterest, {puntos: _fruitItems})
-        console.log(a)
     }
     //handle name change
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewFruitItem(e.target.value)
     }
 
-    //handle new item addition
-    // const handleAddItem = () => {
-    // 	const _fruitItems = [...puntoInteres]
-    // 	_fruitItems.push(newFruitItem)
-    // 	setPuntoInteres(_fruitItems)
-    // }
+    //drag and drop salas
+    const dragItemSalas = React.useRef<any>(null)
+    const dragOverItemSalas = React.useRef<any>(null)
+    const handleSortSalas = async () => {
+        //duplicate items
+        let _fruitItems = [...room]
+
+        //remove and save the dragged item content
+        const draggedItemContent = _fruitItems.splice(dragItemSalas.current, 1)[0]
+
+        //switch the position
+        _fruitItems.splice(dragOverItemSalas.current, 0, draggedItemContent)
+
+        //reset the position ref
+        dragItemSalas.current = null
+        dragOverItemSalas.current = null
+
+        //update the actual array
+        setRooms(_fruitItems)
+    }
+
+    //fin drag and drop salas
 
     // * Restricción por rol
     const {setShowLoad} = useContext(LoadingContext)
@@ -267,8 +270,6 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const validateRole = async () => {
-        setShowLoad(true)
-
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -289,12 +290,9 @@ const Interes: FC<id_sitio> = (props) => {
                 setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
             }
         })
-
-        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
-        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
@@ -319,6 +317,22 @@ const Interes: FC<id_sitio> = (props) => {
                                         role='group'
                                         aria-label='Basic example'
                                         key={index}
+                                        draggable
+                                        onDragStart={async () => {
+                                            await validateRole()
+
+                                            if (!permissionSortPoint) {
+                                                swal({
+                                                    title: 'No tienes permiso para ordenar puntos de interés',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
+                                            dragItemSalas.current = index
+                                        }}
+                                        onDragEnter={(e) => (dragOverItemSalas.current = index)}
+                                        onDragEnd={handleSortSalas}
+                                        onDragOver={(e) => e.preventDefault()}
                                     >
                                         <Button
                                             variant='outline-dark'
@@ -389,7 +403,9 @@ const Interes: FC<id_sitio> = (props) => {
                                 <Button
                                     variant='outline-dark'
                                     size='sm'
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await validateRole()
+
                                         if (!permissionCreateRoom) {
                                             swal({
                                                 title: 'No tienes permiso para crear salas',
@@ -492,7 +508,9 @@ const Interes: FC<id_sitio> = (props) => {
                                         key={index}
                                         className='list-item'
                                         draggable
-                                        onDragStart={(e) => {
+                                        onDragStart={async () => {
+                                            await validateRole()
+
                                             if (!permissionSortPoint) {
                                                 swal({
                                                     title: 'No tienes permiso para ordenar puntos de interés',
@@ -638,7 +656,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                                         ? 'bi bi bi-circle'
                                                                         : 'bi bi-record-circle'
                                                                 }
-                                                                onClick={() => {
+                                                                onClick={async () => {
+                                                                    await validateRole()
+
                                                                     if (
                                                                         !permissionSetPrincipalImage
                                                                     ) {
@@ -649,6 +669,15 @@ const Interes: FC<id_sitio> = (props) => {
                                                                         return
                                                                     }
 
+                                                                    !punto.es_visible &&
+                                                                        (await postData(
+                                                                            statePointInteres,
+                                                                            {
+                                                                                id_punto:
+                                                                                    punto.id_punto,
+                                                                                es_visible: true,
+                                                                            }
+                                                                        ))
                                                                     punto.es_portada_de_sitio =
                                                                         !punto.es_portada_de_sitio
                                                                     changeImagePrincipal(
@@ -670,13 +699,18 @@ const Interes: FC<id_sitio> = (props) => {
 
                                                     <li className='nav-item'>
                                                         <Button
+                                                            disabled={
+                                                                punto.es_portada_de_sitio && true
+                                                            }
                                                             className={
                                                                 punto.es_visible == false
                                                                     ? 'btn-secondary fa-solid fa-eye-slash background-button'
                                                                     : 'btn-secondary fa-solid fa-eye background-button'
                                                             }
                                                             id='center2'
-                                                            onClick={() => {
+                                                            onClick={async () => {
+                                                                await validateRole()
+
                                                                 if (
                                                                     !permissionChangeVisibilityPoint
                                                                 ) {
@@ -706,7 +740,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                             display: 'flex',
                                                             marginRight: '4px',
                                                         }}
-                                                        onClick={(event) => {
+                                                        onClick={async () => {
+                                                            await validateRole()
+
                                                             if (!permissionEditPoint) {
                                                                 swal({
                                                                     title: 'No tienes permiso para editar un punto de interés',
@@ -738,8 +774,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                             //         }
                                                             //     }
                                                             // }
-                                                            // console.log(punto.lenguajes)
-                                                            // console.log(lenaguajeDefault)
                                                             // const languageEscogido =
                                                             //     punto.lenguajes.map(
                                                             //         (language) => ({
@@ -747,7 +781,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                             //             label: lenaguajeDefault,
                                                             //         })
                                                             //     )
-                                                            // console.log(languageEscogido)
                                                             navigate(
                                                                 `/sitios/edit-point-interes/${punto.id_sitio}/${punto.id_punto}`,
                                                                 {
@@ -784,7 +817,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                             display: 'flex',
                                                             marginRight: '20px',
                                                         }}
-                                                        onClick={() => {
+                                                        onClick={async () => {
+                                                            await validateRole()
+
                                                             if (!permissionDeletePoint) {
                                                                 swal({
                                                                     title: 'No tienes permiso para eliminar un punto de interés',
@@ -792,7 +827,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 })
                                                                 return
                                                             }
-                                                            // console.log(punto.es_portada_de_sitio)
                                                             deletePointInteres(
                                                                 punto.id_punto,
                                                                 punto.id_sitio
@@ -834,7 +868,9 @@ const Interes: FC<id_sitio> = (props) => {
                                                 borderWidth: '1px',
                                                 borderColor: '#009EF7',
                                             }}
-                                            onClick={(event) => {
+                                            onClick={async () => {
+                                                await validateRole()
+
                                                 if (!permissionCreatePoint) {
                                                     swal({
                                                         title: 'No tienes permiso para crear un nuevo punto de interés',

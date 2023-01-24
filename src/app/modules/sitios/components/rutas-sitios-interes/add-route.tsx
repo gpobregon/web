@@ -25,7 +25,8 @@ import {CatalogLanguage} from '../../../../models/catalogLanguage'
 import {roleManager} from '../../../../models/roleManager'
 import {Auth} from 'aws-amplify'
 import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/validadorCadena'
-import { LoadingContext } from '../../../../utility/component/loading/context'
+import {LoadingContext} from '../../../../utility/component/loading/context'
+import {DeleteImage} from '../../../deleteFile/delete-image'
 type datosPuntoInteres2 = {
     id_punto: number
     lenguajes: [
@@ -61,7 +62,7 @@ const AddRoute = () => {
     const {state} = useLocation()
     const [puntos, setpuntos] = useState(state as datosPuntoInteres)
     const [ruta, setruta] = useState<Route>()
- 
+
     const [getimg, setGetimg] = useState<Imagen>({
         id_punto_a: 0,
         id_punto_b: 0,
@@ -72,8 +73,6 @@ const AddRoute = () => {
     const [modalupimg, setModalupIMG] = useState(false)
     const [agregrarPaso, setagregrarPaso] = useState<any>([])
 
-   
-    
     const [imgprincipal, setImgprincipal] = useState({
         id_punto_a: puntos.id_punto_a,
         id_punto_b: puntos.id_punto_b,
@@ -90,10 +89,8 @@ const AddRoute = () => {
         })
         setruta(route)
         setagregrarPaso(route.pasos)
-        // console.log(route)
-       
-        // console.log(getimg)
-        if (getimg.imagen_ref1==="" && getimg.imagen_ref2==="" && getimg.imagen_ref3==="") {
+
+        if (getimg.imagen_ref1 === '' && getimg.imagen_ref2 === '' && getimg.imagen_ref3 === '') {
             setGetimg({
                 id_punto_a: puntos.id_punto_a,
                 id_punto_b: puntos.id_punto_b,
@@ -114,79 +111,59 @@ const AddRoute = () => {
         // addImages
         if (lenguajes.id_lenguaje != 0) {
             // if (imgprincipal.img_principal != '') {
-                if(getimg.imagen_ref1===null){
-                    getimg.imagen_ref1=""
+            if (getimg.imagen_ref1 === null) {
+                getimg.imagen_ref1 = ''
+            }
+            if (getimg.imagen_ref2 === null) {
+                getimg.imagen_ref2 = ''
+            }
+            if (getimg.imagen_ref3 === null) {
+                getimg.imagen_ref3 = ''
+            }
+            await postData(addImagePrincipal, imgprincipal)
+            await postData(addImages, getimg)
+            await postData(addPasos, {
+                id_punto_a: ruta?.id_punto_a,
+                id_punto_b: ruta?.id_punto_b,
+                pasos: agregrarPaso,
+                id_lenguaje: lenguajes.id_lenguaje,
+            })
+            swal({
+                title: '¿Quiere seguir editando ?',
+                icon: 'warning',
+                buttons: ['No', 'Sí'],
+            }).then(async (res) => {
+                if (res) {
+                    swal({
+                        text: 'Se Guardó guía correctamente ',
+                        icon: 'success',
+                        timer: 2000,
+                    })
+                } else {
+                    navigate(`/sitios/edit-point-interes/${puntos.id_sitio}/${puntos.id_punto_a}`)
                 }
-                if(getimg.imagen_ref2===null){
-                    getimg.imagen_ref2=""
-                }
-                if(getimg.imagen_ref3===null){
-                    getimg.imagen_ref3=""
-                }
-                // console.log(getimg)
-                await postData(addImagePrincipal, imgprincipal)
-                await postData(addImages, getimg)
-            // } else {
-            //     swal('Error', 'Falta agregar alguna imagen', 'error')
-            //     return
-            // }
-       
-               
-                await postData(addPasos, {
-                    id_punto_a: ruta?.id_punto_a,
-                    id_punto_b: ruta?.id_punto_b,
-                    pasos: agregrarPaso,
-                    id_lenguaje: lenguajes.id_lenguaje,
-                })
-                swal({
-                    title: '¿Quiere seguir editando ?',
-                    icon: 'warning',
-                    buttons: ['No', 'Sí'],
-                }).then(async (res) => {
-                    if (res) { 
-                        swal({
-                            text: 'Se Guardó guía correctamente ',
-                            icon: 'success',
-                            timer: 2000,
-                        })
-                       
-                    }else{ 
-                        navigate(`/sitios/edit-point-interes/${puntos.id_sitio}/${puntos.id_punto_a}` )
-                    }
-                    
-                })
-            
+            })
         } else {
             swal('Error', 'Falta seleccionar el lenguaje', 'error')
         }
-        // const g = await postData(addImages, imganes)
-        // const a = await postData(addPasos, { id_punto_a: ruta?.id_punto_a, id_punto_b: ruta?.id_punto_b, pasos: agregrarPaso })
-        // console.log(imganes)
-        // console.log(imgprincipal)
-        // console.log(agregrarPaso)
-        // console.log(a)
-        // var newArray = arrayimagenes.filter((item) => item.id_image !== 1);
-        // console.log(newArray);
     }
 
-    const [id, setId] = useState<number>(0)
     const [numeroImg, setnumeroImg] = useState<number>(0)
     const [contador, setContador] = useState<number>(0)
     const navigate = useNavigate()
 
     const uploadImage = async (imagen: string) => {
         if (imagen != '') {
-          
-                if (numeroImg === 1) {
-                    getimg.imagen_ref1 = URLAWS + 'sitePages/' + imagen
-                } else if (numeroImg === 2) {
-                    getimg.imagen_ref2 = URLAWS + 'sitePages/' + imagen
-                } else if (numeroImg === 3) {
-                    getimg.imagen_ref3 = URLAWS + 'sitePages/' + imagen
-                }else if(numeroImg===0){
-                    imgprincipal.img_principal = URLAWS + 'sitePages/' + imagen
-                }
-            
+            if (numeroImg === 1) {
+                getimg.imagen_ref1 = URLAWS + 'sitePages/routes/' + imagen
+            } else if (numeroImg === 2) {
+                getimg.imagen_ref2 = URLAWS + 'sitePages/routes/' + imagen
+            } else if (numeroImg === 3) {
+                getimg.imagen_ref3 = URLAWS + 'sitePages/routes/' + imagen
+            } else if (numeroImg === 0) {
+                imgprincipal.img_principal = URLAWS + 'sitePages/routes/' + imagen
+            }
+
             setModalupIMG(false)
         }
     }
@@ -195,7 +172,6 @@ const AddRoute = () => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        // console.log(language)
     }
     const languagesOptions = languages?.map((language) => ({
         value: language.id_lenguaje,
@@ -258,7 +234,6 @@ const AddRoute = () => {
         lenguajes.id_lenguaje = e.value
         setagregrarPaso([])
         await obtenerRuta()
-        // console.log(lenguajes.id_lenguaje)
     }
     // termina seleccionar idioma de la guia ==============================
 
@@ -288,14 +263,7 @@ const AddRoute = () => {
         await obtenerRuta()
     }
     const addNewPaso = async () => {
-       const a:any= await postData(addPasos, {
-            id_punto_a: puntos.id_punto_a,
-            id_punto_b: puntos.id_punto_b,
-            pasos: agregrarPaso,
-            id_lenguaje: lenguajes.id_lenguaje,
-        })
-        console.log(a)
-        console.log({
+        const a: any = await postData(addPasos, {
             id_punto_a: puntos.id_punto_a,
             id_punto_b: puntos.id_punto_b,
             pasos: agregrarPaso,
@@ -330,7 +298,7 @@ const AddRoute = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                navigate(`/sitios/edit-point-interes/${puntos.id_sitio}/${puntos.id_punto_a}` )
+                navigate(`/sitios/edit-point-interes/${puntos.id_sitio}/${puntos.id_punto_a}`)
             }
         })
     }
@@ -528,6 +496,7 @@ const AddRoute = () => {
                                                 <div className='row'>
                                                     <Form.Control
                                                         as='textarea'
+                                                        onLoad={async () => await validateRole()}
                                                         disabled={!permissionEditRouteSteps}
                                                         placeholder='Escribe una indicación para llegar a este punto.'
                                                         style={{width: '100%', height: '100px'}}
@@ -549,7 +518,9 @@ const AddRoute = () => {
                                                     <Link
                                                         className='bi bi-trash background-button text-danger'
                                                         to={''}
-                                                        onClick={() => {
+                                                        onClick={async () => {
+                                                            await validateRole()
+
                                                             if (!permissionDeleteRouteSteps) {
                                                                 swal({
                                                                     title: 'No tienes permiso para eliminar pasos en la ruta',
@@ -604,7 +575,9 @@ const AddRoute = () => {
                                                     borderWidth: '1px',
                                                     borderColor: '#009EF7',
                                                 }}
-                                                onClick={(event) => {
+                                                onClick={async (event) => {
+                                                    await validateRole()
+
                                                     if (!permissionCreateRouteSteps) {
                                                         swal({
                                                             title: 'No tienes permiso para crear pasos en la ruta',
@@ -678,7 +651,9 @@ const AddRoute = () => {
                                                         alt='Card image cap'
                                                         onClick={
                                                             imgprincipal.img_principal == ''
-                                                                ? (e) => {
+                                                                ? async (e) => {
+                                                                      await validateRole()
+
                                                                       if (!permissionEditRouteMap) {
                                                                           swal({
                                                                               title: 'No tienes permiso para cambiar el mapa de una ruta',
@@ -706,7 +681,9 @@ const AddRoute = () => {
                                                                 <Link
                                                                     className='bi bi-arrow-left-right background-button text-info'
                                                                     to={''}
-                                                                    onClick={() => {
+                                                                    onClick={async () => {
+                                                                        await validateRole()
+
                                                                         if (
                                                                             !permissionEditRouteMap
                                                                         ) {
@@ -727,7 +704,9 @@ const AddRoute = () => {
                                                                 <Link
                                                                     className='bi bi-trash background-button text-danger'
                                                                     to={''}
-                                                                    onClick={() => {
+                                                                    onClick={async () => {
+                                                                        await validateRole()
+
                                                                         if (
                                                                             !permissionDeleteRouteMap
                                                                         ) {
@@ -737,7 +716,10 @@ const AddRoute = () => {
                                                                             })
                                                                             return
                                                                         }
-
+                                                                        DeleteImage(
+                                                                            'sitePages/routes',
+                                                                            imgprincipal.img_principal
+                                                                        )
                                                                         imgprincipal.img_principal =
                                                                             ''
                                                                     }}
@@ -758,236 +740,300 @@ const AddRoute = () => {
                                                     <div className='card-header row'>
                                                         <h5 className='card-title'>
                                                             Imagenes de Referencia
-                                                        </h5>                                                      
-                                                                <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6 '>
-                                                                    <Card.Img
-                                                                        src={
-                                                                            getimg.imagen_ref1 =='' || getimg.imagen_ref1 == null
-                                                                                ? logo
-                                                                                : getimg.imagen_ref1
-                                                                        }
-                                                                        alt='Card image cap'
-                                                                        style={{
-                                                                            height: '248px',
-                                                                            borderRadius: '10px',
-                                                                        }}
-                                                                        onClick={
-                                                                            getimg.imagen_ref1 =='' || getimg.imagen_ref1 == null
-                                                                                ? (e) => {
-                                                                                      if (
-                                                                                          !permissionEditRouteImage
-                                                                                      ) {
-                                                                                          swal({
-                                                                                              title: 'No tienes permiso para cambiar las imagenes de referencia de una ruta',
-                                                                                              icon: 'warning',
-                                                                                          })
-                                                                                          return
-                                                                                      }
-                                                                                      setModalupIMG(
-                                                                                          true
-                                                                                      )
-                                                                                    
-                                                                                      setnumeroImg(
-                                                                                          1
-                                                                                      )
-                                                                                  }
-                                                                                : (e) => {}
-                                                                        }
-                                                                    />
-                                                                    <div className='card-body '>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                            </Col>
+                                                        </h5>
+                                                        <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6 '>
+                                                            <Card.Img
+                                                                src={
+                                                                    getimg.imagen_ref1 == '' ||
+                                                                    getimg.imagen_ref1 == null
+                                                                        ? logo
+                                                                        : getimg.imagen_ref1
+                                                                }
+                                                                alt='Card image cap'
+                                                                style={{
+                                                                    height: '248px',
+                                                                    borderRadius: '10px',
+                                                                }}
+                                                                onClick={
+                                                                    getimg.imagen_ref1 == '' ||
+                                                                    getimg.imagen_ref1 == null
+                                                                        ? async (e) => {
+                                                                              await validateRole()
 
-                                                                            <Col>
-                                                                                <Link
-                                                                                    className='bi bi-arrow-left-right background-button text-info'
-                                                                                    to={''}
-                                                                                    onClick={() => {
-                                                                                        if (
-                                                                                            !permissionEditRouteImage
-                                                                                        ) {
-                                                                                            swal({
-                                                                                                title: 'No tienes permiso para cambiar las imagenes de referencia de una ruta',
-                                                                                                icon: 'warning',
-                                                                                            })
-                                                                                            return
-                                                                                        }
-                                                                                        setModalupIMG(
-                                                                                            true
-                                                                                        )
-                                                                                        
-                                                                                        setnumeroImg(
-                                                                                            1
-                                                                                        )
-                                                                                    }}
-                                                                                ></Link>
-                                                                            </Col>
-                                                                            <Col>
-                                                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                            </Col>
-                                                                            <Col>
-                                                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                            </Col>
-                                                                            <Col>
-                                                                                <Link
-                                                                                    className='bi bi-trash background-button text-danger'
-                                                                                    to={''}
-                                                                                    onClick={() => {
-                                                                                        if (
-                                                                                            !permissionDeleteRouteImage
-                                                                                        ) {
-                                                                                            swal({
-                                                                                                title: 'No tienes permiso para eliminar las imagenes de referencia de una ruta',
-                                                                                                icon: 'warning',
-                                                                                            })
-                                                                                            return
-                                                                                        }
-                                                                                        getimg.imagen_ref1=
-                                                                                            ''
-                                                                                    }}
-                                                                                ></Link>
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </div>
-                                                                </div>
+                                                                              if (
+                                                                                  !permissionEditRouteImage
+                                                                              ) {
+                                                                                  swal({
+                                                                                      title: 'No tienes permiso para cambiar las imagenes de referencia de una ruta',
+                                                                                      icon: 'warning',
+                                                                                  })
+                                                                                  return
+                                                                              }
+                                                                              setModalupIMG(true)
 
-                                                                <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6'>
-                                                                    <Card.Img
-                                                                        src={
-                                                                            getimg.imagen_ref2 =='' || getimg.imagen_ref2 == null  
-                                                                                ? logo
-                                                                                : getimg.imagen_ref2
-                                                                        }
-                                                                        alt='Card image cap'
-                                                                        style={{
-                                                                            height: '248px',
-                                                                            borderRadius: '10px',
-                                                                        }}
-                                                                        onClick={
-                                                                            getimg.imagen_ref2 =='' || getimg.imagen_ref2 == null  
-                                                                                ? (e) => {
-                                                                                      setModalupIMG(
-                                                                                          true
-                                                                                      )
-                                                                                     
-                                                                                      setnumeroImg(
-                                                                                          2
-                                                                                      )
-                                                                                  }
-                                                                                : (e) => {}
-                                                                        }
-                                                                    />
-                                                                    <div className='card-body '>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                            </Col>
+                                                                              setnumeroImg(1)
+                                                                          }
+                                                                        : (e) => {}
+                                                                }
+                                                            />
+                                                            <div className='card-body '>
+                                                                <Row>
+                                                                    <Col>
+                                                                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                                                    </Col>
 
-                                                                            <Col>
-                                                                                <Link
-                                                                                    className='bi bi-arrow-left-right background-button text-info'
-                                                                                    to={''}
-                                                                                    onClick={() => {
-                                                                                        setModalupIMG(
-                                                                                            true
-                                                                                        )
-                                                                                        
-                                                                                        setnumeroImg(
-                                                                                            2
-                                                                                        )
-                                                                                    }}
-                                                                                ></Link>
-                                                                            </Col>
-                                                                            <Col>
-                                                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                            </Col>
-                                                                            <Col>
-                                                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                            </Col>
-                                                                            <Col>
-                                                                                <Link
-                                                                                    className='bi bi-trash background-button text-danger'
-                                                                                    to={''}
-                                                                                    onClick={() => {
-                                                                                        getimg.imagen_ref2 =
-                                                                                            ''
-                                                                                    }}
-                                                                                ></Link>
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </div>
-                                                                </div>
+                                                                    <Col>
+                                                                        <Link
+                                                                            className='bi bi-arrow-left-right background-button text-info'
+                                                                            to={''}
+                                                                            onClick={async () => {
+                                                                                await validateRole()
 
-                                                                <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6'>
-                                                                    <Card.Img
-                                                                        src={
-                                                                            getimg.imagen_ref3 =='' || getimg.imagen_ref3 == null
-                                                                                ? logo
-                                                                                : getimg.imagen_ref3
-                                                                        }
-                                                                        alt='Card image cap'
-                                                                        style={{
-                                                                            height: '248px',
-                                                                            borderRadius: '10px',
-                                                                        }}
-                                                                        onClick={
-                                                                            getimg.imagen_ref3 =='' || getimg.imagen_ref3 == null
-                                                                                ? (e) => {
-                                                                                      setModalupIMG(
-                                                                                          true
-                                                                                      )
-                                                                                     
-                                                                                      setnumeroImg(
-                                                                                          3
-                                                                                      )
-                                                                                  }
-                                                                                : (e) => {}
-                                                                        }
-                                                                    />
-                                                                    <div className='card-body '>
-                                                                        <Row>
-                                                                            <Col>
-                                                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                            </Col>
+                                                                                if (
+                                                                                    !permissionEditRouteImage
+                                                                                ) {
+                                                                                    swal({
+                                                                                        title: 'No tienes permiso para cambiar las imagenes de referencia de una ruta',
+                                                                                        icon: 'warning',
+                                                                                    })
+                                                                                    return
+                                                                                }
+                                                                                setModalupIMG(true)
 
-                                                                            <Col>
-                                                                                <Link
-                                                                                    className='bi bi-arrow-left-right background-button text-info'
-                                                                                    to={''}
-                                                                                    onClick={() => {
-                                                                                        setModalupIMG(
-                                                                                            true
-                                                                                        )
-                                                                                        
-                                                                                        setnumeroImg(
-                                                                                            3
-                                                                                        )
-                                                                                    }}
-                                                                                ></Link>
-                                                                            </Col>
-                                                                            <Col>
-                                                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                            </Col>
-                                                                            <Col>
-                                                                                {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
-                                                                            </Col>
-                                                                            <Col>
-                                                                                <Link
-                                                                                    className='bi bi-trash background-button text-danger'
-                                                                                    to={''}
-                                                                                    onClick={() => {
-                                                                                        getimg.imagen_ref3 =
-                                                                                            ''
-                                                                                    }}
-                                                                                ></Link>
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </div>
-                                                                </div>
-                                                           
-                                                        
+                                                                                setnumeroImg(1)
+                                                                            }}
+                                                                        ></Link>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                                                    </Col>
+                                                                    <Col>
+                                                                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <Link
+                                                                            className='bi bi-trash background-button text-danger'
+                                                                            to={''}
+                                                                            onClick={async () => {
+                                                                                await validateRole()
+
+                                                                                if (
+                                                                                    !permissionDeleteRouteImage
+                                                                                ) {
+                                                                                    swal({
+                                                                                        title: 'No tienes permiso para eliminar las imagenes de referencia de una ruta',
+                                                                                        icon: 'warning',
+                                                                                    })
+                                                                                    return
+                                                                                }
+                                                                                DeleteImage(
+                                                                                    'sitePages/routes',
+                                                                                    getimg.imagen_ref1
+                                                                                )
+                                                                                getimg.imagen_ref1 =
+                                                                                    ''
+                                                                            }}
+                                                                        ></Link>
+                                                                    </Col>
+                                                                </Row>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6'>
+                                                            <Card.Img
+                                                                src={
+                                                                    getimg.imagen_ref2 == '' ||
+                                                                    getimg.imagen_ref2 == null
+                                                                        ? logo
+                                                                        : getimg.imagen_ref2
+                                                                }
+                                                                alt='Card image cap'
+                                                                style={{
+                                                                    height: '248px',
+                                                                    borderRadius: '10px',
+                                                                }}
+                                                                onClick={
+                                                                    getimg.imagen_ref2 == '' ||
+                                                                    getimg.imagen_ref2 == null
+                                                                        ? async (e) => {
+                                                                              await validateRole()
+
+                                                                              if (
+                                                                                  !permissionEditRouteImage
+                                                                              ) {
+                                                                                  swal({
+                                                                                      title: 'No tienes permiso para cambiar las imagenes de referencia de una ruta',
+                                                                                      icon: 'warning',
+                                                                                  })
+                                                                                  return
+                                                                              }
+                                                                              setModalupIMG(true)
+                                                                              setnumeroImg(2)
+                                                                          }
+                                                                        : (e) => {}
+                                                                }
+                                                            />
+                                                            <div className='card-body '>
+                                                                <Row>
+                                                                    <Col>
+                                                                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                                                    </Col>
+
+                                                                    <Col>
+                                                                        <Link
+                                                                            className='bi bi-arrow-left-right background-button text-info'
+                                                                            to={''}
+                                                                            onClick={async () => {
+                                                                                await validateRole()
+
+                                                                                if (
+                                                                                    !permissionEditRouteImage
+                                                                                ) {
+                                                                                    swal({
+                                                                                        title: 'No tienes permiso para cambiar las imagenes de referencia de una ruta',
+                                                                                        icon: 'warning',
+                                                                                    })
+                                                                                    return
+                                                                                }
+                                                                                setModalupIMG(true)
+
+                                                                                setnumeroImg(2)
+                                                                            }}
+                                                                        ></Link>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                                                    </Col>
+                                                                    <Col>
+                                                                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <Link
+                                                                            className='bi bi-trash background-button text-danger'
+                                                                            to={''}
+                                                                            onClick={async () => {
+                                                                                await validateRole()
+
+                                                                                if (
+                                                                                    !permissionDeleteRouteImage
+                                                                                ) {
+                                                                                    swal({
+                                                                                        title: 'No tienes permiso para eliminar las imagenes de referencia de una ruta',
+                                                                                        icon: 'warning',
+                                                                                    })
+                                                                                    return
+                                                                                }
+                                                                                DeleteImage(
+                                                                                    'sitePages/routes',
+                                                                                    getimg.imagen_ref2
+                                                                                )
+                                                                                getimg.imagen_ref2 =
+                                                                                    ''
+                                                                            }}
+                                                                        ></Link>
+                                                                    </Col>
+                                                                </Row>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className='card div-image col-xs-2 col-md-2 col-lg-2 mt-6'>
+                                                            <Card.Img
+                                                                src={
+                                                                    getimg.imagen_ref3 == '' ||
+                                                                    getimg.imagen_ref3 == null
+                                                                        ? logo
+                                                                        : getimg.imagen_ref3
+                                                                }
+                                                                alt='Card image cap'
+                                                                style={{
+                                                                    height: '248px',
+                                                                    borderRadius: '10px',
+                                                                }}
+                                                                onClick={
+                                                                    getimg.imagen_ref3 == '' ||
+                                                                    getimg.imagen_ref3 == null
+                                                                        ? async (e) => {
+                                                                              await validateRole()
+
+                                                                              if (
+                                                                                  !permissionEditRouteImage
+                                                                              ) {
+                                                                                  swal({
+                                                                                      title: 'No tienes permiso para cambiar las imagenes de referencia de una ruta',
+                                                                                      icon: 'warning',
+                                                                                  })
+                                                                                  return
+                                                                              }
+
+                                                                              setModalupIMG(true)
+
+                                                                              setnumeroImg(3)
+                                                                          }
+                                                                        : (e) => {}
+                                                                }
+                                                            />
+                                                            <div className='card-body '>
+                                                                <Row>
+                                                                    <Col>
+                                                                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                                                    </Col>
+
+                                                                    <Col>
+                                                                        <Link
+                                                                            className='bi bi-arrow-left-right background-button text-info'
+                                                                            to={''}
+                                                                            onClick={async () => {
+                                                                                await validateRole()
+
+                                                                                if (
+                                                                                    !permissionEditRouteImage
+                                                                                ) {
+                                                                                    swal({
+                                                                                        title: 'No tienes permiso para cambiar las imagenes de referencia de una ruta',
+                                                                                        icon: 'warning',
+                                                                                    })
+                                                                                    return
+                                                                                }
+                                                                                setModalupIMG(true)
+
+                                                                                setnumeroImg(3)
+                                                                            }}
+                                                                        ></Link>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                                                    </Col>
+                                                                    <Col>
+                                                                        {/* <Link className='bi bi-crop background-button text-info' to={''}></Link> */}
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <Link
+                                                                            className='bi bi-trash background-button text-danger'
+                                                                            to={''}
+                                                                            onClick={async () => {
+                                                                                await validateRole()
+
+                                                                                if (
+                                                                                    !permissionDeleteRouteImage
+                                                                                ) {
+                                                                                    swal({
+                                                                                        title: 'No tienes permiso para eliminar las imagenes de referencia de una ruta',
+                                                                                        icon: 'warning',
+                                                                                    })
+                                                                                    return
+                                                                                }
+                                                                                DeleteImage(
+                                                                                    'sitePages/routes',
+                                                                                    getimg.imagen_ref3
+                                                                                )
+                                                                                getimg.imagen_ref3 =
+                                                                                    ''
+                                                                            }}
+                                                                        ></Link>
+                                                                    </Col>
+                                                                </Row>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </>
@@ -1005,7 +1051,7 @@ const AddRoute = () => {
                 show={modalupimg}
                 onClose={() => setModalupIMG(false)}
                 cargarIMG={uploadImage}
-                ubicacionBucket={'sitePages'}
+                ubicacionBucket={'sitePages/routes'}
                 tipoArchivoPermitido={'image/*'}
             />
         </>

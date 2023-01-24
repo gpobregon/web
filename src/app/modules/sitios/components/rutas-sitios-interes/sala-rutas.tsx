@@ -23,7 +23,8 @@ import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
 import React from 'react'
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
-import { LoadingContext } from '../../../../utility/component/loading/context'
+import {LoadingContext} from '../../../../utility/component/loading/context'
+import {setMaxListeners} from 'node:process'
 type datosPuntoInteres = {
     id_punto: number
     lenguajes: [
@@ -79,35 +80,14 @@ const SalaRutas: FC<id_punto_a> = (props) => {
             if (data.length === 0) {
                 setRutas([{id_punto: 0}])
             }
-        } catch (e: any) {
-            console.log(e.message)
-        }
-        // console.log(data);
-        // for (let i = 0; i < puntoInteres.length; i++) {
-        //     for (let j = 0; j < data.length; j++) {
-        //         if (puntoInteres[i].id_punto === data[j].id_punto) {
-
-        //             puntoInteres[i].rutaActiva = true
-        //         } else {
-        //             if (puntoInteres[i].rutaActiva) {
-
-        //             } else {
-        //                 puntoInteres[i].rutaActiva = false
-        //             }
-        //         }
-        //     }
-
-        // }
-        // console.log(puntoInteres);
+        } catch (e: any) {}
     }
 
     const getSalas = async () => {
         const rooms: any = await postData(RoomsMethod, {id_sitio: props.id_sitio})
         await getRutas()
-        // console.log(rooms);
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
-        // setVistaPrevia(false)
     }
     const seteatPuntoInteres = (interes: any) => {
         setPuntoInteres(interes)
@@ -173,7 +153,6 @@ const SalaRutas: FC<id_punto_a> = (props) => {
 
         //update the actual array
         setPuntoInteres(_fruitItems)
-        // console.log(_fruitItems)
         await postData(OrderPointOfInterest, {puntos: _fruitItems})
     }
     const agregarRuta = async (puntoa: number, puntob: number) => {
@@ -386,8 +365,12 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                         style={{
                                                                             marginRight: '10px',
                                                                         }}
-                                                                        onClick={() => {
-                                                                            if (!permissionEditRoutePoint) {
+                                                                        onClick={async () => {
+                                                                            await validateRole()
+
+                                                                            if (
+                                                                                !permissionEditRoutePoint
+                                                                            ) {
                                                                                 swal({
                                                                                     title: 'No tienes permiso para editar una ruta',
                                                                                     icon: 'warning',
@@ -403,10 +386,11 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                             props.id_punto_a,
                                                                                         id_punto_b:
                                                                                             punto.id_punto,
-                                                                                       id_sitio: props.id_sitio,
-                                                                                       
-                                                                        
-                                                                                            nombre_punto_a:props.nombrepunto_a,
+                                                                                        id_sitio:
+                                                                                            props.id_sitio,
+
+                                                                                        nombre_punto_a:
+                                                                                            props.nombrepunto_a,
                                                                                         nombre_punto_b:
                                                                                             punto.nombre,
                                                                                     },
@@ -422,15 +406,18 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                         style={{
                                                                             marginRight: '10px',
                                                                         }}
-                                                                        onClick={() => {
-                                                                            if (!permissionDeleteRoutePoint) {
+                                                                        onClick={async () => {
+                                                                            await validateRole()
+
+                                                                            if (
+                                                                                !permissionDeleteRoutePoint
+                                                                            ) {
                                                                                 swal({
                                                                                     title: 'No tienes permiso para eliminar una ruta',
                                                                                     icon: 'warning',
                                                                                 })
                                                                                 return
                                                                             }
-                                                                            // console.log(punto.es_portada_de_sitio)
                                                                             eliminarRuta(
                                                                                 punto.id_punto
                                                                             )
@@ -446,8 +433,12 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                         style={{
                                                                             marginRight: '10px',
                                                                         }}
-                                                                        onClick={() => {
-                                                                            if (!permissionCreateRoutePoint) {
+                                                                        onClick={async () => {
+                                                                            await validateRole()
+
+                                                                            if (
+                                                                                !permissionCreateRoutePoint
+                                                                            ) {
                                                                                 swal({
                                                                                     title: 'No tienes permiso para crear una ruta',
                                                                                     icon: 'warning',
@@ -467,10 +458,11 @@ const SalaRutas: FC<id_punto_a> = (props) => {
                                                                                             props.id_punto_a,
                                                                                         id_punto_b:
                                                                                             punto.id_punto,
-                                                                                       id_sitio: props.id_sitio,
-                                                                                       
-                                                                        
-                                                                                            nombre_punto_a:props.nombrepunto_a,
+                                                                                        id_sitio:
+                                                                                            props.id_sitio,
+
+                                                                                        nombre_punto_a:
+                                                                                            props.nombrepunto_a,
                                                                                         nombre_punto_b:
                                                                                             punto.nombre,
                                                                                     },

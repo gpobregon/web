@@ -92,13 +92,14 @@ const changePassword: FC<any> = ({
                     </Form.Group>
 
                     <Form.Group className='pt-5'>
-                        <Form.Label>Contraseña Nueva</Form.Label>
+                        <Form.Label>Contraseña Nueva</Form.Label> 
+                        <p>*Debe tener por lo menos 6 caracteres, con letras mayúsculas, letras minúsculas, números y almenos un caracter especial*</p>
                         <FormControl
                             sx={{width: '100%'}}
                             variant='outlined'
                             color='primary'
                             focused
-                        >
+                        > 
                             <OutlinedInput
                                 inputProps={{style: {fontFamily: 'sans-serif', color: '#92929F'}}}
                                 id='outlined-adornment-password'

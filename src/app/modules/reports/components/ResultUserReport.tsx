@@ -1,13 +1,134 @@
-import React, {FC} from 'react'
-import { Button, Col, Form, Row, Table } from 'react-bootstrap'
-import Select from 'react-select/dist/declarations/src/Select'
+import React, {FC, useCallback, useEffect, useState} from 'react'
+import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 
-const ResultUserReport: FC<any> = ({show}) => {
-    let iterationRows = [1, 2, 3, 4, 5, 6];
+import Select from 'react-select'
+import makeAnimated from 'react-select/animated'
+
+import Moment from 'moment'
+
+import PDF from '../ExportReport/PDF'
+import { Auth } from 'aws-amplify'
+import { utils, writeFileXLSX } from 'xlsx'
+
+const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
+    const [user, setDataUser] = useState({
+        name: '',
+        lastName: '',
+    })
+
+    
+    const optionsWithIcons = [
+        {
+            value: 1,
+            label: 'PDF',
+        },
+        {
+            value: 2,
+            label: 'Excel',
+        },
+    ]
+
+    const genresOptions: {[key: number]: string} = {
+        1: 'Femenino',
+        2: 'Masculino',
+        3: 'Prefiero no decirlo',
+        4: 'Todos los generos',
+    }
+
+    const yearsOldOptions: {[key: number]: string} = {
+        1: 'Menor de edad',
+        2: '18 a 30',
+        3: '31 a 50',
+        4: '51 en adelante',
+        5: 'Todas las edades',
+    }
+    const countryOptions: {[key: number]: string} = {
+        1: 'Nacional',
+        2: 'Extranjero',
+        3: 'Todos los paises',
+    }
+
+    if (typeof site.pais === 'number') {
+        site.tipopais = countryOptions[site.pais]
+    }
+    if (typeof site.edad === 'number') {
+        site.tipoedad = yearsOldOptions[site.edad]
+    }
+    if (typeof site.genero === 'number') {
+        site.tipogenero = genresOptions[site.genero]
+    }
+
+    var datos = Object.assign(
+        {},
+        {rows: data},
+        {name: name},
+        {portada_path: photo},
+        {tipo: 'usuarios'},
+        {site: site}
+    )
+
+    const handleChangeLanguage = (event: any) => {
+        if (event.value == 1) {
+            PDF(datos)
+        } else if (event.value == 2) {
+            exportFile()
+        }
+    }
+
+    useEffect(() => {
+        Auth.currentUserInfo().then((user) => {
+            setDataUser({
+                name: user.attributes.name,
+                lastName: user.attributes['custom:lastname'],
+            })
+        })
+    }, [])
+
+    const exportFile = useCallback(() => {
+        // const ws1 = utils.json_to_sheet(pres);
+        //colocar encabezado en el excel
+        var ws = utils.aoa_to_sheet([
+            ['MINISTERIO DE CULTURA Y DEPORTES'],
+            [`${datos.tipo} por sitio`],
+            [
+                `Filtro: Pais: ${datos.site.tipopais} - Edad: ${datos.site.tipoedad} - Genero: ${datos.site.tipogenero}`,
+            ],
+            [`Periodo consultado: ${datos.site.fecha_inicial} - ${datos.site.fecha_final}`],
+            [`Sitio: ${datos.name} (${datos.site.id_sitio})`],
+        ])
+
+        //colocar datos en tabla el excel
+        const wb = utils.book_new()
+        utils.sheet_add_json(ws, data, {
+            origin: 'A8',
+            cellStyles: true,
+        })
+
+        utils.sheet_add_aoa(
+            ws,
+            [
+                [
+                    'Usuario',
+                    'Ultima visita',
+                    'País',
+                    'Genero',
+                    'Edad',
+                ],
+            ],
+            {origin: 'A8'}
+        )
+
+        utils.book_append_sheet(wb, ws, 'Usuarios')
+
+        writeFileXLSX(wb, `[${datos.site.id_sitio}]${datos.tipo}-${datos.name}.xlsx`, {
+            Props: {Author: `${user.name} ${user.lastName}`},
+        })
+    }, [data])
+
     return (
         <div style={show == false ? {display: 'none'} : {display: 'block'}}>
             <Row className='mb-7'>
-                <div className='text-left' style={{ paddingTop: 20 }} >
+                <div className='text-left' style={{paddingTop: 20}}>
                     <h3 className='text-dark mt-0'>Resultados de la busqueda</h3>
                 </div>
             </Row>
@@ -28,80 +149,41 @@ const ResultUserReport: FC<any> = ({show}) => {
                                 backgroundColor: '#a9a9a9',
                                 borderRadius: '50%',
                             }}
-                        ></div>
-                        <div>
-                            <h2 className=''>Museo de Arte Moderno</h2>
-                            <h6 className='text-muted'>17/07/2022 - 22/07/2022</h6>
+                        >
+                            <img
+                                src={photo}
+                                style={{
+                                    width: '60px',
+                                    height: '60px',
+                                    objectFit: 'cover',
+                                    borderRadius: '50%',
+                                }}
+                            />
+                        </div>
+                        <div className='col-xs-9 col-md-9 col-lg-9 py-5 '>
+                            <h2 className=''>{name}</h2>
+                            <h6 className='text-muted'>
+                            {Moment(site.fecha_inicial).format('DD/MM/YYYY')} - {Moment(site.fecha_final).format('DD/MM/YYYY')}
+                            </h6>
+                        </div>
+                        <div className='col-xs-2 col-md-2 col-lg-2 py-5'>
+                            <div className='d-flex justify-content-end'>
+                                <Select
+                                    options={optionsWithIcons}
+                                    styles={customStyles}
+                                    components={animatedComponents}
+                                    className={'mb-4'}
+                                    onChange={handleChangeLanguage}
+                                    placeholder='Exportar'
+                                />
+                            </div>
                         </div>
                     </div>
-                    <hr style={{ border: '1px solid rgba(255 255 255)', color: '#FFF' }} />
+                    <hr style={{border: '1px solid rgba(255 255 255)', color: '#FFF'}} />
                 </div>
 
-                {/* <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'  style={{textAlign: 'center'}} > 
-                    <Row> 
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Foto</Form.Label>
-                            </Form.Group>
-                        </Col>    
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Usuario</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Última visita</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>País</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Género</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-
-                        <Col lg={2} md={2} sm={3} > 
-                            <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                <Form.Label>Edad</Form.Label> 
-                                <i className="bi bi-chevron-down" style={{fontSize: 15, paddingLeft : 10  }} ></i>
-                            </Form.Group>
-                        </Col>  
-                    </Row> 
-
-                    <Row> 
-                        <Col lg={2} md={2} sm={3} > 
-                            <div className='d-flex align-items-center' > 
-                                <div
-                                    className='me-8'
-                                    style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        backgroundColor: '#a9a9a9',
-                                        borderRadius: '50%',
-                                    }}
-                                ></div>
-                            </div>
-                        </Col>    
-
-                        
-                    </Row>
-                </div> */}
-
                 <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
-                    <Table striped bordered hover variant="dark" className='align-middle'>
+                    <Table striped bordered hover variant='dark' className='align-middle'>
                         <thead>
                             <tr>
                                 <th>Foto</th>
@@ -113,8 +195,8 @@ const ResultUserReport: FC<any> = ({show}) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {iterationRows.map((item) => (
-                                <tr>
+                            {data?.map((item: any ) => (
+                                <tr >
                                     <td>
                                         <div
                                             style={{
@@ -126,13 +208,14 @@ const ResultUserReport: FC<any> = ({show}) => {
                                         ></div>
                                     </td>
                                     <td>
-                                        <div>Mark</div>
-                                        <div className='text-muted' >example@gmail.com</div>
+                                        <div>{item?.nombre}</div>
                                     </td>
-                                    <td className='text-muted' >12/08/2022</td>
-                                    <td className='text-muted' >Guatemala</td>
-                                    <td className='text-muted' >Masculino</td>
-                                    <td className='text-muted' >23</td>
+                                    <td className='text-muted'>
+                                        {Moment(item?.ultima_visita).format('DD/MM/YYYY')}
+                                    </td>
+                                    <td className='text-muted'>{item?.pais}</td>
+                                    <td className='text-muted'>{item?.genero}</td>
+                                    <td className='text-muted'>{item?.edad}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -143,4 +226,48 @@ const ResultUserReport: FC<any> = ({show}) => {
     )
 }
 
-export default ResultUserReport;
+const animatedComponents = makeAnimated()
+const customStyles = {
+    control: (base: any, state: any) => ({
+        ...base,
+        background: 'transparent',
+        borderColor: state.isFocused ? '#474761' : '#323248',
+        borderRadius: 6.175,
+        color: '#92929F',
+        '&:hover': {
+            borderColor: '#323248',
+        },
+        '&:focus': {
+            borderColor: '#323248',
+        },
+        '&:active': {
+            borderColor: '#323248',
+        },
+    }),
+    input: (base: any, state: any) => ({
+        ...base,
+        color: '#92929f',
+    }),
+    option: (base: any, state: any) => ({
+        ...base,
+        background: state.isFocused ? '#009EF7' : '#323248',
+        color: state.isFocused ? '#fff' : '#92929F',
+        padding: 10,
+    }),
+    singleValue: (base: any) => ({
+        ...base,
+        color: '#fff',
+    }),
+    menu: (base: any) => ({
+        ...base,
+        borderRadius: 6.175,
+        background: '#323248',
+    }),
+    menuList: (base: any) => ({
+        ...base,
+        padding: 0,
+        borderRadius: 6.175,
+    }),
+}
+
+export default ResultUserReport

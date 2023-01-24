@@ -1,8 +1,68 @@
-import React from 'react'
 import {Container, Col, Row, Card} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
+import React, {useContext, useEffect, useState} from 'react'
+import {useNavigate} from 'react-router-dom'
+import {roleManager} from '../../models/roleManager'
+import {getData, getRolesMethod} from '../../services/api'
+import {LoadingContext} from '../../utility/component/loading/context'
+import {Amplify, Auth} from 'aws-amplify'
+import {useAuth} from '../auth'
+import swal from 'sweetalert'
 
-const UsersPage = () => {
+const UsersPage = () => { 
+    let navigate = useNavigate()
+    const {setShowLoad} = useContext(LoadingContext)
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    //para cerrar sesión despues de cambiar contraseña, no olvida el dispositivo :c
+    const {currentUser, logout} = useAuth()
+    const forgotDevice = async () => {
+        try {
+            logout()
+            await Amplify.Auth.forgetDevice()
+        } catch (error) {
+        }
+    }
+
+    //fin
+
+    const validateRole = async () => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+
+                if (filter[0]?.gestor_reportes === false) {
+                    navigate('/error/401', {replace: true})
+                }
+            } catch (error) {
+                swal(
+                    'Se ha cambiado la contraseña de tu usuario',
+                    'Cierra sesión y vuelve a ingresar',
+                    'warning'
+                )
+                await forgotDevice()
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    }  
+
+    useEffect(() => {
+        setShowLoad(true)
+        getRoles()
+        validateRole()
+    }, [existRoles])
+
     return (
         <>
             <Container fluid>

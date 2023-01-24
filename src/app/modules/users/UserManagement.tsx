@@ -18,7 +18,7 @@ import {
 import {roleManager} from '../../models/roleManager'
 import {getData, postData, getRolesMethod, updateUserMethod} from '../../services/api'
 import swal from 'sweetalert'
-import { LoadingContext } from '../../utility/component/loading/context'
+import {LoadingContext} from '../../utility/component/loading/context'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -31,7 +31,7 @@ const customStyles = {
             borderColor: '#323248',
         },
         '&:focus': {
-            borderColor: '#323248', 
+            borderColor: '#323248',
         },
         '&:active': {
             borderColor: '#323248',
@@ -68,14 +68,6 @@ const customStyles = {
 
 const animatedComponents = makeAnimated()
 
-//esto me retorna el email del usuario con el que estoy logueado
-// const getEmail = ()=>{
-//     Auth.currentAuthenticatedUser().then((user) => {
-//         console.log('user email = ' + user.attributes.email + ' ' + user.attributes.name  );
-//       });
-// }
-
-// getEmail()
 const UserManagement: FC<any> = ({show}) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
@@ -88,7 +80,7 @@ const UserManagement: FC<any> = ({show}) => {
     const [banderID, setBanderID] = useState(0)
     const [dataSelect, setDataSelect] = useState({user: '', role: ''})
 
-    const [searchInput, setSearchInput] = useState('')
+ 
     const [filteredResults, setFilteredResults] = useState(users)
 
     const [user, setUser] = useState({
@@ -106,13 +98,13 @@ const UserManagement: FC<any> = ({show}) => {
     const [roles, setRoles] = useState<roleManager[]>([])
 
     const searchItems = (searchValue: any) => {
-        setSearchInput(searchValue)
-        if (searchInput !== '') {
+      
+        if (searchValue !== '') {
             const filteredData = users.filter((item: any) => {
                 return Object.values(item.Attributes[2].Value)
                     .join('')
                     .toLowerCase()
-                    .includes(searchInput.toLowerCase())
+                    .includes(searchValue.toLowerCase())
             })
             setFilteredResults(filteredData)
         } else {
@@ -126,7 +118,9 @@ const UserManagement: FC<any> = ({show}) => {
         setRoles(role.data as roleManager[])
     }
 
-    const showModalAddUser = () => {
+    const showModalAddUser = async () => {
+        await validateRole()
+
         if (!permissionCreateUsers) {
             swal({
                 title: 'No tienes permiso para crear usuarios',
@@ -138,7 +132,9 @@ const UserManagement: FC<any> = ({show}) => {
         setModalAddUser(true)
     }
 
-    const showModalDeleteUser = (user: any) => {
+    const showModalDeleteUser = async (user: any) => {
+        await validateRole()
+
         if (!permissionDeleteUsers) {
             swal({
                 title: 'No tienes permiso para eliminar un usuario',
@@ -164,13 +160,12 @@ const UserManagement: FC<any> = ({show}) => {
 
         return new Promise((resolve, reject) => {
             AWS.config.update({
-                accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-                secretAccessKey: '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',
+                accessKeyId: 'AKIAT3ANXPJIACFL5367',
+                secretAccessKey: '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',
             })
             let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.listUsers(params, (err, data) => {
                 if (err) {
-                    console.log(err)
                     reject(err)
                 } else {
                     resolve(data)
@@ -185,46 +180,33 @@ const UserManagement: FC<any> = ({show}) => {
 
     const updateUsuarios = async () => {
         AWS.config.update({
-            accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-            secretAccessKey: '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',
+            accessKeyId: 'AKIAT3ANXPJIACFL5367',
+            secretAccessKey: '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',
         })
         let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
-        console.log('cognito: ', cognito)
         try {
-            cognito.adminUpdateUserAttributes(
-                {
-                    UserAttributes: [
-                        {
-                            Name: 'custom:role',
-                            Value: String(dataSelect.role),
-                        },
-                    ],
-                    UserPoolId: awsconfig.userPoolId,
-                    Username: dataSelect.user,
-                },
-                function (err, data) {
-                    if (err) console.log(err, err.stack) // an error occurred
-                    else console.log(data)
-                }
-            )
+            cognito.adminUpdateUserAttributes({
+                UserAttributes: [
+                    {
+                        Name: 'custom:role',
+                        Value: String(dataSelect.role),
+                    },
+                ],
+                UserPoolId: awsconfig.userPoolId,
+                Username: dataSelect.user,
+            })
 
             const filter = roles.filter((item) => {
                 return dataSelect.role === item.nombre
             })
-            console.log('filter: ', filter)
-
             let objeto = {
                 id_usuario: users[0].Username,
                 id_rol: filter[0].id_rol,
                 foto: user.imageProfile,
             }
 
-            await postData(updateUserMethod, objeto).then((data) => {
-                console.log(data)
-            })
-        } catch (err) {
-            console.log('err: ', err)
-        }
+            await postData(updateUserMethod, objeto)
+        } catch (err) {}
         getUsers()
     }
 
@@ -321,18 +303,20 @@ const UserManagement: FC<any> = ({show}) => {
                                 />
                                 <input
                                     type='text'
-                                    value={searchInput}
+                                    // value={searchInput}
                                     data-kt-user-table-filter='search'
                                     className='form-control form-control-solid w-250px ps-14'
                                     placeholder='Buscar'
-                                    onChange={(event) => {
-                                        if (!permissionSearchUsers) {
-                                            swal({
-                                                title: 'No tienes permiso para buscar usuario',
-                                                icon: 'warning',
-                                            })
-                                            return
-                                        }
+                                    onChange={async (event) => {
+                                        // await validateRole()
+
+                                        // if (!permissionSearchUsers) {
+                                        //     swal({
+                                        //         title: 'No tienes permiso para buscar usuario',
+                                        //         icon: 'warning',
+                                        //     })
+                                        //     return
+                                        // }
                                         searchItems(event.target.value)
                                     }}
                                 />
@@ -359,6 +343,9 @@ const UserManagement: FC<any> = ({show}) => {
                                         <th>Usuario</th>
                                         <th>Teléfono</th>
                                         <th
+                                            onLoad={async () => {
+                                                await validateRole()
+                                            }}
                                             style={
                                                 permissionEditUsers
                                                     ? {display: 'block'}
@@ -372,7 +359,7 @@ const UserManagement: FC<any> = ({show}) => {
                                 </thead>
                                 <tbody>
                                     {existUsers == true ? (
-                                        searchInput.length > 1 ? (
+                                        // searchInput.length > 1 ? (
                                             filteredResults?.map((item: any) => (
                                                 <tr key={item.Username}>
                                                     <td>
@@ -405,6 +392,9 @@ const UserManagement: FC<any> = ({show}) => {
                                                         {item.Attributes[0].Value}
                                                     </td>
                                                     <td
+                                                        onLoad={async () => {
+                                                            await validateRole()
+                                                        }}
                                                         style={
                                                             permissionEditUsers
                                                                 ? {display: 'flex'}
@@ -478,118 +468,9 @@ const UserManagement: FC<any> = ({show}) => {
                                                     </td>
                                                 </tr>
                                             ))
-                                        ) : (
-                                            users?.map((item: any) => (
-                                                <tr key={item.Username}>
-                                                    <td>
-                                                        <div
-                                                            style={{
-                                                                width: '40px',
-                                                                height: '40px',
-                                                                backgroundColor: '#a9a9a9',
-                                                                borderRadius: '50%',
-                                                            }}
-                                                        >
-                                                            <img
-                                                                src={item.Attributes[1].Value}
-                                                                style={{
-                                                                    width: '40px',
-                                                                    height: '40px',
-                                                                    objectFit: 'cover',
-                                                                    borderRadius: '50%',
-                                                                }}
-                                                            ></img>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div>{item.Attributes[2].Value}</div>
-                                                        <div className='text-muted'>
-                                                            {item.Attributes[4].Value}
-                                                        </div>
-                                                    </td>
-                                                    <td className='text-muted'>
-                                                        {item.Attributes[0].Value}
-                                                    </td>
-                                                    <td
-                                                        style={
-                                                            permissionEditUsers
-                                                                ? {display: 'flex'}
-                                                                : {display: 'none'}
-                                                        }
-                                                    >
-                                                        {existUsers ? (
-                                                            <div className='d-flex align-items-center'>
-                                                                <Select
-                                                                    onMenuOpen={() => getRoles()}
-                                                                    options={rolesOptions}
-                                                                    styles={customStyles}
-                                                                    components={animatedComponents}
-                                                                    onChange={(event: any) => {
-                                                                        setButtonAcept(true)
-                                                                        setBanderID(item)
-                                                                        setDataSelect({
-                                                                            user: item.Attributes[4]
-                                                                                .Value,
-                                                                            role: event.value,
-                                                                        })
-                                                                    }}
-                                                                    // value={item?.Attributes[2]?.Value ? item.Attributes[2].Value : '' }
-
-                                                                    defaultValue={{
-                                                                        label:
-                                                                            item?.Attributes[3]
-                                                                                ?.Value ?? '',
-                                                                        value:
-                                                                            item?.Attributes[3]
-                                                                                ?.Value ?? '',
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        ) : (
-                                                            <></>
-                                                        )}
-                                                        {buttonAcept === true &&
-                                                        item === banderID ? (
-                                                            <div className='d-flex align-items-center'>
-                                                                {/* cheque */}
-                                                                <Button
-                                                                    variant='btn btn-light btn-active-light-primary ms-5 me-1'
-                                                                    onClick={() => updateUsuarios()}
-                                                                >
-                                                                    <i
-                                                                        className={`bi bi-check text-white fs-3`}
-                                                                    ></i>
-                                                                </Button>
-                                                                {/* la X */}
-                                                                <Button variant='btn btn-light btn-active-light-primary ms-1'>
-                                                                    <i
-                                                                        className={`bi bi-x text-white fs-3`}
-                                                                    ></i>
-                                                                </Button>
-                                                            </div>
-                                                        ) : null}
-                                                    </td>
-                                                    <td>
-                                                        <label
-                                                            className='btn btn-light btn-active-light-danger btn-sm'
-                                                            onClick={() =>
-                                                                showModalDeleteUser(item)
-                                                            }
-                                                        >
-                                                            {'Eliminar '}
-                                                            <span className='menu-icon me-0'>
-                                                                <i
-                                                                    className={`bi bi-trash-fill`}
-                                                                ></i>
-                                                            </span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )
-                                    ) : (
-                                        <></>
-                                    )}
+                       
+                                       
+                                    )  : <></>   }
                                 </tbody>
                             </Table>
                         </div>
