@@ -1537,7 +1537,7 @@ const EditSite = () => {
                                             </div>
                                         </Card>
                                         <div style={{textAlign: 'center', color: 'gray'}}>
-                                            Formato permitido: .json
+                                            Formato permitido: .geojson
                                         </div>
                                     </Form.Group>
                                     <br></br>
