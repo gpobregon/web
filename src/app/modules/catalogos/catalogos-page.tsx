@@ -193,8 +193,8 @@ const CatalogosPage = () => {
             alertNotNullInputsObj({
                 nombre: language.nombre,
                 descripcion: language.descripcion,
-                json_web: language.json_web,
-                json_movil: language.json_movil,
+                ['json web']: language.json_web,
+                ['jsown movil']: language.json_movil,
             })
         }
     }
