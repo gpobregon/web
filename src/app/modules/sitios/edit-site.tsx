@@ -113,16 +113,6 @@ const EditSite = () => {
     const [botonActivo, setbotonActivo] = useState(false)
 
     // obtener usuario que editó
-    const [dataUser, setDataUser] = useState({
-        email: '',
-        name: '',
-        phoneNumber: '',
-        lastname: '',
-        imageProfile: '',
-        role: '',
-        descripcion: '',
-        id: '',
-    })
 
     const [dataUserHeader, setDataUserHeader] = useState({
         email: '',
@@ -138,6 +128,12 @@ const EditSite = () => {
     const getUserForHeader = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
+
+            if(site.bloqueado_por_edicion_id!=user.attributes.sub&&site.bloqueado_por_edicion_id!=''){
+                console.log(site.bloqueado_por_edicion_id)
+                console.log(user.attributes.sub)
+            navigate('/sitios')
+            }
             setDataUserHeader({
                 email: user.attributes.email,
                 name: user.attributes.name,
@@ -148,7 +144,7 @@ const EditSite = () => {
                 descripcion: '',
                 id: user.attributes.sub,
             })
-        })
+        })    
     }
 
     const getUser = async () => {
@@ -205,6 +201,7 @@ const EditSite = () => {
     }
 
     const getSite = async () => {
+      
         const sitio: any = await getValue(sitesMethod, Number(id))
         setSite({
             ...sitio.site,
@@ -223,6 +220,9 @@ const EditSite = () => {
         }))
 
         setmostrarCategorias(mostrarCategorys)
+
+        getUserForHeader()
+       
         await getUser()
         setloadingSite(false)
     }
@@ -694,7 +694,6 @@ const EditSite = () => {
     useEffect(() => {
         // getUser()
         getSite()
-        getUserForHeader()
     }, [loadingSite])
 
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
