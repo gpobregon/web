@@ -186,7 +186,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                     <Table striped bordered hover variant='dark' className='align-middle'>
                         <thead>
                             <tr>
-                                <th>Foto</th>
+                                    {/* <th>Foto</th> */}
                                 <th>Usuario</th>
                                 <th>Ultima visita</th>
                                 <th>País</th>
@@ -197,7 +197,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                         <tbody>
                             {data?.map((item: any ) => (
                                 <tr >
-                                    <td>
+                                    {/* <td>
                                         <div
                                             style={{
                                                 width: '40px',
@@ -206,7 +206,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                                                 borderRadius: '50%',
                                             }}
                                         ></div>
-                                    </td>
+                                    </td> */}
                                     <td>
                                         <div>{item?.nombre}</div>
                                     </td>
