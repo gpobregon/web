@@ -41,7 +41,7 @@ const Index = () => {
                                         style={{ fill: 'red' }}
                                         className={`max-h-70px cursor-pointer tooltip-trigger`}
                                         src={toAbsoluteUrl(`/media/svg/iconsFigma/${changeTypeEdit === 1 ? 'Movil-active.svg' : 'Movil.svg'}`)}
-                                        onClick={() => ChangeMode(1)}
+                                        // onClick={() => ChangeMode(1)}
                                     />
                                     <div className="tooltip-one">
                                         Maquetación Móvil
@@ -55,7 +55,7 @@ const Index = () => {
                                         alt="Logo"
                                         className={`max-h-70px cursor-pointer tooltip-trigger`}
                                         src={toAbsoluteUrl(`/media/svg/iconsFigma/${changeTypeEdit === 2 ? 'Desktop-active.svg' : 'Desktop.svg'}`)}
-                                        onClick={() => ChangeMode(2)}
+                                        // onClick={() => ChangeMode(2)}
                                         />
                                     <div className="tooltip-one">
                                         Maquetación Web
