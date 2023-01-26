@@ -2,12 +2,14 @@ import React, {useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
-import {Link} from 'react-router-dom'
-import ResultUserReport from './components/ResultUserReport'
-import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
+import {Link, useNavigate} from 'react-router-dom'
+import ResultUserReport from './components/ResultUserReport' 
+import {Amplify, Auth} from 'aws-amplify'
+import {getData, getDataReport, getRolesMethod, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
 import swal from 'sweetalert'
 import {LoadingContext} from '../../utility/component/loading/context'
+import { roleManager } from '../../models/roleManager'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -77,8 +79,9 @@ const countryOptions = [
 const UserReport = () => {
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
-    let [publishSite, setPublishSite] = useState<PublishSite[]>([])
-    
+    let [publishSite, setPublishSite] = useState<PublishSite[]>([]) 
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
     const [type, setType] = useState({
         tipo_reporte: 'usuarios',
         id_sitio: 0,
@@ -91,7 +94,34 @@ const UserReport = () => {
     })
     const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
-    const [data, setData] = useState([])
+    const [data, setData] = useState([])  
+    let navigate = useNavigate() 
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_usuarios_generar === false) {
+                    navigate('/error/401', {replace: true})
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    } 
+
     const typeReport = async (typee: any) => {
         if (
             type.id_sitio != 0 &&
@@ -166,8 +196,10 @@ const UserReport = () => {
 
     useEffect(() => {
         getSite()
-        //getPublishSites()
-    }, [])
+        //getPublishSites()  
+        getRoles()
+        validateRole()
+    }, [existRoles])
 
     const showResultComponent = () => {
         setShowResult(true)

@@ -2,13 +2,15 @@ import React, {useState, useRef, useEffect, useContext} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Form, Row, Overlay, Container} from 'react-bootstrap'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import ResultSitestByRating from './components/ResultSitesByRating'
 import UsersResultByRating from './components/UsersResultSitesByRating'
-import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
+import {getData, getDataReport, getRolesMethod, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
 import swal from 'sweetalert'
 import {LoadingContext} from '../../utility/component/loading/context'
+import { roleManager } from '../../models/roleManager' 
+import {Amplify, Auth} from 'aws-amplify'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -72,7 +74,9 @@ const sitesOptions = [
     {value: 6, label: 'Ejemplo 7'},
 ]
 
-const SitesByRating = () => {
+const SitesByRating = () => { 
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     const [marcadoMalo, setMarcadoMalo] = useState(false)
@@ -95,7 +99,35 @@ const SitesByRating = () => {
     const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
     const [data, setData] = useState([])
-    const [users, setUsers] = useState([])
+    const [users, setUsers] = useState([]) 
+
+    let navigate = useNavigate() 
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_calificacion_generar === false) {
+                    navigate('/error/401', {replace: true})
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    } 
+
     const typeReport = async (typee: any) => {
         if (
             type.id_sitio != 0 &&
@@ -143,8 +175,10 @@ const SitesByRating = () => {
 
     useEffect(() => {
         getSite()
-        //getPublishSites()
-    }, [])
+        //getPublishSites() 
+        getRoles()
+        validateRole()
+    }, [existRoles])
 
     const showResultComponent = () => {
         setShowResult(true)
