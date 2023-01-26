@@ -862,7 +862,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                 flexDirection: 'column',
                                                 borderStyle: 'dashed',
                                                 borderWidth: '1px',
-                                                borderColor: '#009EF7',
+                                                borderColor: '#009EF7', 
+                                                cursor: 'pointer'
                                             }}
                                             onClick={async () => {
                                                 await validateRole()
@@ -894,7 +895,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         >
                                             <Card.Title
                                                 className='text-center'
-                                                style={{flexDirection: 'row'}}
+                                                style={{flexDirection: 'row', cursor: 'pointer'}} 
                                             >
                                                 <i>
                                                     <Card.Subtitle className='text-muted mb-4'>
