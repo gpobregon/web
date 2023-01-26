@@ -128,7 +128,7 @@ const EditSite = () => {
     const getUserForHeader = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
-            if(site.bloqueado_por_edicion_id!=user.attributes.sub&&site.bloqueado_por_edicion_id!=''&&site.bloqueado_por_edicion){
+            if(site.bloqueado_por_edicion_id!=user.attributes.sub&&site.bloqueado_por_edicion_id!=''&&site.bloqueado_por_edicion&& site.bloqueado_por_edicion_id !=null){
                 swal({
                     text: 'Este sitio está siendo editado por otro usuario',
                     icon: 'error',
@@ -147,10 +147,9 @@ const EditSite = () => {
                 descripcion: '',
                 id: user.attributes.sub,
             })
-            if (site.bloqueado_por_edicion_id != '') {
+            if (site.bloqueado_por_edicion_id != '' ) {
                 await saveLocked(true, user.attributes.sub, user.attributes.name) //bloquear sitio
             }
-          
         })   
        
     }
