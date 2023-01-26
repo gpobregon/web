@@ -113,16 +113,6 @@ const EditSite = () => {
     const [botonActivo, setbotonActivo] = useState(false)
 
     // obtener usuario que editó
-    const [dataUser, setDataUser] = useState({
-        email: '',
-        name: '',
-        phoneNumber: '',
-        lastname: '',
-        imageProfile: '',
-        role: '',
-        descripcion: '',
-        id: '',
-    })
 
     const [dataUserHeader, setDataUserHeader] = useState({
         email: '',
@@ -138,6 +128,15 @@ const EditSite = () => {
     const getUserForHeader = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
+            if(site.bloqueado_por_edicion_id!=user.attributes.sub&&site.bloqueado_por_edicion_id!=''&&site.bloqueado_por_edicion){
+                swal({
+                    text: 'Este sitio está siendo editado por otro usuario',
+                    icon: 'error',
+                    timer: 4000,
+                })
+            navigate('/sitios')
+                return
+            }
             setDataUserHeader({
                 email: user.attributes.email,
                 name: user.attributes.name,
@@ -148,7 +147,12 @@ const EditSite = () => {
                 descripcion: '',
                 id: user.attributes.sub,
             })
-        })
+            if (site.bloqueado_por_edicion_id != '') {
+                await saveLocked(true, user.attributes.sub, user.attributes.name) //bloquear sitio
+            }
+          
+        })   
+       
     }
 
     const getUser = async () => {
@@ -205,6 +209,7 @@ const EditSite = () => {
     }
 
     const getSite = async () => {
+      
         const sitio: any = await getValue(sitesMethod, Number(id))
         setSite({
             ...sitio.site,
@@ -223,7 +228,10 @@ const EditSite = () => {
         }))
 
         setmostrarCategorias(mostrarCategorys)
-        await getUser()
+
+        getUserForHeader()
+       
+       
         setloadingSite(false)
     }
 
@@ -694,7 +702,6 @@ const EditSite = () => {
     useEffect(() => {
         // getUser()
         getSite()
-        getUserForHeader()
     }, [loadingSite])
 
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>

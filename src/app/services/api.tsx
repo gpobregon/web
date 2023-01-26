@@ -35,6 +35,7 @@ export const changePointOfInterestFront = RoomsMethod + '/points/changePointOfIn
 export const OrderPointOfInterest = RoomsMethod + '/points/changeorder'
 export const statePointInteresPublished = RoomsMethod + '/points/changepublishedpointofinterest'
 export const getPuntoInteres = '/site/rooms/points/get'
+export const postPositionRoom = 'sitios/set/salas/orden'
 
 export const getRoutefInterest = RoomsMethod + '/points/getpointswithroute'
 export const addRoute = RoomsMethod + '/points/route/add'
