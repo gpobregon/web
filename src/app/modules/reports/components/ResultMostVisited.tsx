@@ -1,10 +1,14 @@
 import moment from 'moment'
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react'
+import React, {FC, useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import PDF from '../ExportReport/PDF'
-import {Auth} from 'aws-amplify'
+import {Auth} from 'aws-amplify' 
+import { getData, getRolesMethod } from '../../../services/api'
+import { roleManager } from '../../../models/roleManager'
+import { LoadingContext } from '../../../utility/component/loading/context'
+import swal from 'sweetalert'
 
 import {saveAs} from 'file-saver'
 import {read, utils, writeFileXLSX} from 'xlsx'
@@ -53,11 +57,9 @@ const customStyles = {
     }),
 }
 
-const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
-    // console.log('name: ', name)
-    // console.log('data: ', data)
-    // console.log('site: ', site)
-
+const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => { 
+    const {setShowLoad} = useContext(LoadingContext)
+    const [roles, setRoles] = useState<roleManager[]>([])
     var date_report = new Date()
     var date_report_format = moment(date_report).format('DD/MM/YYYY')
     var hour_report_format = moment(date_report).format('HH:mm:ss')
@@ -130,7 +132,40 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
         {portada_path: photo},
         {tipo: 'Visitas por sitio'},
         {site: site}
-    )
+    ) 
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+    }
+
+    const exportValidate = async (event: any) => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_visitas_exportar === false) {
+                    swal({
+                        title: 'No tienes permiso para exportar este reporte',
+                        icon: 'warning',
+                    })
+                }else{ 
+                    if (event.value == 1) {
+                        PDF(datos)
+                    } else if (event.value == 2) {
+                        exportFile()
+                    }
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    }
 
     const handleChangeLanguage = (event: any) => {
         if (event.value == 1) {
@@ -146,7 +181,8 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
                 name: user.attributes.name,
                 lastName: user.attributes['custom:lastname'],
             })
-        })
+        }) 
+        getRoles()
     }, [])
 
     /* get live table and export to XLSX */
@@ -243,7 +279,8 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
                                     styles={customStyles}
                                     components={animatedComponents}
                                     className={'mb-4'}
-                                    onChange={handleChangeLanguage}
+                                    // onChange={handleChangeLanguage} 
+                                    onChange={exportValidate}
                                     placeholder='Exportar'
                                 />
                             </div>

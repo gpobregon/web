@@ -2,12 +2,14 @@ import React, {useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import ResultMostVisited from './components/ResultMostVisited'
-import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
+import {getData, getDataReport, getRolesMethod, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
 import swal from 'sweetalert' 
 import { LoadingContext } from '../../utility/component/loading/context'
+import { roleManager } from '../../models/roleManager' 
+import {Amplify, Auth} from 'aws-amplify'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -76,7 +78,9 @@ const countryOptions = [
     {value: 3, label: 'Todos'},
 ]
 
-const MostVistedReport = () => { 
+const MostVistedReport = () => {  
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([])
@@ -100,9 +104,35 @@ const MostVistedReport = () => {
         fecha_inicial: '',
         fecha_final: '',
     }) 
-    console.log("date: ", date);
     const [data, setData] = useState([])
-    console.log("data: ", data);
+      
+
+    let navigate = useNavigate() 
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_visitas_generar === false) {
+                    navigate('/error/401', {replace: true})
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    } 
    
     const typeReport = async (typee: any) => {
         if (
@@ -173,8 +203,10 @@ const MostVistedReport = () => {
 
     useEffect(() => {   
         getSite()
-        //getPublishSites()
-    }, [])
+        //getPublishSites()  
+        getRoles()
+        validateRole()
+    }, [existRoles])
 
     const handleChangeSitio = (event: any) => {
         setType({

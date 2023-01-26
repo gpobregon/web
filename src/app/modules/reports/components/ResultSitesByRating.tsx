@@ -1,10 +1,14 @@
 import { Auth } from 'aws-amplify'
 import moment from 'moment'
-import React, {FC, useCallback, useEffect, useState} from 'react'
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react'
 import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import { utils, writeFileXLSX } from 'xlsx'
+import { utils, writeFileXLSX } from 'xlsx' 
+import { getData, getRolesMethod } from '../../../services/api'
+import { roleManager } from '../../../models/roleManager'
+import { LoadingContext } from '../../../utility/component/loading/context'
+import swal from 'sweetalert'
 
 import PDF from '../ExportReport/PDF'
 
@@ -52,12 +56,48 @@ const customStyles = {
     }),
 }
 
-const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => {
+const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => { 
+    const {setShowLoad} = useContext(LoadingContext)
+    const [roles, setRoles] = useState<roleManager[]>([])
 
     const [user, setDataUser] = useState({
         name: '',
         lastName: '',
-    })
+    }) 
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+    }
+
+    const exportValidate = async (event: any) => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_calificacion_exportar === false) {
+                    swal({
+                        title: 'No tienes permiso para exportar este reporte',
+                        icon: 'warning',
+                    })
+                }else{ 
+                    if (event.value == 1) {
+                        PDF(datos)
+                    } else if (event.value == 2) {
+                        exportFile()
+                    }
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    }
+
 
     useEffect(() => {
         Auth.currentUserInfo().then((user) => {
@@ -65,7 +105,8 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                 name: user.attributes.name,
                 lastName: user.attributes['custom:lastname'],
             })
-        })
+        }) 
+        getRoles()
     }, [])
 
 
@@ -235,7 +276,8 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                                         styles={customStyles}
                                         components={animatedComponents}
                                         className={'mb-4'}
-                                        onChange={handleChangeLanguage}
+                                        // onChange={handleChangeLanguage} 
+                                        onChange={exportValidate}
                                         placeholder='Exportar'
                                     />
                                 </div>
