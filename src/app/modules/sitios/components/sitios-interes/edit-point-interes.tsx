@@ -32,6 +32,8 @@ import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
 import {LoadingContext} from '../../../../utility/component/loading/context'
 import {DeleteImage} from '../../../deleteFile/delete-image'
+import {Tooltip, tooltipClasses, TooltipProps} from '@mui/material'
+import {styled} from '@mui/system'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -409,6 +411,16 @@ const EditPoint = () => {
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
         ['e', 'E'].includes(e.key) && e.preventDefault()
 
+    const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+        <Tooltip {...props} classes={{popper: className}} />
+    ))(({theme}) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            color: '#FFF',
+            fontSize: 12,
+            fontWeight: 500,
+        },
+    }))
+
     return (
         <>
             <div className=' '>
@@ -467,16 +479,18 @@ const EditPoint = () => {
                                         style={{ display: 'flex', marginRight: '4px' }} ></i> */}
                                 </li>
                                 <li className='nav-item'>
-                                    <Button
-                                        className='btn-secondary fa-solid fa-qrcode background-button '
-                                        id='center2'
-                                        onClick={handleShow}
-                                        style={{
-                                            color: '#92929F',
-                                            display: 'flex',
-                                            marginRight: '4px',
-                                        }}
-                                    ></Button>
+                                    <CustomTooltip title='Generar QR'>
+                                        <Button
+                                            className='btn-secondary fa-solid fa-qrcode background-button '
+                                            id='center2'
+                                            onClick={handleShow}
+                                            style={{
+                                                color: '#92929F',
+                                                display: 'flex',
+                                                marginRight: '4px',
+                                            }}
+                                        ></Button>
+                                    </CustomTooltip>
                                 </li>
 
                                 <Modal show={show} onHide={handleClose}>
@@ -502,6 +516,7 @@ const EditPoint = () => {
                                     </Modal.Footer>
                                 </Modal>
 
+                                <CustomTooltip title='Visibilidad del punto'>
                                 <Button
                                     className={
                                         sitio.es_visible == false
@@ -521,7 +536,10 @@ const EditPoint = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+
+                                <CustomTooltip title='Descartar cambios'>
                                 <Button
                                     className='btn-secondary fa-solid fa-xmark background-button'
                                     id='center2'
@@ -529,7 +547,10 @@ const EditPoint = () => {
                                         discardChanges()
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+
+                                <CustomTooltip title='Guardar cambios'>
                                 <Button
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
@@ -546,8 +567,10 @@ const EditPoint = () => {
                                         saveChanges()
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip>
 
+                                <CustomTooltip title='Publicar'>
                                 <Button
                                     onClick={() => {
                                         sitio.publicado = !sitio.publicado
@@ -564,7 +587,10 @@ const EditPoint = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+
+                                <CustomTooltip title='Mostrar maqueta movil'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -583,7 +609,10 @@ const EditPoint = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip>  
+
+                                <CustomTooltip title='Mostrar maqueta web'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -603,7 +632,8 @@ const EditPoint = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip>
                                 {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
                             </ul>
                         </div>
