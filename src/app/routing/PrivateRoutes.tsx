@@ -21,20 +21,14 @@ import AddPoin from '../modules/sitios/components/sitios-interes/add-point-inter
 import EditPoin from '../modules/sitios/components/sitios-interes/edit-point-interes'
 import UserManagement from '../modules/users/UserManagement'
 import RoleManagement from '../modules/users/RoleManagement'
-import PushNotificationsPage from '../modules/push-notifications/PushNotificationsPage' 
+import PushNotificationsPage from '../modules/push-notifications/PushNotificationsPage'
 import UserProfilePage from '../modules/UserProfile/UserProfilePage'
 import AddRoute from '../modules/sitios/components/rutas-sitios-interes/add-route'
-import OfflineManagement from '../modules/offline/OfflinePage';
+import OfflineManagement from '../modules/offline/OfflinePage'
 import Container from '../modules/Test/index'
 
-
 const PrivateRoutes = () => {
-    // // const ProfilePage = lazy(() => import('../modules/profile/ProfilePage'))
-    // // const WizardsPage = lazy(() => import('../modules/wizards/WizardsPage'))
-    // // const AccountPage = lazy(() => import('../modules/accounts/AccountPage'))
-    // // const WidgetsPage = lazy(() => import('../modules/widgets/WidgetsPage'))
-    // // const ChatPage = lazy(() => import('../modules/apps/chat/ChatPage'))
-    //const UsersPage = lazy(() => import('../modules/apps/user-management/UsersPage'))
+  
 
     return (
         <Routes>
@@ -42,35 +36,38 @@ const PrivateRoutes = () => {
                 {/* Redirect to Dashboard after success login/registartion */}
                 <Route path='auth/*' element={<Navigate to='/sitios' />} />
 
-        {/* Pages */}
-        <Route path='dashboard' element={<DashboardWrapper />} />
-        <Route path='/sitios/createSite' element={<ConfSite />} />
-        <Route path='/sitios/editSite/:id' element={<EditSite />} />
-        <Route path='builder' element={<BuilderPageWrapper />} />
-        <Route path='menu-test' element={<MenuTestPage />} />
-        <Route path='catalogos' element={<CatalogosPage />} />
-        <Route path='reportes' element={<ReportsPage />} /> 
-        <Route path='usuarios' element={<UsersPage />} /> 
-        <Route path='perfil' element={<UserProfilePage />} /> 
-        <Route path='/usuarios/user-management' element={<UserManagement />} />  
-        <Route path='/usuarios/role-management' element={<RoleManagement />} /> 
-        <Route path='/reportes/sitios-mas-visitados' element={<MostVistedReport />} /> 
-        <Route path='/reportes/sitios-por-calificacion' element={<SitesByRating />}  /> 
-        <Route path='/reportes/reporte-de-usuario' element={<UserReport />}  />
-        <Route path='sitios' element={<SitiosPage />} /> 
-        <Route path="/template/:tipo">
-            <Route path=":modo/:id" element={<Template />} />
-            <Route path=":modo/:id" element={<Template />} />
-            <Route path=":idSitio/:modo/:id" element={<Template />} />
-            <Route path=":idSitio/:modo/:id" element={<Template />} />
-        </Route>
-        <Route path='notificaciones-push' element={<PushNotificationsPage />} /> 
-        <Route path='/offline' element={<OfflineManagement />} />
-        <Route path='notificaciones-push' element={<PushNotificationsPage />} />
-        <Route path='/sitios/create-point-interes' element={<AddPoin />} />
-        <Route path='/sitios/edit-point-interes/:id_sitio/:id_punto' element={<EditPoin />} />
-        <Route path='/sitios/add-route' element={<AddRoute />} />
-        <Route path='/test' element={<Container />} />
+                {/* Pages */}
+                <Route path='dashboard' element={<DashboardWrapper />} />
+                <Route path='builder' element={<BuilderPageWrapper />} />
+                <Route path='menu-test' element={<MenuTestPage />} />
+                <Route path='catalogos' element={<CatalogosPage />} />
+                <Route path='reportes' element={<ReportsPage />} />
+                <Route path='usuarios' element={<UsersPage />} />
+                <Route path='perfil' element={<UserProfilePage />} />
+                <Route path='/usuarios/user-management' element={<UserManagement />} />
+                <Route path='/usuarios/role-management' element={<RoleManagement />} />
+                <Route path='/reportes/sitios-mas-visitados' element={<MostVistedReport />} />
+                <Route path='/reportes/sitios-por-calificacion' element={<SitesByRating />} />
+                <Route path='/reportes/reporte-de-usuario' element={<UserReport />} />
+                <Route path='sitios' element={<SitiosPage />} />
+                <Route path='/sitios/createSite' element={<ConfSite />} />
+                <Route path='/sitios/editSite/:id' element={<EditSite />} />
+                <Route path='/sitios/create-point-interes' element={<AddPoin />} />
+                <Route
+                    path='/sitios/edit-point-interes/:id_sitio/:id_punto'
+                    element={<EditPoin />}
+                />
+                <Route path='/sitios/add-route' element={<AddRoute />} />
+                <Route path='/template/:tipo'>
+                    <Route path=':modo/:id' element={<Template />} />
+                    <Route path=':modo/:id' element={<Template />} />
+                    <Route path=':idSitio/:modo/:id' element={<Template />} />
+                    <Route path=':idSitio/:modo/:id' element={<Template />} />
+                </Route>
+                <Route path='notificaciones-push' element={<PushNotificationsPage />} />
+                <Route path='/offline' element={<OfflineManagement />} />
+                <Route path='notificaciones-push' element={<PushNotificationsPage />} />
+                <Route path='/test' element={<Container />} />
                 {/* Page Not Found */}
                 <Route path='*' element={<Navigate to='/error/404' />} />
             </Route>

@@ -1,37 +1,13 @@
-import React, {useState, useEffect, FC, useRef} from 'react' 
+import React, {useState, useEffect, FC, useRef} from 'react'
 import {Auth} from 'aws-amplify'
-import {
-    Container,
-    Row,
-    Col,
-    Button,
-    Card,
-    ListGroup,
-    Form,
-    Navbar,
-    Nav,
-    NavDropdown,
-    Modal,
-} from 'react-bootstrap'
+import {Row, Col, Button, Card, Form, Modal} from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
-import {Site} from '../../models/site'
-import Moment from 'moment'
-import {
-    getData,
-    sitesMethod,
-    deleteData,
-    postData,
-    categorysMethod,
-    statesMethod,
-    URLAWS,
-} from '../../services/api'
+import {getData, sitesMethod, postData, categorysMethod, URLAWS} from '../../services/api'
 import {Tag} from '../../models/tag'
 import {status} from '../../models/status'
 import swal from 'sweetalert'
-import {useForm} from 'react-hook-form'
-import Interes from './components/sitios-interes/sala-interes'
 import logo from './upload-image_03.jpg'
 import UpImage from '../uploadFile/upload-image'
 import {
@@ -39,10 +15,7 @@ import {
     validateStringSoloNumeros,
 } from '../validarCadena/validadorCadena'
 import {KTSVG} from '../../../_metronic/helpers'
-import { DeleteImage } from '../deleteFile/delete-image'
-const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
-    (item) => ({label: item, value: item})
-) 
+import {DeleteImage} from '../deleteFile/delete-image'
 
 const options = [
     {label: 'Grapes', value: 'grapes'},
@@ -105,16 +78,9 @@ const customStyles = {
     }),
 }
 const animatedComponents = makeAnimated()
-
-//   async function postSite() {
-//     console.log('posting');
-//   }
-
-// const {state} = useLocation();
-
 const ConfSite = () => {
     useEffect(() => {
-        getCategorys() 
+        getCategorys()
         getUser()
     }, [])
     const handleClose = () => setShow(false)
@@ -147,14 +113,12 @@ const ConfSite = () => {
         website: '',
         qr_image_path: '',
         publicar_web: false,
-        publicar_movil: false, 
+        publicar_movil: false,
         nombre_usuario_edito: '',
-    }) 
-    console.log("site: ", site);
+    })
 
     // obtener usuario que editó
     const [dataUser, setDataUser] = useState({
-        
         email: '',
         name: '',
         phoneNumber: '',
@@ -175,9 +139,7 @@ const ConfSite = () => {
                 descripcion: '',
             })
         })
-    }   
-    //console.log("dataUser: ", dataUser);
-    // fin obtener usuario que editó
+    }
 
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
@@ -194,7 +156,6 @@ const ConfSite = () => {
         category.map((cat: any) => {
             categorys.push({value: cat.id_categoria, label: cat.nombre})
         })
-        // console.log(category)
     }
 
     const alertNotNullInputs = async () => {
@@ -239,14 +200,12 @@ const ConfSite = () => {
             website: site.website,
             qr_image_path: site.qr_image_path,
             publicar_web: status.publicar_web,
-            publicar_movil: status.publicar_movil, 
+            publicar_movil: status.publicar_movil,
             nombre_usuario_edito: dataUser.name,
         })
+    }
 
-        // console.log(site);
-    } 
-    
-    //methods to post data to api------------------------------------------------------ 
+    //methods to post data to api------------------------------------------------------
 
     async function postSite(sitee: any, tipo: string) {
         if (
@@ -255,13 +214,11 @@ const ConfSite = () => {
             site.geoY != '' &&
             site.ubicacion != '' &&
             site.portada_path != '' &&
-            site.geo_json != '' && 
-            site.categorias.length >= 1  && 
+            site.geo_json != '' &&
+            site.categorias.length >= 1 &&
             site.categorias[0].id_categoria != 0
         ) {
             const sit: any = await postData(sitesMethod + '/add', sitee)
-            console.log(sit)
-            console.log(sitee)
             navigate(`/template/sitio/${tipo}/${sit.id_sitio}`)
         } else {
             alertNotNullInputs()
@@ -270,21 +227,6 @@ const ConfSite = () => {
     async function postDefault(route: string, object: any) {
         const sit: any = await postData(route, object)
     }
-    // const changeStatus = (favorito: boolean, publicado: boolean, oculto: boolean) => {
-    //     setStatus({
-    //         id_sitio: site.id_sitio,
-    //         favorito: favorito,
-    //         publicado: publicado,
-    //         oculto: oculto,
-    //         cercania_activa: site.cercania_activa,
-    //     })
-    //     // console.log(status)
-    //     postDefault(statesMethod, status)
-    //     // const getSites = async () => {
-    //     //   const site: any = await getData(sitesMethod)
-    //     //   console.log(site)
-    //     // }
-    // }
 
     //alert methods-----------------------------------------------------------------------
     const discardChanges = async () => {
@@ -307,31 +249,37 @@ const ConfSite = () => {
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
     const uploadImage = async (imagen: string) => {
-        let arr = imagen.split('.');
+        let arr = imagen.split('.')
         //esta validacion solo es unicamente para ver que sea un archivo admitido en la carga
-        if (arr[arr.length-1] === 'geojson') {
+        if (arr[arr.length - 1] === 'geojson') {
             // esta validacion es para vereficcar apartado selecciona la carga (geojson o img)
-            if(ArchivoPermitido==='.geojson'){
+            if (ArchivoPermitido === '.geojson') {
                 site.geo_json = `${URLAWS}${unbicacionBucket}/${imagen}`
                 setNombreJson(imagen)
-            }else{
+            } else {
                 swal({
                     text: '¡Tipo de archivo no admitido!',
                     icon: 'warning',
                     timer: 2000,
                 })
             }
-        } else if(arr[arr.length-1]==='jpg' || arr[arr.length-1]==='bmp' ||arr[arr.length-1]==='gif' || arr[arr.length-1]==='jpeg' ||arr[arr.length-1]==='png'){
-            if(ArchivoPermitido==='image/*'){
-                site.portada_path =`${URLAWS}${unbicacionBucket}/${imagen}`
-            }else{
+        } else if (
+            arr[arr.length - 1] === 'jpg' ||
+            arr[arr.length - 1] === 'bmp' ||
+            arr[arr.length - 1] === 'gif' ||
+            arr[arr.length - 1] === 'jpeg' ||
+            arr[arr.length - 1] === 'png'
+        ) {
+            if (ArchivoPermitido === 'image/*') {
+                site.portada_path = `${URLAWS}${unbicacionBucket}/${imagen}`
+            } else {
                 swal({
                     text: '¡Tipo de archivo no admitido!',
                     icon: 'warning',
                     timer: 2000,
                 })
             }
-        }else{
+        } else {
             swal({
                 text: '¡Tipo de archivo no admitido!',
                 icon: 'warning',
@@ -342,10 +290,11 @@ const ConfSite = () => {
             setModalupIMG(false)
         }
     }
-    const [modalupimg, setModalupIMG] = useState(false)  
-    
+    const [modalupimg, setModalupIMG] = useState(false)
+
     //Bloquear letra E en inputs
-    const blockInvalidChar = (e: { key: string; preventDefault: () => any }) => ['e', 'E',].includes(e.key) && e.preventDefault();
+    const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
+        ['e', 'E'].includes(e.key) && e.preventDefault()
 
     return (
         <>
@@ -528,8 +477,8 @@ const ConfSite = () => {
                                                 <Link
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
-                                                    onClick={() =>{
-                                                        DeleteImage('sitePages',site.portada_path)
+                                                    onClick={() => {
+                                                        DeleteImage('sitePages', site.portada_path)
                                                         setSite({
                                                             id_sitio: site.id_sitio,
                                                             nombre: site.nombre,
@@ -555,8 +504,7 @@ const ConfSite = () => {
                                                             publicar_movil: site.publicar_movil,
                                                             nombre_usuario_edito: dataUser.name,
                                                         })
-                                                    }
-                                                    }
+                                                    }}
                                                 ></Link>
                                             </Col>
                                         </Row>
@@ -605,7 +553,7 @@ const ConfSite = () => {
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
                                                     publicar_web: site.publicar_web,
-                                                    publicar_movil: site.publicar_movil, 
+                                                    publicar_movil: site.publicar_movil,
                                                     nombre_usuario_edito: dataUser.name,
                                                 })
                                             }
@@ -626,7 +574,7 @@ const ConfSite = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={site.geoX == '' ? '' : site.geoX} 
+                                                value={site.geoX == '' ? '' : site.geoX}
                                                 onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (validateStringSoloNumeros(e.target.value)) {
@@ -652,7 +600,7 @@ const ConfSite = () => {
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
                                                             publicar_web: site.publicar_web,
-                                                            publicar_movil: site.publicar_movil, 
+                                                            publicar_movil: site.publicar_movil,
                                                             nombre_usuario_edito: dataUser.name,
                                                         })
                                                     }
@@ -672,7 +620,7 @@ const ConfSite = () => {
                                                     fontSize: '18px',
                                                     color: '#FFFFFF',
                                                 }}
-                                                value={site.geoY == '' ? '' : site.geoY} 
+                                                value={site.geoY == '' ? '' : site.geoY}
                                                 onKeyDown={blockInvalidChar}
                                                 onChange={(e) => {
                                                     if (validateStringSoloNumeros(e.target.value)) {
@@ -698,7 +646,7 @@ const ConfSite = () => {
                                                             website: site.website,
                                                             qr_image_path: site.qr_image_path,
                                                             publicar_web: site.publicar_web,
-                                                            publicar_movil: site.publicar_movil, 
+                                                            publicar_movil: site.publicar_movil,
                                                             nombre_usuario_edito: dataUser.name,
                                                         })
                                                     }
@@ -718,52 +666,48 @@ const ConfSite = () => {
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.ubicacion != '' ? site.ubicacion : ''}
                                         onChange={(e) => {
-                                                setSite({
-                                                    id_sitio: site.id_sitio,
-                                                    nombre: site.nombre,
-                                                    descripcion: site.descripcion,
-                                                    ubicacion: e.target.value,
-                                                    geoX: site.geoX,
-                                                    geoY: site.geoY,
-                                                    portada_path: site.portada_path,
-                                                    estado: site.estado,
-                                                    creado: site.creado,
-                                                    editado: site.editado,
-                                                    categorias: site.categorias,
-                                                    id_municipio: site.id_municipio,
-                                                    favorito: site.favorito,
-                                                    publicado: site.publicado,
-                                                    oculto: site.oculto,
-                                                    geo_json: site.geo_json,
-                                                    cercania_activa: site.cercania_activa,
-                                                    telefono: site.telefono,
-                                                    website: site.website,
-                                                    qr_image_path: site.qr_image_path,
-                                                    publicar_web: site.publicar_web,
-                                                    publicar_movil: site.publicar_movil, 
-                                                    nombre_usuario_edito: dataUser.name,
-                                                })
+                                            setSite({
+                                                id_sitio: site.id_sitio,
+                                                nombre: site.nombre,
+                                                descripcion: site.descripcion,
+                                                ubicacion: e.target.value,
+                                                geoX: site.geoX,
+                                                geoY: site.geoY,
+                                                portada_path: site.portada_path,
+                                                estado: site.estado,
+                                                creado: site.creado,
+                                                editado: site.editado,
+                                                categorias: site.categorias,
+                                                id_municipio: site.id_municipio,
+                                                favorito: site.favorito,
+                                                publicado: site.publicado,
+                                                oculto: site.oculto,
+                                                geo_json: site.geo_json,
+                                                cercania_activa: site.cercania_activa,
+                                                telefono: site.telefono,
+                                                website: site.website,
+                                                qr_image_path: site.qr_image_path,
+                                                publicar_web: site.publicar_web,
+                                                publicar_movil: site.publicar_movil,
+                                                nombre_usuario_edito: dataUser.name,
+                                            })
                                         }}
                                     ></input>
-                                    <hr style={{position: 'relative', top: '-20px'}}></hr> 
+                                    <hr style={{position: 'relative', top: '-20px'}}></hr>
 
                                     <br />
                                     <label style={{fontSize: '14px', color: '#FFFFFF'}}>
-                                        Teléfono    
+                                        Teléfono
                                     </label>
                                     <br></br>
                                     <input
-                                        type='text' 
+                                        type='text'
                                         maxLength={8}
                                         className='form-control'
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.telefono != '' ? site.telefono : ''}
                                         onChange={(e) => {
-                                            if (
-                                                validateStringSoloNumeros(
-                                                    e.target.value
-                                                )
-                                            ) {
+                                            if (validateStringSoloNumeros(e.target.value)) {
                                                 setSite({
                                                     id_sitio: site.id_sitio,
                                                     nombre: site.nombre,
@@ -786,13 +730,13 @@ const ConfSite = () => {
                                                     website: site.website,
                                                     qr_image_path: site.qr_image_path,
                                                     publicar_web: site.publicar_web,
-                                                    publicar_movil: site.publicar_movil, 
+                                                    publicar_movil: site.publicar_movil,
                                                     nombre_usuario_edito: dataUser.name,
                                                 })
                                             }
                                         }}
                                     ></input>
-                                    <hr style={{position: 'relative', top: '-20px'}}></hr> 
+                                    <hr style={{position: 'relative', top: '-20px'}}></hr>
 
                                     <br />
                                     <label style={{fontSize: '14px', color: '#FFFFFF'}}>
@@ -805,33 +749,31 @@ const ConfSite = () => {
                                         style={{border: '0', fontSize: '18px', color: '#FFFFFF'}}
                                         value={site.website != '' ? site.website : ''}
                                         onChange={(e) => {
-                                           
-                                                setSite({
-                                                    id_sitio: site.id_sitio,
-                                                    nombre: site.nombre,
-                                                    descripcion: site.descripcion,
-                                                    ubicacion: site.ubicacion,
-                                                    geoX: site.geoX,
-                                                    geoY: site.geoY,
-                                                    portada_path: site.portada_path,
-                                                    estado: site.estado,
-                                                    creado: site.creado,
-                                                    editado: site.editado,
-                                                    categorias: site.categorias,
-                                                    id_municipio: site.id_municipio,
-                                                    favorito: site.favorito,
-                                                    publicado: site.publicado,
-                                                    oculto: site.oculto,
-                                                    geo_json: site.geo_json,
-                                                    cercania_activa: site.cercania_activa,
-                                                    telefono: site.telefono,
-                                                    website: e.target.value,
-                                                    qr_image_path: site.qr_image_path,
-                                                    publicar_web: site.publicar_web,
-                                                    publicar_movil: site.publicar_movil, 
-                                                    nombre_usuario_edito: dataUser.name,
-                                                })
-                                            
+                                            setSite({
+                                                id_sitio: site.id_sitio,
+                                                nombre: site.nombre,
+                                                descripcion: site.descripcion,
+                                                ubicacion: site.ubicacion,
+                                                geoX: site.geoX,
+                                                geoY: site.geoY,
+                                                portada_path: site.portada_path,
+                                                estado: site.estado,
+                                                creado: site.creado,
+                                                editado: site.editado,
+                                                categorias: site.categorias,
+                                                id_municipio: site.id_municipio,
+                                                favorito: site.favorito,
+                                                publicado: site.publicado,
+                                                oculto: site.oculto,
+                                                geo_json: site.geo_json,
+                                                cercania_activa: site.cercania_activa,
+                                                telefono: site.telefono,
+                                                website: e.target.value,
+                                                qr_image_path: site.qr_image_path,
+                                                publicar_web: site.publicar_web,
+                                                publicar_movil: site.publicar_movil,
+                                                nombre_usuario_edito: dataUser.name,
+                                            })
                                         }}
                                     ></input>
                                     <hr style={{position: 'relative', top: '-20px'}}></hr>
@@ -901,7 +843,7 @@ const ConfSite = () => {
                                             </div>
                                         </Card>
                                         <div style={{textAlign: 'center', color: 'gray'}}>
-                                            Formato permitido: .json
+                                            Formato permitido: .geojson
                                         </div>
                                     </Form.Group>
                                     <br></br>

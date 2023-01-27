@@ -31,7 +31,9 @@ import {validateStringSinCaracteresEspeciales} from '../../../validarCadena/vali
 import {Auth} from 'aws-amplify'
 import {roleManager} from '../../../../models/roleManager'
 import {LoadingContext} from '../../../../utility/component/loading/context'
-import { DeleteImage } from '../../../deleteFile/delete-image'
+import {DeleteImage} from '../../../deleteFile/delete-image'
+import {Tooltip, tooltipClasses, TooltipProps} from '@mui/material'
+import {styled} from '@mui/system'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -109,7 +111,6 @@ const EditPoint = () => {
 
     const ObtenerPuntoInteres = async () => {
         const punto: any = await postData(getPuntoInteres, {id_punto: Number(id_punto)})
-        console.log("punto: ", punto);
         setNombreSalas(punto.sala_nombre)
         setSitio({
             id_punto: Number(id_punto),
@@ -131,9 +132,7 @@ const EditPoint = () => {
             publicar_web: punto.publicar_web,
             publicar_movil: punto.publicar_movil,
         })
-        // console.log(punto)
     }
-    // console.log('sitio', sitio)
     const changeOculto = async (oculto: boolean) => {
         await postData(statePointInteres, {
             id_punto: id_punto,
@@ -200,7 +199,6 @@ const EditPoint = () => {
                     icon: 'success',
                     timer: 2000,
                 })
-                // console.log(sitios)
                 navigate(`/sitios/editSite/${id_sitio}`)
             }
         })
@@ -232,33 +230,12 @@ const EditPoint = () => {
 
     const updatePoint = async () => {
         await postData(updatePointInteres, sitio)
-        
-        // console.log(updatePoint)
-        // console.log(sitio)
     }
 
-    // const getSites = async () => {
-    //     const site: any = await getValue(sitesMethod, datospuntoInteres.id_sitio)
-    //     setSitios(site.site)
-    // }
     //obtener lenguajes-------------------------------------------------------------------------------------
     const [languages, setLanguages] = useState<CatalogLanguage[]>([])
 
-    // let lenaguajeDefault = ''
-    // for (let i = 0; i < languages.length; i++) {
-    //     if (languages[i].id_lenguaje === sitio.id_lenguaje[0].value) {
-    //         // setLenaguajeDefault(languages[i].descripcion)
-
-    //         lenaguajeDefault = languages[i].nombre
-    //     }
-    // }
-
-    // const languageEscogido = sitio.id_lenguaje?.map((language) => ({
-    //     value: language.value,
-    //     label: lenaguajeDefault,
-    // }))
-
-    const publishTypePoint = async (publicar_movil:boolean,publicar_web:boolean) => {
+    const publishTypePoint = async (publicar_movil: boolean, publicar_web: boolean) => {
         if (publicar_movil === true && publicar_web === true) {
             await postData(publishPI, {
                 id_punto: sitio.id_punto,
@@ -280,7 +257,6 @@ const EditPoint = () => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        // console.log(language)
     }
 
     const languagesOptions = languages?.map((language) => ({
@@ -297,13 +273,11 @@ const EditPoint = () => {
     // const handleChangeLanguage = async (event: any) => {
     //     const result = sitio.lenguajes?.filter((language) => language.id_lenguaje === event.value)
     //     if (result[0]?.descripcion) {
-    //         // console.log(event.value)
     //         setDescripcion(result[0]?.descripcion)
     //         setMostrarDescripcion(true)
     //         sitio.descripcion = descripcion
     //         sitio.id_lenguaje = event.value
     //         sitio.id_lenguaje_anterior = event.value
-    //         // console.log(sitio)
     //     } else {
     //         setDescripcion('')
     //         swal({
@@ -338,7 +312,6 @@ const EditPoint = () => {
     //         })
     //     }
 
-    //     // console.log(descripcion)
     // }
 
     // UPLOAD IMAGE-------------------------------------------------------------------------
@@ -438,6 +411,16 @@ const EditPoint = () => {
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
         ['e', 'E'].includes(e.key) && e.preventDefault()
 
+    const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+        <Tooltip {...props} classes={{popper: className}} />
+    ))(({theme}) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            color: '#FFF',
+            fontSize: 12,
+            fontWeight: 500,
+        },
+    }))
+
     return (
         <>
             <div className=' '>
@@ -496,16 +479,18 @@ const EditPoint = () => {
                                         style={{ display: 'flex', marginRight: '4px' }} ></i> */}
                                 </li>
                                 <li className='nav-item'>
-                                    <Button
-                                        className='btn-secondary fa-solid fa-qrcode background-button '
-                                        id='center2'
-                                        onClick={handleShow}
-                                        style={{
-                                            color: '#92929F',
-                                            display: 'flex',
-                                            marginRight: '4px',
-                                        }}
-                                    ></Button>
+                                    <CustomTooltip title='Generar QR'>
+                                        <Button
+                                            className='btn-secondary fa-solid fa-qrcode background-button '
+                                            id='center2'
+                                            onClick={handleShow}
+                                            style={{
+                                                color: '#92929F',
+                                                display: 'flex',
+                                                marginRight: '4px',
+                                            }}
+                                        ></Button>
+                                    </CustomTooltip>
                                 </li>
 
                                 <Modal show={show} onHide={handleClose}>
@@ -531,6 +516,7 @@ const EditPoint = () => {
                                     </Modal.Footer>
                                 </Modal>
 
+                                <CustomTooltip title='Visibilidad del punto'>
                                 <Button
                                     className={
                                         sitio.es_visible == false
@@ -545,8 +531,15 @@ const EditPoint = () => {
                                         sitio.es_visible = !sitio.es_visible
                                         changeOculto(sitio.es_visible)
                                     }}
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                    style={{
+                                        color: sitio.es_visible ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button> 
+                                </CustomTooltip> 
+
+                                <CustomTooltip title='Descartar cambios'>
                                 <Button
                                     className='btn-secondary fa-solid fa-xmark background-button'
                                     id='center2'
@@ -554,13 +547,16 @@ const EditPoint = () => {
                                         discardChanges()
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+
+                                <CustomTooltip title='Guardar cambios'>
                                 <Button
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
                                     onClick={async () => {
                                         await validateRole()
-                                        
+
                                         if (!permissionPostPoint) {
                                             swal({
                                                 title: 'No tienes permiso para publicar cambios de un punto de interés',
@@ -571,8 +567,10 @@ const EditPoint = () => {
                                         saveChanges()
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip>
 
+                                <CustomTooltip title='Publicar'>
                                 <Button
                                     onClick={() => {
                                         sitio.publicado = !sitio.publicado
@@ -584,8 +582,15 @@ const EditPoint = () => {
                                             : 'btn-secondary fa-solid fa-upload background-button'
                                     }
                                     id='center2'
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                    style={{
+                                        color: sitio.publicado ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button> 
+                                </CustomTooltip> 
+
+                                <CustomTooltip title='Mostrar maqueta movil'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -593,17 +598,21 @@ const EditPoint = () => {
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
 
-                                        publishTypePoint(!sitio.publicar_movil,sitio.publicar_web)
+                                        publishTypePoint(!sitio.publicar_movil, sitio.publicar_web)
                                         setSitio({...sitio, publicar_movil: !sitio.publicar_movil})
                                     }}
                                     className={'btn-secondary fa-solid fa-mobile background-button'}
                                     id='center2'
                                     style={{
-                                        color: sitio.publicar_movil== false ?  '#92929F': '#009ef7',
+                                        color:
+                                            sitio.publicar_movil == false ? '#92929F' : '#009ef7',
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip>  
+
+                                <CustomTooltip title='Mostrar maqueta web'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -611,7 +620,7 @@ const EditPoint = () => {
                                         //   ? changeStatus(status.favorito, true, status.oculto)
                                         //   : changeStatus(status.favorito, false, status.oculto)
                                         // sitio.publicar_web=!sitio.publicar_web
-                                        publishTypePoint(sitio.publicar_movil,!sitio.publicar_web)
+                                        publishTypePoint(sitio.publicar_movil, !sitio.publicar_web)
                                         setSitio({...sitio, publicar_web: !sitio.publicar_web})
                                     }}
                                     className={
@@ -619,11 +628,12 @@ const EditPoint = () => {
                                     }
                                     id='center2'
                                     style={{
-                                        color: sitio.publicar_web== false ?  '#92929F': '#009ef7',
+                                        color: sitio.publicar_web == false ? '#92929F' : '#009ef7',
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip>
                                 {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
                             </ul>
                         </div>
@@ -682,8 +692,11 @@ const EditPoint = () => {
                                                 <Link
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
-                                                    onClick={() =>{
-                                                        DeleteImage('sitePages/puntosInteres',sitio.portada_path)
+                                                    onClick={() => {
+                                                        DeleteImage(
+                                                            'sitePages/puntosInteres',
+                                                            sitio.portada_path
+                                                        )
                                                         setSitio({
                                                             id_punto: sitio.id_punto,
                                                             id_sitio: sitio.id_sitio,
@@ -707,8 +720,7 @@ const EditPoint = () => {
                                                             publicar_web: sitio.publicar_web,
                                                             publicar_movil: sitio.publicar_movil,
                                                         })
-                                                    }
-                                                    }
+                                                    }}
                                                 ></Link>
                                             </Col>
                                         </Row>
@@ -965,7 +977,7 @@ const EditPoint = () => {
                                             <Button
                                                 onClick={async () => {
                                                     await validateRole()
-                                                    
+
                                                     if (!permissionMockPoint) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar un punto de interés',
@@ -1012,7 +1024,7 @@ const EditPoint = () => {
                                                 className='btn btn-secondary  col-md-12 col-sm-12 col-lg-12'
                                                 onClick={async () => {
                                                     await validateRole()
-                                                    
+
                                                     if (!permissionMockPoint) {
                                                         swal({
                                                             title: 'No tienes permiso para maquetar un punto de interés',

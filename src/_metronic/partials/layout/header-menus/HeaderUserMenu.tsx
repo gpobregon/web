@@ -14,16 +14,13 @@ const HeaderUserMenu: FC = () => {
         phoneNumber: '',
         lastname: '',
         imageProfile: '',
-    }) 
+    })
 
-    const forgotDevice = async () =>{ 
+    const forgotDevice = async () => {
         try {
             logout()
-            await  Amplify.Auth.forgetDevice();
-        } catch (error) {
-            console.log("no jalo", error)
-        }
-
+            await Amplify.Auth.forgetDevice()
+        } catch (error) {}
     }
 
     const getEmail = () => {
@@ -35,15 +32,12 @@ const HeaderUserMenu: FC = () => {
                 lastname: user.attributes['custom:lastname'],
                 imageProfile: user.attributes['custom:imageProfile'],
             })
-            //console.log(user.attributes['custom:phoneNumber']);
-            //console.log(JSON.stringify(user.attributes))
-            //console.log(user)
         })
-    } 
+    }
 
     useEffect(() => {
-      getEmail()
-  }, [])
+        getEmail()
+    }, [])
 
     return (
         <div
@@ -54,6 +48,9 @@ const HeaderUserMenu: FC = () => {
                 <div className='menu-content d-flex align-items-center px-3'>
                     <div className='symbol symbol-50px me-5'>
                         <img alt='Logo' src={dataUser.imageProfile} />
+                    </div>
+                    <div className='symbol symbol-50px me-5'>
+                        {dataUser.name} {dataUser.lastname}
                     </div>
                 </div>
             </div>

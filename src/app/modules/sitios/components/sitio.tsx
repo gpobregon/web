@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from 'react'
 import {Col, Card, Button, Row} from 'react-bootstrap'
 import {Site} from '../../../models/site'
-import {getData, sitesMethod, deleteData, postData} from '../../../services/api'
+import {getData, sitesMethod, deleteData, postData, statelockSite} from '../../../services/api'
 import swal from 'sweetalert'
 import SitiosPage from '../SitiosPage'
 import {Link, useNavigate} from 'react-router-dom'
@@ -41,18 +41,15 @@ type sitio = {
 }
 
 const Sitio: FC<sitio> = (props) => {
-    //console.log('props: ', props)
     const navigate = useNavigate()
 
     const [idSitioState, setIdSitioState] = useState({
         idSite: props.id_sitio,
         nombreSite: props.nombre,
         idUserEditing: props.bloqueado_por_edicion_id,
-        bloqueado: props.bloqueado_por_edicion, 
-        nombreUsuario: props.bloqueado_por_edicion_nombre
+        bloqueado: props.bloqueado_por_edicion,
+        nombreUsuario: props.bloqueado_por_edicion_nombre,
     })
-
-    //console.log('idSitioState: ', idSitioState)
 
     // obtener usuario que editó
     const [dataUser, setDataUser] = useState({
@@ -65,7 +62,6 @@ const Sitio: FC<sitio> = (props) => {
         descripcion: '',
         id: '',
     })
-    //console.log('dataUser: ', dataUser)
 
     const getUser = async () => {
         Auth.currentUserInfo().then((user) => {
@@ -86,23 +82,49 @@ const Sitio: FC<sitio> = (props) => {
         await props.validateRole()
 
         if (props.permissionEditSite) {
+            console.log(props)
             if (idSitioState.bloqueado == null || idSitioState.bloqueado == false) {
                 // setIdSitioState({
                 //     idSite: props.id_sitio,
                 //     nombreSite: props.nombre,
                 //     idUserEditing: dataUser.id,
-                //     bloqueado: true, 
+                //     bloqueado: true,
                 //     nombreUsuario: dataUser.name,
-                // }) 
-                await postData(sitesMethod, {bloqueado_por_edicion: true})
+                // })
+                
                 navigate(`/sitios/editSite/${props.id_sitio}`)
             } else {
                 if (idSitioState.idUserEditing == dataUser.id) {
                     navigate(`/sitios/editSite/${props.id_sitio}`)
                 } else {
                     swal({
-                        title: `Este sitio está siendo editado por '${props.bloqueado_por_edicion_nombre}'`,
-                        icon: 'warning',
+                        text: `Este sitio está siendo editado por: '${props.bloqueado_por_edicion_nombre}'`,
+                        icon: 'error',
+                        
+                        // buttons: ['Cancelar', 'Forzar desbloqueo'],
+                        // dangerMode: true,
+                    }).then(async (res) => {
+                        // if (res) {
+                        //     await postData(sitesMethod, {bloqueado_por_edicion: false})
+                        //     navigate(`/sitios/editSite/${props.id_sitio}`)
+                        // }
+                        // swal({
+                        //     title:'¿Seguro que quieres forzar el desbloqueo?',
+                        //     text: 'Si lo haces, el sitio se desbloqueará y el usuario que lo estaba editando perderá los cambios que hubiera hecho',
+                        //     icon: 'warning',
+                        //     buttons: ['Cancelar', 'Forzar desbloqueo'],
+                        //     dangerMode: true,
+                        // }).then(async (res) => {
+                        //     if (res) {
+                        //         const sit: any = await postData(statelockSite, {
+                        //             id_sitio: props.id_sitio,
+                        //             bloqueado_por_edicion: true,
+                        //             bloqueado_por_edicion_id: dataUser.id,
+                        //             bloqueado_por_edicion_nombre: dataUser.name,
+                        //         })
+                        //         navigate(`/sitios/editSite/${props.id_sitio}`)
+                        //     }
+                        // })
                     })
                 }
             }
@@ -128,23 +150,22 @@ const Sitio: FC<sitio> = (props) => {
                 buttons: ['No', 'Sí'],
             }).then(async (res) => {
                 if (res) {
-                    console.log(props)
-                    if(!props.favorito){
+                    if (!props.favorito) {
                         await deleteData(sitesMethod, {id_sitio: props.id_sitio})
-                    swal({
-                        text: 'Se elimino con éxito',
-                        icon: 'success',
-                        timer: 2000,
-                    })
-                    navigate('/')
-                }else{
-                    swal({
-                        title:'Error',
-                        text: 'No se puede eliminar un sitio Destacado, Intenta con otro sitio',
-                        icon: 'error',
-                        timer: 2000,
-                    })
-                }
+                        swal({
+                            text: 'Se elimino con éxito',
+                            icon: 'success',
+                            timer: 2000,
+                        })
+                        navigate('/')
+                    } else {
+                        swal({
+                            title: 'Error',
+                            text: 'No se puede eliminar un sitio Destacado, Intenta con otro sitio',
+                            icon: 'error',
+                            timer: 2000,
+                        })
+                    }
                     //  window.location.reload(); //reload page
                 }
             })

@@ -11,7 +11,9 @@ import {
     Nav,
     NavDropdown,
     Modal,
+    Popover,
 } from 'react-bootstrap'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Link, Navigate, useLocation, useNavigate, useParams} from 'react-router-dom'
@@ -20,7 +22,7 @@ import Moment from 'moment'
 import {
     getData,
     sitesMethod,
-    deleteData,
+    statelockSite,
     postData,
     categorysMethod,
     statesMethod,
@@ -51,6 +53,8 @@ import {Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
 import {ContentContext} from '../template/movil/context'
 import {roleManager} from '../../models/roleManager'
+import { styled } from '@mui/system'
+import { Tooltip, tooltipClasses, TooltipProps } from '@mui/material'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -113,16 +117,6 @@ const EditSite = () => {
     const [botonActivo, setbotonActivo] = useState(false)
 
     // obtener usuario que editó
-    const [dataUser, setDataUser] = useState({
-        email: '',
-        name: '',
-        phoneNumber: '',
-        lastname: '',
-        imageProfile: '',
-        role: '',
-        descripcion: '',
-        id: '',
-    })
 
     const [dataUserHeader, setDataUserHeader] = useState({
         email: '',
@@ -134,11 +128,24 @@ const EditSite = () => {
         descripcion: '',
         id: '',
     })
-    //console.log("dataUserHeader: ", dataUserHeader);
 
     const getUserForHeader = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
+            if (
+                site.bloqueado_por_edicion_id != user.attributes.sub &&
+                site.bloqueado_por_edicion_id != '' &&
+                site.bloqueado_por_edicion &&
+                site.bloqueado_por_edicion_id != null
+            ) {
+                swal({
+                    text: `Este sitio está siendo editado por: '${site. bloqueado_por_edicion_nombre}'`,
+                    icon: 'error',
+                    timer: 5000,
+                })
+                navigate('/sitios')
+                return
+            }
             setDataUserHeader({
                 email: user.attributes.email,
                 name: user.attributes.name,
@@ -149,30 +156,16 @@ const EditSite = () => {
                 descripcion: '',
                 id: user.attributes.sub,
             })
-
-            // console.log('dataUserId: ', dataUser.id)
-            // console.log('dataUserName: ', dataUser.name)
-            // console.log('site dentro de get: ', site)
-        })
+            
+                await saveLocked(true, user.attributes.sub, user.attributes.name) //bloquear sitio
+            
+        })   
+       
     }
 
     const getUser = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
-            // setDataUser({
-            //     email: user.attributes.email,
-            //     name: user.attributes.name,
-            //     phoneNumber: user.attributes['custom:phoneNumber'],
-            //     lastname: user.attributes['custom:lastname'],
-            //     imageProfile: user.attributes['custom:imageProfile'],
-            //     role: user.attributes['custom:role'],
-            //     descripcion: '',
-            //     id: user.attributes.sub,
-            // })
-
-            // console.log('dataUserId: ', dataUser.id)
-            // console.log('dataUserName: ', dataUser.name)
-            // console.log('site dentro de get: ', site)
             await saveLocked(true, user.attributes.sub, user.attributes.name)
         })
     }
@@ -206,7 +199,6 @@ const EditSite = () => {
         bloqueado_por_edicion_id: '',
         bloqueado_por_edicion_nombre: '',
     })
-    console.log('site: ', site)
 
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr
@@ -230,10 +222,6 @@ const EditSite = () => {
             ...sitio.site,
         })
 
-        //setSite(sitio.site)
-        //getUser() 
-        console.log('------------site dentro del get-----------------: ', site)
-
         let aux = sitio.site.geo_json
         let auxSplit = aux.split('/')
         setNombreJson(auxSplit[auxSplit.length - 1])
@@ -246,8 +234,10 @@ const EditSite = () => {
             label: cat.nombre,
         }))
 
-        setmostrarCategorias(mostrarCategorys) 
-        await getUser()
+        setmostrarCategorias(mostrarCategorys)
+
+        getUserForHeader()
+
         setloadingSite(false)
     }
 
@@ -257,18 +247,18 @@ const EditSite = () => {
         site.bloqueado_por_edicion_id = idUser
         site.bloqueado_por_edicion_nombre = nameUser
         if (site.id_sitio != 0) {
-            const sit: any = await postData(updateSiteMethod, site) 
+            await postData(statelockSite, {
+                id_sitio: site.id_sitio,
+                bloqueado_por_edicion: bloqueado_por_edicion,
+                bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
+                bloqueado_por_edicion_nombre: nameUser,
+            })
+    
             setSite({
                 ...site,
             })
         }
-        //console.log('Save automatico: ', site)
-        
-        //console.log('despues del Save automatico: ', site)
-
-        // window.location.href = "../sitios";
     }
-    //console.log("site: ", site);
     //fin
 
     //para verificar si el sitio esta bloqueado
@@ -279,13 +269,6 @@ const EditSite = () => {
             setbotonActivo(true)
         }
     }
-
-    // useEffect(() => {
-    //      //getSite()
-    //     // saveLocked(site)
-
-    //     //  console.log(state)
-    // }, [paraCargar])
 
     const [status, setStatus] = useState<status>({
         id_sitio: site.id_sitio,
@@ -307,11 +290,9 @@ const EditSite = () => {
             publicar_web: sitio.publicar_web,
             publicar_movil: sitio.publicar_movil,
         })
-        // console.log(status)
     }
     async function getCategorys() {
         const category: any = await getData(categorysMethod)
-        console.log("category: ", category);
 
         category.map((cat: any) => {
             categorys.push({value: cat.id_categoria, label: cat.nombre})
@@ -393,12 +374,11 @@ const EditSite = () => {
                     categorias: site.categorias,
                 })
             }
-        } else { 
+        } else {
             alertNotNullInputCategories({
                 categorias: site.categorias,
             })
         }
-        
     }
 
     const publishTypeSite = async () => {
@@ -530,7 +510,6 @@ const EditSite = () => {
                 bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
                 bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
             })
-            console.log('site 447: ', site)
             setbotonActivo(true)
         }
     }
@@ -541,8 +520,16 @@ const EditSite = () => {
             title: '¿Estas seguro de descartar los cambios ?',
             icon: 'warning',
             buttons: ['No', 'Sí'],
-        }).then((res) => {
+        }).then(async (res) => {
             if (res) {
+                setShowLoad(true)
+                         await postData(statelockSite, {
+                    id_sitio: site.id_sitio,
+                    bloqueado_por_edicion: false,
+                    bloqueado_por_edicion_id: '',
+                    bloqueado_por_edicion_nombre: '',
+                })
+                setShowLoad(false)
                 swal({
                     text: 'Descartado Correctamente',
                     icon: 'success',
@@ -559,15 +546,15 @@ const EditSite = () => {
             buttons: ['No', 'Sí'],
         }).then(async (res) => {
             if (res) {
+                setShowLoad(true)
+                const sit: any = await postData(updateSiteMethod, sitee)
+                setShowLoad(false)
                 swal({
                     text: 'Cambios guardados',
                     icon: 'success',
                     timer: 2000,
                 })
-                const sit: any = await postData(updateSiteMethod, sitee)
                 navigate('/sitios')
-                console.log(sit)
-                // window.location.href = "../sitios";
             }
         })
     }
@@ -588,7 +575,6 @@ const EditSite = () => {
             arrtempo.push({id_categoria: cat.value, nombre: cat.label, estado: 1})
         })
 
-        console.log(arrtempo)
         setSite({
             id_sitio: site.id_sitio,
             nombre: site.nombre,
@@ -618,9 +604,7 @@ const EditSite = () => {
             bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
             bloqueado_por_edicion_nombre: site.bloqueado_por_edicion_nombre,
         })
-        console.log('site 565: ', site)
         setbotonActivo(true)
-        // console.log(site)
     }
     // UPLOAD IMAGE-------------------------------------------------------------------------
 
@@ -724,15 +708,12 @@ const EditSite = () => {
             bloqueado_por_edicion_id: '',
             bloqueado_por_edicion_nombre: '',
         })
-        console.log('site 671: ', site)
         let converterToFalse = site
 
         converterToFalse.bloqueado_por_edicion = false
-        console.log('converterToFalse: ', converterToFalse)
 
         await postSite(site)
-        console.log('site: ', site)
-        // swal("Desbloqueado" ,"Por favor guarde cambios antes de salir", "info");
+       
     }
 
     useEffect(() => {
@@ -744,11 +725,21 @@ const EditSite = () => {
     useEffect(() => {
         // getUser()
         getSite()
-        getUserForHeader()
     }, [loadingSite])
 
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
-        ['e', 'E'].includes(e.key) && e.preventDefault()
+        ['e', 'E'].includes(e.key) && e.preventDefault() 
+
+        const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+            <Tooltip {...props} classes={{popper: className}} />
+          ))(({theme}) => ({
+            [`& .${tooltipClasses.tooltip}`]: {
+              color: '#FFF',
+              fontSize: 12,
+              fontWeight: 500,
+            },
+          }))
+        
 
     return (
         <>
@@ -794,7 +785,8 @@ const EditSite = () => {
                     <div className='col-xs-12 col-md-6 col-lg-5 d-flex py-5 px-9 justify-content-end'>
                         <div id='center2'>
                             <ul className='nav justify-content-end '>
-                                <li className='nav-item'>
+                                <li className='nav-item'> 
+                                <CustomTooltip title='Sitio destacado'>
                                     <Button
                                         className={
                                             status.favorito == false
@@ -827,9 +819,11 @@ const EditSite = () => {
                                             // : changeStatus(false, status.publicado, status.oculto)
                                         }}
                                         style={{display: 'flex', marginRight: '4px'}}
-                                    ></Button>
+                                    ></Button> 
+                                    </CustomTooltip>
                                 </li>
-                                <li className='nav-item'>
+                                <li className='nav-item'> 
+                                <CustomTooltip title='Generar QR'>
                                     <Button
                                         className='btn-secondary fa-solid fa-qrcode background-button '
                                         id='center2'
@@ -842,8 +836,10 @@ const EditSite = () => {
                                             display: 'flex',
                                             marginRight: '4px',
                                         }}
-                                    ></Button>
-                                </li>
+                                    ></Button> 
+                                     </CustomTooltip>
+                                </li>  
+                                
                                 <Modal show={show} onHide={handleClose}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>Escanee su Código QR</Modal.Title>
@@ -865,7 +861,8 @@ const EditSite = () => {
                                             Descargar
                                         </Button>
                                     </Modal.Footer>
-                                </Modal>
+                                </Modal> 
+                                <CustomTooltip title='Visibilidad del sitio'>
                                 <Button
                                     className={
                                         status.oculto == false
@@ -896,8 +893,14 @@ const EditSite = () => {
                                             status.publicar_movil
                                         )
                                     }}
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                    style={{
+                                        color: !status.oculto ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Descartar cambios'>
                                 <Button
                                     className='btn-secondary fa-solid fa-xmark background-button'
                                     id='center2'
@@ -911,7 +914,9 @@ const EditSite = () => {
                                         discardChanges()
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Guardar cambios'>
                                 <Button
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
@@ -928,7 +933,9 @@ const EditSite = () => {
                                         postSite(site)
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Publicar'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -952,8 +959,14 @@ const EditSite = () => {
                                             : 'btn-secondary fa-solid fa-upload background-button'
                                     }
                                     id='center2'
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                    style={{
+                                        color: status.publicado ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Mostrar maqueta movil'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -981,7 +994,9 @@ const EditSite = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Mostrar maqueta web'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -1009,7 +1024,9 @@ const EditSite = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Cercania activa'>
                                 <Button
                                     onClick={() => {
                                         // status.publicado == false
@@ -1031,8 +1048,13 @@ const EditSite = () => {
                                             : 'btn-secondary fa-solid bi-cursor-fill background-button'
                                     }
                                     id='center2'
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                    style={{
+                                        color: status.cercania_activa ? '#009ef7' : '#92929F',
+                                        display: 'flex',
+                                        marginRight: '4px',
+                                    }}
+                                ></Button> 
+                                </CustomTooltip>
                                 {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
                             </ul>
                         </div>
@@ -1148,7 +1170,7 @@ const EditSite = () => {
                                                     className='bi bi-trash background-button text-danger'
                                                     to={''}
                                                     onClick={() => {
-                                                        DeleteImage('sitePages',site.portada_path)
+                                                        DeleteImage('sitePages', site.portada_path)
                                                         setSite({
                                                             id_sitio: site.id_sitio,
                                                             nombre: site.nombre,
@@ -1183,7 +1205,6 @@ const EditSite = () => {
                                                                 site.bloqueado_por_edicion_nombre,
                                                         })
                                                         setbotonActivo(true)
-                                                      
                                                     }}
                                                 ></Link>
                                             </Col>
@@ -1535,11 +1556,6 @@ const EditSite = () => {
                                                 alignItems: 'flex-start',
                                                 justifyContent: 'center',
                                             }}
-                                            onClick={() => {
-                                                setArchivoPermitido('.geojson')
-                                                setUbicacionBucket('sitePages/GeoJSON')
-                                                setModalupIMG(true)
-                                            }}
                                         >
                                             <div
                                                 style={{
@@ -1548,6 +1564,11 @@ const EditSite = () => {
                                                     flexDirection: 'row',
                                                     alignItems: 'center',
                                                     justifyContent: 'space-between',
+                                                }}
+                                                onClick={() => {
+                                                    setArchivoPermitido('.geojson')
+                                                    setUbicacionBucket('sitePages/GeoJSON')
+                                                    setModalupIMG(true)
                                                 }}
                                             >
                                                 <div
@@ -1560,9 +1581,17 @@ const EditSite = () => {
                                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
 
                                                     <div>
-                                                        {site.geo_json === ''
-                                                            ? 'Subir GeoJSON'
-                                                            : nombreJson}
+                                                        {site.geo_json === '' ? (
+                                                            'Subir GeoJSON'
+                                                        ) : (
+                                                            <a
+                                                                href={site.geo_json}
+                                                                target='_blank'
+                                                                rel='noopener noreferrer'
+                                                            >
+                                                                {nombreJson}
+                                                            </a>
+                                                        )}
                                                     </div>
                                                 </div>
 
@@ -1575,7 +1604,7 @@ const EditSite = () => {
                                             </div>
                                         </Card>
                                         <div style={{textAlign: 'center', color: 'gray'}}>
-                                            Formato permitido: .json
+                                            Formato permitido: .geojson
                                         </div>
                                     </Form.Group>
                                     <br></br>

@@ -13,25 +13,25 @@ import {
     getSitesActivesAndPublicatedMethod,
     notificationMethod,
     postData,
-    updateNotificationMethod, 
-    getTotalNotifications
+    updateNotificationMethod,
+    getTotalNotifications,
 } from '../../services/api'
 import swal from 'sweetalert'
 import {useNavigate} from 'react-router-dom'
 import {roleManager} from '../../models/roleManager'
 import {Amplify, Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
-import { useAuth } from '../auth'
-import { DeleteImage } from '../deleteFile/delete-image'
+import {useAuth} from '../auth'
+import {DeleteImage} from '../deleteFile/delete-image'
 
 const PushNotificationsPage = () => {
-    const [showCardAddNotification, setShowCardAddNotification] = useState(false) 
-    const [totalPages, setTotalPages] = useState(1) 
-    const [cantidadSite, setCantidadSite] = useState(0)
+    const [totalPages, setTotalPages] = useState(1)
+    const [showCardAddNotification, setShowCardAddNotification] = useState(false)
     const [cardUpdateNotification, setCardUpdateNotification] = useState({
         show: false,
         notification: {},
     })
+    const [scheduleNotification, setScheduleNotification] = useState(false)
 
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [notification, setNotification] = useState({
@@ -102,18 +102,15 @@ const PushNotificationsPage = () => {
         setOptionGetNotifications('programadas')
     }
 
-    const getNotificationsHistory = async () => { 
+    const getNotificationsHistory = async () => {
         const notificationsData: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber,
             quantity: '12',
         })
         setNotifications(notificationsData.data as Notification[])
-        setOptionGetNotifications('historial') 
+        setOptionGetNotifications('historial')
 
         const coutsite: any = await getData(`${getTotalNotifications}`)
-        console.log("coutsite: ", coutsite);
-         
-        
 
         const countNextResults: any = await postData(`${notificationMethod}/history`, {
             page: pageNumber + 1,
@@ -130,10 +127,9 @@ const PushNotificationsPage = () => {
                 previous: toggleButtonsPagination.previous,
                 next: false,
             })
-        } 
+        }
 
         let pagesLength = Math.ceil(coutsite.count / 12)
-        console.log(pagesLength)
         setTotalPages(pagesLength)
     }
 
@@ -159,6 +155,7 @@ const PushNotificationsPage = () => {
     const showCardUpdateNotification = async (notification: any) => {
         setValueSelect(null)
         setLabelSelect('Sin redirección')
+        setScheduleNotification(false)
         await validateRole()
 
         if (!permissionEditNotificationProgrammed && optionGetNotifications === 'programadas') {
@@ -179,6 +176,7 @@ const PushNotificationsPage = () => {
 
         setValueSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.value)
         setLabelSelect(optionsSites.find((item) => item.value == notification.id_sitio)?.label)
+        setScheduleNotification(notification?.tipo)
 
         setCardUpdateNotification({show: true, notification})
         setNotification({
@@ -266,7 +264,6 @@ const PushNotificationsPage = () => {
     }
 
     const updateNotification = async (notification: any) => {
-        console.log(notification)
         if (
             notification.nombre !== '' &&
             notification.descripcion !== '' &&
@@ -381,7 +378,7 @@ const PushNotificationsPage = () => {
     }
 
     const deleteSelectedNotification = async () => {
-        await validateRole()
+        // await validateRole()
 
         if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
@@ -398,7 +395,6 @@ const PushNotificationsPage = () => {
             })
             return
         }
-
         if (arrayDeleteNotifications.length === 0) {
             swal({
                 title: 'Selecciona notificaciones para eliminar',
@@ -411,6 +407,8 @@ const PushNotificationsPage = () => {
                 buttons: ['No', 'Sí'],
             }).then((willDelete) => {
                 if (willDelete) {
+                    setShowLoad(true)
+                    
                     for (let i = 0; i < arrayDeleteNotifications.length; i++) {
                         deleteData(deleteNotificationMethod, {
                             id_notificacion: parseInt(arrayDeleteNotifications[i]),
@@ -420,15 +418,12 @@ const PushNotificationsPage = () => {
                         title: 'Se han eliminado las notificaciones',
                         icon: 'success',
                     })
+                    arrayDeleteNotifications.length = 0
+
+                    setTimeout(chooseGetNotifications, 500)
+                    setShowLoad(false)
                 }
             })
-
-            setTimeout(chooseGetNotifications, 500)
-            setTimeout(chooseGetNotifications, 1000)
-            setTimeout(chooseGetNotifications, 2000)
-            setTimeout(chooseGetNotifications, 3000)
-
-            arrayDeleteNotifications.length = 0
         }
     }
 
@@ -477,7 +472,7 @@ const PushNotificationsPage = () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
         setExistRoles(true)
-    } 
+    }
 
     //para cerrar sesión despues de cambiar contraseña, no olvida el dispositivo :c
     const {currentUser, logout} = useAuth()
@@ -485,46 +480,47 @@ const PushNotificationsPage = () => {
         try {
             logout()
             await Amplify.Auth.forgetDevice()
-        } catch (error) {
-            console.log('no jalo', error)
-        }
+        } catch (error) {}
     }
 
     //fin
 
-    const validateRole = async () => { 
+    const validateRole = async () => {
         setShowLoad(true)
         Auth.currentUserInfo().then(async (user) => {
-        try {
-            const filter = roles.filter((role) => {
-                return user.attributes['custom:role'] === role.nombre
-            })
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
 
-            if (filter[0]?.gestor_notificaciones === false) {
-                navigate('/error/401', {replace: true})
-            } else {
-                setPermissionCreateNotification(filter[0]?.notificacion_crear)
+                if (filter[0]?.gestor_notificaciones === false) {
+                    navigate('/error/401', {replace: true})
+                } else {
+                    setPermissionCreateNotification(filter[0]?.notificacion_crear)
 
-                setPermissionEditNotificationProgrammed(filter[0]?.notificacion_programada_editar)
-                setPermissionEditNotificationHistory(filter[0]?.notificacion_historial_editar)
+                    setPermissionEditNotificationProgrammed(
+                        filter[0]?.notificacion_programada_editar
+                    )
+                    setPermissionEditNotificationHistory(filter[0]?.notificacion_historial_editar)
 
-                setPermissionDeleteNotificationProgrammed(
-                    filter[0]?.notificacion_programada_eliminar
+                    setPermissionDeleteNotificationProgrammed(
+                        filter[0]?.notificacion_programada_eliminar
+                    )
+                    setPermissionDeleteNotificationHistory(
+                        filter[0]?.notificacion_historial_eliminar
+                    )
+                }
+            } catch (error) {
+                swal(
+                    'Se ha cambiado la contraseña de tu usuario',
+                    'Cierra sesión y vuelve a ingresar',
+                    'warning'
                 )
-                setPermissionDeleteNotificationHistory(filter[0]?.notificacion_historial_eliminar)
+                await forgotDevice()
             }
-        } catch (error) {
-            swal(
-                'Se ha cambiado la contraseña de tu usuario',
-                'Cierra sesión y vuelve a ingresar',
-                'warning'
-            )
-            await forgotDevice()
-        } 
-    })
+        })
 
-    setTimeout(() => setShowLoad(false), 1000)
-        
+        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
@@ -730,14 +726,16 @@ const PushNotificationsPage = () => {
                                             <Button
                                                 variant='outline-danger'
                                                 className='text-center'
-                                                onClick={() =>{
-                                                    DeleteImage('notificaciones',notification.imagen_path)
+                                                onClick={() => {
+                                                    DeleteImage(
+                                                        'notificaciones',
+                                                        notification.imagen_path
+                                                    )
                                                     deleteNotification({
                                                         id_notificacion:
                                                             notification.id_notificacion,
                                                     })
-                                                }
-                                                }
+                                                }}
                                             >
                                                 <i className='fs-2 bi-trash px-0 fw-bolder'></i>
                                             </Button>
@@ -769,6 +767,8 @@ const PushNotificationsPage = () => {
                     setValueSelect={setValueSelect}
                     labelSelect={labelSelect}
                     setLabelSelect={setLabelSelect}
+                    scheduleNotification={scheduleNotification}
+                    setScheduleNotification={setScheduleNotification}
                 />
             </div>
         </Container>

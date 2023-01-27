@@ -7,6 +7,7 @@ const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
 export const sitesMethod = 'site'
 export const statesMethod = 'site/state'
 export const updateSiteMethod = 'site/update'
+export const statelockSite='site/sites/setbloqueadoporedicion'
 
 export const categorysMethod = 'site/categories'
 export const lengthTagsMethod = 'site/categories/count'
@@ -20,7 +21,7 @@ export const updateLanguageMethod = 'language/update'
 export const notificationMethod = 'notifications'
 export const addNotificationMethod = 'notification/add'
 export const updateNotificationMethod = 'notification/update'
-export const deleteNotificationMethod = 'notification' 
+export const deleteNotificationMethod = 'notification'
 export const getTotalNotifications = 'notifications/getcount'
 export const getSitesActivesAndPublicatedMethod = 'site/sites/activesandpublicated'
 
@@ -35,6 +36,7 @@ export const changePointOfInterestFront = RoomsMethod + '/points/changePointOfIn
 export const OrderPointOfInterest = RoomsMethod + '/points/changeorder'
 export const statePointInteresPublished = RoomsMethod + '/points/changepublishedpointofinterest'
 export const getPuntoInteres = '/site/rooms/points/get'
+export const postPositionRoom = 'sitios/set/salas/orden'
 
 export const getRoutefInterest = RoomsMethod + '/points/getpointswithroute'
 export const addRoute = RoomsMethod + '/points/route/add'
@@ -55,9 +57,9 @@ export const updateUserMethod = 'user/edit'
 export const deleteUserMethod = 'user'
 
 export const publishPI = 'site/publish/solo/point'
-export const publishSite = 'site/publish/solo/site' 
+export const publishSite = 'site/publish/solo/site'
 
-export const getDataReport = 'site/sites/reporte' 
+export const getDataReport = 'site/sites/reporte'
 export const getSitiosPublicados = '/sitios/dynamo/publicado'
 
 export const getData = async (route: string) => {
@@ -69,7 +71,6 @@ export const getData = async (route: string) => {
             })
             .catch((err) => {
                 resolve(null)
-                console.log(err.message)
             })
     })
 }
@@ -87,32 +88,31 @@ export const deleteData = async (route: string, object: any) => {
             })
             .catch((err) => {
                 resolve(null)
-                console.log(err.message)
             })
     })
 }
 
 export const postData = async (route: string, object: any) => {
-    // console.log(object)
-    // console.log(route)
+    console.log(object)
+    console.log(route)
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}`, {method: 'POST', mode: 'cors', body: JSON.stringify(object)})
             .then((response) => {
                 //Si la respuesta es diferente de 200, entonces lanza un error
-                if (!response.ok) throw Error('Ocurrió un error')    
-                return response.json();}
-            )
+                if (!response.ok) throw Error('Ocurrió un error')
+                return response.json()
+            })
             .then((data) => {
                 resolve(data)
             })
             .catch((err) => {
-                resolve(null)       
+                resolve(null)
                 swal({
                     title: 'Error',
                     text: err.message,
                     icon: 'error',
                     timer: 2000,
-                })                  
+                })
             })
     })
 }
@@ -126,7 +126,6 @@ export const getValue = async (route: string, id: number) => {
             })
             .catch((err) => {
                 resolve(null)
-                console.log(err.message)
             })
     })
 }

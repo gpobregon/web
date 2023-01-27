@@ -68,19 +68,10 @@ const customStyles = {
 
 const animatedComponents = makeAnimated()
 
-//esto me retorna el email del usuario con el que estoy logueado
-// const getEmail = ()=>{
-//     Auth.currentAuthenticatedUser().then((user) => {
-//         console.log('user email = ' + user.attributes.email + ' ' + user.attributes.name  );
-//       });
-// }
-
-// getEmail()
 const UserManagement: FC<any> = ({show}) => {
     // let iterationRows = [1, 2, 3, 4, 5, 6]
     // let users: Array<any> = []
     const [users, setUsers] = useState<UserType[]>([])
-    console.log("users: ", users);
     const [existUsers, setExistUsers] = useState(false)
     const [modalAddUser, setModalAddUser] = useState(false)
     const [modalDeleteUser, setModalDeleteUser] = useState({show: false, user: {}})
@@ -89,7 +80,6 @@ const UserManagement: FC<any> = ({show}) => {
     const [banderID, setBanderID] = useState(0)
     const [dataSelect, setDataSelect] = useState({user: '', role: ''})
 
-    const [searchInput, setSearchInput] = useState('')
     const [filteredResults, setFilteredResults] = useState(users)
 
     const [user, setUser] = useState({
@@ -107,13 +97,12 @@ const UserManagement: FC<any> = ({show}) => {
     const [roles, setRoles] = useState<roleManager[]>([])
 
     const searchItems = (searchValue: any) => {
-        setSearchInput(searchValue)
-        if (searchInput !== '') {
+        if (searchValue !== '') {
             const filteredData = users.filter((item: any) => {
                 return Object.values(item.Attributes[2].Value)
                     .join('')
                     .toLowerCase()
-                    .includes(searchInput.toLowerCase())
+                    .includes(searchValue.toLowerCase())
             })
             setFilteredResults(filteredData)
         } else {
@@ -168,14 +157,13 @@ const UserManagement: FC<any> = ({show}) => {
         }
 
         return new Promise((resolve, reject) => {
-            // AWS.config.update({
-            //     accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-            //     secretAccessKey: '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',
-            // })
+            AWS.config.update({
+                accessKeyId: 'AKIAT3ANXPJIACFL5367',
+                secretAccessKey: '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',
+            })
             let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
             cognito.listUsers(params, (err, data) => {
                 if (err) {
-                    console.log(err)
                     reject(err)
                 } else {
                     resolve(data)
@@ -189,12 +177,12 @@ const UserManagement: FC<any> = ({show}) => {
     }
 
     const updateUsuarios = async () => {
-        // AWS.config.update({
-        //     accessKeyId: 'AKIARVZ4XJOZRDSZTPQR',
-        //     secretAccessKey: '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',
-        // })
+        AWS.config.update({
+            accessKeyId: 'AKIAT3ANXPJIACFL5367',
+            secretAccessKey: '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',
+        })
         let cognito = new AWS.CognitoIdentityServiceProvider({region: awsconfig.region})
-        console.log('cognito: ', cognito)
+        // console.log('cognito: ', cognito)
         try {
             cognito.adminUpdateUserAttributes(
                 {
@@ -216,7 +204,7 @@ const UserManagement: FC<any> = ({show}) => {
             const filter = roles.filter((item) => {
                 return dataSelect.role === item.nombre
             })
-            console.log('filter: ', filter)
+            // console.log('filter: ', filter)
 
             let objeto = {
                 id_usuario: users[0].Username,
@@ -225,7 +213,7 @@ const UserManagement: FC<any> = ({show}) => {
             }
 
             await postData(updateUserMethod, objeto).then((data) => {
-                console.log(data)
+                // console.log(data)
             })
         } catch (err) {
             console.log('err: ', err)
@@ -326,20 +314,20 @@ const UserManagement: FC<any> = ({show}) => {
                                 />
                                 <input
                                     type='text'
-                                    value={searchInput}
+                                    // value={searchInput}
                                     data-kt-user-table-filter='search'
                                     className='form-control form-control-solid w-250px ps-14'
                                     placeholder='Buscar'
                                     onChange={async (event) => {
-                                        await validateRole()
+                                        // await validateRole()
 
-                                        if (!permissionSearchUsers) {
-                                            swal({
-                                                title: 'No tienes permiso para buscar usuario',
-                                                icon: 'warning',
-                                            })
-                                            return
-                                        }
+                                        // if (!permissionSearchUsers) {
+                                        //     swal({
+                                        //         title: 'No tienes permiso para buscar usuario',
+                                        //         icon: 'warning',
+                                        //     })
+                                        //     return
+                                        // }
                                         searchItems(event.target.value)
                                     }}
                                 />
@@ -382,227 +370,110 @@ const UserManagement: FC<any> = ({show}) => {
                                 </thead>
                                 <tbody>
                                     {existUsers == true ? (
-                                        searchInput.length > 1 ? (
-                                            filteredResults?.map((item: any) => (
-                                                <tr key={item.Username}>
-                                                    <td>
-                                                        <div
+                                        // searchInput.length > 1 ? (
+                                        filteredResults?.map((item: any) => (
+                                            <tr key={item.Username}>
+                                                <td>
+                                                    <div
+                                                        style={{
+                                                            width: '40px',
+                                                            height: '40px',
+                                                            backgroundColor: '#a9a9a9',
+                                                            borderRadius: '50%',
+                                                        }}
+                                                    >
+                                                        <img
+                                                            src={item.Attributes[1].Value}
                                                             style={{
                                                                 width: '40px',
                                                                 height: '40px',
-                                                                backgroundColor: '#a9a9a9',
+                                                                objectFit: 'cover',
                                                                 borderRadius: '50%',
                                                             }}
-                                                        >
-                                                            <img
-                                                                src={item.Attributes[1].Value}
-                                                                style={{
-                                                                    width: '40px',
-                                                                    height: '40px',
-                                                                    objectFit: 'cover',
-                                                                    borderRadius: '50%',
+                                                        ></img>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>{item.Attributes[2].Value}</div>
+                                                    <div className='text-muted'>
+                                                        {item.Attributes[4].Value}
+                                                    </div>
+                                                </td>
+                                                <td className='text-muted'>
+                                                    {item.Attributes[0].Value}
+                                                </td>
+                                                <td
+                                                    onLoad={async () => {
+                                                        await validateRole()
+                                                    }}
+                                                    style={
+                                                        permissionEditUsers
+                                                            ? {display: 'flex'}
+                                                            : {display: 'none'}
+                                                    }
+                                                >
+                                                    {existUsers ? (
+                                                        <div className='d-flex align-items-center'>
+                                                            <Select
+                                                                onMenuOpen={() => getRoles()}
+                                                                options={rolesOptions}
+                                                                styles={customStyles}
+                                                                components={animatedComponents}
+                                                                onChange={(event: any) => {
+                                                                    setButtonAcept(true)
+                                                                    setBanderID(item)
+                                                                    setDataSelect({
+                                                                        user: item.Attributes[4]
+                                                                            .Value,
+                                                                        role: event.value,
+                                                                    })
                                                                 }}
-                                                            ></img>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div>{item.Attributes[2].Value}</div>
-                                                        <div className='text-muted'>
-                                                            {item.Attributes[4].Value}
-                                                        </div>
-                                                    </td>
-                                                    <td className='text-muted'>
-                                                        {item.Attributes[0].Value}
-                                                    </td>
-                                                    <td
-                                                        onLoad={async () => {
-                                                            await validateRole()
-                                                        }}
-                                                        style={
-                                                            permissionEditUsers
-                                                                ? {display: 'flex'}
-                                                                : {display: 'none'}
-                                                        }
-                                                    >
-                                                        {existUsers ? (
-                                                            <div className='d-flex align-items-center'>
-                                                                <Select
-                                                                    onMenuOpen={() => getRoles()}
-                                                                    options={rolesOptions}
-                                                                    styles={customStyles}
-                                                                    components={animatedComponents}
-                                                                    onChange={(event: any) => {
-                                                                        setButtonAcept(true)
-                                                                        setBanderID(item)
-                                                                        setDataSelect({
-                                                                            user: item.Attributes[4]
-                                                                                .Value,
-                                                                            role: event.value,
-                                                                        })
-                                                                    }}
-                                                                    defaultValue={{
-                                                                        label:
-                                                                            item?.Attributes[3]
-                                                                                ?.Value ?? '',
-                                                                        value:
-                                                                            item?.Attributes[3]
-                                                                                ?.Value ?? '',
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        ) : (
-                                                            <></>
-                                                        )}
-                                                        {buttonAcept === true &&
-                                                        item === banderID ? (
-                                                            <div className='d-flex align-items-center'>
-                                                                {/* cheque */}
-                                                                <Button
-                                                                    variant='btn btn-light btn-active-light-primary ms-5 me-1'
-                                                                    onClick={() => updateUsuarios()}
-                                                                >
-                                                                    <i
-                                                                        className={`bi bi-check text-white fs-3`}
-                                                                    ></i>
-                                                                </Button>
-                                                                {/* la X */}
-                                                                <Button variant='btn btn-light btn-active-light-primary ms-1'>
-                                                                    <i
-                                                                        className={`bi bi-x text-white fs-3`}
-                                                                    ></i>
-                                                                </Button>
-                                                            </div>
-                                                        ) : null}
-                                                    </td>
-                                                    <td>
-                                                        <label
-                                                            className='btn btn-light btn-active-light-danger btn-sm'
-                                                            onClick={() =>
-                                                                showModalDeleteUser(item)
-                                                            }
-                                                        >
-                                                            {'Eliminar '}
-                                                            <span className='menu-icon me-0'>
-                                                                <i
-                                                                    className={`bi bi-trash-fill`}
-                                                                ></i>
-                                                            </span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            users?.map((item: any) => (
-                                                <tr key={item.Username}>
-                                                    <td>
-                                                        <div
-                                                            style={{
-                                                                width: '40px',
-                                                                height: '40px',
-                                                                backgroundColor: '#a9a9a9',
-                                                                borderRadius: '50%',
-                                                            }}
-                                                        >
-                                                            <img
-                                                                src={item.Attributes[1].Value}
-                                                                style={{
-                                                                    width: '40px',
-                                                                    height: '40px',
-                                                                    objectFit: 'cover',
-                                                                    borderRadius: '50%',
+                                                                defaultValue={{
+                                                                    label:
+                                                                        item?.Attributes[3]
+                                                                            ?.Value ?? '',
+                                                                    value:
+                                                                        item?.Attributes[3]
+                                                                            ?.Value ?? '',
                                                                 }}
-                                                            ></img>
+                                                            />
                                                         </div>
-                                                    </td>
-                                                    <td>
-                                                        <div>{item.Attributes[2].Value}</div>
-                                                        <div className='text-muted'>
-                                                            {item.Attributes[4].Value}
-                                                        </div>
-                                                    </td>
-                                                    <td className='text-muted'>
-                                                        {item.Attributes[0].Value}
-                                                    </td>
-                                                    <td
-                                                        onLoad={async () => {
-                                                            await validateRole()
-                                                        }}
-                                                        style={
-                                                            permissionEditUsers
-                                                                ? {display: 'flex'}
-                                                                : {display: 'none'}
-                                                        }
-                                                    >
-                                                        {existUsers ? (
-                                                            <div className='d-flex align-items-center'>
-                                                                <Select
-                                                                    onMenuOpen={() => getRoles()}
-                                                                    options={rolesOptions}
-                                                                    styles={customStyles}
-                                                                    components={animatedComponents}
-                                                                    onChange={(event: any) => {
-                                                                        setButtonAcept(true)
-                                                                        setBanderID(item)
-                                                                        setDataSelect({
-                                                                            user: item.Attributes[4]
-                                                                                .Value,
-                                                                            role: event.value,
-                                                                        })
-                                                                    }}
-                                                                    // value={item?.Attributes[2]?.Value ? item.Attributes[2].Value : '' }
-
-                                                                    defaultValue={{
-                                                                        label:
-                                                                            item?.Attributes[3]
-                                                                                ?.Value ?? '',
-                                                                        value:
-                                                                            item?.Attributes[3]
-                                                                                ?.Value ?? '',
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        ) : (
-                                                            <></>
-                                                        )}
-                                                        {buttonAcept === true &&
-                                                        item === banderID ? (
-                                                            <div className='d-flex align-items-center'>
-                                                                {/* cheque */}
-                                                                <Button
-                                                                    variant='btn btn-light btn-active-light-primary ms-5 me-1'
-                                                                    onClick={() => updateUsuarios()}
-                                                                >
-                                                                    <i
-                                                                        className={`bi bi-check text-white fs-3`}
-                                                                    ></i>
-                                                                </Button>
-                                                                {/* la X */}
-                                                                <Button variant='btn btn-light btn-active-light-primary ms-1'>
-                                                                    <i
-                                                                        className={`bi bi-x text-white fs-3`}
-                                                                    ></i>
-                                                                </Button>
-                                                            </div>
-                                                        ) : null}
-                                                    </td>
-                                                    <td>
-                                                        <label
-                                                            className='btn btn-light btn-active-light-danger btn-sm'
-                                                            onClick={() =>
-                                                                showModalDeleteUser(item)
-                                                            }
-                                                        >
-                                                            {'Eliminar '}
-                                                            <span className='menu-icon me-0'>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                    {buttonAcept === true && item === banderID ? (
+                                                        <div className='d-flex align-items-center'>
+                                                            {/* cheque */}
+                                                            <Button
+                                                                variant='btn btn-light btn-active-light-primary ms-5 me-1'
+                                                                onClick={() => updateUsuarios()}
+                                                            >
                                                                 <i
-                                                                    className={`bi bi-trash-fill`}
+                                                                    className={`bi bi-check text-white fs-3`}
                                                                 ></i>
-                                                            </span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )
+                                                            </Button>
+                                                            {/* la X */}
+                                                            <Button variant='btn btn-light btn-active-light-primary ms-1'>
+                                                                <i
+                                                                    className={`bi bi-x text-white fs-3`}
+                                                                ></i>
+                                                            </Button>
+                                                        </div>
+                                                    ) : null}
+                                                </td>
+                                                <td>
+                                                    <label
+                                                        className='btn btn-light btn-active-light-danger btn-sm'
+                                                        onClick={() => showModalDeleteUser(item)}
+                                                    >
+                                                        {'Eliminar '}
+                                                        <span className='menu-icon me-0'>
+                                                            <i className={`bi bi-trash-fill`}></i>
+                                                        </span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        ))
                                     ) : (
                                         <></>
                                     )}

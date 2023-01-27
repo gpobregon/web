@@ -2,12 +2,14 @@ import React, {useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import ResultMostVisited from './components/ResultMostVisited'
-import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
+import {getData, getDataReport, getRolesMethod, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
 import swal from 'sweetalert' 
 import { LoadingContext } from '../../utility/component/loading/context'
+import { roleManager } from '../../models/roleManager' 
+import {Amplify, Auth} from 'aws-amplify'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -54,14 +56,6 @@ const customStyles = {
 
 const animatedComponents = makeAnimated()
 
-const sitesOptions = [
-    {value: 1, label: 'Ejemplo 1'},
-    {value: 2, label: 'Ejemplo 2'},
-    {value: 3, label: 'Ejemplo 4'},
-    {value: 4, label: 'Ejemplo 5'},
-    {value: 5, label: 'Ejemplo 6'},
-    {value: 6, label: 'Ejemplo 7'},
-]
 
 const genresOptions = [
     {value: 1, label: 'Femenino'},
@@ -84,7 +78,9 @@ const countryOptions = [
     {value: 3, label: 'Todos'},
 ]
 
-const MostVistedReport = () => { 
+const MostVistedReport = () => {  
+    const [roles, setRoles] = useState<roleManager[]>([])
+    const [existRoles, setExistRoles] = useState(false)
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([])
@@ -100,12 +96,44 @@ const MostVistedReport = () => {
         pais: 0,
         calificacion: 4,
     })
-    console.log('type: ', type)
+   
 
     const [photo, setPhoto] = useState([])
-    const [name, setName] = useState([])
+    const [name, setName] = useState([]) 
+    const [date, setDate] = useState({ 
+        fecha_inicial: '',
+        fecha_final: '',
+    }) 
     const [data, setData] = useState([])
-    console.log('data: ', data)
+      
+
+    let navigate = useNavigate() 
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        setRoles(role.data as roleManager[])
+        setExistRoles(true)
+    }
+
+    const validateRole = async () => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_visitas_generar === false) {
+                    navigate('/error/401', {replace: true})
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    } 
+   
     const typeReport = async (typee: any) => {
         if (
             type.id_sitio != 0 &&
@@ -116,34 +144,30 @@ const MostVistedReport = () => {
             type.pais != 0
         ) {
             if (type.fecha_inicial >= type.fecha_final) {
-                swal(
-                    'Fechas incorrectas',
-                    'Por favor introduce una fecha inicial menor que la final',
-                    'error'
-                )
+                errorDate()
             } else { 
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                console.log('sit: ', sit)
+                console.log("typee: ", typee);
+                 console.log('sit: ', sit) 
+                setDate({  
+                    fecha_inicial: typee.fecha_inicial,
+                    fecha_final: typee.fecha_final,
+                })
                 setName(sit[0].nombre_sitio)
                 setPhoto(sit[0].imagen)
 
                 let temp = []
 
                 for (let i = 0; i < sit.length; i++) {
-                    console.log('sit: ', sit[i].data)
                     temp.push(sit[i].data)
-                    // for (let e = 0; e <= sit[i].data.length; e++) {
-                    //        console.log(sit[i].data[e])
-                    //     temp.push(sit[i].data[e])
-                    // }
                 }
 
                 setData(temp as [])
                 showResultComponent()
-                // console.log('sit: ', sit)
                 setExistUsers(true) 
-                setTimeout(() => setShowLoad(false), 1000)
+                setShowLoad(false)
+                // setTimeout(() => setShowLoad(false), 1000)
             }
         } else {
             alertNotNullInputs()
@@ -155,24 +179,34 @@ const MostVistedReport = () => {
             text: '¡Faltan campos por completar!',
             icon: 'warning',
         })
+    } 
+
+    const errorDate = async () => {
+        swal({
+            text: 'Fechas incorrectas',
+            icon: 'warning',
+        })
     }
 
     const getSite = async () => {
         getPublishSites()
     }
     async function getPublishSites() {
+        setShowLoad(true)
         const sites: any = await getData(getSitiosPublicados)
-        // console.log('sites: ', sites.data)
-
+        
         sites.data.map((sit: any) => {
             publishSite.push({value: sit.id_sitio, label: sit.nombre})
         })
+        setShowLoad(false)
     }
 
-    useEffect(() => {
+    useEffect(() => {   
         getSite()
-        //getPublishSites()
-    }, [])
+        //getPublishSites()  
+        getRoles()
+        validateRole()
+    }, [existRoles])
 
     const handleChangeSitio = (event: any) => {
         setType({
@@ -271,7 +305,7 @@ const MostVistedReport = () => {
                                 <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
                             </Button>
                         </Link>
-                        <h1 className='m-0'>Reporte de sitios mas visitados</h1>
+                        <h1 className='m-0'>Reporte de visitas por sitio</h1>
                     </div>
                 </div>
             </div>
@@ -383,7 +417,8 @@ const MostVistedReport = () => {
                 show={showResult}
                 data={data}
                 site={type}
-                name={name}
+                name={name} 
+                date={date}
                 photo={photo}
             />
         </Container>

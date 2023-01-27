@@ -85,6 +85,12 @@ const RoleManagement: FC<any> = ({show}) => {
         rol_crear: false,
         rol_editar: false,
         rol_eliminar: false,
+        reporte_usuarios_generar: false,
+        reporte_usuarios_exportar: false,
+        reporte_visitas_generar: false,
+        reporte_visitas_exportar: false,
+        reporte_calificacion_generar: false,
+        reporte_calificacion_exportar: false,
         gestor_sitios: true,
         gestor_notificaciones: false,
         gestor_puntos_de_interes: false,
@@ -95,6 +101,7 @@ const RoleManagement: FC<any> = ({show}) => {
         gestor_categorias_idiomas: false,
         estado: 1,
     })
+    console.log("stateRole: ", stateRole);
 
     const [clicked, setClicked] = useState(false)
 
@@ -158,6 +165,12 @@ const RoleManagement: FC<any> = ({show}) => {
             rol_crear: false,
             rol_editar: false,
             rol_eliminar: false,
+            reporte_usuarios_generar: false,
+            reporte_usuarios_exportar: false,
+            reporte_visitas_generar: false,
+            reporte_visitas_exportar: false,
+            reporte_calificacion_generar: false,
+            reporte_calificacion_exportar: false,
             gestor_sitios: true,
             gestor_notificaciones: false,
             gestor_puntos_de_interes: false,
@@ -199,6 +212,7 @@ const RoleManagement: FC<any> = ({show}) => {
         try {
             if (flag) {
                 const deleteInfo: any = await deleteData(deleteRoleMethod, role)
+                console.log('deleteInfo: ', deleteInfo)
                 if (deleteInfo.id_rol.en_uso === undefined) {
                     swal({
                         title: 'Se ha eliminado el rol',
@@ -207,7 +221,6 @@ const RoleManagement: FC<any> = ({show}) => {
 
                     setTimeout(() => (document.location.href = '/usuarios/role-management'), 750)
                 } else {
-                    console.log('deleteInfo: ', deleteInfo)
                     swal({
                         title: 'Error al eliminar rol',
                         text: `Este rol esta siendo usado por usuarios`,
@@ -217,9 +230,7 @@ const RoleManagement: FC<any> = ({show}) => {
                     // el/los usuarios: ${deleteInfo.id_rol.en_uso.id_usuario.toString()} \n
                 }
             }
-        } catch (error) {
-            console.log(error)
-        }
+        } catch (error) {}
 
         // await deleteData(deleteRoleMethod, role)
         // getRoles()
@@ -228,11 +239,6 @@ const RoleManagement: FC<any> = ({show}) => {
         //     icon: 'success',
         // })
     }
-
-    for (let rol of roles) {
-        console.log(rol)
-    }
-    console.log('----------------------------------------')
 
     let navigate = useNavigate()
     const {setShowLoad} = useContext(LoadingContext)
@@ -265,17 +271,13 @@ const RoleManagement: FC<any> = ({show}) => {
     useEffect(() => {
         setShowLoad(true)
         getRoles()
-        validateRole()
+        validateRole() 
+        comprobarReportes()
     }, [existRoles, permissionEditRole, permissionDeleteRole])
 
     //Esto se hizo con el fin de que cuando se guarde un check box hijo tambien se guarde automaticamente el padre
     //Pero la función en realidad viene desde el back
     const comprobarCategorias = () => {
-        console.log(
-            !stateRole.categoria_crear &&
-                !stateRole.categoria_editar &&
-                !stateRole.categoria_eliminar
-        )
         if (
             !stateRole.categoria_crear &&
             !stateRole.categoria_editar &&
@@ -289,7 +291,6 @@ const RoleManagement: FC<any> = ({show}) => {
                 id_rol: role.id_rol,
                 gestor_categorias_idiomas: true,
             }))
-            console.log(stateRole.gestor_categorias_idiomas)
         } else {
             setStateRole((role) => ({
                 ...role,
@@ -300,14 +301,12 @@ const RoleManagement: FC<any> = ({show}) => {
     }
 
     const comprobarOffline = () => {
-        console.log(!stateRole.offline_sitios && !stateRole.offline_puntos)
         if (!stateRole.offline_sitios && !stateRole.offline_puntos) {
             setStateRole((role) => ({
                 ...role,
                 id_rol: role.id_rol,
                 gestor_offline: true,
             }))
-            console.log(stateRole.gestor_offline)
         } else {
             setStateRole((role) => ({
                 ...role,
@@ -353,7 +352,6 @@ const RoleManagement: FC<any> = ({show}) => {
                 id_rol: role.id_rol,
                 gestor_sitios: true,
             }))
-            console.log(stateRole.gestor_sitios)
         } else {
             setStateRole((role) => ({
                 ...role,
@@ -376,7 +374,6 @@ const RoleManagement: FC<any> = ({show}) => {
                 id_rol: role.id_rol,
                 gestor_notificaciones: true,
             }))
-            console.log(stateRole.gestor_notificaciones)
         } else {
             setStateRole((role) => ({
                 ...role,
@@ -401,13 +398,36 @@ const RoleManagement: FC<any> = ({show}) => {
                 id_rol: role.id_rol,
                 gestor_usuarios: true,
             }))
-            console.log(stateRole.gestor_usuarios)
         } else {
             setStateRole((role) => ({
                 ...role,
                 id_rol: role.id_rol,
                 gestor_usuarios: false,
             }))
+        }
+    }
+
+    const comprobarReportes = () => {
+        if (
+            stateRole.reporte_usuarios_generar === true &&
+            stateRole.reporte_usuarios_exportar === true &&
+            stateRole.reporte_visitas_generar === true &&
+            stateRole.reporte_visitas_exportar === true &&
+            stateRole.reporte_calificacion_generar === true &&
+            stateRole.reporte_calificacion_exportar === true
+        ) {
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_reportes: false,
+            }))
+        } else { 
+            setStateRole((role) => ({
+                ...role,
+                id_rol: role.id_rol,
+                gestor_reportes: true,
+            }))
+            
         }
     }
 
@@ -532,6 +552,12 @@ const RoleManagement: FC<any> = ({show}) => {
                                     rol_crear: rol.rol_crear,
                                     rol_editar: rol.rol_editar,
                                     rol_eliminar: rol.rol_eliminar,
+                                    reporte_usuarios_generar: rol.reporte_usuarios_generar,
+                                    reporte_usuarios_exportar: rol.reporte_usuarios_exportar,
+                                    reporte_visitas_generar: rol.reporte_visitas_generar,
+                                    reporte_visitas_exportar: rol.reporte_visitas_exportar,
+                                    reporte_calificacion_generar: rol.reporte_calificacion_generar,
+                                    reporte_calificacion_exportar: rol.reporte_calificacion_exportar,
                                     gestor_sitios: rol.gestor_sitios,
                                     gestor_notificaciones: rol.gestor_notificaciones,
                                     gestor_puntos_de_interes: rol.gestor_puntos_de_interes,
@@ -681,7 +707,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                     style={{fontSize: 20, cursor: 'pointer'}}
                                                     onClick={async () => {
                                                         await validateRole()
-                                                        
+
                                                         if (!permissionDeleteRole) {
                                                             swal({
                                                                 title: 'No tienes permiso para eliminar un rol',
@@ -2065,20 +2091,246 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                         rol.gestor_reportes
                                                                     }
                                                                     label='Reportes'
-                                                                    onChange={(e) => {
-                                                                        setStateRole((role) => ({
-                                                                            ...role,
-                                                                            id_rol: role.id_rol,
-                                                                            gestor_reportes:
-                                                                                e.target.checked,
-                                                                        }))
+                                                                    // onChange={(e) => {
+                                                                    //     setStateRole((role) => ({
+                                                                    //         ...role,
+                                                                    //         id_rol: role.id_rol,
+                                                                    //         gestor_reportes:
+                                                                    //             e.target.checked,
+                                                                    //     }))
 
-                                                                        // await postData(editRoleMethod, stateRole)
-                                                                        // getRoles()
-                                                                    }}
+                                                                    //     // await postData(editRoleMethod, stateRole)
+                                                                    //     // getRoles()
+                                                                    // }}
+                                                                    disabled
                                                                 />
                                                             </Accordion.Header>
-                                                            <Accordion.Body></Accordion.Body>
+                                                            <Accordion.Body>
+                                                                <Accordion>
+                                                                    <Accordion.Item eventKey='3'>
+                                                                        <Accordion.Header>
+                                                                            Usuarios
+                                                                        </Accordion.Header>
+                                                                        <Accordion.Body>
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.reporte_usuarios_generar
+                                                                                    }
+                                                                                    label='Generar reporte'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                reporte_usuarios_generar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
+                                                                                        comprobarReportes()
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
+
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    label='Exportar reporte'
+                                                                                    defaultChecked={
+                                                                                        rol.reporte_usuarios_exportar
+                                                                                    }
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                reporte_usuarios_exportar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
+                                                                                        comprobarReportes()
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
+                                                                        </Accordion.Body>
+                                                                    </Accordion.Item>
+                                                                </Accordion>
+
+                                                                <Accordion>
+                                                                    <Accordion.Item eventKey='4'>
+                                                                        <Accordion.Header>
+                                                                            Visitas por sitio
+                                                                        </Accordion.Header>
+                                                                        <Accordion.Body>
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.reporte_visitas_generar
+                                                                                    }
+                                                                                    label='Generar reporte'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                reporte_visitas_generar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
+                                                                                        comprobarReportes()
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
+
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.reporte_visitas_exportar
+                                                                                    }
+                                                                                    label='Exportar reporte'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                reporte_visitas_exportar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
+                                                                                        comprobarReportes()
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
+                                                                        </Accordion.Body>
+                                                                    </Accordion.Item>
+                                                                </Accordion>
+
+                                                                <Accordion>
+                                                                    <Accordion.Item eventKey='1'>
+                                                                        <Accordion.Header>
+                                                                            Sitios por calificación
+                                                                        </Accordion.Header>
+                                                                        <Accordion.Body>
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.reporte_calificacion_generar
+                                                                                    }
+                                                                                    label='Generar reporte'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                reporte_calificacion_generar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
+                                                                                        comprobarReportes()
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
+
+                                                                            <Row
+                                                                                style={{
+                                                                                    paddingTop: 15,
+                                                                                }}
+                                                                            >
+                                                                                <Form.Check
+                                                                                    inline
+                                                                                    defaultChecked={
+                                                                                        rol.reporte_calificacion_exportar
+                                                                                    }
+                                                                                    label='Exportar reporte'
+                                                                                    onChange={(
+                                                                                        e
+                                                                                    ) => {
+                                                                                        setStateRole(
+                                                                                            (
+                                                                                                role
+                                                                                            ) => ({
+                                                                                                ...role,
+                                                                                                id_rol: role.id_rol,
+                                                                                                reporte_calificacion_exportar:
+                                                                                                    e
+                                                                                                        .target
+                                                                                                        .checked,
+                                                                                            })
+                                                                                        )
+                                                                                        comprobarReportes()
+                                                                                        // await postData(editRoleMethod, stateRole)
+                                                                                        // getRoles()
+                                                                                    }}
+                                                                                />
+                                                                            </Row>
+                                                                        </Accordion.Body>
+                                                                    </Accordion.Item>
+                                                                </Accordion>
+                                                            </Accordion.Body>
                                                         </Accordion.Item>
                                                     </Accordion>
                                                 </Col>

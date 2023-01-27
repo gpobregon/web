@@ -15,24 +15,19 @@ import {
     getData,
     languagesMethod,
     getRolesMethod,
+    postPositionRoom,
 } from '../../../../services/api'
 import {Room} from '../../../../models/rooms'
 import swal from 'sweetalert'
 import {PointInteres} from '../../../../models/sitio-interes'
-import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
-import {safeUseLayoutEffect} from 'react-table'
-import {number} from 'yup'
+import { useNavigate} from 'react-router-dom'
 import {QRCodeCanvas} from 'qrcode.react'
-import logo from '../../upload-image_03.jpg'
 import AddRoom from './add-room'
 import UpdateRoom from './update-room'
-import domtoimage from 'dom-to-image'
-import {SortableContainer, SortableElement} from 'react-sortable-hoc'
-import SalaRutas from '../rutas-sitios-interes/sala-rutas'
-import {CatalogLanguage} from '../../../../models/catalogLanguage'
-import {Auth} from 'aws-amplify'
-import {roleManager} from '../../../../models/roleManager'
 import {LoadingContext} from '../../../../utility/component/loading/context'
+import { CatalogLanguage } from '../../../../models/catalogLanguage'
+import { roleManager } from '../../../../models/roleManager'
+import { Auth } from 'aws-amplify'
 
 type id_sitio = {
     id_sitio: number
@@ -93,7 +88,6 @@ const Interes: FC<id_sitio> = (props) => {
     const getLanguages = async () => {
         const language: any = await getData(languagesMethod)
         setLanguages(language.data as CatalogLanguage[])
-        // console.log(language)
     }
 
     useEffect(() => {
@@ -105,12 +99,10 @@ const Interes: FC<id_sitio> = (props) => {
         const rooms: any = await postData(RoomsMethod, props)
         setRooms(rooms.salas as Room[])
         setVistaPrevia(false)
-        // console.log(rooms.salas)
     }
 
     const seteatPuntoInteres = (interes: any) => {
         setPuntoInteres(interes)
-        // console.log(puntoInteres)
     }
 
     const addNewRoom = async (createRoom: any) => {
@@ -131,7 +123,6 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const showModalUpdateRoom = () => {
-        console.log(upRoom)
         setModalUpdateRoom(true)
     }
 
@@ -161,7 +152,6 @@ const Interes: FC<id_sitio> = (props) => {
         }
     }
     const deletePointInteres = (id_punto: number, id_sitio: number) => {
-        // console.log(id_punto,id_sitio,idsala)
         swal({
             title: '¿Estas seguro de Eliminar este punto de interes ?',
             icon: 'warning',
@@ -169,13 +159,6 @@ const Interes: FC<id_sitio> = (props) => {
         }).then(async (res) => {
             if (res) {
                 await deleteData(delPointInteres, {
-                    id_punto: id_punto,
-                    id_lenguaje: 1,
-                    id_sitio: id_sitio,
-                    id_guia: idsala,
-                    estado: 0,
-                })
-                console.log({
                     id_punto: id_punto,
                     id_lenguaje: 1,
                     id_sitio: id_sitio,
@@ -228,21 +211,36 @@ const Interes: FC<id_sitio> = (props) => {
 
         //update the actual array
         setPuntoInteres(_fruitItems)
-        // console.log(_fruitItems)
         const a = await postData(OrderPointOfInterest, {puntos: _fruitItems})
-        console.log(a)
     }
     //handle name change
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewFruitItem(e.target.value)
     }
 
-    //handle new item addition
-    // const handleAddItem = () => {
-    // 	const _fruitItems = [...puntoInteres]
-    // 	_fruitItems.push(newFruitItem)
-    // 	setPuntoInteres(_fruitItems)
-    // }
+    //drag and drop salas
+    const dragItemSalas = React.useRef<any>(null)
+    const dragOverItemSalas = React.useRef<any>(null)
+    const handleSortSalas = async () => {
+        //duplicate items
+        let _fruitItems = [...room]
+
+        //remove and save the dragged item content
+        const draggedItemContent = _fruitItems.splice(dragItemSalas.current, 1)[0]
+
+        //switch the position
+        _fruitItems.splice(dragOverItemSalas.current, 0, draggedItemContent)
+
+        //reset the position ref
+        dragItemSalas.current = null
+        dragOverItemSalas.current = null
+
+        //update the actual array
+        setRooms(_fruitItems)
+        const a = await postData(postPositionRoom, {salas: _fruitItems.map(obj => obj.id_sala)})
+    }
+
+    //fin drag and drop salas
 
     // * Restricción por rol
     const {setShowLoad} = useContext(LoadingContext)
@@ -268,8 +266,6 @@ const Interes: FC<id_sitio> = (props) => {
     }
 
     const validateRole = async () => {
-        setShowLoad(true)
-
         Auth.currentUserInfo().then((user) => {
             const filter = roles.filter((role) => {
                 return user.attributes['custom:role'] === role.nombre
@@ -290,12 +286,9 @@ const Interes: FC<id_sitio> = (props) => {
                 setPermissionMockPoint(filter[0]?.sitio_punto_maquetar)
             }
         })
-
-        setTimeout(() => setShowLoad(false), 1000)
     }
 
     useEffect(() => {
-        setShowLoad(true)
         getRoles()
         validateRole()
     }, [existRoles])
@@ -320,6 +313,22 @@ const Interes: FC<id_sitio> = (props) => {
                                         role='group'
                                         aria-label='Basic example'
                                         key={index}
+                                        draggable
+                                        onDragStart={async () => {
+                                            await validateRole()
+
+                                            if (!permissionSortPoint) {
+                                                swal({
+                                                    title: 'No tienes permiso para ordenar puntos de interés',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
+                                            dragItemSalas.current = index
+                                        }}
+                                        onDragEnter={(e) => (dragOverItemSalas.current = index)}
+                                        onDragEnd={handleSortSalas}
+                                        onDragOver={(e) => e.preventDefault()}
                                     >
                                         <Button
                                             variant='outline-dark'
@@ -662,8 +671,7 @@ const Interes: FC<id_sitio> = (props) => {
                                                                             {
                                                                                 id_punto:
                                                                                     punto.id_punto,
-                                                                                es_visible:
-                                                                                    true,
+                                                                                es_visible: true,
                                                                             }
                                                                         ))
                                                                     punto.es_portada_de_sitio =
@@ -762,8 +770,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                             //         }
                                                             //     }
                                                             // }
-                                                            // console.log(punto.lenguajes)
-                                                            // console.log(lenaguajeDefault)
                                                             // const languageEscogido =
                                                             //     punto.lenguajes.map(
                                                             //         (language) => ({
@@ -771,7 +777,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                             //             label: lenaguajeDefault,
                                                             //         })
                                                             //     )
-                                                            // console.log(languageEscogido)
                                                             navigate(
                                                                 `/sitios/edit-point-interes/${punto.id_sitio}/${punto.id_punto}`,
                                                                 {
@@ -818,7 +823,6 @@ const Interes: FC<id_sitio> = (props) => {
                                                                 })
                                                                 return
                                                             }
-                                                            // console.log(punto.es_portada_de_sitio)
                                                             deletePointInteres(
                                                                 punto.id_punto,
                                                                 punto.id_sitio
@@ -858,7 +862,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                 flexDirection: 'column',
                                                 borderStyle: 'dashed',
                                                 borderWidth: '1px',
-                                                borderColor: '#009EF7',
+                                                borderColor: '#009EF7', 
+                                                cursor: 'pointer'
                                             }}
                                             onClick={async () => {
                                                 await validateRole()
@@ -890,7 +895,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         >
                                             <Card.Title
                                                 className='text-center'
-                                                style={{flexDirection: 'row'}}
+                                                style={{flexDirection: 'row', cursor: 'pointer'}} 
                                             >
                                                 <i>
                                                     <Card.Subtitle className='text-muted mb-4'>

@@ -64,7 +64,14 @@ export interface roleManager {
 
     rol_crear: boolean
     rol_editar: boolean
-    rol_eliminar: boolean
+    rol_eliminar: boolean 
+
+    reporte_usuarios_generar: boolean,
+    reporte_usuarios_exportar: boolean,
+    reporte_visitas_generar: boolean,
+    reporte_visitas_exportar: boolean,
+    reporte_calificacion_generar: boolean,
+    reporte_calificacion_exportar: boolean,
 
     gestor_categorias_idiomas: boolean
     gestor_sitios: boolean
