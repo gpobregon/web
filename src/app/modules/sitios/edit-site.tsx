@@ -11,7 +11,9 @@ import {
     Nav,
     NavDropdown,
     Modal,
+    Popover,
 } from 'react-bootstrap'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Link, Navigate, useLocation, useNavigate, useParams} from 'react-router-dom'
@@ -51,6 +53,8 @@ import {Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
 import {ContentContext} from '../template/movil/context'
 import {roleManager} from '../../models/roleManager'
+import { styled } from '@mui/system'
+import { Tooltip, tooltipClasses, TooltipProps } from '@mui/material'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -128,13 +132,18 @@ const EditSite = () => {
     const getUserForHeader = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
-            if(site.bloqueado_por_edicion_id!=user.attributes.sub&&site.bloqueado_por_edicion_id!=''&&site.bloqueado_por_edicion&& site.bloqueado_por_edicion_id !=null){
+            if (
+                site.bloqueado_por_edicion_id != user.attributes.sub &&
+                site.bloqueado_por_edicion_id != '' &&
+                site.bloqueado_por_edicion &&
+                site.bloqueado_por_edicion_id != null
+            ) {
                 swal({
                     text: `Este sitio está siendo editado por: '${site. bloqueado_por_edicion_nombre}'`,
                     icon: 'error',
                     timer: 5000,
                 })
-            navigate('/sitios')
+                navigate('/sitios')
                 return
             }
             setDataUserHeader({
@@ -208,7 +217,6 @@ const EditSite = () => {
     }
 
     const getSite = async () => {
-      
         const sitio: any = await getValue(sitesMethod, Number(id))
         setSite({
             ...sitio.site,
@@ -229,8 +237,7 @@ const EditSite = () => {
         setmostrarCategorias(mostrarCategorys)
 
         getUserForHeader()
-       
-       
+
         setloadingSite(false)
     }
 
@@ -721,7 +728,18 @@ const EditSite = () => {
     }, [loadingSite])
 
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
-        ['e', 'E'].includes(e.key) && e.preventDefault()
+        ['e', 'E'].includes(e.key) && e.preventDefault() 
+
+        const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+            <Tooltip {...props} classes={{popper: className}} />
+          ))(({theme}) => ({
+            [`& .${tooltipClasses.tooltip}`]: {
+              color: '#FFF',
+              fontSize: 12,
+              fontWeight: 500,
+            },
+          }))
+        
 
     return (
         <>
@@ -767,7 +785,8 @@ const EditSite = () => {
                     <div className='col-xs-12 col-md-6 col-lg-5 d-flex py-5 px-9 justify-content-end'>
                         <div id='center2'>
                             <ul className='nav justify-content-end '>
-                                <li className='nav-item'>
+                                <li className='nav-item'> 
+                                <CustomTooltip title='favorito'>
                                     <Button
                                         className={
                                             status.favorito == false
@@ -800,9 +819,11 @@ const EditSite = () => {
                                             // : changeStatus(false, status.publicado, status.oculto)
                                         }}
                                         style={{display: 'flex', marginRight: '4px'}}
-                                    ></Button>
+                                    ></Button> 
+                                    </CustomTooltip>
                                 </li>
-                                <li className='nav-item'>
+                                <li className='nav-item'> 
+                                <CustomTooltip title='Generar QR'>
                                     <Button
                                         className='btn-secondary fa-solid fa-qrcode background-button '
                                         id='center2'
@@ -815,8 +836,10 @@ const EditSite = () => {
                                             display: 'flex',
                                             marginRight: '4px',
                                         }}
-                                    ></Button>
-                                </li>
+                                    ></Button> 
+                                     </CustomTooltip>
+                                </li>  
+                                
                                 <Modal show={show} onHide={handleClose}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>Escanee su Código QR</Modal.Title>
@@ -838,7 +861,8 @@ const EditSite = () => {
                                             Descargar
                                         </Button>
                                     </Modal.Footer>
-                                </Modal>
+                                </Modal> 
+                                <CustomTooltip title='visibilidad de sitio'>
                                 <Button
                                     className={
                                         status.oculto == false
@@ -874,7 +898,9 @@ const EditSite = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Descartar cambios'>
                                 <Button
                                     className='btn-secondary fa-solid fa-xmark background-button'
                                     id='center2'
@@ -888,7 +914,9 @@ const EditSite = () => {
                                         discardChanges()
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Guardar cambios'>
                                 <Button
                                     className='btn-secondary fa-solid fa-floppy-disk background-button'
                                     id='center2'
@@ -905,7 +933,9 @@ const EditSite = () => {
                                         postSite(site)
                                     }}
                                     style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Publicar'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -934,7 +964,9 @@ const EditSite = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Movil'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -962,7 +994,9 @@ const EditSite = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Web'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -990,7 +1024,9 @@ const EditSite = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip> 
+                                <CustomTooltip title='Autorización'>
                                 <Button
                                     onClick={() => {
                                         // status.publicado == false
@@ -1017,7 +1053,8 @@ const EditSite = () => {
                                         display: 'flex',
                                         marginRight: '4px',
                                     }}
-                                ></Button>
+                                ></Button> 
+                                </CustomTooltip>
                                 {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
                             </ul>
                         </div>
@@ -1543,15 +1580,22 @@ const EditSite = () => {
                                                 >
                                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
 
-                                                    <div>                                                        
-                                                        {site.geo_json === ''
-                                                            ? 'Subir GeoJSON'
-                                                            :  <a href={site.geo_json} target="_blank" rel="noopener noreferrer">{nombreJson}</a>}
+                                                    <div>
+                                                        {site.geo_json === '' ? (
+                                                            'Subir GeoJSON'
+                                                        ) : (
+                                                            <a
+                                                                href={site.geo_json}
+                                                                target='_blank'
+                                                                rel='noopener noreferrer'
+                                                            >
+                                                                {nombreJson}
+                                                            </a>
+                                                        )}
                                                     </div>
                                                 </div>
 
-                                                <div           
-                                                >
+                                                <div>
                                                     <KTSVG
                                                         path='/media/icons/duotune/general/gen035.svg'
                                                         className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
