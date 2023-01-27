@@ -82,7 +82,6 @@ const Sitio: FC<sitio> = (props) => {
         await props.validateRole()
 
         if (props.permissionEditSite) {
-            console.log(props)
             if (idSitioState.bloqueado == null || idSitioState.bloqueado == false) {
                 // setIdSitioState({
                 //     idSite: props.id_sitio,
@@ -156,7 +155,7 @@ const Sitio: FC<sitio> = (props) => {
                             text: 'Se elimino con éxito',
                             icon: 'success',
                             timer: 2000,
-                        })
+                        })                    
                         navigate('/')
                     } else {
                         swal({
