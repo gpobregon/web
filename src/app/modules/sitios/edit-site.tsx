@@ -786,7 +786,7 @@ const EditSite = () => {
                         <div id='center2'>
                             <ul className='nav justify-content-end '>
                                 <li className='nav-item'> 
-                                <CustomTooltip title='favorito'>
+                                <CustomTooltip title='Sitio destacado'>
                                     <Button
                                         className={
                                             status.favorito == false
@@ -862,7 +862,7 @@ const EditSite = () => {
                                         </Button>
                                     </Modal.Footer>
                                 </Modal> 
-                                <CustomTooltip title='visibilidad de sitio'>
+                                <CustomTooltip title='Visibilidad del sitio'>
                                 <Button
                                     className={
                                         status.oculto == false
@@ -966,7 +966,7 @@ const EditSite = () => {
                                     }}
                                 ></Button> 
                                 </CustomTooltip> 
-                                <CustomTooltip title='Movil'>
+                                <CustomTooltip title='Mostrar maqueta movil'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -996,7 +996,7 @@ const EditSite = () => {
                                     }}
                                 ></Button> 
                                 </CustomTooltip> 
-                                <CustomTooltip title='Web'>
+                                <CustomTooltip title='Mostrar maqueta web'>
                                 <Button
                                     onClick={() => {
                                         //toogleSave()
@@ -1026,7 +1026,7 @@ const EditSite = () => {
                                     }}
                                 ></Button> 
                                 </CustomTooltip> 
-                                <CustomTooltip title='Autorización'>
+                                <CustomTooltip title='Cercania activa'>
                                 <Button
                                     onClick={() => {
                                         // status.publicado == false
