@@ -7,6 +7,7 @@ const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
 export const sitesMethod = 'site'
 export const statesMethod = 'site/state'
 export const updateSiteMethod = 'site/update'
+export const statelockSite='site/sites/setbloqueadoporedicion'
 
 export const categorysMethod = 'site/categories'
 export const lengthTagsMethod = 'site/categories/count'

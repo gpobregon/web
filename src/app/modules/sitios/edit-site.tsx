@@ -20,7 +20,7 @@ import Moment from 'moment'
 import {
     getData,
     sitesMethod,
-    deleteData,
+    statelockSite,
     postData,
     categorysMethod,
     statesMethod,
@@ -130,9 +130,9 @@ const EditSite = () => {
         Auth.currentUserInfo().then(async (user) => {
             if(site.bloqueado_por_edicion_id!=user.attributes.sub&&site.bloqueado_por_edicion_id!=''&&site.bloqueado_por_edicion&& site.bloqueado_por_edicion_id !=null){
                 swal({
-                    text: 'Este sitio está siendo editado por otro usuario',
+                    text: `Este sitio está siendo editado por: '${site. bloqueado_por_edicion_nombre}'`,
                     icon: 'error',
-                    timer: 4000,
+                    timer: 5000,
                 })
             navigate('/sitios')
                 return
@@ -147,9 +147,9 @@ const EditSite = () => {
                 descripcion: '',
                 id: user.attributes.sub,
             })
-            if (site.bloqueado_por_edicion_id != '' ) {
+            
                 await saveLocked(true, user.attributes.sub, user.attributes.name) //bloquear sitio
-            }
+            
         })   
        
     }
@@ -240,7 +240,13 @@ const EditSite = () => {
         site.bloqueado_por_edicion_id = idUser
         site.bloqueado_por_edicion_nombre = nameUser
         if (site.id_sitio != 0) {
-            const sit: any = await postData(updateSiteMethod, site)
+            await postData(statelockSite, {
+                id_sitio: site.id_sitio,
+                bloqueado_por_edicion: bloqueado_por_edicion,
+                bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
+                bloqueado_por_edicion_nombre: nameUser,
+            })
+    
             setSite({
                 ...site,
             })
@@ -507,8 +513,16 @@ const EditSite = () => {
             title: '¿Estas seguro de descartar los cambios ?',
             icon: 'warning',
             buttons: ['No', 'Sí'],
-        }).then((res) => {
+        }).then(async (res) => {
             if (res) {
+                setShowLoad(true)
+                         await postData(statelockSite, {
+                    id_sitio: site.id_sitio,
+                    bloqueado_por_edicion: false,
+                    bloqueado_por_edicion_id: '',
+                    bloqueado_por_edicion_nombre: '',
+                })
+                setShowLoad(false)
                 swal({
                     text: 'Descartado Correctamente',
                     icon: 'success',
@@ -525,12 +539,14 @@ const EditSite = () => {
             buttons: ['No', 'Sí'],
         }).then(async (res) => {
             if (res) {
+                setShowLoad(true)
+                const sit: any = await postData(updateSiteMethod, sitee)
+                setShowLoad(false)
                 swal({
                     text: 'Cambios guardados',
                     icon: 'success',
                     timer: 2000,
                 })
-                const sit: any = await postData(updateSiteMethod, sitee)
                 navigate('/sitios')
             }
         })
@@ -690,6 +706,7 @@ const EditSite = () => {
         converterToFalse.bloqueado_por_edicion = false
 
         await postSite(site)
+       
     }
 
     useEffect(() => {
