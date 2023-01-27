@@ -12,7 +12,6 @@ export function AsideMenuMain() {
 
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
-
         validateRole(role.data as roleManager[])
     }
 

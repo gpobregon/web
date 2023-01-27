@@ -140,17 +140,16 @@ const SitiosPage = () => {
 
     let navigate = useNavigate()
     const {setShowLoad} = useContext(LoadingContext)
-    const [roles, setRoles] = useState<roleManager[]>([])
-    const [existRoles, setExistRoles] = useState(false)
 
     const [permissionCreateSite, setPermissionCreateSite] = useState(true)
     const [permissionEditSite, setPermissionEditSite] = useState(true)
     const [permissionDeleteSite, setPermissionDeleteSite] = useState(true)
 
     const getRoles = async () => {
+        setShowLoad(true)
         const role: any = await getData(getRolesMethod)
-        setRoles(role.data as roleManager[])
-        setExistRoles(true)
+        validateRole(role.data as roleManager[])
+        setShowLoad(false)
     }
 
     //para cerrar sesión despues de cambiar contraseña, no olvida el dispositivo :c
@@ -165,12 +164,10 @@ const SitiosPage = () => {
 
     //fin
 
-    const validateRole = async () => {
-        
-            setShowLoad(true)
+    const validateRole = async (rol:any) => {     
             Auth.currentUserInfo().then(async (user) => {  
                 try {
-                    const filter = roles.filter((role) => {
+                    const filter = rol.filter((role:any) => {
                         return user.attributes['custom:role'] === role.nombre
                     })
     
@@ -182,6 +179,7 @@ const SitiosPage = () => {
                         setPermissionDeleteSite(filter[0]?.sitio_eliminar)
                     }
                 } catch (error) {
+                    console.log(error)
                     swal(
                         'Se ha cambiado la contraseña de tu usuario',
                         'Cierra sesión y vuelve a ingresar',
@@ -191,15 +189,11 @@ const SitiosPage = () => {
                 }
                 
             })
-            setTimeout(() => setShowLoad(false), 1000)
-        
     }
 
     useEffect(() => {
-        setShowLoad(true)
         getRoles()
-        validateRole()
-    }, [existRoles])
+    }, [])
 
     //UseEffect para obtener los sitios --------------------------------------------------------------
     useEffect(() => {
@@ -290,7 +284,7 @@ const SitiosPage = () => {
                 <Button
                     className='btn btn-primary'
                     onClick={async () => {
-                        await validateRole()
+                        await getRoles()
 
                         if (!permissionCreateSite) {
                             swal({
@@ -311,7 +305,7 @@ const SitiosPage = () => {
                     <Sitio
                         {...sitio}
                         key={sitio.id_sitio.toString()}
-                        validateRole={validateRole}
+                        validateRole={getRoles}
                         permissionEditSite={permissionEditSite}
                         permissionDeleteSite={permissionDeleteSite}
                     />
@@ -338,7 +332,7 @@ const SitiosPage = () => {
                                 textAlign: 'center',
                             }}
                             onClick={async () => {
-                                await validateRole()
+                                await getRoles()
 
                                 if (!permissionCreateSite) {
                                     swal({
