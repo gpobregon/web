@@ -18,6 +18,9 @@ import {Amplify, Auth} from 'aws-amplify'
 import {awsconfig} from '../../../../aws-exports'
 import {useAuth} from '../../auth/core/Auth'
 import swal from 'sweetalert'
+import {FormControl, IconButton, InputAdornment, OutlinedInput} from '@mui/material'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import Visibility from '@mui/icons-material/Visibility'
 
 Amplify.configure(awsconfig)
 
@@ -26,6 +29,14 @@ const alertUserDone = async () => {
         text: 'Usuario creado',
         icon: 'success',
     })
+}
+
+interface State {
+    amount: string
+    password: string
+    weight: string
+    weightRange: string
+    showPassword: boolean
 }
 
 const customStyles = {
@@ -234,6 +245,33 @@ const AddUser: FC<any> = ({show, onClose}) => {
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
         ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()
 
+    const [password, setPassword] = useState('')
+    const [data, setData] = useState({newPassword: '', confirmPassword: ''})
+    const [values, setValues] = useState({
+        amount: '',
+        password: '',
+        weight: '',
+        weightRange: '',
+        showPassword: false,
+    })
+    const handleChange = (prop: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({...values, [prop]: event.target.value})
+        setTouchedPasswordInput(true)
+
+        if (validateStringPassword(event.target.value)) {
+            setPassword(event.target.value)
+        }
+
+        setValidPassword(validateStringPassword(event.target.value))
+    }
+
+    const handleClickShowPassword = () => {
+        setValues({
+            ...values,
+            showPassword: !values.showPassword,
+        })
+    }
+
     return (
         <>
             <Modal show={show} onHide={onClose}>
@@ -387,7 +425,60 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                     *Debe tener por lo menos 6 caracteres, con letras mayúsculas,
                                     letras minúsculas, números y almenos un caracter especial*
                                 </p>
-                                <Form.Control
+                                <FormControl
+                                    sx={{width: '100%'}}
+                                    variant='outlined'
+                                    color='primary'
+                                    focused
+                                >
+                                    <OutlinedInput
+                                        inputProps={{
+                                            style: {fontFamily: 'sans-serif', color: '#92929F'},
+                                        }}
+                                        id='outlined-adornment-password'
+                                        type={values.showPassword ? 'text' : 'password'}
+                                        onChange={(e) => {
+                                            setTouchedPasswordInput(true)
+
+                                            setUser({
+                                                username: user.username,
+                                                password: e.target.value,
+                                                name: user.name,
+                                                lastname: user.lastname,
+                                                role: user.role,
+                                                passwordConfirm: user.passwordConfirm,
+                                                phoneNumber: user.phoneNumber,
+                                                imageProfile: user.imageProfile,
+                                            })
+
+                                            setValidPassword(validateStringPassword(e.target.value))
+
+                                            setData({
+                                                newPassword: data.newPassword,
+                                                confirmPassword: e.target.value,
+                                            })
+                                            handleChange('password')
+                                        }}
+                                        placeholder='Introduce tu contraseña'
+                                        endAdornment={
+                                            <InputAdornment position='end'>
+                                                <IconButton
+                                                    style={{color: '#92929F'}}
+                                                    aria-label='toggle password visibility'
+                                                    onClick={handleClickShowPassword}
+                                                    edge='end'
+                                                >
+                                                    {values.showPassword ? (
+                                                        <VisibilityOff />
+                                                    ) : (
+                                                        <Visibility />
+                                                    )}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                                {/* <Form.Control
                                     type='password'
                                     className={'mb-4'}
                                     onChange={(e) => {
@@ -406,7 +497,7 @@ const AddUser: FC<any> = ({show, onClose}) => {
 
                                         setValidPassword(validateStringPassword(e.target.value))
                                     }}
-                                />
+                                /> */}
                                 {validPassword && touchedPasswordInput ? (
                                     <Form.Label className='text-primary'>
                                         Contraseña válida
@@ -421,8 +512,61 @@ const AddUser: FC<any> = ({show, onClose}) => {
 
                         <Col lg={12} md={12} sm={12}>
                             <Form.Group>
-                                <Form.Label>{'Confirma la contraseña'}</Form.Label>
-                                <Form.Control
+                                <Form.Label>{'Confirma la contraseña'}</Form.Label> 
+                                <FormControl
+                            sx={{width: '100%'}}
+                            variant='outlined'
+                            color='primary'
+                            focused
+                        >
+                            <OutlinedInput
+                                inputProps={{style: {fontFamily: 'sans-serif', color: '#92929F'}}}
+                                id='outlined-adornment-password'
+                                type={values.showPassword ? 'text' : 'password'}
+                                onChange={(e) => { 
+                                    setTouchedRepeatPasswordInput(true)
+
+                                        setUser({
+                                            username: user.username,
+                                            password: user.password,
+                                            name: user.name,
+                                            lastname: user.lastname,
+                                            role: user.role,
+                                            passwordConfirm: e.target.value,
+                                            phoneNumber: user.phoneNumber,
+                                            imageProfile: user.imageProfile,
+                                        })
+
+                                        setValidRepeatPassword(
+                                            validateStringPassword(e.target.value)
+                                        ) 
+                                        
+                                    setData({
+                                        newPassword: data.newPassword,
+                                        confirmPassword: e.target.value,
+                                    })
+                                    handleChange('password')
+                                }}
+                                placeholder='Introduce tu contraseña'
+                                endAdornment={
+                                    <InputAdornment position='end'>
+                                        <IconButton
+                                            style={{color: '#92929F'}}
+                                            aria-label='toggle password visibility'
+                                            onClick={handleClickShowPassword}
+                                            edge='end'
+                                        >
+                                            {values.showPassword ? (
+                                                <VisibilityOff />
+                                            ) : (
+                                                <Visibility />
+                                            )}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                        </FormControl>
+                                {/* <Form.Control
                                     type='password'
                                     className={'mb-4'}
                                     onChange={(e) => {
@@ -443,7 +587,7 @@ const AddUser: FC<any> = ({show, onClose}) => {
                                             validateStringPassword(e.target.value)
                                         )
                                     }}
-                                />
+                                /> */}
                                 {user.password == user.passwordConfirm ? (
                                     <Form.Label className='text-primary'>
                                         Las contraseñas coinciden
