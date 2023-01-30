@@ -80,8 +80,6 @@ const UserReport = () => {
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     let [publishSite, setPublishSite] = useState<PublishSite[]>([]) 
-    const [roles, setRoles] = useState<roleManager[]>([])
-    const [existRoles, setExistRoles] = useState(false)
     const [type, setType] = useState({
         tipo_reporte: 'usuarios',
         id_sitio: 0,
@@ -99,15 +97,14 @@ const UserReport = () => {
 
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
-        setRoles(role.data as roleManager[])
-        setExistRoles(true)
+        validateRole(role.data as roleManager[])
     }
 
-    const validateRole = async () => {
+    const validateRole = async (roles:any) => {
         setShowLoad(true)
         Auth.currentUserInfo().then(async (user) => {
             try {
-                const filter = roles.filter((role) => {
+                const filter = roles.filter((role:any) => {
                     return user.attributes['custom:role'] === role.nombre
                 })
                 console.log("filter: ", filter);
@@ -181,25 +178,34 @@ const UserReport = () => {
     //     typeReport(type)
     // }, [])
 
-    const getSite = async () => {
-        getPublishSites()
-    }
     async function getPublishSites() {
         setShowLoad(true)
         const sites: any = await getData(getSitiosPublicados)
-
+        let temp:any = []
         sites.data.map((sit: any) => {
-            publishSite.push({value: sit.id_sitio, label: sit.nombre})
+            temp.push({
+                label: sit.nombre,
+                value: sit.id_sitio,
+            })
         })
+        //solo elementos unicos
+
+        let hash:any = {}
+        temp = temp.filter((o:any) => {
+            return hash[o.value] ? false : (hash[o.value] = true)
+          })
+
+        setPublishSite(temp)
+      
         setShowLoad(false)
     }
 
     useEffect(() => {
-        getSite()
-        //getPublishSites()  
+       
+        getPublishSites()  
         getRoles()
-        validateRole()
-    }, [existRoles])
+   
+    }, [])
 
     const showResultComponent = () => {
         setShowResult(true)
