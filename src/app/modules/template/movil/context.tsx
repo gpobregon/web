@@ -477,7 +477,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
             tipo_elemento: 'element',
         })
         if (response.data) {
-            setAllResource(response.data)
+            setAllResource(response.data.reverse())
         }
         if (response2.data) {
             setAllResourceElement(response2.data)

@@ -13,7 +13,7 @@ export function updateData(allData, oneData) {
 }
 
 export function appendData(all, data) {
-    return [...all, data]
+    return [data,...all]
 }
 
 export const setDataList = (el) => {
