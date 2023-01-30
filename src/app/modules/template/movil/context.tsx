@@ -26,8 +26,8 @@ const myBucket = new AWS.S3({
 
 export const ContentProvider: FC<WithChildren> = ({children}) => {
     const [board, setBoard] = useState<any>([])
-    const [validChange, setValidChange] =  useState<number>(0)
-    const [boardChange, setBoardChange] = useState<any>([]) 
+    const [validChange, setValidChange] = useState<number>(0)
+    const [boardChange, setBoardChange] = useState<any>([])
     const [lenguajeOld, setLenguajeOld] = useState<any>([])
     const [sizeWeb, setSizeWeb] = useState<string>('100%')
     const [oneDataTemplate, setOneDataTemplate] = useState<any>([])
@@ -128,11 +128,13 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     // Actualizar data de un item
     const updateElement = (data: any) => {
         setEditItem(data)
-        const content = board.filter((element:any) => { return element !== undefined; });
+        const content = board.filter((element: any) => {
+            return element !== undefined
+        })
         setBoard(updateData(content, data))
     }
     // Cambiar Lenguaje
-    const changeLangegeSelect = (data: any,select_idioma:any) => { 
+    const changeLangegeSelect = (data: any, select_idioma: any) => {
         setChangeLaguage(data)
         if (select_idioma === undefined) {
             swal({
@@ -141,22 +143,20 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                 buttons: ['No', 'Sí'],
             }).then(async (res) => {
                 if (res) {
-                    onlySave(changeTypeEdit === 1 ? true : false, board, changeLaguage, data) 
-                } 
-            }) 
+                    onlySave(changeTypeEdit === 1 ? true : false, board, changeLaguage, data)
+                }
+            })
         }
-            oneData(data, changeTypeEdit === 1 ? true : false)
-        
-       
-    }  
+        oneData(data, changeTypeEdit === 1 ? true : false)
+    }
 
     const getChange = (data: any) => {
-        if (data.value === changeLaguage.value) { 
+        if (data.value === changeLaguage.value) {
             oneData(changeLaguage, modo === 'movil' ? true : false)
-        } else { 
+        } else {
             oneData(data, modo === 'movil' ? true : false)
         }
-    } 
+    }
 
     // cambiar modalidad de edición
     const ChangeMode = async (type: number) => {
@@ -175,11 +175,11 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     const onlySave = async (type: any, data: any, lenguaje: any, newLenguaje: any) => {
         setBoardChange(data)
         if (oneDataTemplate.length === 0) {
-            setValidChange(1) 
+            setValidChange(1)
             setLenguajeOld(lenguaje)
             handleCloseSave(true)
         } else {
-            setValidChange(0) 
+            setValidChange(0)
             setShowLoad(true)
             const dataTemplate = {
                 id_punto: tipo === 'punto' ? id : -1,
@@ -191,13 +191,13 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                 version: 'version sitio movil 1',
                 es_movil: changeTypeEdit === 1 ? true : false,
                 estado: 1,
-            } 
+            }
             const response: any = await postData('site/mobile/set', dataTemplate)
             response &&
                 swal({
                     text: '¡Maquetación almacenada exitosamente!',
                     icon: 'success',
-                }) 
+                })
             getChange(newLenguaje)
             setShowLoad(false)
         }
@@ -240,16 +240,15 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
 
     // obtenemos el template para modificar
     const oneData = async (item: any, type: boolean) => {
-        const response = await getTemplate(item, type)    
-        if (response.data.length > 0) {  
+        const response = await getTemplate(item, type)
+        if (response.data.length > 0) {
             setOneDataTemplate(response.data[0])
             if (response.data[0].contenido !== '[]') {
                 setBoard(JSON.parse(response.data[0].contenido))
-                setOldBoard(JSON.parse(response.data[0].contenido)) 
-                
+                setOldBoard(JSON.parse(response.data[0].contenido))
             } else {
                 setBoard([])
-                setOldBoard([]) 
+                setOldBoard([])
                 setOneDataTemplate([])
             }
         } else {
@@ -290,14 +289,18 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         const dataTemplate = {
             id_punto: tipo === 'punto' ? id : -1,
             id_sitio: tipo === 'sitio' ? id : idSitio,
-            id_lenguaje: validChange === 1 ? lenguajeOld.value: changeLaguage.value,
+            id_lenguaje: validChange === 1 ? lenguajeOld.value : changeLaguage.value,
             nombre: data.nombre,
             descripcion: data.descripcion,
-            contenido: data.clonar ? templateToClone.contenido : validChange === 1 ?  JSON.stringify(boardChange) : JSON.stringify(board),
+            contenido: data.clonar
+                ? templateToClone.contenido
+                : validChange === 1
+                ? JSON.stringify(boardChange)
+                : JSON.stringify(board),
             version: 'version sitio movil 1',
             es_movil: changeTypeEdit === 1 ? true : false,
             estado: 1,
-        } 
+        }
 
         const response: any = await postData('site/mobile/set', dataTemplate)
         response &&
@@ -307,14 +310,14 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                     : '¡Maquetación almacenada exitosamente!',
                 icon: 'success',
             })
-        if (data.clonar) { 
+        if (data.clonar) {
             setOneDataTemplate(dataTemplate)
             setBoard(JSON.parse(templateToClone.contenido))
             setOldBoard(JSON.parse(templateToClone.contenido))
-        } 
+        }
         if (validChange === 1) {
-            getChange(changeLaguage) 
-        } 
+            getChange(changeLaguage)
+        }
         setValidChange(0)
         setShowLoad(false)
     }
@@ -345,7 +348,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
         setEditItem([])
         setEditItemResource([])
         setDestroyItem(true)
-    }    
+    }
 
     // descarta los cambios realizados dentro del editor
     const discardChange = () => {
@@ -416,6 +419,12 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                                 icon: 'success',
                             })
                         setShowLoad(false)
+                        if (modo === 'movil') {
+                            getAllResources(1)
+                        }
+                        if (modo === 'web') {
+                            getAllResources(2)
+                        }
                     } else {
                         setShowLoad(false)
                         return url
@@ -499,8 +508,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
                 })
             tipo === 1 ? setAllResource(items) : setAllResourceElement(items)
             setShowLoad(false)
-        } catch (error) {
-        }
+        } catch (error) {}
     }
 
     const handleFilter = (e: any, allElement: any, tipo: number) => {
