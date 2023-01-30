@@ -3,17 +3,15 @@
 import {Element} from './data'
 
 export function updateData(allData, oneData) {
-
-    let all = allData.map((u) => u && (u.id !== oneData.id ? u : oneData)
-    )
-    const results = all.filter(element => {
-        return element !== undefined;
-      });
+    let all = allData.map((u) => u && (u.id !== oneData.id ? u : oneData))
+    const results = all.filter((element) => {
+        return element !== undefined
+    })
     return results
 }
 
 export function appendData(all, data) {
-    return [...all, data]
+    return [data, ...all]
 }
 
 export const setDataList = (el) => {
@@ -54,22 +52,22 @@ const BaseInut = {
     backgroundColor: '#2b2b40',
 }
 
-const styleClassOption = (base) => ({ 
+const styleClassOption = (base) => ({
     ...base,
 
-    "&:hover": {
-        backgroundColor: "#12121B",
-      },
-    "&:visited": {
-        backgroundColor: "#12121B",
-    }
+    '&:hover': {
+        backgroundColor: '#12121B',
+    },
+    '&:visited': {
+        backgroundColor: '#12121B',
+    },
 })
 
 const styleClassInputDanger = (base) => ({
     ...base,
     ...BaseInut,
     color: '#F00 !important',
-    border: '1px solid #F00'
+    border: '1px solid #F00',
 })
 
 const styleClassInput = (base) => ({
@@ -90,8 +88,8 @@ export const customStyles = {
     option: styleClassOption,
     singleValue: (base) => ({
         ...base,
-        color: '#FFF'
-    })
+        color: '#FFF',
+    }),
 }
 
 export const customStylesDanger = {
@@ -159,9 +157,9 @@ export default {
     elementData,
     setDataList,
     validElement,
-    customStyles, 
+    customStyles,
     dataURLtoFile,
     interpretHTML,
     customStylesDanger,
-    generateRandomString
+    generateRandomString,
 }

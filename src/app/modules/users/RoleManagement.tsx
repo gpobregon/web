@@ -108,7 +108,8 @@ const RoleManagement: FC<any> = ({show}) => {
     //TODO: get roles
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
-        setRoles(role.data as roleManager[])
+        setRoles(role.data.reverse() as roleManager[])
+        validateRole(role.data as roleManager[])
     }
 
     //TODO: add role
@@ -248,11 +249,11 @@ const RoleManagement: FC<any> = ({show}) => {
     const [permissionEditRole, setPermissionEditRole] = useState(true)
     const [permissionDeleteRole, setPermissionDeleteRole] = useState(true)
 
-    const validateRole = async () => {
+    const validateRole = async (rol:any) => {
         setShowLoad(true)
 
         Auth.currentUserInfo().then((user) => {
-            const filter = roles.filter((role) => {
+            const filter = rol.filter((role:any) => {
                 return user.attributes['custom:role'] === role.nombre
             })
 
@@ -265,13 +266,12 @@ const RoleManagement: FC<any> = ({show}) => {
             }
         })
 
-        setTimeout(() => setShowLoad(false), 1000)
+       setShowLoad(false)
     }
 
     useEffect(() => {
         setShowLoad(true)
         getRoles()
-        validateRole() 
         comprobarReportes()
     }, [existRoles, permissionEditRole, permissionDeleteRole])
 
@@ -461,7 +461,7 @@ const RoleManagement: FC<any> = ({show}) => {
                         variant='primary'
                         className='mt-md-0 mt-4'
                         onClick={async () => {
-                            await validateRole()
+                           
 
                             if (!permissionCreateRole) {
                                 swal({
@@ -587,9 +587,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                             <InputGroup className='mb-5'>
                                                 <Form.Control
                                                     defaultValue={rol.nombre}
-                                                    onLoad={async () => {
-                                                        await validateRole()
-                                                    }}
+                                                    
                                                     disabled={!permissionEditRole}
                                                     style={{
                                                         fontSize: 18,
@@ -632,9 +630,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                             <Form.Control
                                                 as='textarea'
                                                 className='p-5'
-                                                onLoad={async () => {
-                                                    await validateRole()
-                                                }}
+                                                
                                                 disabled={!permissionEditRole}
                                                 defaultValue={rol.descripcion}
                                                 style={{
@@ -706,7 +702,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                     className='bi bi-trash text-danger'
                                                     style={{fontSize: 20, cursor: 'pointer'}}
                                                     onClick={async () => {
-                                                        await validateRole()
+                                                        
 
                                                         if (!permissionDeleteRole) {
                                                             swal({
@@ -724,9 +720,6 @@ const RoleManagement: FC<any> = ({show}) => {
                                         </div>
 
                                         <div
-                                            onLoad={async () => {
-                                                await validateRole()
-                                            }}
                                             style={{
                                                 display:
                                                     permissionEditRole === true ? 'block' : 'none',
