@@ -15,6 +15,7 @@ import {
     getRolesMethod,
     getPuntoInteres,
     publishPI,
+    statelockSite,
 } from '../../../../services/api'
 import swal from 'sweetalert'
 import makeAnimated from 'react-select/animated'
@@ -79,6 +80,14 @@ const customStyles = {
 
 const animatedComponents = makeAnimated()
 const EditPoint = () => {
+    window.onunload = async function(e) {
+        await postData(statelockSite, {
+            id_sitio: sitio.id_sitio,
+            bloqueado_por_edicion: false,
+            bloqueado_por_edicion_id: '',
+            bloqueado_por_edicion_nombre: '',
+        })
+ };
     const navigate = useNavigate()
     const handleClose = () => setShow(false) //modal close qr
     const handleShow = () => setShow(true) //modal open qr

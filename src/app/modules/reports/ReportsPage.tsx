@@ -39,7 +39,7 @@ const ReportsPage = () => {
                 const filter = roles.filter((role) => {
                     return user.attributes['custom:role'] === role.nombre
                 })
-                console.log("filter: ", filter);
+                // console.log("filter: ", filter);
                 if (filter[0]?.gestor_reportes === false) {
                     navigate('/error/401', {replace: true})
                 }
