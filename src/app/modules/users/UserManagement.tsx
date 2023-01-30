@@ -78,7 +78,7 @@ const UserManagement: FC<any> = ({show}) => {
 
     const [buttonAcept, setButtonAcept] = useState(false)
     const [banderID, setBanderID] = useState(0)
-    const [dataSelect, setDataSelect] = useState({user: '', role: ''})
+    const [dataSelect, setDataSelect] = useState({user: '', role: '', idUser: ''})
 
     const [filteredResults, setFilteredResults] = useState(users)
 
@@ -170,6 +170,7 @@ const UserManagement: FC<any> = ({show}) => {
 
                     setUsers(data.Users as UserType[])
                     setFilteredResults(data.Users as UserType[])
+                    console.log("setFilteredResults: ", filteredResults);
                     setExistUsers(true)
                 }
             })
@@ -207,7 +208,7 @@ const UserManagement: FC<any> = ({show}) => {
             // console.log('filter: ', filter)
 
             let objeto = {
-                id_usuario: users[0].Username,
+                id_usuario: dataSelect.idUser,
                 id_rol: filter[0].id_rol,
                 foto: user.imageProfile,
             }
@@ -425,7 +426,8 @@ const UserManagement: FC<any> = ({show}) => {
                                                                     setDataSelect({
                                                                         user: item.Attributes[4]
                                                                             .Value,
-                                                                        role: event.value,
+                                                                        role: event.value, 
+                                                                        idUser: item.Username
                                                                     })
                                                                 }}
                                                                 defaultValue={{
