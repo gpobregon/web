@@ -7,7 +7,8 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import {useDropzone} from 'react-dropzone'
 import {ContentContext} from '../context'
 import Masonry from 'react-masonry-css'
-import CustomCollapse from './collapse'
+import CustomCollapse from './collapse' 
+
 
 const Recursos = () => {
     const {
@@ -19,7 +20,8 @@ const Recursos = () => {
         filteredDataElement,
         searchValue,
         searchValueElement,
-        handleFilter,
+        handleFilter, 
+        changeTypeEdit,
     } = useContext(ContentContext)
     const breakpointColumnsObj = {default: 2, 1100: 1, 700: 2, 500: 1}
     const {getRootProps, getInputProps} = useDropzone({
@@ -129,6 +131,9 @@ const Recursos = () => {
                                 <i className='bi bi-arrow-90deg-down text-white' />
                             </p>
                             <p>Suelta aqui tus archivos</p>
+                        </div> 
+                        <div> 
+                        <p className="small text-muted">{changeTypeEdit === 1 ? 'Se recomienda no cargar imagenes mayores a 5 MB' : ''}</p>
                         </div>
                     </section>
                 </Col>
