@@ -135,8 +135,7 @@ const UserReport = () => {
                 const sit: any = await postData(getDataReport, typee)
                 setName(type.id_sitio!=-1 ? sit[0]?.nombre_sitio : 'Todos los sitios')
                 setPhoto(type.id_sitio!=-1 ? sit[0]?.imagen : null)
-
-                console.log("sit: ", sit);
+                
                 let temp = []
 
                 for (let i = 0; i < sit.length; i++) {

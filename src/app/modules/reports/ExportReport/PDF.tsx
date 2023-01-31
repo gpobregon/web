@@ -41,15 +41,17 @@ const PDF = (data: any) => {
         doc.text('Nacionalidad: '+data.site?.tipopais, 15, 47)
         doc.text('Fecha inicial: ' + data.site.fecha_inicial, 10, 54)
         doc.text('Fecha final: ' + data.site.fecha_final, 10, 59)
+        tabla(data, doc)
     } else if (data.tipo === 'Calificaciones') {
         doc.text(data.site?.tipocalificacion, 15, 37)
         doc.text('Fecha inicial: ' + data.site.fecha_inicial, 10, 44)
         doc.text('Fecha final: ' + data.site.fecha_final, 10, 49)
+        tabla(data, doc)
         doc.addPage()
         tablaUsers(data, doc)
     }
     
-    tabla(data, doc)
+   
     const pageSize = doc.getNumberOfPages()
     for (let i = 1; i <= pageSize; i++) {
         doc.setPage(i)
@@ -104,15 +106,17 @@ const tabla = (data: any, doc: any) => {
         return autoTable(doc, {
             startY: 55,
             head: [['Total vistas', 'Pésima', 'Buena', 'Excelente']],
-            body: [
-                [
-                    data.calificaciones.total_visitas,
-                    data.calificaciones.pesima,
-                    data.calificaciones.buena,
-                    data.calificaciones.excelente,
-                ],
+            body: 
+                data.calificaciones.map((user: any) => {
+                    return [
+                        user.total_visitas,
+                        user.pesima,
+                        user.buena,
+                        user.excelente,
+                    ]
+                }),
                 // ...
-            ],
+            
         })
     }else if (data.tipo === 'usuarios') {
         return autoTable(doc, {

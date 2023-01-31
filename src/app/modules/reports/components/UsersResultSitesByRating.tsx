@@ -18,6 +18,7 @@ const ResultSitesByRating: FC<any> = ({show, users}) => {
                         <Table striped bordered hover variant='dark' className='align-middle'>
                             <thead>
                                 <tr>
+                                    {users[0]?.nombre_sitio && <th>Nombre del sitio</th>}
                                     <th>Nombre</th>
                                     <th>Apellido</th>
                                     <th>Genero</th>
@@ -29,6 +30,10 @@ const ResultSitesByRating: FC<any> = ({show, users}) => {
                             <tbody>
                                 {users?.map((item: any) => (
                                     <tr>
+                                        {users[0]?.nombre_sitio && (
+                                            <td className='text-muted'>{item.nombre_sitio}</td>
+                                        )}
+                                        <td className='text-muted'>{item.nombre}</td>
                                         <td className='text-muted'>{item.nombre}</td>
                                         <td className='text-muted'>{item.apellido}</td>
                                         <td className='text-muted'>{item.genero}</td>

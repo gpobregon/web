@@ -1,13 +1,13 @@
-import { Auth } from 'aws-amplify'
+import {Auth} from 'aws-amplify'
 import moment from 'moment'
 import React, {FC, useCallback, useContext, useEffect, useState} from 'react'
 import {Button, Col, Form, Row, Table} from 'react-bootstrap'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
-import { utils, writeFileXLSX } from 'xlsx' 
-import { getData, getRolesMethod } from '../../../services/api'
-import { roleManager } from '../../../models/roleManager'
-import { LoadingContext } from '../../../utility/component/loading/context'
+import {utils, writeFileXLSX} from 'xlsx'
+import {getData, getRolesMethod} from '../../../services/api'
+import {roleManager} from '../../../models/roleManager'
+import {LoadingContext} from '../../../utility/component/loading/context'
 import swal from 'sweetalert'
 
 import PDF from '../ExportReport/PDF'
@@ -56,14 +56,14 @@ const customStyles = {
     }),
 }
 
-const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => { 
+const ResultSitesByRating: FC<any> = ({show, data, site, name, photo, users}) => {
     const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
 
     const [user, setDataUser] = useState({
         name: '',
         lastName: '',
-    }) 
+    })
 
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
@@ -77,13 +77,12 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                 const filter = roles.filter((role) => {
                     return user.attributes['custom:role'] === role.nombre
                 })
-                console.log("filter: ", filter);
                 if (filter[0]?.reporte_calificacion_exportar === false) {
                     swal({
                         title: 'No tienes permiso para exportar este reporte',
                         icon: 'warning',
                     })
-                }else{ 
+                } else {
                     if (event.value == 1) {
                         PDF(datos)
                     } else if (event.value == 2) {
@@ -91,13 +90,12 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                     }
                 }
             } catch (error) {
-                console.log("error: ", error);
+                console.log('error: ', error)
             }
         })
 
         setTimeout(() => setShowLoad(false), 1000)
     }
-
 
     useEffect(() => {
         Auth.currentUserInfo().then((user) => {
@@ -105,10 +103,9 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                 name: user.attributes.name,
                 lastName: user.attributes['custom:lastname'],
             })
-        }) 
+        })
         getRoles()
     }, [])
-
 
     const optionsWithIcons = [
         {
@@ -130,17 +127,17 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
     if (typeof site.calificacion === 'number') {
         site.tipocalificacion = calificaciones[site.calificacion]
     }
-    
 
     var datos = Object.assign(
         {},
-        {calificaciones: data[0]},
+        {calificaciones: data},
         {name: name},
         {portada_path: photo},
         {tipo: 'Calificaciones'},
         {site: site},
         {users: users}
     )
+    
 
     const handleChangeLanguage = (event: any) => {
         if (event.value == 1) {
@@ -156,9 +153,7 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
         var ws = utils.aoa_to_sheet([
             ['MINISTERIO DE CULTURA Y DEPORTES'],
             [`Reporte: ${datos.tipo}`],
-            [
-                `Filtro: Calificacion: ${datos.site.tipocalificacion}`,
-            ],
+            [`Filtro: Calificacion: ${datos.site.tipocalificacion}`],
             [`Periodo consultado: ${datos.site.fecha_inicial} - ${datos.site.fecha_final}`],
             [`Sitio: ${datos.name} (${datos.site.id_sitio})`],
         ])
@@ -170,18 +165,7 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
             cellStyles: true,
         })
 
-        utils.sheet_add_aoa(
-            ws,
-            [
-                [
-                    'Total Visitas',
-                    'Pésima',
-                    'Buena',
-                    'Excelente',
-                ],
-            ],
-            {origin: 'A8'}
-        )
+        utils.sheet_add_aoa(ws, [['Total Visitas', 'Pésima', 'Buena', 'Excelente']], {origin: 'A8'})
 
         utils.book_append_sheet(wb, ws, 'Califiaciones Generales')
 
@@ -189,14 +173,11 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
         const ws2 = utils.aoa_to_sheet([
             ['MINISTERIO DE CULTURA Y DEPORTES'],
             [`Reporte: ${datos.tipo}`],
-            [
-                `Filtro: Calificacion: ${datos.site.tipocalificacion}`,
-            ],
+            [`Filtro: Calificacion: ${datos.site.tipocalificacion}`],
             [`Periodo consultado: ${datos.site.fecha_inicial} - ${datos.site.fecha_final}`],
             [`Sitio: ${datos.name} (${datos.site.id_sitio})`],
         ])
 
-     
         utils.sheet_add_json(ws2, datos.users, {
             origin: 'A8',
             cellStyles: true,
@@ -204,28 +185,17 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
 
         utils.sheet_add_aoa(
             ws2,
-            [
-                [
-                    'Nombre',
-                    'Apellido',
-                    'Genero',
-                    'País',
-                    "Comentario", 
-                    "Puntuación",
-                ],
-            ],
+            [['Nombre', 'Apellido', 'Genero', 'País', 'Comentario', 'Puntuación']],
             {origin: 'A8'}
         )
 
         utils.book_append_sheet(wb, ws2, 'Califiaciones por usuario')
-
 
         writeFileXLSX(wb, `[${datos.site.id_sitio}]${datos.tipo}-${datos.name}.xlsx`, {
             Props: {Author: `${user.name} ${user.lastName}`},
         })
     }, [datos])
 
- 
     return (
         <>
             <div style={show == false ? {display: 'none'} : {display: 'block'}}>
@@ -243,25 +213,27 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                 >
                     <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
                         <div className='d-flex align-items-center'>
-                            <div
-                                className='me-8'
-                                style={{
-                                    width: '60px',
-                                    height: '60px',
-                                    backgroundColor: '#a9a9a9',
-                                    borderRadius: '50%',
-                                }}
-                            >
-                                <img
-                                    src={photo}
+                            {datos.site.id_sitio != -1 && (
+                                <div
+                                    className='me-8'
                                     style={{
                                         width: '60px',
                                         height: '60px',
-                                        objectFit: 'cover',
+                                        backgroundColor: '#a9a9a9',
                                         borderRadius: '50%',
                                     }}
-                                />
-                            </div>
+                                >
+                                    <img
+                                        src={photo}
+                                        style={{
+                                            width: '60px',
+                                            height: '60px',
+                                            objectFit: 'cover',
+                                            borderRadius: '50%',
+                                        }}
+                                    />
+                                </div>
+                            )}
                             <div className='col-xs-9 col-md-9 col-lg-9 py-5 '>
                                 <h2 className=''>{name}</h2>
                                 <h6 className='text-muted'>
@@ -276,7 +248,7 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                                         styles={customStyles}
                                         components={animatedComponents}
                                         className={'mb-4'}
-                                        // onChange={handleChangeLanguage} 
+                                        // onChange={handleChangeLanguage}
                                         onChange={exportValidate}
                                         placeholder='Exportar'
                                     />
@@ -292,13 +264,20 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                         style={{textAlign: 'center'}}
                     >
                         <Row className='mb-5'>
-                            <Col lg={3} md={3} sm={4}>
+                            {datos.site.id_sitio === -1 && (
+                                <Col >
+                                    <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
+                                        <Form.Label>Nombre sitio</Form.Label>
+                                    </Form.Group>
+                                </Col>
+                            )}
+                            <Col >
                                 <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                     <Form.Label>Total de visitas</Form.Label>
                                 </Form.Group>
                             </Col>
 
-                            <Col lg={3} md={3} sm={4}>
+                            <Col >
                                 <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                     <i
                                         className='bi bi-emoji-frown'
@@ -308,7 +287,7 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                                 </Form.Group>
                             </Col>
 
-                            <Col lg={3} md={3} sm={4}>
+                            <Col >
                                 <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                     <i
                                         className='bi bi-emoji-smile'
@@ -318,7 +297,7 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                                 </Form.Group>
                             </Col>
 
-                            <Col lg={3} md={3} sm={4}>
+                            <Col >
                                 <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
                                     <i
                                         className='bi bi-emoji-smile'
@@ -330,28 +309,38 @@ const ResultSitesByRating: FC<any> = ({show, data, site, name, photo,users}) => 
                         </Row>
 
                         {data?.map((item: any) => (
+                              
                             <Row>
-                                <Col lg={3} md={3} sm={4}>
+                                {
+                                    datos.site.id_sitio === -1 && (
+                                        <Col >
+                                        <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
+                                            <Form.Label>{item.nombre_sitio}</Form.Label>
+                                        </Form.Group>
+                                    </Col>
+                                    )
+                                }
+                                <Col >
                                     <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                        <Form.Label>{data[0].total_visitas}</Form.Label>
+                                        <Form.Label>{item.total_visitas}</Form.Label>
                                     </Form.Group>
                                 </Col>
 
-                                <Col lg={3} md={3} sm={4}>
+                                <Col >
                                     <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                        <Form.Label>{data[0].pesima}</Form.Label>
+                                        <Form.Label>{item.pesima}</Form.Label>
                                     </Form.Group>
                                 </Col>
 
-                                <Col lg={3} md={3} sm={4}>
+                                <Col >
                                     <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                        <Form.Label>{data[0].buena}</Form.Label>
+                                        <Form.Label>{item.buena}</Form.Label>
                                     </Form.Group>
                                 </Col>
 
-                                <Col lg={3} md={3} sm={4}>
+                                <Col >
                                     <Form.Group className='mb-4 m-lg-0 m-xxl-0'>
-                                        <Form.Label>{data[0].excelente}</Form.Label>
+                                        <Form.Label>{item.excelente}</Form.Label>
                                     </Form.Group>
                                 </Col>
                             </Row>

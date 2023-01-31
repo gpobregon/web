@@ -75,8 +75,6 @@ const sitesOptions = [
 ]
 
 const SitesByRating = () => { 
-    const [roles, setRoles] = useState<roleManager[]>([])
-    const [existRoles, setExistRoles] = useState(false)
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     const [marcadoMalo, setMarcadoMalo] = useState(false)
@@ -105,15 +103,14 @@ const SitesByRating = () => {
 
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
-        setRoles(role.data as roleManager[])
-        setExistRoles(true)
+        validateRole(role.data as roleManager[])
     }
 
-    const validateRole = async () => {
+    const validateRole = async (roles:any) => {
         setShowLoad(true)
         Auth.currentUserInfo().then(async (user) => {
             try {
-                const filter = roles.filter((role) => {
+                const filter = roles.filter((role:any) => {
                     return user.attributes['custom:role'] === role.nombre
                 })
                 console.log("filter: ", filter);
@@ -140,13 +137,17 @@ const SitesByRating = () => {
             } else {
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                setName(sit[0].nombre_sitio)
-                setPhoto(sit[0].imagen)
+                
+
+                setName(type.id_sitio!=-1 ? sit[0]?.nombre_sitio : 'Todos los sitios')
+                setPhoto(type.id_sitio!=-1 ? sit[0]?.imagen : null)
                 let temp = []
                 let temp2 = []
                 for (let i = 0; i < sit.length; i++) {
+                    sit[i].data.nombre_sitio = sit[i].nombre_sitio
                     temp.push(sit[i].data)
                     for (let e = 0; e < sit[i].usuarios.length; e++) {
+                      if(type.id_sitio===-1)  sit[i].usuarios[e].nombre_sitio = sit[i].nombre_sitio
                         temp2.push(sit[i].usuarios[e])
                     }
                 }
@@ -166,10 +167,24 @@ const SitesByRating = () => {
     async function getPublishSites() {
         setShowLoad(true)
         const sites: any = await getData(getSitiosPublicados)
-
+        let temp:any = []
         sites.data.map((sit: any) => {
-            publishSite.push({value: sit.id_sitio, label: sit.nombre})
+            temp.push({
+                label: sit.nombre,
+                value: sit.id_sitio,
+            })
         })
+        //solo elementos unicos
+        temp.unshift({
+            label: 'Todos los sitios',
+            value: -1,
+        })
+        let hash:any = {}
+        temp = temp.filter((o:any) => {
+            return hash[o.value] ? false : (hash[o.value] = true)
+          })
+
+        setPublishSite(temp)
         setShowLoad(false)
     }
 
@@ -177,8 +192,8 @@ const SitesByRating = () => {
         getSite()
         //getPublishSites() 
         getRoles()
-        validateRole()
-    }, [existRoles])
+       
+    }, [])
 
     const showResultComponent = () => {
         setShowResult(true)
