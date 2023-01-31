@@ -578,7 +578,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-    console.log(board)
+    
     // ------------------------------------------------------------
     useEffect(() => {
         if (DestroyItem) {

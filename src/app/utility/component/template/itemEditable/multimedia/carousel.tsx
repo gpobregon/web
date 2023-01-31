@@ -101,7 +101,6 @@ const Carousel: FC<Model> = ({
     const selectionData = (item: any) => { 
         reset()
         const element = data.list.filter((el: any) => el.id_recurso === item.id_recurso)
-        console.log(element)
         item.id_recurso && !selected.id_recurso ? setSelected({...item, titulo: element[0]?.titulo, descripcion: element[0]?.descripcion}) : setSelected([])
     }
 
