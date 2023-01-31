@@ -32,10 +32,9 @@ const PDF = (data: any) => {
 
     doc.text('Filtros: ', 10, 32)
 
-    tabla(data, doc)
-
-  
-
+    
+    
+    
     if (data.tipo === 'Visitas por sitio' || data.tipo === 'usuarios') {
         doc.text('Genero: '+data.site?.tipogenero, 15, 37)
         doc.text('Edad: '+data.site?.tipoedad, 15, 42)
@@ -49,7 +48,8 @@ const PDF = (data: any) => {
         doc.addPage()
         tablaUsers(data, doc)
     }
-
+    
+    tabla(data, doc)
     const pageSize = doc.getNumberOfPages()
     for (let i = 1; i <= pageSize; i++) {
         doc.setPage(i)
@@ -117,10 +117,11 @@ const tabla = (data: any, doc: any) => {
     }else if (data.tipo === 'usuarios') {
         return autoTable(doc, {
             startY: 65,
-            head: [['Usuario', 'Genero', 'País', 'Edad', 'Ultima visita']],
+            head: [[data.site.id_sitio ===-1 ? 'Nombre Sitio':'','Usuario', 'Genero', 'País', 'Edad', 'Ultima visita']],
             body: 
             data.rows.map((user: any) => {
                 return [
+                    data.site.id_sitio ===-1 ? user.nombre_sitio:'',
                     user.nombre,
                     user.genero,
                     user.pais,

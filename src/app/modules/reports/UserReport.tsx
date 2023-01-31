@@ -133,13 +133,15 @@ const UserReport = () => {
             } else {
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                setName(sit[0]?.nombre_sitio)
-                setPhoto(sit[0]?.imagen)
+                setName(type.id_sitio!=-1 ? sit[0]?.nombre_sitio : 'Todos los sitios')
+                setPhoto(type.id_sitio!=-1 ? sit[0]?.imagen : null)
 
+                console.log("sit: ", sit);
                 let temp = []
 
                 for (let i = 0; i < sit.length; i++) {
                     for (let e = 0; e < sit[i].data.length; e++) {
+                        sit[i].data[e].nombre_sitio = sit[i].nombre_sitio
                         temp.push(sit[i].data[e])
                     }
                 }
@@ -189,7 +191,10 @@ const UserReport = () => {
             })
         })
         //solo elementos unicos
-
+        temp.unshift({
+            label: 'Todos los sitios',
+            value: -1,
+        })
         let hash:any = {}
         temp = temp.filter((o:any) => {
             return hash[o.value] ? false : (hash[o.value] = true)

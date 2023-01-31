@@ -7,21 +7,21 @@ import makeAnimated from 'react-select/animated'
 import Moment from 'moment'
 
 import PDF from '../ExportReport/PDF'
-import { Auth } from 'aws-amplify'
-import { utils, writeFileXLSX } from 'xlsx'
-import { getData, getRolesMethod } from '../../../services/api'
-import { roleManager } from '../../../models/roleManager'
-import { LoadingContext } from '../../../utility/component/loading/context'
+import {Auth} from 'aws-amplify'
+import {utils, writeFileXLSX} from 'xlsx'
+import {getData, getRolesMethod} from '../../../services/api'
+import {roleManager} from '../../../models/roleManager'
+import {LoadingContext} from '../../../utility/component/loading/context'
 import swal from 'sweetalert'
 
-const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {  
+const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
     const {setShowLoad} = useContext(LoadingContext)
     const [roles, setRoles] = useState<roleManager[]>([])
     const [user, setDataUser] = useState({
         name: '',
         lastName: '',
-    })   
-    
+    })
+
     const getRoles = async () => {
         const role: any = await getData(getRolesMethod)
         setRoles(role.data as roleManager[])
@@ -34,13 +34,13 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                 const filter = roles.filter((role) => {
                     return user.attributes['custom:role'] === role.nombre
                 })
-                console.log("filter: ", filter);
+                console.log('filter: ', filter)
                 if (filter[0]?.reporte_usuarios_exportar === false) {
                     swal({
                         title: 'No tienes permiso para exportar este reporte',
                         icon: 'warning',
                     })
-                }else{ 
+                } else {
                     if (event.value == 1) {
                         PDF(datos)
                     } else if (event.value == 2) {
@@ -48,14 +48,13 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                     }
                 }
             } catch (error) {
-                console.log("error: ", error);
+                console.log('error: ', error)
             }
         })
 
         setTimeout(() => setShowLoad(false), 1000)
     }
 
-    
     const optionsWithIcons = [
         {
             value: 1,
@@ -106,7 +105,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
         {site: site}
     )
 
-    const handleChangeLanguage = (event: any) => { 
+    const handleChangeLanguage = (event: any) => {
         if (event.value == 1) {
             PDF(datos)
         } else if (event.value == 2) {
@@ -120,7 +119,7 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                 name: user.attributes.name,
                 lastName: user.attributes['custom:lastname'],
             })
-        }) 
+        })
         getRoles()
     }, [])
 
@@ -144,19 +143,9 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
             cellStyles: true,
         })
 
-        utils.sheet_add_aoa(
-            ws,
-            [
-                [
-                    'Usuario',
-                    'Ultima visita',
-                    'País',
-                    'Genero',
-                    'Edad',
-                ],
-            ],
-            {origin: 'A8'}
-        )
+        utils.sheet_add_aoa(ws, [['Usuario', 'Ultima visita', 'País', 'Genero', 'Edad']], {
+            origin: 'A8',
+        })
 
         utils.book_append_sheet(wb, ws, 'Usuarios')
 
@@ -181,29 +170,32 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
             >
                 <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
                     <div className='d-flex align-items-center'>
-                        <div
-                            className='me-8'
-                            style={{
-                                width: '60px',
-                                height: '60px',
-                                backgroundColor: '#a9a9a9',
-                                borderRadius: '50%',
-                            }}
-                        >
-                            <img
-                                src={photo}
+                        {datos.site.id_sitio != -1 && (
+                            <div
+                                className='me-8'
                                 style={{
                                     width: '60px',
                                     height: '60px',
-                                    objectFit: 'cover',
+                                    backgroundColor: '#a9a9a9',
                                     borderRadius: '50%',
                                 }}
-                            />
-                        </div>
+                            >
+                                <img
+                                    src={photo}
+                                    style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        objectFit: 'cover',
+                                        borderRadius: '50%',
+                                    }}
+                                />
+                            </div>
+                        )}
                         <div className='col-xs-9 col-md-9 col-lg-9 py-5 '>
                             <h2 className=''>{name}</h2>
                             <h6 className='text-muted'>
-                            {Moment(site.fecha_inicial).format('DD/MM/YYYY')} - {Moment(site.fecha_final).format('DD/MM/YYYY')}
+                                {Moment(site.fecha_inicial).format('DD/MM/YYYY')} -{' '}
+                                {Moment(site.fecha_final).format('DD/MM/YYYY')}
                             </h6>
                         </div>
                         <div className='col-xs-2 col-md-2 col-lg-2 py-5'>
@@ -227,7 +219,8 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                     <Table striped bordered hover variant='dark' className='align-middle'>
                         <thead>
                             <tr>
-                                    {/* <th>Foto</th> */}
+                                {/* <th>Foto</th> */}
+                                {datos.site.id_sitio === -1 && <th>Nombre Sitio</th>}
                                 <th>Usuario</th>
                                 <th>Ultima visita</th>
                                 <th>País</th>
@@ -236,8 +229,8 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {data?.map((item: any ) => (
-                                <tr >
+                            {data?.map((item: any) => (
+                                <tr>
                                     {/* <td>
                                         <div
                                             style={{
@@ -248,6 +241,11 @@ const ResultUserReport: FC<any> = ({show, data, site, name, photo}) => {
                                             }}
                                         ></div>
                                     </td> */}
+                                    {datos.site.id_sitio === -1 && (
+                                        <td>
+                                            <div>{item?.nombre_sitio}</div>
+                                        </td>
+                                    )}
                                     <td>
                                         <div>{item?.nombre}</div>
                                     </td>
