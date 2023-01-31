@@ -105,10 +105,11 @@ const tabla = (data: any, doc: any) => {
     } else if (data.tipo === 'Calificaciones') {
         return autoTable(doc, {
             startY: 55,
-            head: [['Total vistas', 'Pésima', 'Buena', 'Excelente']],
+            head: [[data.calificaciones.length >1 ? 'Nombre sitio' :'','Total vistas', 'Pésima', 'Buena', 'Excelente']],
             body: 
                 data.calificaciones.map((user: any) => {
                     return [
+                        data.calificaciones.length >1 ? user.nombre_sitio :'' ,
                         user.total_visitas,
                         user.pesima,
                         user.buena,
@@ -121,7 +122,7 @@ const tabla = (data: any, doc: any) => {
     }else if (data.tipo === 'usuarios') {
         return autoTable(doc, {
             startY: 65,
-            head: [[data.site.id_sitio ===-1 ? 'Nombre Sitio':'','Usuario', 'Genero', 'País', 'Edad', 'Ultima visita']],
+            head: [[data.site.id_sitio ===-1 ? 'Nombre sitio':'','Usuario', 'Genero', 'País', 'Edad', 'Ultima visita']],
             body: 
             data.rows.map((user: any) => {
                 return [
@@ -150,6 +151,7 @@ const tablaUsers = (data: any, doc: any) => {
         startY: 20,
         columnStyles: { Comentario: { cellWidth:10 } },
         columns: [
+            data.site.id_sitio ===-1 ? {header: 'Nombre sitio', dataKey: 'nombre_sitio'}:'',
             {header: 'Nombre', dataKey: 'nombre'},
             {header: 'Apellido', dataKey: 'apellido'},
             {header: 'Género', dataKey: 'genero'},
@@ -162,6 +164,7 @@ const tablaUsers = (data: any, doc: any) => {
                 var str=user.comentario.substring(0, 50);
 
                 return [
+                    data.site.id_sitio ===-1 ? user.nombre_sitio:'',
                     user.nombre,
                     user.apellido,
                     user.genero,
