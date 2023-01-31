@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {FC, useContext, useState, useEffect} from 'react'
 import Masonry from 'react-masonry-css'
@@ -94,22 +95,31 @@ const Carousel: FC<Model> = ({
             changeText({list: response})
             setItemsList(response)
             setCount(1)
-            reset()
         }
     }
 
-    const selectionData = (item: any) => {
-        reset()
-        item.id_recurso && !selected.id_recurso ? setSelected(item) : setSelected([])
+    const selectionData = (item: any) => { 
+        const element = data.list.filter((el: any) => el.id_recurso === item.id_recurso)
+        item.id_recurso && !selected.id_recurso ? setSelected({...item, titulo: element[0].titulo, descripcion: element[0].descripcion}) : setSelected([])
     }
 
     useEffect(() => {
         if (count === 1) {
-            changeText({list: itemsList})
+            changeText({list: itemsList, selectedItem})
             setCount(0)
         }
     }, [count])
 
+
+    useEffect (
+        () => {
+            if (data.list.length > 0) {
+                const items = data.list.map( (element: any) => element.id_recurso )
+                setSelectedItem(items)
+                setItemsList(data.list)
+            }
+        }, []
+    )
     const popoverClick = (
         <Popover
             id='popover-basic'
@@ -176,13 +186,7 @@ const Carousel: FC<Model> = ({
                                     <Form.Control
                                         type='text'
                                         size='sm'
-                                        defaultValue={
-                                            itemsList?.map((item: any) => {
-                                                      if (item.id_recurso === selected.id_recurso) {
-                                                          return item.titulo
-                                                      }
-                                                    })
-                                        }
+                                        defaultValue={selected.titulo}
                                         {...register('titulo', {
                                             required: {
                                                 value: false,
@@ -200,14 +204,7 @@ const Carousel: FC<Model> = ({
                                     <Form.Control
                                         type='text'
                                         size='sm'
-                                        defaultValue={
-                                             itemsList?.map((item: any) => {
-                                                      if (item.id_recurso === selected.id_recurso) {
-                                                          return item.descripcion
-                                                      }
-                                                  })
-                                               
-                                        }
+                                        defaultValue={selected.descripcion}
                                         {...register('descripcion', {
                                             required: {
                                                 value: false,

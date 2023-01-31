@@ -343,7 +343,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
 
     // elimina items dragados en el editor
     const removeItem = (data: any) => {
-        const newBoard = board.filter((item: any) => String(item.id) !== String(data))
+        const newBoard = board.filter((item: any) => item && String(item.id) !== String(data))
         setBoard(newBoard)
         setEditItem([])
         setEditItemResource([])
@@ -578,7 +578,7 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
+    console.log(board)
     // ------------------------------------------------------------
     useEffect(() => {
         if (DestroyItem) {
