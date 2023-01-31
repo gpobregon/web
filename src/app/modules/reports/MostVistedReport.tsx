@@ -148,18 +148,18 @@ const MostVistedReport = () => {
             } else { 
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                console.log("typee: ", typee);
-                 console.log('sit: ', sit) 
+
                 setDate({  
                     fecha_inicial: typee.fecha_inicial,
                     fecha_final: typee.fecha_final,
                 })
-                setName(sit[0].nombre_sitio)
-                setPhoto(sit[0].imagen)
+                setName(type.id_sitio!=-1 ? sit[0]?.nombre_sitio : 'Todos los sitios')
+                setPhoto(type.id_sitio!=-1 ? sit[0]?.imagen : null)
 
                 let temp = []
 
                 for (let i = 0; i < sit.length; i++) {
+                    sit[i].data.nombre_sitio = sit[i].nombre_sitio
                     temp.push(sit[i].data)
                 }
 
@@ -194,10 +194,23 @@ const MostVistedReport = () => {
     async function getPublishSites() {
         setShowLoad(true)
         const sites: any = await getData(getSitiosPublicados)
-        
+        let temp:any = []
         sites.data.map((sit: any) => {
-            publishSite.push({value: sit.id_sitio, label: sit.nombre})
+            temp.push({
+                label: sit.nombre,
+                value: sit.id_sitio,
+            })
         })
+        //solo elementos unicos
+        temp.unshift({
+            label: 'Todos los sitios',
+            value: -1,
+        })
+        let hash:any = {}
+        temp = temp.filter((o:any) => {
+            return hash[o.value] ? false : (hash[o.value] = true)
+          })
+          setPublishSite(temp)
         setShowLoad(false)
     }
 
@@ -209,6 +222,7 @@ const MostVistedReport = () => {
     }, [existRoles])
 
     const handleChangeSitio = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: event.value,
@@ -222,6 +236,7 @@ const MostVistedReport = () => {
     }
 
     const handleChangeGenero = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -235,6 +250,7 @@ const MostVistedReport = () => {
     }
 
     const handleChangeEdad = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -248,6 +264,7 @@ const MostVistedReport = () => {
     }
 
     const handleChangeFechaInicial = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -261,6 +278,7 @@ const MostVistedReport = () => {
     }
 
     const handleChangeFechaFinal = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -274,6 +292,7 @@ const MostVistedReport = () => {
     }
 
     const handleChangePais = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,

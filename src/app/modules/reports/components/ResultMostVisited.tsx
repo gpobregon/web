@@ -108,22 +108,26 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
     if (typeof site.genero === 'number') {
         site.tipogenero = genresOptions[site.genero]
     }
+    console.log("site: ", site);
 
     var datos1 = Object.assign(
         [{}],
-        [
-            {
-                total_visits: data[0]?.total_visitas,
-                hombre: data[0]?.genero.hombre,
-                mujer: data[0]?.genero.mujer,
-                indefinido: data[0]?.genero.indefinido,
-                menores: data[0]?.edad.menores,
-                mayores: data[0]?.edad.mayores,
-                tercera_edad: data[0]?.edad.tercera_edad,
-                nacional: data[0]?.pais.nacional,
-                internacional: data[0]?.pais.internacional,
-            },
-        ]
+        
+            data.map((item: any) => {
+                return {
+                    total_visits: item.total_visitas,
+                    hombre: item.genero.hombre,
+                    mujer: item.genero.mujer,
+                    indefinido: item.genero.indefinido,
+                    menores: item.edad.menores,
+                    mayores: item.edad.mayores,
+                    tercera_edad: item.edad.tercera_edad,
+                    nacional: item.pais.nacional,
+                    internacional: item.pais.internacional,
+                    nombre_sitio: site.id_sitio ===-1 ? item.nombre_sitio:'',
+                }
+        }),
+        
     )
     var datos = Object.assign(
         {},
@@ -245,6 +249,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
                 }}
             >
                 <div className='col-xs-12 col-md-12 col-lg-12 py-5 px-9'>
+                {datos.site.id_sitio != -1 && (
                     <div
                         className='me-8'
                         style={{
@@ -264,6 +269,7 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
                             }}
                         />
                     </div>
+                )}
                     <Row>
                         <div className='col-xs-8 col-md-8 col-lg-8 py-5 px-9'>
                             <h2 className=''>{name}</h2>
@@ -290,6 +296,10 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
                     <Table bordered responsive className='text-center' size='sm' striped>
                         <thead>
                             <tr>
+                                {
+                                    datos.site.id_sitio === -1 && 
+                                    <th>Nombre del Sitio</th>
+                                }
                                 <th>Visitas</th>
                                 <th colSpan={3}>Género</th>
                                 <th colSpan={3}>Edad</th>
@@ -298,6 +308,10 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
                         </thead>
                         <tbody>
                             <tr>
+                                {
+                                    datos.site.id_sitio === -1 &&
+                                    <td></td>
+                                }
                                 <td>Total de visitas</td>
 
                                 <td>Hombre</td>
@@ -313,18 +327,22 @@ const ResultMostVisited: FC<any> = ({show, data, site, name, photo, date}) => {
                             </tr>
                             {data?.map((item: any, index: any) => (
                                 <tr key={index}>
-                                    <td>{data[0].total_visitas}</td>
+                                    {
+                                        datos.site.id_sitio === -1 &&
+                                        <td>{item.nombre_sitio}</td>
+                                    }
+                                    <td>{item.total_visitas}</td>
 
-                                    <td>{data[0].genero.hombre}</td>
-                                    <td>{data[0].genero.mujer}</td>
+                                    <td>{item.genero.hombre}</td>
+                                    <td>{item.genero.mujer}</td>
                                     <td>{data[0].genero.indefinido}</td>
 
-                                    <td>{data[0].edad.menores}</td>
-                                    <td>{data[0].edad.mayores}</td>
-                                    <td>{data[0].edad.tercera_edad}</td>
+                                    <td>{item.edad.menores}</td>
+                                    <td>{item.edad.mayores}</td>
+                                    <td>{item.edad.tercera_edad}</td>
 
-                                    <td>{data[0].pais.nacional}</td>
-                                    <td>{data[0].pais.internacional}</td>
+                                    <td>{item.pais.nacional}</td>
+                                    <td>{item.pais.internacional}</td>
                                 </tr>
                             ))}
                         </tbody>

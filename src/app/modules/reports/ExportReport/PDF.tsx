@@ -76,6 +76,7 @@ const tabla = (data: any, doc: any) => {
             startY: 65,
             head: [
                 [
+                    data.rows.length >1 ? 'Nombre sitio' :'',
                     'Total vistas',
                     'Hombre',
                     'Mujer',
@@ -87,20 +88,22 @@ const tabla = (data: any, doc: any) => {
                     'Extranjero',
                 ],
             ],
-            body: [
-                [
-                    data.rows[0].total_visits,
-                    data.rows[0].hombre,
-                    data.rows[0].mujer,
-                    data.rows[0].indefinido,
-                    data.rows[0].menores,
-                    data.rows[0].mayores,
-                    data.rows[0].tercera_edad,
-                    data.rows[0].nacional,
-                    data.rows[0].internacional,
-                ],
+            body: 
+            data.rows.map((user: any) => {
+                return [
+                    data.rows.length >1 ? user.nombre_sitio :'' ,
+                    user.total_visits,
+                    user.hombre,
+                    user.mujer,
+                    user.indefinido,
+                    user.menores,
+                    user.mayores,
+                    user.tercera_edad,
+                    user.nacional,
+                    user.internacional,
+                ]
                 // ...
-            ],
+        }),
         })
     } else if (data.tipo === 'Calificaciones') {
         return autoTable(doc, {
