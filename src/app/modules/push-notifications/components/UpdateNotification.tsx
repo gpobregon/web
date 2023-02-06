@@ -7,6 +7,8 @@ import {URLAWS} from '../../../services/api'
 import makeAnimated from 'react-select/animated'
 import Select from 'react-select'
 import {DeleteImage} from '../../deleteFile/delete-image'
+import {Tooltip, tooltipClasses, TooltipProps} from '@mui/material'
+import {styled} from '@mui/system'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -153,6 +155,16 @@ const UpdateNotification: FC<any> = ({
         setLabelSelect(optionsSites.find((item: Options) => item.value == event.value)?.label)
     }
 
+    const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+        <Tooltip {...props} classes={{popper: className}} />
+    ))(({theme}) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            color: '#FFF',
+            fontSize: 12,
+            fontWeight: 500,
+        },
+    }))
+
     return (
         <div
             style={cardUpdateNotification === false ? {display: 'none'} : {display: 'block'}}
@@ -197,38 +209,43 @@ const UpdateNotification: FC<any> = ({
                         </div>
 
                         <div className='d-flex justify-content-between'>
-                            <Button
-                                variant='outline-primary'
-                                className='text-center'
-                                onClick={
-                                    notification.imagen_path === ''
-                                        ? (e) => {
-                                              setModalUploadIMG(true)
-                                          }
-                                        : (e) => {}
-                                }
-                            >
-                                <i className='fs-2 bi-upload px-0 fw-bolder'></i>
-                            </Button>
-                            <Button
-                                variant='outline-danger'
-                                className='text-center'
-                                onClick={() => {
-                                    DeleteImage('notificaciones', notification.imagen_path)
-                                    setNotification({
-                                        id_notificacion: notification.id_notificacion,
-                                        nombre: notification.nombre,
-                                        descripcion: notification.descripcion,
-                                        imagen_path: '',
-                                        fecha_hora_programada: notification.fecha_hora_programada,
-                                        tipo: notification.tipo,
-                                        estado: 1,
-                                        id_sitio: notification.id_sitio,
-                                    })
-                                }}
-                            >
-                                <i className='fs-2 bi-trash px-0 fw-bolder'></i>
-                            </Button>
+                            <CustomTooltip title='Cargar imagen'>
+                                <Button
+                                    variant='outline-primary'
+                                    className='text-center'
+                                    onClick={
+                                        notification.imagen_path === ''
+                                            ? (e) => {
+                                                  setModalUploadIMG(true)
+                                              }
+                                            : (e) => {}
+                                    }
+                                >
+                                    <i className='fs-2 bi-upload px-0 fw-bolder'></i>
+                                </Button>
+                            </CustomTooltip>
+                            <CustomTooltip title='Eliminar'>
+                                <Button
+                                    variant='outline-danger'
+                                    className='text-center'
+                                    onClick={() => {
+                                        DeleteImage('notificaciones', notification.imagen_path)
+                                        setNotification({
+                                            id_notificacion: notification.id_notificacion,
+                                            nombre: notification.nombre,
+                                            descripcion: notification.descripcion,
+                                            imagen_path: '',
+                                            fecha_hora_programada:
+                                                notification.fecha_hora_programada,
+                                            tipo: notification.tipo,
+                                            estado: 1,
+                                            id_sitio: notification.id_sitio,
+                                        })
+                                    }}
+                                >
+                                    <i className='fs-2 bi-trash px-0 fw-bolder'></i>
+                                </Button>
+                            </CustomTooltip>
                         </div>
                     </div>
                 </div>
