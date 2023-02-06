@@ -23,6 +23,8 @@ import {Amplify, Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
 import {useAuth} from '../auth'
 import {DeleteImage} from '../deleteFile/delete-image'
+import {Tooltip, tooltipClasses, TooltipProps} from '@mui/material'
+import {styled} from '@mui/system'
 
 const PushNotificationsPage = () => {
     const [totalPages, setTotalPages] = useState(1)
@@ -408,7 +410,7 @@ const PushNotificationsPage = () => {
             }).then((willDelete) => {
                 if (willDelete) {
                     setShowLoad(true)
-                    
+
                     for (let i = 0; i < arrayDeleteNotifications.length; i++) {
                         deleteData(deleteNotificationMethod, {
                             id_notificacion: parseInt(arrayDeleteNotifications[i]),
@@ -535,6 +537,16 @@ const PushNotificationsPage = () => {
 
     const [radioValue, setRadioValue] = useState('1')
 
+    const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+        <Tooltip {...props} classes={{popper: className}} />
+    ))(({theme}) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            color: '#FFF',
+            fontSize: 12,
+            fontWeight: 500,
+        },
+    }))
+
     return (
         <Container fluid>
             <div
@@ -658,12 +670,14 @@ const PushNotificationsPage = () => {
                             {`${optionSort}`}
                         </div>
                         <div>
-                            <Button
-                                variant='outline-danger'
-                                onClick={() => deleteSelectedNotification()}
-                            >
-                                <i className='bi bi-trash fs-1'></i>
-                            </Button>
+                            <CustomTooltip title='Eliminar'>
+                                <Button
+                                    variant='outline-danger'
+                                    onClick={() => deleteSelectedNotification()}
+                                >
+                                    <i className='bi bi-trash fs-1'></i>
+                                </Button>
+                            </CustomTooltip>
                         </div>
                     </div>
 
@@ -713,16 +727,19 @@ const PushNotificationsPage = () => {
                                             </div>
                                         </td>
                                         <td style={{width: '144px'}}>
-                                            <Button
-                                                variant='outline-primary'
-                                                className='text-center'
-                                                onClick={() => {
-                                                    toggleCardAddNotification(false)
-                                                    showCardUpdateNotification(notification)
-                                                }}
-                                            >
-                                                <i className='fs-2 bi-pencil px-0 fw-bolder'></i>
-                                            </Button>
+                                            <CustomTooltip title='Editar'>
+                                                <Button
+                                                    variant='outline-primary'
+                                                    className='text-center'
+                                                    onClick={() => {
+                                                        toggleCardAddNotification(false)
+                                                        showCardUpdateNotification(notification)
+                                                    }}
+                                                >
+                                                    <i className='fs-2 bi-pencil px-0 fw-bolder'></i>
+                                                </Button>
+                                            </CustomTooltip> 
+                                            <CustomTooltip title='Eliminar'>
                                             <Button
                                                 variant='outline-danger'
                                                 className='text-center'
@@ -738,7 +755,8 @@ const PushNotificationsPage = () => {
                                                 }}
                                             >
                                                 <i className='fs-2 bi-trash px-0 fw-bolder'></i>
-                                            </Button>
+                                            </Button> 
+                                            </CustomTooltip>
                                         </td>
                                     </tr>
                                 ))}

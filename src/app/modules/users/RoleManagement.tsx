@@ -27,6 +27,8 @@ import swal from 'sweetalert'
 import {validateStringSinCaracteresEspeciales} from '../validarCadena/validadorCadena'
 import {Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
+import {Tooltip, tooltipClasses, TooltipProps} from '@mui/material'
+import {styled} from '@mui/system'
 
 const RoleManagement: FC<any> = ({show}) => {
     const [roles, setRoles] = useState<roleManager[]>([])
@@ -101,7 +103,7 @@ const RoleManagement: FC<any> = ({show}) => {
         gestor_categorias_idiomas: false,
         estado: 1,
     })
-    console.log("stateRole: ", stateRole);
+    console.log('stateRole: ', stateRole)
 
     const [clicked, setClicked] = useState(false)
 
@@ -249,11 +251,11 @@ const RoleManagement: FC<any> = ({show}) => {
     const [permissionEditRole, setPermissionEditRole] = useState(true)
     const [permissionDeleteRole, setPermissionDeleteRole] = useState(true)
 
-    const validateRole = async (rol:any) => {
+    const validateRole = async (rol: any) => {
         setShowLoad(true)
 
         Auth.currentUserInfo().then((user) => {
-            const filter = rol.filter((role:any) => {
+            const filter = rol.filter((role: any) => {
                 return user.attributes['custom:role'] === role.nombre
             })
 
@@ -266,7 +268,7 @@ const RoleManagement: FC<any> = ({show}) => {
             }
         })
 
-       setShowLoad(false)
+        setShowLoad(false)
     }
 
     useEffect(() => {
@@ -421,15 +423,24 @@ const RoleManagement: FC<any> = ({show}) => {
                 id_rol: role.id_rol,
                 gestor_reportes: false,
             }))
-        } else { 
+        } else {
             setStateRole((role) => ({
                 ...role,
                 id_rol: role.id_rol,
                 gestor_reportes: true,
             }))
-            
         }
     }
+
+    const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+        <Tooltip {...props} classes={{popper: className}} />
+    ))(({theme}) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            color: '#FFF',
+            fontSize: 12,
+            fontWeight: 500,
+        },
+    }))
 
     return (
         <Container fluid>
@@ -461,8 +472,6 @@ const RoleManagement: FC<any> = ({show}) => {
                         variant='primary'
                         className='mt-md-0 mt-4'
                         onClick={async () => {
-                           
-
                             if (!permissionCreateRole) {
                                 swal({
                                     title: 'No tienes permiso para crear un rol',
@@ -557,7 +566,8 @@ const RoleManagement: FC<any> = ({show}) => {
                                     reporte_visitas_generar: rol.reporte_visitas_generar,
                                     reporte_visitas_exportar: rol.reporte_visitas_exportar,
                                     reporte_calificacion_generar: rol.reporte_calificacion_generar,
-                                    reporte_calificacion_exportar: rol.reporte_calificacion_exportar,
+                                    reporte_calificacion_exportar:
+                                        rol.reporte_calificacion_exportar,
                                     gestor_sitios: rol.gestor_sitios,
                                     gestor_notificaciones: rol.gestor_notificaciones,
                                     gestor_puntos_de_interes: rol.gestor_puntos_de_interes,
@@ -587,7 +597,6 @@ const RoleManagement: FC<any> = ({show}) => {
                                             <InputGroup className='mb-5'>
                                                 <Form.Control
                                                     defaultValue={rol.nombre}
-                                                    
                                                     disabled={!permissionEditRole}
                                                     style={{
                                                         fontSize: 18,
@@ -630,7 +639,6 @@ const RoleManagement: FC<any> = ({show}) => {
                                             <Form.Control
                                                 as='textarea'
                                                 className='p-5'
-                                                
                                                 disabled={!permissionEditRole}
                                                 defaultValue={rol.descripcion}
                                                 style={{
@@ -655,7 +663,8 @@ const RoleManagement: FC<any> = ({show}) => {
                                         </div>
                                         {buttonAcept === true && index === banderID ? (
                                             <div className='d-flex align-items-center mt-5'>
-                                                {/* cheque */}
+                                                {/* cheque */} 
+                                                <CustomTooltip title='Guardar cambios'>
                                                 <Button
                                                     variant='btn btn-outline-primary me-1'
                                                     onClick={async () => {
@@ -676,8 +685,10 @@ const RoleManagement: FC<any> = ({show}) => {
                                                     }}
                                                 >
                                                     <i className={`bi bi-check fs-3`}></i>
-                                                </Button>
-                                                {/* la X */}
+                                                </Button> 
+                                                </CustomTooltip>
+                                                {/* la X */} 
+                                                <CustomTooltip title='Descartar cambios'>
                                                 <Button
                                                     variant='btn btn-outline-danger ms-1'
                                                     onClick={() => {
@@ -686,7 +697,8 @@ const RoleManagement: FC<any> = ({show}) => {
                                                     }}
                                                 >
                                                     <i className={`bi bi-x fs-3`}></i>
-                                                </Button>
+                                                </Button> 
+                                                </CustomTooltip>
                                             </div>
                                         ) : null}
                                     </Col>
@@ -698,24 +710,24 @@ const RoleManagement: FC<any> = ({show}) => {
                                         >
                                             <h1>Funciones de este Rol</h1>
                                             <div className='d-flex justify-content-end'>
-                                                <i
-                                                    className='bi bi-trash text-danger'
-                                                    style={{fontSize: 20, cursor: 'pointer'}}
-                                                    onClick={async () => {
-                                                        
-
-                                                        if (!permissionDeleteRole) {
-                                                            swal({
-                                                                title: 'No tienes permiso para eliminar un rol',
-                                                                icon: 'warning',
+                                                <CustomTooltip title='Eliminar rol'>
+                                                    <i
+                                                        className='bi bi-trash text-danger'
+                                                        style={{fontSize: 20, cursor: 'pointer'}}
+                                                        onClick={async () => {
+                                                            if (!permissionDeleteRole) {
+                                                                swal({
+                                                                    title: 'No tienes permiso para eliminar un rol',
+                                                                    icon: 'warning',
+                                                                })
+                                                                return
+                                                            }
+                                                            deleteRole({
+                                                                id_rol: rol.id_rol,
                                                             })
-                                                            return
-                                                        }
-                                                        deleteRole({
-                                                            id_rol: rol.id_rol,
-                                                        })
-                                                    }}
-                                                ></i>
+                                                        }}
+                                                    ></i>
+                                                </CustomTooltip>
                                             </div>
                                         </div>
 

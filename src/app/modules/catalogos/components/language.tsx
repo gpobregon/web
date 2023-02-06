@@ -1,5 +1,17 @@
 import React, {FC} from 'react'
 import {Col, Card, Button, Figure} from 'react-bootstrap'
+import {Tooltip, tooltipClasses, TooltipProps} from '@mui/material'
+import {styled} from '@mui/system'
+
+const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+    <Tooltip {...props} classes={{popper: className}} />
+))(({theme}) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        color: '#FFF',
+        fontSize: 12,
+        fontWeight: 500,
+    },
+}))
 
 const Language: FC<any> = ({data, showModal}) => {
     return (
@@ -14,11 +26,13 @@ const Language: FC<any> = ({data, showModal}) => {
 
                 <div className='flex-fill'>
                     <div className='d-flex justify-content-end'>
-                        <i
-                            className='bi-three-dots fs-2 '
-                            onClick={showModal}
-                            style={{cursor: 'pointer'}}
-                        ></i>
+                        <CustomTooltip title='Editar'>
+                            <i
+                                className='bi-three-dots fs-2 '
+                                onClick={showModal}
+                                style={{cursor: 'pointer'}}
+                            ></i>
+                        </CustomTooltip>
                     </div>
                 </div>
             </Card>
