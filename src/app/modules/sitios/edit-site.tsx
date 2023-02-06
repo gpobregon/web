@@ -932,15 +932,7 @@ const EditSite = () => {
                                         className='btn-secondary fa-solid fa-floppy-disk background-button'
                                         id='center2'
                                         onClick={async () => {
-                                            await validateRole()
-
-                                            if (!permissionPostSite) {
-                                                swal({
-                                                    title: 'No tienes permiso para publicar cambios de un sitio',
-                                                    icon: 'warning',
-                                                })
-                                                return
-                                            }
+                                            
                                             postSite(site)
                                         }}
                                         style={{
@@ -952,12 +944,16 @@ const EditSite = () => {
                                 </CustomTooltip>
                                 <CustomTooltip title='Publicar'>
                                     <Button
-                                        onClick={() => {
-                                            //toogleSave()
-                                            // status.publicado == false
-                                            //   ? changeStatus(status.favorito, true, status.oculto)
-                                            //   : changeStatus(status.favorito, false, status.oculto)
+                                        onClick={async () => {
+                                            await validateRole()
 
+                                            if (!permissionPostSite) {
+                                                swal({
+                                                    title: 'No tienes permiso para publicar cambios de un sitio',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
                                             changeStatus(
                                                 status.favorito,
                                                 !status.publicado,
