@@ -244,6 +244,11 @@ const AttrText: FC<Model> = ({
                 editItem.type === 'image-360') && (
                 <Fragment>
                     <Row>
+                        <p className='small text-muted'>
+                            {changeTypeEdit === 1
+                                ? 'Se recomienda no cargar imagenes mayores a 5 MB'
+                                : ''}
+                        </p>
                         <Col>
                             <div className='resource-element size-resource-video rounded d-flex justify-content-center align-items-center'>
                                 <span className='text-center'>
