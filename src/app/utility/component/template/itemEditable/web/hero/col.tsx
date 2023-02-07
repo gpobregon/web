@@ -46,19 +46,6 @@ const NewCol: FC<Model> = ({
         }),
     }))
 
-    // // Arrastrar elemento
-    // const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
-    //     setItems2((prevCards: any[]) =>
-    //         update(prevCards, {
-    //             $splice: [
-    //                 [dragIndex, 1],
-    //                 [hoverIndex, 0, prevCards[dragIndex] as any],
-    //             ],
-    //         })
-    //     )
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    //     setCount2((count2: number) => (count2 = 1))
-    // }, [])
     const findCard = useCallback(
         (id: any) => {
             const card = items2.filter((c: any) => `${c.id}` === id)[0]
@@ -71,7 +58,6 @@ const NewCol: FC<Model> = ({
     )
     const moveCard = useCallback(
         (dragIndex: number, hoverIndex: number) => {
-            console.log(dragIndex, hoverIndex, 'Col')
             setItems2((prevCards: any) =>
                 update(prevCards, {
                     $splice: [
@@ -97,7 +83,6 @@ const NewCol: FC<Model> = ({
         const response = updateData(sectionData, item)
         updateElement(EditSeccionChildren(response, 1))
     }
-
     const EditSeccionChildren = (children: any, type: number) => {
         let newElement = {}
         if (section === 0) {
@@ -122,14 +107,36 @@ const NewCol: FC<Model> = ({
     }
 
     const destroyChildren = (code: any) => {
-        updateElement(EditSeccionChildren(remote(code), 1))
+        const item = document.getElementById(`h-${code}`);
+        const seleccion = item?.className || ''
+        updateElement(EditSeccionChildren(remote(code, seleccion), 1))
     }
 
-    const remote = (element: any) => {
+    const remote = (element: any,seccion: string) => {
+        
+        let contenido = []
+        switch (seccion) {
+            case "0":
+              contenido = data.section1
+              break;
+            case "1":
+                contenido = data.section2
+              break;
+            case "2":
+                contenido = data.section3
+              break;
+            default:
+            console.log('Lo lamentamos, por el momento no disponemos de ' + seccion + '.');
+        }
         let newBoard = {}
-        newBoard = sectionData.filter((item: any) => String(item.id) !== String(element))
+        newBoard = contenido.filter((item: any) => String(item.id) !== String(element))
         return newBoard
     }
+
+    const selectedSeccion = (data: any) => {
+        setEditItem(data)
+    }
+
     useEffect(() => {
         if (count === 1) {
             updateElement(EditSeccionChildren(items, 0))
@@ -153,10 +160,16 @@ const NewCol: FC<Model> = ({
     }, [count2])
 
     return (
-        <Col className='border border-opacity-10' lg={lg} style={{minHeight: '100px'}} ref={drop}>
+        <Col 
+            className='border border-opacity-10' 
+            lg={lg} 
+            style={{minHeight: '100px'}} 
+            onClick={() => selectedSeccion(data)}
+            ref={drop}
+        >
             {sectionData.map((item: any, index: number) => {
                 return (
-                    <div key={index}>
+                    <div key={index} id={`h-${item.id}`} className={`${section}`}>
                         <ItemEditable
                             key={index}
                             data={item}
