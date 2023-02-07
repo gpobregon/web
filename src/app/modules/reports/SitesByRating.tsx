@@ -2,13 +2,15 @@ import React, {useState, useRef, useEffect, useContext} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Form, Row, Overlay, Container} from 'react-bootstrap'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import ResultSitestByRating from './components/ResultSitesByRating'
 import UsersResultByRating from './components/UsersResultSitesByRating'
-import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
+import {getData, getDataReport, getRolesMethod, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
 import swal from 'sweetalert'
 import {LoadingContext} from '../../utility/component/loading/context'
+import { roleManager } from '../../models/roleManager' 
+import {Amplify, Auth} from 'aws-amplify'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -72,7 +74,7 @@ const sitesOptions = [
     {value: 6, label: 'Ejemplo 7'},
 ]
 
-const SitesByRating = () => {
+const SitesByRating = () => { 
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
     const [marcadoMalo, setMarcadoMalo] = useState(false)
@@ -95,7 +97,34 @@ const SitesByRating = () => {
     const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
     const [data, setData] = useState([])
-    const [users, setUsers] = useState([])
+    const [users, setUsers] = useState([]) 
+
+    let navigate = useNavigate() 
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        validateRole(role.data as roleManager[])
+    }
+
+    const validateRole = async (roles:any) => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role:any) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_calificacion_generar === false) {
+                    navigate('/error/401', {replace: true})
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    } 
+
     const typeReport = async (typee: any) => {
         if (
             type.id_sitio != 0 &&
@@ -104,28 +133,28 @@ const SitesByRating = () => {
             type.calificacion != 0
         )
             if (type.fecha_inicial >= type.fecha_final) {
-                swal(
-                    'Fechas incorrectas',
-                    'Por favor introduce una fecha inicial menor que la final',
-                    'error'
-                )
+               errorDate()
             } else {
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                setName(sit[0].nombre_sitio)
-                setPhoto(sit[0].imagen)
+                
+
+                setName(type.id_sitio!=-1 ? sit[0]?.nombre_sitio : 'Todos los sitios')
+                setPhoto(type.id_sitio!=-1 ? sit[0]?.imagen : null)
                 let temp = []
                 let temp2 = []
                 for (let i = 0; i < sit.length; i++) {
+                    sit[i].data.nombre_sitio = sit[i].nombre_sitio
                     temp.push(sit[i].data)
                     for (let e = 0; e < sit[i].usuarios.length; e++) {
+                      if(type.id_sitio===-1)  sit[i].usuarios[e].nombre_sitio = sit[i].nombre_sitio
                         temp2.push(sit[i].usuarios[e])
                     }
                 }
                 setData(temp as [])
                 setUsers(temp2 as [])
                 showResultComponent()
-                setTimeout(() => setShowLoad(false), 1000)
+                setShowLoad(false)
             }
         else {
             alertNotNullInputs()
@@ -136,16 +165,34 @@ const SitesByRating = () => {
         getPublishSites()
     }
     async function getPublishSites() {
+        setShowLoad(true)
         const sites: any = await getData(getSitiosPublicados)
-
+        let temp:any = []
         sites.data.map((sit: any) => {
-            publishSite.push({value: sit.id_sitio, label: sit.nombre})
+            temp.push({
+                label: sit.nombre,
+                value: sit.id_sitio,
+            })
         })
+        //solo elementos unicos
+        temp.unshift({
+            label: 'Todos los sitios',
+            value: -1,
+        })
+        let hash:any = {}
+        temp = temp.filter((o:any) => {
+            return hash[o.value] ? false : (hash[o.value] = true)
+          })
+
+        setPublishSite(temp)
+        setShowLoad(false)
     }
 
     useEffect(() => {
         getSite()
-        //getPublishSites()
+        //getPublishSites() 
+        getRoles()
+       
     }, [])
 
     const showResultComponent = () => {
@@ -153,6 +200,7 @@ const SitesByRating = () => {
     }
 
     const handleChangeSitio = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: event.value,
@@ -166,6 +214,7 @@ const SitesByRating = () => {
     }
 
     const handleChangeFechaInicial = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -179,6 +228,7 @@ const SitesByRating = () => {
     }
 
     const handleChangeFechaFinal = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -196,7 +246,15 @@ const SitesByRating = () => {
             text: '¡Faltan campos por completar!',
             icon: 'warning',
         })
+    } 
+
+    const errorDate = async () => {
+        swal({
+            text: 'Fechas incorrectas',
+            icon: 'warning',
+        })
     }
+
 
     return (
         <Container fluid>
@@ -214,7 +272,7 @@ const SitesByRating = () => {
                                 <i className='fs-2 bi-chevron-left px-0 fw-bolder'></i>
                             </Button>
                         </Link>
-                        <h1 className='m-0'>Reporte de sitios por Califiación</h1>
+                        <h1 className='m-0'>Reporte de sitios por Calificación</h1>
                     </div>
                 </div>
             </div>
@@ -281,6 +339,7 @@ const SitesByRating = () => {
                                                 : 'btn btn-primary-outline fa-solid bi-emoji-frown fs-1 background-button'
                                         }
                                         onClick={() => {
+                                            setShowResult(false)
                                             setType({
                                                 tipo_reporte: type.tipo_reporte,
                                                 id_sitio: type.id_sitio,
@@ -332,6 +391,7 @@ const SitesByRating = () => {
                                                 : 'btn btn-primary-outline fa-solid bi-emoji-smile fs-1 background-button'
                                         }
                                         onClick={() => {
+                                            setShowResult(false)
                                             setType({
                                                 tipo_reporte: type.tipo_reporte,
                                                 id_sitio: type.id_sitio,
@@ -370,6 +430,7 @@ const SitesByRating = () => {
                                                 : 'btn btn-primary-outline fa-solid bi-emoji-laughing fs-1 background-button'
                                         }
                                         onClick={() => {
+                                            setShowResult(false)
                                             setType({
                                                 tipo_reporte: type.tipo_reporte,
                                                 id_sitio: type.id_sitio,
@@ -395,6 +456,7 @@ const SitesByRating = () => {
                                     <button
                                         className='btn btn-primary-outline background-button'
                                         onClick={() => {
+                                            setShowResult(false)
                                             setType({
                                                 tipo_reporte: type.tipo_reporte,
                                                 id_sitio: type.id_sitio,
@@ -446,6 +508,7 @@ const SitesByRating = () => {
                     site={type}
                     name={name}
                     photo={photo}
+                    users={users}
                 />
 
                 <UsersResultByRating show={showResult} users={users} />

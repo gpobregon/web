@@ -7,6 +7,7 @@ const URL = 'https://aweehvu3y3.execute-api.us-east-1.amazonaws.com/dev2'
 export const sitesMethod = 'site'
 export const statesMethod = 'site/state'
 export const updateSiteMethod = 'site/update'
+export const statelockSite='site/sites/setbloqueadoporedicion'
 
 export const categorysMethod = 'site/categories'
 export const lengthTagsMethod = 'site/categories/count'
@@ -35,6 +36,7 @@ export const changePointOfInterestFront = RoomsMethod + '/points/changePointOfIn
 export const OrderPointOfInterest = RoomsMethod + '/points/changeorder'
 export const statePointInteresPublished = RoomsMethod + '/points/changepublishedpointofinterest'
 export const getPuntoInteres = '/site/rooms/points/get'
+export const postPositionRoom = 'sitios/set/salas/orden'
 
 export const getRoutefInterest = RoomsMethod + '/points/getpointswithroute'
 export const addRoute = RoomsMethod + '/points/route/add'
@@ -91,6 +93,8 @@ export const deleteData = async (route: string, object: any) => {
 }
 
 export const postData = async (route: string, object: any) => {
+    console.log(object)
+    console.log(route)
     return new Promise((resolve, reject) => {
         fetch(`${URL}/${route}`, {method: 'POST', mode: 'cors', body: JSON.stringify(object)})
             .then((response) => {

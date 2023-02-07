@@ -2,12 +2,14 @@ import React, {useContext, useEffect, useState} from 'react'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Button, Col, Container, Form, Row} from 'react-bootstrap'
-import {Link} from 'react-router-dom'
-import ResultUserReport from './components/ResultUserReport'
-import {getData, getDataReport, getSitiosPublicados, postData} from '../../services/api'
+import {Link, useNavigate} from 'react-router-dom'
+import ResultUserReport from './components/ResultUserReport' 
+import {Amplify, Auth} from 'aws-amplify'
+import {getData, getDataReport, getRolesMethod, getSitiosPublicados, postData} from '../../services/api'
 import {PublishSite} from '../../models/publishSite'
 import swal from 'sweetalert'
 import {LoadingContext} from '../../utility/component/loading/context'
+import { roleManager } from '../../models/roleManager'
 const customStyles = {
     control: (base: any, state: any) => ({
         ...base,
@@ -77,8 +79,7 @@ const countryOptions = [
 const UserReport = () => {
     const {setShowLoad} = useContext(LoadingContext)
     const [showResult, setShowResult] = useState(false)
-    let [publishSite, setPublishSite] = useState<PublishSite[]>([])
-    const [existUsers, setExistUsers] = useState(false)
+    let [publishSite, setPublishSite] = useState<PublishSite[]>([]) 
     const [type, setType] = useState({
         tipo_reporte: 'usuarios',
         id_sitio: 0,
@@ -91,7 +92,33 @@ const UserReport = () => {
     })
     const [photo, setPhoto] = useState([])
     const [name, setName] = useState([])
-    const [data, setData] = useState([])
+    const [data, setData] = useState([])  
+    let navigate = useNavigate() 
+
+    const getRoles = async () => {
+        const role: any = await getData(getRolesMethod)
+        validateRole(role.data as roleManager[])
+    }
+
+    const validateRole = async (roles:any) => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role:any) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_usuarios_generar === false) {
+                    navigate('/error/401', {replace: true})
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    } 
+
     const typeReport = async (typee: any) => {
         if (
             type.id_sitio != 0 &&
@@ -102,29 +129,31 @@ const UserReport = () => {
             type.pais != 0
         )
             if (type.fecha_inicial >= type.fecha_final) {
-                swal(
-                    'Fechas incorrectas',
-                    'Por favor introduce una fecha inicial menor que la final',
-                    'error'
-                )
+               errorDate()
             } else {
                 setShowLoad(true)
                 const sit: any = await postData(getDataReport, typee)
-                setName(sit[0].nombre_sitio)
-                setPhoto(sit[0].imagen)
-
+                setName(type.id_sitio!=-1 ? sit[0]?.nombre_sitio : 'Todos los sitios')
+                setPhoto(type.id_sitio!=-1 ? sit[0]?.imagen : null)
+                
                 let temp = []
 
                 for (let i = 0; i < sit.length; i++) {
                     for (let e = 0; e < sit[i].data.length; e++) {
+                        sit[i].data[e].nombre_sitio = sit[i].nombre_sitio
                         temp.push(sit[i].data[e])
                     }
                 }
 
                 setData(temp as [])
-                showResultComponent()
-                setExistUsers(true)
-                setTimeout(() => setShowLoad(false), 1000)
+                if (temp.length > 0) {
+                    setShowResult(true)
+                } else {
+                    swal('No hay datos', 'No hay datos para mostrar', 'error')
+                    setShowResult(false)
+                }
+            
+                 setShowLoad(false)
             }
         else {
             alertNotNullInputs()
@@ -136,26 +165,50 @@ const UserReport = () => {
             text: '¡Faltan campos por completar!',
             icon: 'warning',
         })
+    } 
+
+    const errorDate = async () => {
+        swal({
+            text: 'Fechas incorrectas',
+            icon: 'warning',
+        })
     }
+
 
     // useEffect(() => {
     //     typeReport(type)
     // }, [])
 
-    const getSite = async () => {
-        getPublishSites()
-    }
     async function getPublishSites() {
+        setShowLoad(true)
         const sites: any = await getData(getSitiosPublicados)
-
+        let temp:any = []
         sites.data.map((sit: any) => {
-            publishSite.push({value: sit.id_sitio, label: sit.nombre})
+            temp.push({
+                label: sit.nombre,
+                value: sit.id_sitio,
+            })
         })
+        //solo elementos unicos
+        temp.unshift({
+            label: 'Todos los sitios',
+            value: -1,
+        })
+        let hash:any = {}
+        temp = temp.filter((o:any) => {
+            return hash[o.value] ? false : (hash[o.value] = true)
+          })
+
+        setPublishSite(temp)
+      
+        setShowLoad(false)
     }
 
     useEffect(() => {
-        getSite()
-        //getPublishSites()
+       
+        getPublishSites()  
+        getRoles()
+   
     }, [])
 
     const showResultComponent = () => {
@@ -163,6 +216,7 @@ const UserReport = () => {
     }
 
     const handleChangeSitio = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: event.value,
@@ -176,6 +230,7 @@ const UserReport = () => {
     }
 
     const handleChangeGenero = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -189,6 +244,7 @@ const UserReport = () => {
     }
 
     const handleChangeEdad = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -202,6 +258,7 @@ const UserReport = () => {
     }
 
     const handleChangeFechaInicial = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -215,6 +272,7 @@ const UserReport = () => {
     }
 
     const handleChangeFechaFinal = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,
@@ -228,6 +286,7 @@ const UserReport = () => {
     }
 
     const handleChangePais = (event: any) => {
+        setShowResult(false)
         setType({
             tipo_reporte: type.tipo_reporte,
             id_sitio: type.id_sitio,

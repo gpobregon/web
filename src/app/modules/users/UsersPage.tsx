@@ -41,7 +41,7 @@ const UsersPage = () => {
                     return user.attributes['custom:role'] === role.nombre
                 })
 
-                if (filter[0]?.gestor_reportes === false) {
+                if (filter[0]?.gestor_usuarios === false) {
                     navigate('/error/401', {replace: true})
                 }
             } catch (error) {

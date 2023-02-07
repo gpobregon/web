@@ -110,11 +110,6 @@ const UpdateLanguage: FC<any> = ({
                                 alignItems: 'flex-start',
                                 justifyContent: 'center',
                             }}
-                            onClick={() => {
-                                setShow(false)
-                                setShowJson(true)
-                                setUrl('idiomasMovil')
-                            }}
                         >
                             <div
                                 style={{
@@ -134,16 +129,31 @@ const UpdateLanguage: FC<any> = ({
                                 >
                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
                                     <div>
-                                        {nameMovil !== ''
-                                            ? nameMovil
-                                            : idioma?.json_movil?.split('/').pop()}
+                                        {nameMovil !== '' ? (
+                                            nameMovil
+                                        ) : (
+                                            <a
+                                                href={idioma?.json_movil}
+                                                target='_blank'
+                                                rel='noopener noreferrer'
+                                            >
+                                                {idioma?.json_movil?.split('/').pop()}
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
-
-                                <KTSVG
-                                    path='/media/icons/duotune/general/gen035.svg'
-                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
-                                />
+                                <div
+                                    onClick={() => {
+                                        setShow(false)
+                                        setShowJson(true)
+                                        setUrl('plantillasIdiomas')
+                                    }}
+                                >
+                                    <KTSVG
+                                        path='/media/icons/duotune/general/gen035.svg'
+                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                    />
+                                </div>
                             </div>
                         </Card>
                     </Form.Group>
@@ -158,11 +168,6 @@ const UpdateLanguage: FC<any> = ({
                                 alignItems: 'flex-start',
                                 justifyContent: 'center',
                             }}
-                            onClick={() => {
-                                setShow(false)
-                                setShowJson(true)
-                                setUrl('idiomasWeb')
-                            }}
                         >
                             <div
                                 style={{
@@ -183,16 +188,31 @@ const UpdateLanguage: FC<any> = ({
                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
 
                                     <div>
-                                        {nameWeb !== ''
-                                            ? nameWeb
-                                            : idioma?.json_web?.split('/').pop()}
+                                        {nameWeb !== '' ? (
+                                            nameWeb
+                                        ) : (
+                                            <a
+                                                href={idioma?.json_web}
+                                                target='_blank'
+                                                rel='noopener noreferrer'
+                                            >
+                                                {idioma?.json_web?.split('/').pop()}
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
-
-                                <KTSVG
-                                    path='/media/icons/duotune/general/gen035.svg'
-                                    className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
-                                />
+                                <div
+                                    onClick={() => {
+                                        setShow(false)
+                                        setShowJson(true)
+                                        setUrl('idiomasWeb')
+                                    }}
+                                >
+                                    <KTSVG
+                                        path='/media/icons/duotune/general/gen035.svg'
+                                        className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
+                                    />
+                                </div>
                             </div>
                         </Card>
                         <div style={{textAlign: 'center', color: 'gray'}}>

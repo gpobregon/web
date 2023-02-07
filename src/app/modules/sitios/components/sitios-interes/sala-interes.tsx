@@ -15,24 +15,19 @@ import {
     getData,
     languagesMethod,
     getRolesMethod,
+    postPositionRoom,
 } from '../../../../services/api'
 import {Room} from '../../../../models/rooms'
 import swal from 'sweetalert'
 import {PointInteres} from '../../../../models/sitio-interes'
-import {Link, Navigate, useLocation, useNavigate} from 'react-router-dom'
-import {safeUseLayoutEffect} from 'react-table'
-import {number} from 'yup'
+import { useNavigate} from 'react-router-dom'
 import {QRCodeCanvas} from 'qrcode.react'
-import logo from '../../upload-image_03.jpg'
 import AddRoom from './add-room'
 import UpdateRoom from './update-room'
-import domtoimage from 'dom-to-image'
-import {SortableContainer, SortableElement} from 'react-sortable-hoc'
-import SalaRutas from '../rutas-sitios-interes/sala-rutas'
-import {CatalogLanguage} from '../../../../models/catalogLanguage'
-import {Auth} from 'aws-amplify'
-import {roleManager} from '../../../../models/roleManager'
 import {LoadingContext} from '../../../../utility/component/loading/context'
+import { CatalogLanguage } from '../../../../models/catalogLanguage'
+import { roleManager } from '../../../../models/roleManager'
+import { Auth } from 'aws-amplify'
 
 type id_sitio = {
     id_sitio: number
@@ -242,6 +237,7 @@ const Interes: FC<id_sitio> = (props) => {
 
         //update the actual array
         setRooms(_fruitItems)
+        const a = await postData(postPositionRoom, {salas: _fruitItems.map(obj => obj.id_sala)})
     }
 
     //fin drag and drop salas
@@ -866,7 +862,8 @@ const Interes: FC<id_sitio> = (props) => {
                                                 flexDirection: 'column',
                                                 borderStyle: 'dashed',
                                                 borderWidth: '1px',
-                                                borderColor: '#009EF7',
+                                                borderColor: '#009EF7', 
+                                                cursor: 'pointer'
                                             }}
                                             onClick={async () => {
                                                 await validateRole()
@@ -898,7 +895,7 @@ const Interes: FC<id_sitio> = (props) => {
                                         >
                                             <Card.Title
                                                 className='text-center'
-                                                style={{flexDirection: 'row'}}
+                                                style={{flexDirection: 'row', cursor: 'pointer'}} 
                                             >
                                                 <i>
                                                     <Card.Subtitle className='text-muted mb-4'>

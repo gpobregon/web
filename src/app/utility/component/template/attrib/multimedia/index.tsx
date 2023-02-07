@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import {FC, useState, useEffect, useRef, Fragment} from 'react'
+import {FC, useState, useEffect, useRef, Fragment, useContext} from 'react'
 import {Row, Col, Button, ButtonGroup, Form} from 'react-bootstrap'
 import {generateRandomString} from '../../../../../utility/global/index'
 import {toAbsoluteUrl} from '../../../../../../_metronic/helpers'
 import {dataURLtoFile} from '../../../../global/index'
 import {Image} from 'react-bootstrap'
+import {ContentContext} from '../../../../../modules/template/movil/context'
 import CropImage from './cropImage'
 import swal from 'sweetalert'
 
@@ -28,8 +29,12 @@ const AttrText: FC<Model> = ({
     setEditItemResource,
 }) => {
     const [dataResource, setDataResource] = useState([])
+    const [extensionAllow, setExtensionAllow] = useState(false)
     const titulo = useRef<HTMLInputElement>(null)
     const descripcion = useRef<HTMLInputElement>(null)
+
+    const {changeTypeEdit} = useContext(ContentContext)
+
     const changeSizeTitle = (data: {}) => {
         const item = {
             ...editItem,
@@ -80,6 +85,18 @@ const AttrText: FC<Model> = ({
         changeSizeTitle({list: response})
     }
 
+    const editElementCarousel = (id: string, titulo: string, descripcion: string) => {
+        // buscar el elemento por id y cambiar el titulo y descripcion
+        const response = editItem.list.map((item: any) => {
+            if (String(item.id) === String(id)) {
+                item.titulo = titulo
+                item.descripcion = descripcion
+            }
+            return item
+        })
+        changeSizeTitle({list: response})
+    }
+
     const changeResource = () => {
         changeSizeTitle({url: ''})
         setEditItemResource([])
@@ -95,9 +112,26 @@ const AttrText: FC<Model> = ({
         }
     }, [editItemResource])
 
+    var extensionesValidas = '.png, .gif, .jpeg, .jpg, .jfif'
     useEffect(() => {
+        var extension = editItem.url?.substring(editItem.url?.lastIndexOf('.') + 1).toLowerCase()
+        var extensionValida: number = extensionesValidas.indexOf(extension)
         if (editItem.type === 'image') {
-            setEditItemResource(editItem.url !== '' ? {url: editItem.url} : [])
+            if (extensionValida > 0) {
+                setEditItemResource({url: editItem.url})
+                setExtensionAllow(true)
+            } else {
+                setExtensionAllow(false)
+                // if(editItem.url){
+                //     swal({
+                //         title: 'Error!',
+                //         text: `La imagen debe tener una de las siguientes extensiones ${extensionesValidas}`,
+                //         icon: 'error',
+                //     })
+                // }
+                editItem.url = ''
+                setEditItemResource([])
+            }
         }
     }, [editItem])
 
@@ -105,6 +139,13 @@ const AttrText: FC<Model> = ({
         <div className='w-100 text-center' ref={drop2}>
             {editItem.type === 'image' && (
                 <Row>
+                    <div>
+                        <p className='small text-muted'>
+                            {changeTypeEdit === 1
+                                ? 'Se recomienda no cargar imagenes mayores a 5 MB'
+                                : ''}
+                        </p>
+                    </div>
                     <Col className='d-flex justify-content-center '>
                         <div className='py-2 d-flex flex-row'>
                             <div className='tooltip-container mx-2'>
@@ -168,7 +209,7 @@ const AttrText: FC<Model> = ({
                             </div>
                         </div>
                     </Col>
-                    {editItemResource.nombre || editItemResource.url ? (
+                    {editItemResource.nombre || (editItemResource.url && extensionAllow) ? (
                         <Fragment>
                             <Col lg={12}>
                                 <div className='w-100'>
@@ -203,6 +244,11 @@ const AttrText: FC<Model> = ({
                 editItem.type === 'image-360') && (
                 <Fragment>
                     <Row>
+                        <p className='small text-muted'>
+                            {changeTypeEdit === 1
+                                ? 'Se recomienda no cargar imagenes mayores a 5 MB'
+                                : ''}
+                        </p>
                         <Col>
                             <div className='resource-element size-resource-video rounded d-flex justify-content-center align-items-center'>
                                 <span className='text-center'>
@@ -250,13 +296,23 @@ const AttrText: FC<Model> = ({
                     <Row>
                         <Col>
                             {!editItemResource.url ? (
-                                <div className='resource-element size-resource-video rounded d-flex justify-content-center align-items-center'>
-                                    <span className='text-center'>
-                                        <p>
-                                            <i className='bi bi-arrow-90deg-down text-white' />
+                                <div>
+                                    <div>
+                                        <p className='small text-muted'>
+                                            {changeTypeEdit === 1
+                                                ? 'Se recomienda no cargar imagenes mayores a 5 MB'
+                                                : ''}
                                         </p>
-                                        <p>Arrasta una imagen</p>
-                                    </span>
+                                    </div>
+
+                                    <div className='resource-element size-resource-video rounded d-flex justify-content-center align-items-center'>
+                                        <span className='text-center'>
+                                            <p>
+                                                <i className='bi bi-arrow-90deg-down text-white' />
+                                            </p>
+                                            <p>Arrasta una imagen</p>
+                                        </span>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className='w-100'>
@@ -273,12 +329,7 @@ const AttrText: FC<Model> = ({
                         </Col>
                         <Col lg={12} className='py-3'>
                             <Form.Label>Título</Form.Label>
-                            <Form.Control
-                                type='text'
-                                size='sm'
-                                placeholder='Títitulo'
-                                ref={titulo}
-                            />
+                            <Form.Control type='text' size='sm' placeholder='Título' ref={titulo} />
                             {titulo.current && !titulo.current.value && 'El título es requerido'}
                         </Col>
                         <Col lg={12}>
@@ -307,8 +358,40 @@ const AttrText: FC<Model> = ({
                                         <li className='list-group-item bg-transparent' key={index}>
                                             <div className='d-flex'>
                                                 <div className='p-2 w-100'>
-                                                    {item.titulo ? item.titulo : item.id}
+                                                    <Form.Label>Título</Form.Label>
+                                                    <input
+                                                        type='text'
+                                                        className='form-control'
+                                                        defaultValue={
+                                                            item.titulo ? item.titulo : item.id
+                                                        }
+                                                        onChange={(e) =>
+                                                            editElementCarousel(
+                                                                item.id,
+                                                                e.target.value,
+                                                                item.descripcion
+                                                            )
+                                                        }
+                                                    />
+                                                    <Form.Label>Descripción</Form.Label>
+                                                    <input
+                                                        type='text'
+                                                        className='form-control'
+                                                        defaultValue={
+                                                            item.descripcion
+                                                                ? item.descripcion
+                                                                : item.id
+                                                        }
+                                                        onChange={(e) =>
+                                                            editElementCarousel(
+                                                                item.id,
+                                                                item.titulo,
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
                                                 </div>
+
                                                 <div
                                                     className='p-2 flex-shrink-1'
                                                     onClick={() => destroyElementCarousel(item.id)}

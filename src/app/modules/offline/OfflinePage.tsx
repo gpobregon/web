@@ -83,8 +83,8 @@ const OfflineManagement: FC<any> = ({show}) => {
                             checked={t.checked}
                             onClick={async (e: any) => {
                                 await validateRole()
-
-                                if (m.nombre === 'Sitios' && !permissionOfflineSites) {
+                                if (m.nombre === 'Configuración inicial de sitios' || m.nombre === 'Personalización permitida de sitios' && !permissionOfflineSites) {
+                                    
                                     swal({
                                         title: 'No tienes los permisos para cambiar el contenido descargable de los sitios',
                                         icon: 'warning',
@@ -92,7 +92,7 @@ const OfflineManagement: FC<any> = ({show}) => {
                                     return
                                 }
 
-                                if (m.nombre === 'Puntos de interés' && !permissionOfflinePoints) {
+                                if (m.nombre === 'Configuración inicial de puntos de interés' || m.nombre==='Configuración inicial de puntos de interés' && !permissionOfflinePoints) {
                                     swal({
                                         title: 'No tienes los permisos para cambiar el contenido descargable de los puntos de interés',
                                         icon: 'warning',
@@ -120,8 +120,8 @@ const OfflineManagement: FC<any> = ({show}) => {
                             }}
                             name='group1'
                             // type={type}
-                        />
-                    </Col>
+                        /> 
+                    </Col> 
                 )
                 arr.push(x)
             })
@@ -158,8 +158,7 @@ const OfflineManagement: FC<any> = ({show}) => {
         try {
             logout()
             await Amplify.Auth.forgetDevice()
-        } catch (error) {
-        }
+        } catch (error) {}
     }
 
     //fin
@@ -179,7 +178,7 @@ const OfflineManagement: FC<any> = ({show}) => {
                     alt_permisOfflinePoints = filter[0]?.offline_puntos
                     setPermissionOfflineSites(filter[0]?.offline_sitios)
                     setPermissionOfflinePoints(filter[0]?.offline_puntos)
-                }
+                } 
             } catch (error) {
                 swal(
                     'Se ha cambiado la contraseña de tu usuario',

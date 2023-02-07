@@ -39,7 +39,7 @@ const ReportsPage = () => {
                 const filter = roles.filter((role) => {
                     return user.attributes['custom:role'] === role.nombre
                 })
-
+                // console.log("filter: ", filter);
                 if (filter[0]?.gestor_reportes === false) {
                     navigate('/error/401', {replace: true})
                 }
@@ -50,6 +50,78 @@ const ReportsPage = () => {
                     'warning'
                 )
                 await forgotDevice()
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    } 
+
+    const validateUsuarios = async () => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_usuarios_generar === true) {
+                    navigate('/reportes/reporte-de-usuario')
+                }else{ 
+                    swal({
+                        title: 'No tienes permiso para entrar a este reporte',
+                        icon: 'warning',
+                    })
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    } 
+
+    const validateVisitas = async () => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if (filter[0]?.reporte_visitas_generar === true) {
+                    navigate('/reportes/sitios-mas-visitados')
+                }else{ 
+                    swal({
+                        title: 'No tienes permiso para entrar a este reporte',
+                        icon: 'warning',
+                    })
+                }
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        })
+
+        setTimeout(() => setShowLoad(false), 1000)
+    } 
+
+    const validateCalificacion = async () => {
+        setShowLoad(true)
+        Auth.currentUserInfo().then(async (user) => {
+            try {
+                const filter = roles.filter((role) => {
+                    return user.attributes['custom:role'] === role.nombre
+                })
+                console.log("filter: ", filter);
+                if ( filter[0]?.reporte_calificacion_generar === true) {
+                    navigate('/reportes/sitios-por-calificacion')
+                }else{ 
+                    swal({
+                        title: 'No tienes permiso para entrar a este reporte',
+                        icon: 'warning',
+                    })
+                }
+            } catch (error) {
+                console.log("error: ", error);
             }
         })
 
@@ -73,13 +145,15 @@ const ReportsPage = () => {
                 </Row>
                 <Row className='g-10'>
                     <Col sm='4' md='3' style={{cursor: 'pointer'}}>
-                        <Link to='/reportes/reporte-de-usuario'>
+                        {/* <Link to='/reportes/reporte-de-usuario'> */}
                             <Card
                                 className='d-flex justify-content-center align-items-center p-5'
                                 style={{
                                     height: 270,
-                                }}
-                            >
+                                }} 
+                                onClick = {() => validateUsuarios()}
+                            > 
+                            
                                 <Card.Title
                                     className='mb-4'
                                     style={{
@@ -97,16 +171,17 @@ const ReportsPage = () => {
                                 </Card.Title>
                                 <Card.Subtitle className='mb-4 fs-3'>Usuarios</Card.Subtitle>
                             </Card>
-                        </Link>
+                        {/* </Link> */}
                     </Col>
 
                     <Col sm='4' md='3' style={{cursor: 'pointer'}}>
-                        <Link to='/reportes/sitios-mas-visitados'>
+                        {/* <Link to='/reportes/sitios-mas-visitados'> */}
                             <Card
                                 className='d-flex justify-content-center align-items-center p-5'
                                 style={{
                                     height: 270,
-                                }}
+                                }} 
+                                onClick = {() => validateVisitas()}
                             >
                                 <Card.Title
                                     className='mb-4'
@@ -124,19 +199,20 @@ const ReportsPage = () => {
                                     </span>
                                 </Card.Title>
                                 <Card.Subtitle className='mb-4 fs-3'>
-                                    Sitios más visitados
+                                    Visitas por sitio
                                 </Card.Subtitle>
                             </Card>
-                        </Link>
+                        {/* </Link> */}
                     </Col>
 
                     <Col sm='4' md='3' style={{cursor: 'pointer'}}>
-                        <Link to='/reportes/sitios-por-calificacion'>
+                        {/* <Link to='/reportes/sitios-por-calificacion'> */}
                             <Card
                                 className='d-flex justify-content-center align-items-center p-5'
                                 style={{
                                     height: 270,
-                                }}
+                                }} 
+                                onClick = {() => validateCalificacion()}
                             >
                                 <Card.Title
                                     className='mb-4'
@@ -157,7 +233,7 @@ const ReportsPage = () => {
                                     Sitios por calificación
                                 </Card.Subtitle>
                             </Card>
-                        </Link>
+                        {/* </Link> */}
                     </Col>
                 </Row>
             </Container>

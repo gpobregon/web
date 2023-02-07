@@ -11,7 +11,9 @@ import {
     Nav,
     NavDropdown,
     Modal,
+    Popover,
 } from 'react-bootstrap'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated'
 import {Link, Navigate, useLocation, useNavigate, useParams} from 'react-router-dom'
@@ -20,7 +22,7 @@ import Moment from 'moment'
 import {
     getData,
     sitesMethod,
-    deleteData,
+    statelockSite,
     postData,
     categorysMethod,
     statesMethod,
@@ -51,6 +53,8 @@ import {Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
 import {ContentContext} from '../template/movil/context'
 import {roleManager} from '../../models/roleManager'
+import {styled} from '@mui/system'
+import {Tooltip, tooltipClasses, TooltipProps} from '@mui/material'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -105,6 +109,16 @@ const customStyles = {
 const animatedComponents = makeAnimated()
 
 const EditSite = () => {
+    //preguntar si quiere salir de la pestana
+    window.onunload = async function (e) {
+        await postData(statelockSite, {
+            id_sitio: site.id_sitio,
+            bloqueado_por_edicion: false,
+            bloqueado_por_edicion_id: '',
+            bloqueado_por_edicion_nombre: '',
+        })
+    }
+
     //const { toogleSave, discardChange } = useContext(ContentContext)
     const {setShowLoad} = useContext(LoadingContext)
     const [loadingSite, setloadingSite] = useState(true)
@@ -113,16 +127,6 @@ const EditSite = () => {
     const [botonActivo, setbotonActivo] = useState(false)
 
     // obtener usuario que editó
-    const [dataUser, setDataUser] = useState({
-        email: '',
-        name: '',
-        phoneNumber: '',
-        lastname: '',
-        imageProfile: '',
-        role: '',
-        descripcion: '',
-        id: '',
-    })
 
     const [dataUserHeader, setDataUserHeader] = useState({
         email: '',
@@ -138,6 +142,20 @@ const EditSite = () => {
     const getUserForHeader = async () => {
         tryCharging()
         Auth.currentUserInfo().then(async (user) => {
+            if (
+                site.bloqueado_por_edicion_id != user.attributes.sub &&
+                site.bloqueado_por_edicion_id != '' &&
+                site.bloqueado_por_edicion &&
+                site.bloqueado_por_edicion_id != null
+            ) {
+                swal({
+                    text: `Este sitio está siendo editado por: '${site.bloqueado_por_edicion_nombre}'`,
+                    icon: 'error',
+                    timer: 5000,
+                })
+                navigate('/sitios')
+                return
+            }
             setDataUserHeader({
                 email: user.attributes.email,
                 name: user.attributes.name,
@@ -148,6 +166,8 @@ const EditSite = () => {
                 descripcion: '',
                 id: user.attributes.sub,
             })
+
+            await saveLocked(true, user.attributes.sub, user.attributes.name) //bloquear sitio
         })
     }
 
@@ -223,7 +243,9 @@ const EditSite = () => {
         }))
 
         setmostrarCategorias(mostrarCategorys)
-        await getUser()
+
+        getUserForHeader()
+
         setloadingSite(false)
     }
 
@@ -233,7 +255,13 @@ const EditSite = () => {
         site.bloqueado_por_edicion_id = idUser
         site.bloqueado_por_edicion_nombre = nameUser
         if (site.id_sitio != 0) {
-            const sit: any = await postData(updateSiteMethod, site)
+            await postData(statelockSite, {
+                id_sitio: site.id_sitio,
+                bloqueado_por_edicion: bloqueado_por_edicion,
+                bloqueado_por_edicion_id: site.bloqueado_por_edicion_id,
+                bloqueado_por_edicion_nombre: nameUser,
+            })
+
             setSite({
                 ...site,
             })
@@ -500,8 +528,17 @@ const EditSite = () => {
             title: '¿Estas seguro de descartar los cambios ?',
             icon: 'warning',
             buttons: ['No', 'Sí'],
-        }).then((res) => {
+        }).then(async (res) => {
             if (res) {
+                setShowLoad(true)
+                await postData(statelockSite, {
+                    id_sitio: site.id_sitio,
+                    bloqueado_por_edicion: false,
+                    bloqueado_por_edicion_id: '',
+                    bloqueado_por_edicion_nombre: '',
+                })
+
+                setShowLoad(false)
                 swal({
                     text: 'Descartado Correctamente',
                     icon: 'success',
@@ -518,12 +555,14 @@ const EditSite = () => {
             buttons: ['No', 'Sí'],
         }).then(async (res) => {
             if (res) {
+                setShowLoad(true)
+                const sit: any = await postData(updateSiteMethod, sitee)
+                setShowLoad(false)
                 swal({
                     text: 'Cambios guardados',
                     icon: 'success',
                     timer: 2000,
                 })
-                const sit: any = await postData(updateSiteMethod, sitee)
                 navigate('/sitios')
             }
         })
@@ -694,11 +733,20 @@ const EditSite = () => {
     useEffect(() => {
         // getUser()
         getSite()
-        getUserForHeader()
     }, [loadingSite])
 
     const blockInvalidChar = (e: {key: string; preventDefault: () => any}) =>
         ['e', 'E'].includes(e.key) && e.preventDefault()
+
+    const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+        <Tooltip {...props} classes={{popper: className}} />
+    ))(({theme}) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            color: '#FFF',
+            fontSize: 12,
+            fontWeight: 500,
+        },
+    }))
 
     return (
         <>
@@ -745,55 +793,60 @@ const EditSite = () => {
                         <div id='center2'>
                             <ul className='nav justify-content-end '>
                                 <li className='nav-item'>
-                                    <Button
-                                        className={
-                                            status.favorito == false
-                                                ? 'btn-secondary text-white  fa-regular fa-star background-button'
-                                                : 'btn-secondary text-primary fas fa-star background-button'
-                                        }
-                                        id='center2'
-                                        onClick={async () => {
-                                            await validateRole()
+                                    <CustomTooltip title='Sitio destacado'>
+                                        <Button
+                                            className={
+                                                status.favorito == false
+                                                    ? 'btn-secondary text-white  fa-regular fa-star background-button'
+                                                    : 'btn-secondary text-primary fas fa-star background-button'
+                                            }
+                                            id='center2'
+                                            onClick={async () => {
+                                                await validateRole()
 
-                                            if (!permissionFavoriteSite) {
-                                                swal({
-                                                    title: 'No tienes permiso para marcar como destacado un sitio',
-                                                    icon: 'warning',
-                                                })
-                                                return
-                                            }
-                                            // status.favorito == false
-                                            if (!status.favorito) {
-                                                status.favorito = !status.favorito
-                                                changeStatus(
-                                                    status.favorito,
-                                                    true,
-                                                    false,
-                                                    true,
-                                                    true,
-                                                    true
-                                                )
-                                            }
-                                            // : changeStatus(false, status.publicado, status.oculto)
-                                        }}
-                                        style={{display: 'flex', marginRight: '4px'}}
-                                    ></Button>
+                                                if (!permissionFavoriteSite) {
+                                                    swal({
+                                                        title: 'No tienes permiso para marcar como destacado un sitio',
+                                                        icon: 'warning',
+                                                    })
+                                                    return
+                                                }
+                                                // status.favorito == false
+                                                if (!status.favorito) {
+                                                    status.favorito = !status.favorito
+                                                    changeStatus(
+                                                        status.favorito,
+                                                        true,
+                                                        false,
+                                                        true,
+                                                        true,
+                                                        true
+                                                    )
+                                                }
+                                                // : changeStatus(false, status.publicado, status.oculto)
+                                            }}
+                                            style={{display: 'flex', marginRight: '4px'}}
+                                        ></Button>
+                                    </CustomTooltip>
                                 </li>
                                 <li className='nav-item'>
-                                    <Button
-                                        className='btn-secondary fa-solid fa-qrcode background-button '
-                                        id='center2'
-                                        onClick={() => {
-                                            setQr(site.qr_path)
-                                            handleShow()
-                                        }}
-                                        style={{
-                                            color: '#92929F',
-                                            display: 'flex',
-                                            marginRight: '4px',
-                                        }}
-                                    ></Button>
+                                    <CustomTooltip title='Generar QR'>
+                                        <Button
+                                            className='btn-secondary fa-solid fa-qrcode background-button '
+                                            id='center2'
+                                            onClick={() => {
+                                                setQr(site.qr_path)
+                                                handleShow()
+                                            }}
+                                            style={{
+                                                color: '#92929F',
+                                                display: 'flex',
+                                                marginRight: '4px',
+                                            }}
+                                        ></Button>
+                                    </CustomTooltip>
                                 </li>
+
                                 <Modal show={show} onHide={handleClose}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>Escanee su Código QR</Modal.Title>
@@ -816,173 +869,203 @@ const EditSite = () => {
                                         </Button>
                                     </Modal.Footer>
                                 </Modal>
-                                <Button
-                                    className={
-                                        status.oculto == false
-                                            ? 'btn-secondary fa-solid fa-eye background-button'
-                                            : 'btn-secondary fa-solid fa-eye-slash background-button'
-                                    }
-                                    id='center2'
-                                    onClick={async () => {
-                                        await validateRole()
-
-                                        if (!permissionChangeVisibilitySite) {
-                                            swal({
-                                                title: 'No tienes permiso para cambiar la visibilidad de un sitio',
-                                                icon: 'warning',
-                                            })
-                                            return
+                                <CustomTooltip title='Visibilidad del sitio'>
+                                    <Button
+                                        className={
+                                            status.oculto == false
+                                                ? 'btn-secondary fa-solid fa-eye background-button'
+                                                : 'btn-secondary fa-solid fa-eye-slash background-button'
                                         }
-                                        // status.oculto == false
-                                        //   ? changeStatus(status.favorito, status.publicado, true)
-                                        //   : changeStatus(status.favorito, status.publicado, false)
+                                        id='center2'
+                                        onClick={async () => {
+                                            await validateRole()
 
-                                        changeStatus(
-                                            status.favorito,
-                                            status.publicado,
-                                            !status.oculto,
-                                            status.cercania_activa,
-                                            status.publicar_web,
-                                            status.publicar_movil
-                                        )
-                                    }}
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
-                                <Button
-                                    className='btn-secondary fa-solid fa-xmark background-button'
-                                    id='center2'
-                                    onClick={() => {
-                                        // var n = window.confirm('Esta seguro que descartar cambios?')
-                                        // if (n == true) {
-                                        //     window.location.href = "../sitios";
-                                        // } else {
-                                        // }
+                                            if (!permissionChangeVisibilitySite) {
+                                                swal({
+                                                    title: 'No tienes permiso para cambiar la visibilidad de un sitio',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
+                                            // status.oculto == false
+                                            //   ? changeStatus(status.favorito, status.publicado, true)
+                                            //   : changeStatus(status.favorito, status.publicado, false)
 
-                                        discardChanges()
-                                    }}
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
-                                <Button
-                                    className='btn-secondary fa-solid fa-floppy-disk background-button'
-                                    id='center2'
-                                    onClick={async () => {
-                                        await validateRole()
+                                            changeStatus(
+                                                status.favorito,
+                                                status.publicado,
+                                                !status.oculto,
+                                                status.cercania_activa,
+                                                status.publicar_web,
+                                                status.publicar_movil
+                                            )
+                                        }}
+                                        style={{
+                                            color: !status.oculto ? '#009ef7' : '#92929F',
+                                            display: 'flex',
+                                            marginRight: '4px',
+                                        }}
+                                    ></Button>
+                                </CustomTooltip>
+                                <CustomTooltip title='Descartar cambios'>
+                                    <Button
+                                        className='btn-secondary fa-solid fa-xmark background-button'
+                                        id='center2'
+                                        onClick={() => {
+                                            // var n = window.confirm('Esta seguro que descartar cambios?')
+                                            // if (n == true) {
+                                            //     window.location.href = "../sitios";
+                                            // } else {
+                                            // }
 
-                                        if (!permissionPostSite) {
-                                            swal({
-                                                title: 'No tienes permiso para publicar cambios de un sitio',
-                                                icon: 'warning',
-                                            })
-                                            return
+                                            discardChanges()
+                                        }}
+                                        style={{
+                                            color: '#92929F',
+                                            display: 'flex',
+                                            marginRight: '4px',
+                                        }}
+                                    ></Button>
+                                </CustomTooltip>
+                                <CustomTooltip title='Guardar cambios'>
+                                    <Button
+                                        className='btn-secondary fa-solid fa-floppy-disk background-button'
+                                        id='center2'
+                                        onClick={async () => {
+                                            
+                                            postSite(site)
+                                        }}
+                                        style={{
+                                            color: '#92929F',
+                                            display: 'flex',
+                                            marginRight: '4px',
+                                        }}
+                                    ></Button>
+                                </CustomTooltip>
+                                <CustomTooltip title='Publicar'>
+                                    <Button
+                                        onClick={async () => {
+                                            await validateRole()
+
+                                            if (!permissionPostSite) {
+                                                swal({
+                                                    title: 'No tienes permiso para publicar cambios de un sitio',
+                                                    icon: 'warning',
+                                                })
+                                                return
+                                            }
+                                            changeStatus(
+                                                status.favorito,
+                                                !status.publicado,
+                                                status.oculto,
+                                                status.cercania_activa,
+                                                status.publicar_web,
+                                                status.publicar_movil
+                                            )
+                                            publishTypeSite()
+                                        }}
+                                        className={
+                                            status.publicado == false
+                                                ? 'btn-secondary fa-solid fa-download background-button'
+                                                : 'btn-secondary fa-solid fa-upload background-button'
                                         }
-                                        postSite(site)
-                                    }}
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
-                                <Button
-                                    onClick={() => {
-                                        //toogleSave()
-                                        // status.publicado == false
-                                        //   ? changeStatus(status.favorito, true, status.oculto)
-                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                        id='center2'
+                                        style={{
+                                            color: status.publicado ? '#009ef7' : '#92929F',
+                                            display: 'flex',
+                                            marginRight: '4px',
+                                        }}
+                                    ></Button>
+                                </CustomTooltip>
+                                <CustomTooltip title='Mostrar maqueta movil'>
+                                    <Button
+                                        onClick={() => {
+                                            //toogleSave()
+                                            // status.publicado == false
+                                            //   ? changeStatus(status.favorito, true, status.oculto)
+                                            //   : changeStatus(status.favorito, false, status.oculto)
 
-                                        changeStatus(
-                                            status.favorito,
-                                            !status.publicado,
-                                            status.oculto,
-                                            status.cercania_activa,
-                                            status.publicar_web,
-                                            status.publicar_movil
-                                        )
-                                        publishTypeSite()
-                                    }}
-                                    className={
-                                        status.publicado == false
-                                            ? 'btn-secondary fa-solid fa-download background-button'
-                                            : 'btn-secondary fa-solid fa-upload background-button'
-                                    }
-                                    id='center2'
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
-                                <Button
-                                    onClick={() => {
-                                        //toogleSave()
-                                        // status.publicado == false
-                                        //   ? changeStatus(status.favorito, true, status.oculto)
-                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                            changeStatus(
+                                                status.favorito,
+                                                status.publicado,
+                                                status.oculto,
+                                                status.cercania_activa,
+                                                status.publicar_web,
+                                                !status.publicar_movil
+                                            )
+                                        }}
+                                        className={
+                                            status.publicado == false
+                                                ? 'btn-secondary fa-solid fa-mobile background-button'
+                                                : 'btn-secondary fa-solid fa-mobile background-button'
+                                        }
+                                        id='center2'
+                                        style={{
+                                            color: status.publicar_movil ? '#009ef7' : '#92929F',
+                                            display: 'flex',
+                                            marginRight: '4px',
+                                        }}
+                                    ></Button>
+                                </CustomTooltip>
+                                <CustomTooltip title='Mostrar maqueta web'>
+                                    <Button
+                                        onClick={() => {
+                                            //toogleSave()
+                                            // status.publicado == false
+                                            //   ? changeStatus(status.favorito, true, status.oculto)
+                                            //   : changeStatus(status.favorito, false, status.oculto)
 
-                                        changeStatus(
-                                            status.favorito,
-                                            status.publicado,
-                                            status.oculto,
-                                            status.cercania_activa,
-                                            status.publicar_web,
-                                            !status.publicar_movil
-                                        )
-                                    }}
-                                    className={
-                                        status.publicado == false
-                                            ? 'btn-secondary fa-solid fa-mobile background-button'
-                                            : 'btn-secondary fa-solid fa-mobile background-button'
-                                    }
-                                    id='center2'
-                                    style={{
-                                        color: status.publicar_movil ? '#009ef7' : '#92929F',
-                                        display: 'flex',
-                                        marginRight: '4px',
-                                    }}
-                                ></Button>
-                                <Button
-                                    onClick={() => {
-                                        //toogleSave()
-                                        // status.publicado == false
-                                        //   ? changeStatus(status.favorito, true, status.oculto)
-                                        //   : changeStatus(status.favorito, false, status.oculto)
+                                            changeStatus(
+                                                status.favorito,
+                                                status.publicado,
+                                                status.oculto,
+                                                status.cercania_activa,
+                                                !status.publicar_web,
+                                                status.publicar_movil
+                                            )
+                                        }}
+                                        className={
+                                            status.publicado == false
+                                                ? 'btn-secondary fa-solid fa-computer background-button'
+                                                : 'btn-secondary fa-solid fa-computer background-button'
+                                        }
+                                        id='center2'
+                                        style={{
+                                            color: status.publicar_web ? '#009ef7' : '#92929F',
+                                            display: 'flex',
+                                            marginRight: '4px',
+                                        }}
+                                    ></Button>
+                                </CustomTooltip>
+                                <CustomTooltip title='Cercania activa'>
+                                    <Button
+                                        onClick={() => {
+                                            // status.publicado == false
+                                            //   ? changeStatus(status.favorito, true, status.oculto)
+                                            //   : changeStatus(status.favorito, false, status.oculto)
 
-                                        changeStatus(
-                                            status.favorito,
-                                            status.publicado,
-                                            status.oculto,
-                                            status.cercania_activa,
-                                            !status.publicar_web,
-                                            status.publicar_movil
-                                        )
-                                    }}
-                                    className={
-                                        status.publicado == false
-                                            ? 'btn-secondary fa-solid fa-computer background-button'
-                                            : 'btn-secondary fa-solid fa-computer background-button'
-                                    }
-                                    id='center2'
-                                    style={{
-                                        color: status.publicar_web ? '#009ef7' : '#92929F',
-                                        display: 'flex',
-                                        marginRight: '4px',
-                                    }}
-                                ></Button>
-                                <Button
-                                    onClick={() => {
-                                        // status.publicado == false
-                                        //   ? changeStatus(status.favorito, true, status.oculto)
-                                        //   : changeStatus(status.favorito, false, status.oculto)
-
-                                        changeStatus(
-                                            status.favorito,
-                                            status.publicado,
-                                            status.oculto,
-                                            !status.cercania_activa,
-                                            status.publicar_web,
-                                            status.publicar_movil
-                                        )
-                                    }}
-                                    className={
-                                        status.cercania_activa == false
-                                            ? 'btn-secondary fa-solid bi-cursor background-button'
-                                            : 'btn-secondary fa-solid bi-cursor-fill background-button'
-                                    }
-                                    id='center2'
-                                    style={{color: '#92929F', display: 'flex', marginRight: '4px'}}
-                                ></Button>
+                                            changeStatus(
+                                                status.favorito,
+                                                status.publicado,
+                                                status.oculto,
+                                                !status.cercania_activa,
+                                                status.publicar_web,
+                                                status.publicar_movil
+                                            )
+                                        }}
+                                        className={
+                                            status.cercania_activa == false
+                                                ? 'btn-secondary fa-solid bi-cursor background-button'
+                                                : 'btn-secondary fa-solid bi-cursor-fill background-button'
+                                        }
+                                        id='center2'
+                                        style={{
+                                            color: status.cercania_activa ? '#009ef7' : '#92929F',
+                                            display: 'flex',
+                                            marginRight: '4px',
+                                        }}
+                                    ></Button>
+                                </CustomTooltip>
                                 {/* <Button className='btn-secondary fa-solid fa-gear background-button' id='center2' style={{ color: '#92929F', display: 'flex' }}></Button> */}
                             </ul>
                         </div>
@@ -1484,11 +1567,6 @@ const EditSite = () => {
                                                 alignItems: 'flex-start',
                                                 justifyContent: 'center',
                                             }}
-                                            onClick={() => {
-                                                setArchivoPermitido('.geojson')
-                                                setUbicacionBucket('sitePages/GeoJSON')
-                                                setModalupIMG(true)
-                                            }}
                                         >
                                             <div
                                                 style={{
@@ -1509,13 +1587,27 @@ const EditSite = () => {
                                                     <i className='bi bi-file-earmark-arrow-up-fill svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3' />
 
                                                     <div>
-                                                        {site.geo_json === ''
-                                                            ? 'Subir GeoJSON'
-                                                            : nombreJson}
+                                                        {site.geo_json === '' ? (
+                                                            'Subir GeoJSON'
+                                                        ) : (
+                                                            <a
+                                                                href={site.geo_json}
+                                                                target='_blank'
+                                                                rel='noopener noreferrer'
+                                                            >
+                                                                {nombreJson}
+                                                            </a>
+                                                        )}
                                                     </div>
                                                 </div>
 
-                                                <div>
+                                                <div
+                                                    onClick={() => {
+                                                        setArchivoPermitido('.geojson')
+                                                        setUbicacionBucket('sitePages/GeoJSON')
+                                                        setModalupIMG(true)
+                                                    }}
+                                                >
                                                     <KTSVG
                                                         path='/media/icons/duotune/general/gen035.svg'
                                                         className='svg-icon-2 svg-icon-lg-1 svg-icon-gray-500 m-3'
@@ -1524,7 +1616,7 @@ const EditSite = () => {
                                             </div>
                                         </Card>
                                         <div style={{textAlign: 'center', color: 'gray'}}>
-                                            Formato permitido: .json
+                                            Formato permitido: .geojson
                                         </div>
                                     </Form.Group>
                                     <br></br>

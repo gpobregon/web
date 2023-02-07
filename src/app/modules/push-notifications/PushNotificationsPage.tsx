@@ -23,6 +23,8 @@ import {Amplify, Auth} from 'aws-amplify'
 import {LoadingContext} from '../../utility/component/loading/context'
 import {useAuth} from '../auth'
 import {DeleteImage} from '../deleteFile/delete-image'
+import {Tooltip, tooltipClasses, TooltipProps} from '@mui/material'
+import {styled} from '@mui/system'
 
 const PushNotificationsPage = () => {
     const [totalPages, setTotalPages] = useState(1)
@@ -378,7 +380,7 @@ const PushNotificationsPage = () => {
     }
 
     const deleteSelectedNotification = async () => {
-        await validateRole()
+        // await validateRole()
 
         if (!permissionDeleteNotificationProgrammed && optionGetNotifications === 'programadas') {
             swal({
@@ -395,7 +397,6 @@ const PushNotificationsPage = () => {
             })
             return
         }
-
         if (arrayDeleteNotifications.length === 0) {
             swal({
                 title: 'Selecciona notificaciones para eliminar',
@@ -408,6 +409,8 @@ const PushNotificationsPage = () => {
                 buttons: ['No', 'Sí'],
             }).then((willDelete) => {
                 if (willDelete) {
+                    setShowLoad(true)
+
                     for (let i = 0; i < arrayDeleteNotifications.length; i++) {
                         deleteData(deleteNotificationMethod, {
                             id_notificacion: parseInt(arrayDeleteNotifications[i]),
@@ -417,15 +420,12 @@ const PushNotificationsPage = () => {
                         title: 'Se han eliminado las notificaciones',
                         icon: 'success',
                     })
+                    arrayDeleteNotifications.length = 0
+
+                    setTimeout(chooseGetNotifications, 500)
+                    setShowLoad(false)
                 }
             })
-
-            setTimeout(chooseGetNotifications, 500)
-            setTimeout(chooseGetNotifications, 1000)
-            setTimeout(chooseGetNotifications, 2000)
-            setTimeout(chooseGetNotifications, 3000)
-
-            arrayDeleteNotifications.length = 0
         }
     }
 
@@ -482,8 +482,7 @@ const PushNotificationsPage = () => {
         try {
             logout()
             await Amplify.Auth.forgetDevice()
-        } catch (error) {
-        }
+        } catch (error) {}
     }
 
     //fin
@@ -537,6 +536,16 @@ const PushNotificationsPage = () => {
     }, [pageNumber])
 
     const [radioValue, setRadioValue] = useState('1')
+
+    const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+        <Tooltip {...props} classes={{popper: className}} />
+    ))(({theme}) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            color: '#FFF',
+            fontSize: 12,
+            fontWeight: 500,
+        },
+    }))
 
     return (
         <Container fluid>
@@ -661,12 +670,14 @@ const PushNotificationsPage = () => {
                             {`${optionSort}`}
                         </div>
                         <div>
-                            <Button
-                                variant='outline-danger'
-                                onClick={() => deleteSelectedNotification()}
-                            >
-                                <i className='bi bi-trash fs-1'></i>
-                            </Button>
+                            <CustomTooltip title='Eliminar'>
+                                <Button
+                                    variant='outline-danger'
+                                    onClick={() => deleteSelectedNotification()}
+                                >
+                                    <i className='bi bi-trash fs-1'></i>
+                                </Button>
+                            </CustomTooltip>
                         </div>
                     </div>
 
@@ -716,16 +727,19 @@ const PushNotificationsPage = () => {
                                             </div>
                                         </td>
                                         <td style={{width: '144px'}}>
-                                            <Button
-                                                variant='outline-primary'
-                                                className='text-center'
-                                                onClick={() => {
-                                                    toggleCardAddNotification(false)
-                                                    showCardUpdateNotification(notification)
-                                                }}
-                                            >
-                                                <i className='fs-2 bi-pencil px-0 fw-bolder'></i>
-                                            </Button>
+                                            <CustomTooltip title='Editar'>
+                                                <Button
+                                                    variant='outline-primary'
+                                                    className='text-center'
+                                                    onClick={() => {
+                                                        toggleCardAddNotification(false)
+                                                        showCardUpdateNotification(notification)
+                                                    }}
+                                                >
+                                                    <i className='fs-2 bi-pencil px-0 fw-bolder'></i>
+                                                </Button>
+                                            </CustomTooltip> 
+                                            <CustomTooltip title='Eliminar'>
                                             <Button
                                                 variant='outline-danger'
                                                 className='text-center'
@@ -741,7 +755,8 @@ const PushNotificationsPage = () => {
                                                 }}
                                             >
                                                 <i className='fs-2 bi-trash px-0 fw-bolder'></i>
-                                            </Button>
+                                            </Button> 
+                                            </CustomTooltip>
                                         </td>
                                     </tr>
                                 ))}

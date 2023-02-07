@@ -7,7 +7,9 @@ import {getData, getSitesActivesAndPublicatedMethod, URLAWS} from '../../../serv
 import {validateStringSinCaracteresEspeciales} from '../../validarCadena/validadorCadena'
 import makeAnimated from 'react-select/animated'
 import Select from 'react-select'
-import {DeleteImage} from '../../deleteFile/delete-image'
+import {DeleteImage} from '../../deleteFile/delete-image' 
+import {Tooltip, tooltipClasses, TooltipProps} from '@mui/material'
+import {styled} from '@mui/system'
 
 const customStyles = {
     control: (base: any, state: any) => ({
@@ -127,7 +129,17 @@ const NewNotification: FC<any> = ({
         newOptions.unshift({value: null, label: 'Sin redirección'})
 
         setOptionsSites(newOptions)
-    }
+    } 
+
+    const CustomTooltip = styled(({className, ...props}: TooltipProps) => (
+        <Tooltip {...props} classes={{popper: className}} />
+    ))(({theme}) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            color: '#FFF',
+            fontSize: 12,
+            fontWeight: 500,
+        },
+    }))
 
     useEffect(() => {
         getSites()
@@ -172,7 +184,8 @@ const NewNotification: FC<any> = ({
                             </div>
                         </div>
 
-                        <div className='d-flex justify-content-between'>
+                        <div className='d-flex justify-content-between'> 
+                        <CustomTooltip title='Cargar imagen'>
                             <Button
                                 variant='outline-primary'
                                 className='text-center'
@@ -185,7 +198,9 @@ const NewNotification: FC<any> = ({
                                 }
                             >
                                 <i className='fs-2 bi-upload px-0 fw-bolder'></i>
-                            </Button>
+                            </Button> 
+                            </CustomTooltip> 
+                            <CustomTooltip title='Eliminar'>
                             <Button
                                 variant='outline-danger'
                                 className='text-center'
@@ -203,7 +218,8 @@ const NewNotification: FC<any> = ({
                                 }}
                             >
                                 <i className='fs-2 bi-trash px-0 fw-bolder'></i>
-                            </Button>
+                            </Button> 
+                            </CustomTooltip>
                         </div>
                     </div>
                 </div>

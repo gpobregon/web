@@ -29,8 +29,13 @@ const UpImage: FC<any> = ({ show, onClose, cargarIMG,ubicacionBucket,tipoArchivo
     const [selectedFile, setSelectedFile] = useState(null);
     const [porcentajeCargado,setPorcetajeCargado] = useState(0);
     const handleFileInput = (e: any) => {
-        setSelectedFile(e.target.files[0]);
-        setImg(e.target.files[0].name)
+        if(e.target.files[0].size > 1000000 && ubicacionBucket==='notificaciones' ){
+            swal("Error", "El archivo no puede ser mayor a 1MB", "error");
+            setSelectedFile(null);
+        }else{
+            setSelectedFile(e.target.files[0]);
+            setImg(e.target.files[0].name)
+        }
     }
 
     const uploadFile = (file: any) => {

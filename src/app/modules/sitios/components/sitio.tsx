@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from 'react'
 import {Col, Card, Button, Row} from 'react-bootstrap'
 import {Site} from '../../../models/site'
-import {getData, sitesMethod, deleteData, postData} from '../../../services/api'
+import {getData, sitesMethod, deleteData, postData, statelockSite} from '../../../services/api'
 import swal from 'sweetalert'
 import SitiosPage from '../SitiosPage'
 import {Link, useNavigate} from 'react-router-dom'
@@ -90,15 +90,40 @@ const Sitio: FC<sitio> = (props) => {
                 //     bloqueado: true,
                 //     nombreUsuario: dataUser.name,
                 // })
-                await postData(sitesMethod, {bloqueado_por_edicion: true})
+                
                 navigate(`/sitios/editSite/${props.id_sitio}`)
             } else {
                 if (idSitioState.idUserEditing == dataUser.id) {
                     navigate(`/sitios/editSite/${props.id_sitio}`)
                 } else {
                     swal({
-                        title: `Este sitio está siendo editado por '${props.bloqueado_por_edicion_nombre}'`,
-                        icon: 'warning',
+                        text: `Este sitio está siendo editado por: '${props.bloqueado_por_edicion_nombre}'`,
+                        icon: 'error',
+                        
+                        // buttons: ['Cancelar', 'Forzar desbloqueo'],
+                        // dangerMode: true,
+                    }).then(async (res) => {
+                        // if (res) {
+                        //     await postData(sitesMethod, {bloqueado_por_edicion: false})
+                        //     navigate(`/sitios/editSite/${props.id_sitio}`)
+                        // }
+                        // swal({
+                        //     title:'¿Seguro que quieres forzar el desbloqueo?',
+                        //     text: 'Si lo haces, el sitio se desbloqueará y el usuario que lo estaba editando perderá los cambios que hubiera hecho',
+                        //     icon: 'warning',
+                        //     buttons: ['Cancelar', 'Forzar desbloqueo'],
+                        //     dangerMode: true,
+                        // }).then(async (res) => {
+                        //     if (res) {
+                        //         const sit: any = await postData(statelockSite, {
+                        //             id_sitio: props.id_sitio,
+                        //             bloqueado_por_edicion: true,
+                        //             bloqueado_por_edicion_id: dataUser.id,
+                        //             bloqueado_por_edicion_nombre: dataUser.name,
+                        //         })
+                        //         navigate(`/sitios/editSite/${props.id_sitio}`)
+                        //     }
+                        // })
                     })
                 }
             }
@@ -130,7 +155,7 @@ const Sitio: FC<sitio> = (props) => {
                             text: 'Se elimino con éxito',
                             icon: 'success',
                             timer: 2000,
-                        })
+                        })                    
                         navigate('/')
                     } else {
                         swal({
