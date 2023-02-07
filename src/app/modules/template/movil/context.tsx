@@ -344,7 +344,6 @@ export const ContentProvider: FC<WithChildren> = ({children}) => {
     // elimina items dragados en el editor
     const removeItem = (data: any) => {
         const newBoard = board.filter((item: any) => item && String(item.id) !== String(data))
-        console.log(data, board, newBoard, 'context')
         setBoard(newBoard)
         setEditItem([])
         setEditItemResource([])
