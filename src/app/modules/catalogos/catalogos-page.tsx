@@ -664,7 +664,9 @@ const CatalogosPage = () => {
                     <div className='d-flex flex-row-reverse'>
                         <a
                             style={{paddingLeft: 30}}
-                            href={'https://mcd-archivos.s3.amazonaws.com/plantillasIdiomas/plantailla_es_website1.json'}
+                            href={
+                                'https://mcd-archivos.s3.amazonaws.com/plantillasIdiomas/plantilla_es_website.json'
+                            }
                             target='_blank'
                             rel='noopener noreferrer'
                         >
@@ -678,7 +680,9 @@ const CatalogosPage = () => {
 
                         <a
                             style={{paddingLeft: 30}}
-                            href={'https://mcd-archivos.s3.amazonaws.com/plantillasIdiomas/plantilla_es_movil1.json'}
+                            href={
+                                'https://mcd-archivos.s3.amazonaws.com/plantillasIdiomas/plantilla_es_movil.json'
+                            }
                             target='_blank'
                             rel='noopener noreferrer'
                         >
