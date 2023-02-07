@@ -1029,7 +1029,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                     defaultChecked={
                                                                                         rol.offline_sitios
                                                                                     }
-                                                                                    label='Seleccionar contenido descarble de Sitios'
+                                                                                    label='Seleccionar contenido descargable de Sitios'
                                                                                     onChange={(
                                                                                         e
                                                                                     ) => {
@@ -1062,7 +1062,7 @@ const RoleManagement: FC<any> = ({show}) => {
                                                                                     defaultChecked={
                                                                                         rol.offline_puntos
                                                                                     }
-                                                                                    label='Seleccionar contenido descarble de Puntos de interés'
+                                                                                    label='Seleccionar contenido descargable de Puntos de interés'
                                                                                     onChange={(
                                                                                         e
                                                                                     ) => {
