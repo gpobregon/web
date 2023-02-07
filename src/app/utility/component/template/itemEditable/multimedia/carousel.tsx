@@ -264,7 +264,8 @@ const Carousel: FC<Model> = ({
                 ) : (
                     <>
                         <OverlayTrigger trigger='click' placement='left' overlay={popoverClick}>
-                            <i className='bi bi-plus-circle-fill text-white fw-bolder fs-2 cursor-pointer shadow-sm position-icon' />
+                            <i className='bi bi-plus-circle-fill text-white fw-bolder fs-2 cursor-pointer shadow-sm position-icon' title='Editar contenido'/>
+                         
                         </OverlayTrigger>
                         <div className='px-3'>
                             {data.list.length > 0 ? (

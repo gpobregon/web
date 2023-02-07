@@ -14,7 +14,6 @@ type Model = {
   removeItem: (data: any) => void
 }
 const Text: FC<Model> = ({ isDragging, referencia, handlerId, data, setEditItem, updateElement, removeItem }) => {
-
   const { show } = useContextMenu({ id: "menu-id" });
 
   const destroyItem = (e: any) => {
