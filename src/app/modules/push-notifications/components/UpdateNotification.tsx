@@ -374,12 +374,21 @@ const UpdateNotification: FC<any> = ({
                                     descripcion: notification.descripcion,
                                     imagen_path: notification.imagen_path,
                                     fecha_hora_programada: dateNow,
-                                    tipo: 0,
+                                    tipo: 1,
                                     estado: 1,
                                     id_sitio: notification.id_sitio,
                                 })
 
-                                updateNotification(notification)
+                                updateNotification({
+                                    id_notificacion: notification.id_notificacion,
+                                    nombre: notification.nombre,
+                                    descripcion: notification.descripcion,
+                                    imagen_path: notification.imagen_path,
+                                    fecha_hora_programada: dateNow,
+                                    tipo: 1,
+                                    estado: 1,
+                                    id_sitio: notification.id_sitio,
+                                })
                             }}
                         >
                             <span className='menu-icon me-0'>
@@ -403,7 +412,16 @@ const UpdateNotification: FC<any> = ({
                                     id_sitio: notification.id_sitio,
                                 })
 
-                                updateNotification(notification)
+                                updateNotification({
+                                    id_notificacion: notification.id_notificacion,
+                                    nombre: notification.nombre,
+                                    descripcion: notification.descripcion,
+                                    imagen_path: notification.imagen_path,
+                                    fecha_hora_programada: notification.fecha_hora_programada,
+                                    tipo: 1,
+                                    estado: 1,
+                                    id_sitio: notification.id_sitio,
+                                })
                             }}
                         >
                             <span className='menu-icon me-0'>
